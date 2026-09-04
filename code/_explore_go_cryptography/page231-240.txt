@@ -1,0 +1,251 @@
+And now the payoff. We’ll reattach the enciphered image to its header,
+creating a new, valid PPM file:
+Here’s the result, opened in an image viewer:
+Wow. That’s terrible. Far from obscuring the original image, the encryption
+hardly seems to have altered it at all. The background went black, and the
+eyes went a bit swirly, but that’s basically it.
+Muddying the waters
+If we hoped that Eve wouldn’t be able to spot that Alice’s message is a
+picture of a devil gopher, the result is disappointing. Indeed, Eve doesn’t
+need to break our cipher scheme at all, whether by brute-forcing the key, or
+otherwise. All she needs to know is that the ciphertext contains image data,
+and she’d be able to reconstruct something like the picture we just saw.
+go run ./cmd/encipher -key \
+  0101010101010101010101010101010101010101010101010101010101010101 
+  < imgdata.txt >enciphered.bin
+cat header.txt enciphered.bin >test.ppm
+So what’s gone wrong? We deliberately chose a “low” key: one that doesn’t
+perturb the plaintext very much. It just adds one to the value of every byte.
+Maybe that’s why it’s so shatteringly obvious what the enciphered picture
+represents.
+Let’s try the process again, only this time we’ll use a randomly-chosen 32-
+byte key. That should perturb the image data a lot more, and hopefully
+obscure it more effectively.
+In fact, to avoid any worries about whether or not the local computer has a
+good enough source of randomness, I’ve used the qrand tool, which we met
+in the previous chapter, to generate a key of truly cosmic randomness:
+8e8c2771be5c2bb10d541a5bf6aa51203e0bce2d6d4fa267afd89a6e20df11f1
+You can use any method you like, including tossing a coin 256 times. So,
+here we go again with the new key:
+And the result:
+qrand 32
+go run ./cmd/encipher -key \
+  8e8c2771be5c2bb10d541a5bf6aa51203e0bce2d6d4fa267afd89a6e20df11f1 
+  < imgdata.txt >enciphered.bin
+cat header.txt enciphered.bin >test.ppm
+Hmm. It’s okay. Not great.
+You can definitely still see at least the outlines of the original image. It’s
+scrambled the colours a bit, but it’s nowhere near the ideal “random noise”
+image that we were going for.
+But this was enciphered using the longest practicable key, generated using
+the randomest numbers in the universe. So why does it still really look like
+a devil gopher?
+What’s wrong with this picture?
+Well, the answer is simple, and we’ve already talked about it in previous
+chapters: we’re repeating the key. Even though 32 bytes is long for a key,
+it’s a tiny fraction of the data in our image: about 0.05%.
+This 32-byte repeat is clearly visible in the “enciphered” image as a regular
+stippling effect. Because there are regularities in the original image with a
+much longer “wavelength”, if you like, this 32-byte perturbation doesn’t do
+much to hide them.
+So, while some encryption is clearly happening, is this good enough? I
+think not. If Alice wants to send top-secret blueprints or schematics, for
+example, it’s no good just stippling them a bit and shuffling the colours.
+Line drawings and diagrams would still be clearly visible to Eve in the
+enciphered message. Maybe even text, if it’s in a big enough font.
+What can we do? Use a longer key, maybe?
+Mallory in the middle
+Actually, there’s nothing wrong with the key. The problem here is the
+operating mode of our cipher. The way we handle each block is pretty
+simple-minded: we just encipher (or decipher) it independently, by
+combining it with the key.
+ECB: a block-headed operating mode
+That means, as we’ve already seen in previous chapters, that a given input
+block always produces the same output block. In fact, you could make
+enciphering and deciphering very fast by simply generating all the possible
+input-output mappings in advance, as a lookup table.
+Such a code book would be easy to use. Given a block of plaintext, for
+example, Alice could just look it up in the book. Every 32-byte block is
+equivalent to some large integer, as we know, so all she’d need to do is find
+this page number in the book, read off the corresponding block of
+ciphertext, and send it to Bob.
+The trouble, as we’ve just seen, is that the blocks are typically very small
+relative to the message. That means if there is structure in the message on a
+larger scale, our scheme can’t do much to hide it.
+For example, in the devil image, there are long sequences of pixels of the
+same colour, such as the white background, or the red body of the gopher.
+Wherever a block of white pixels occur together in the plaintext, they’ll
+produce a certain block of pixels in the ciphertext, and that ciphertext block
+is always the same.
+So, while Eve might not be able to reconstruct the precise original colour of
+those pixels, just the repeating pixel patterns themselves are enough to give
+away a lot of valuable information about the image. We need to fix that.
+Specifically, we need a better operating mode. It turns out the one we’re
+using, namely “just combine each block with the key”, has a name: it’s
+called Electronic Code Book (ECB). That’s because it acts like a physical
+code book, as we’ve seen, in that the same input always maps to the same
+output.
+This is a serious weakness, because if Eve can collect or generate such a
+code book, she can use it to trivially decipher any message. All she has to
+do is look up the number corresponding to a particular ciphertext block, and
+read off the corresponding plaintext.
+Introducing Mallory
+And there’s another problem with ECB-encrypted messages. To illustrate it,
+let’s introduce another member of the traditional cryptographic theatre
+company: Mallory.
+Like Eve, Mallory is an adversary of Alice and Bob’s. Whereas Eve can
+only read Alice and Bob’s ciphertexts, Mallory can read them and also
+potentially modify them in transit.
+Block replay
+Suppose Mallory sells Alice a car for $1000, and Alice pays for it with an
+electronic funds transfer via her banker, Bob. This is encrypted, naturally,
+but Mallory can spy on and record the transmitted ciphertext. While they
+can’t recover the plaintext without the key, it doesn’t matter, because they
+already know what it says: in effect, “transfer $1000 from Alice’s account
+to Mallory’s.”
+Mallory can now carry out a replay attack: they simply re-transmit the same
+ciphertext block to Bob the banker’s computer. Bob obediently deciphers
+the message and carries out what he believes is Alice’s new instruction.
+Jackpot for Mallory! Another $1000 in their account.
+And Mallory can keep doing this as often as they like. All they need to do is
+record and replay the single block of the ciphertext conversation that
+contains Alice’s transfer instruction.
+Because the cipher is operating in ECB mode, the same message always
+enciphers to the same ciphertext block, so the bank has no way to know that
+the replayed blocks are not genuine.
+Dropping and modifying blocks
+Mallory can work other kinds of mischief with Alice’s cipher traffic. For
+example, suppose Mallory buys a laptop from Alice for $1000, and pays by
+electronic transfer. If they can identify the specific block containing the
+transfer instruction, they can simply delete it from the sequence of blocks,
+so that Bob never receives it.
+As far as Alice knows, though, the transfer has been made. She won’t
+realise what has happened until the money fails to show up in her account,
+by which time Mallory may be long gone.
+In this case, the vulnerability is slightly different: it depends on the fact that
+each block in ECB mode is completely independent of those that went
+before. Thus, there’s no way for Bob to know that a block has been
+removed by Mallory, just as there’s no way for him to know if Mallory is
+repeating a block.
+Mallory can also modify blocks, though how useful this is to them depends
+on the specific cipher in use, and other details such as the padding scheme.
+Suffice it to say that ECB mode offers no protection against this general
+class of attack, which is why it’s rarely used in real cryptographic systems.
+We need something a little more sophisticated. Specifically, we need to
+make it so that the same plaintext block doesn’t always produce the same
+ciphertext block.
+More sophisticated modes
+So what other operating modes could there be? I mean, we still need to
+combine each block of plaintext with the key, so what else could we throw
+into the mix, to spice things up a bit? It would need to be something that
+changes with every block, to avoid the repetitious “code book” problem.
+Counter mode (CTR)
+One simple idea is to use a counter: just increment some number every time
+we encipher a new block, and combine that number with the key and
+plaintext. Just using a simple sequence number on its own wouldn’t add
+much spice to the dish, admittedly, but with a few extra tweaks, it can be
+quite effective. This mode of operation is called CTR (it doesn’t stand for
+anything, it’s just short for “counter”).
+In ECB mode, the only input to each block is the plaintext and the key. In
+CTR mode, we add an extra input: the counter value. However, we could
+invent other modes where the extra input doesn’t have to come from a
+counter: it could just be random data, or the wall-clock time, or any other
+value that changes frequently.
+Nonces
+This extra input is sometimes called a nonce, from the expression “for the
+nonce”, meaning some one-off value that won’t be re-used. The point, of
+course, is that if we did re-use the same value for every block, we’d just be
+back in plain old ECB mode, and we wouldn’t be able to foil Mallory’s
+replay attacks.
+The nonce doesn’t need to be secret. Bob needs to know it for each block,
+so that he can decipher the block. If it’s a counter value, he can just keep
+count of the blocks, or we could include the nonce value before the
+beginning of each block.
+Either way, Mallory will know it too, but that doesn’t matter: without the
+key, they still won’t be able to decipher any block. Bob, though, has the key
+and the nonces, so he can.
+Cipher Block Chain (CBC)
+One interesting value we could use as the extra input to each block is… the
+previous block! This is rather elegant, because we don’t need to maintain a
+counter, or otherwise generate a unique nonce value for each block. Instead,
+we simply use the ciphertext of the previous block that we just enciphered.
+In this mode, then, the input to the cipher for each block consists of:
+1. The key
+2. The plaintext for this block
+3. The ciphertext for the previous block
+These are all combined to produce the ciphertext for this block—which will
+be used as the nonce for the next block, and so on.
+This cleverly avoids the “same plaintext, same ciphertext block” problem.
+Each new block of ciphertext we generate will be different, even if the
+plaintext is the same as the previous block’s. And if Mallory tries to replay
+a block, Bob won’t be fooled. He’ll know that something nefarious has
+happened, because he won’t be able to decipher the repeated block or
+anything after it.
+Mallory also can’t drop, add, or modify blocks, for the same reason—at
+least, not without being detected by Bob. Each valid block depends for its
+decryption on the previous one, and so on, forming a chain of linked blocks.
+A blockchain, indeed, which is where that term comes from.
+Thus, this operating mode is known as Cipher Block Chain (CBC).
+Initialization Vector (IV)
+However, this only partially solves the “same plaintext, same ciphertext”
+problem:
+The block-by-block problem is solved by making each block’s
+encrypted value depend on all of the previous blocks but the larger
+message-by-message problem remains because the same full message
+will still encrypt to the same value.
+—Azeem Bande-Ali, “Intuition for Cryptography”
+In other words, if the entire message is the same as one Alice has previously
+sent, then the first block will be the same, so its ciphertext will be the same,
+too. And since every block depends on the previous one, all the blocks will
+end up the same. Mallory could simply replay the entire message instead of
+an individual block.
+That’s because, for the first block, we have no previous ciphertext to use as
+the nonce input. What could we do? Where could we get some suitable data
+from?
+The answer is that it doesn’t matter: random data will do. We just need a
+block’s worth of junk bits to get the blockchain started. Again, it doesn’t
+have to be kept secret: we’ll be sending this initialization vector (IV) to Bob
+in the clear, along with the ciphertext message.
+Generating a secure IV
+To generate the IV, we can just grab some bits from the system entropy
+pool, or toss some coins. Now the same message won’t produce the same
+ciphertext even with the same key, so long as it has a unique IV.
+If you’re really paying close attention, though, you might wonder what
+happens if Mallory modifies the IV in transit. Wouldn’t that make the whole
+message unreadable for Bob?
+Well, no: remember, the IV is only used to encipher the first block. After
+that, the input to each block is the ciphertext of the previous block, which
+won’t have changed. Yes, Bob will fail to decipher the first block, or
+decipher it incorrectly, but he’ll still be able to read all the other blocks.
+And there are ways that Alice and Bob can protect their messages from
+being secretly modified by Mallory at all, which—spoilers!—we’ll talk
+about later on in this book.
+Implementing CBC mode
+First, let’s see how to improve our shift cipher by operating it in CBC
+mode. We could write a bunch of code to do everything we’ve just
+described: mingle each block’s plaintext with the previous block’s
+ciphertext, and so on. But there’s no need: once again, the standard library
+has done the work for us.
+The crypto/cipher package contains code that will take a block cipher—
+that is, anything that implements cipher.Block—and give us an “encrypter”
+object that operates the cipher in CBC mode. That object, naturally enough,
+is an implementation of cipher.Mode.
+Just as a quick reminder, since we last saw it a few chapters ago, here’s an
+edited snippet from the code we currently have in our encipher tool:
+Taking this step by step, here’s what happens:
+1. We use the key to create a cipher
+2. We use the cipher to create an encrypter
+3. We use the encrypter to encipher the plaintext
+Enciphering in CBC mode
+We actually don’t need to change the code that much to use CBC instead of
+ECB mode, now that we’ve discovered ECB is a bust. The main difference
+is that, instead of calling our own function shift.NewEncrypter, we’ll call
+the standard library’s cipher.NewCBCEncrypter.
+However, we now need to supply an IV, along with our block cipher, so the
+call will look something like this:
+block, err := shift.NewCipher(key)
+...
+enc := shift.NewEncrypter(block)
+...
+enc.CryptBlocks(ciphertext, plaintext)
+...

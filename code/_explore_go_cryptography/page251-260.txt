@@ -1,0 +1,259 @@
+The computed value is called a digest of the message, and as the name
+suggests, it’s usually shorter than the message itself. In fact, a digest usually
+has some fixed length—for example, 256 bits—regardless of the size of the
+message it represents.
+The problem of taking some arbitrarily long string of bits (a message), and
+turning it into some representative fixed-length string is called hashing, as
+in “corned-beef hash”, or “making a hash of things”.
+As the name suggests, it involves mixing or muddling up the bits in some
+way. So, how do we make a hash of a string of bits?
+Well, there are many possibilities: many imaginable hash algorithms. And
+that makes sense, since there are many different applications for hashing,
+and the choice of algorithm depends on what you want to use it for.
+Hash tables
+For example, one common application is the hash table: essentially, an
+index for quick lookups. Suppose you have a million files stored on a
+particular disk. How can you find the particular one you’re looking for?
+One simple idea is to just start at the first byte of the disk and keep on
+reading sequentially until you find the start of the file you want. That’s easy
+to implement, but it performs really badly. On average you’d have to read
+half of the entire disk per file access, and that sucks.
+Of course you wouldn’t do it this way. Instead, you’d keep a list of all the
+files by name, and link each one to its starting position on the disk.
+This lookup table (or directory, which is where that term comes from)
+means that you can jump straight to the beginning of the file, without
+reading any of the intervening data.
+This is great, but what happens when the directory itself becomes large? In
+our million-file example, a simple-minded table scan means we have to
+read every directory entry until we find the one associated with the target
+file. On average, that means reading half a million entries per file access.
+Not as slow as reading half of the whole disk, but still not great.
+What can we do?
+Buckets and distribution
+Ideally, we’d break up the directory into a number of smaller chunks—
+known as buckets—and scan only the chunk that contains the entry for the
+target file. But how do we know which chunk that is?
+We could imagine allocating a chunk for each initial letter of the filename,
+for example, from A to Z. Then, given a target filename to find, all we need
+to do is look at its first letter, go straight to the relevant chunk, and scan it
+until we find the file. That’s a hash algorithm, of a kind.
+In practice, this wouldn’t work very well: the buckets wouldn’t be equally
+populated. The “T”, “A”, and “O” buckets would be crammed to
+overflowing, since these are the most common initial letters of English
+words. Meanwhile, the “X” and “Z” buckets would be mostly wasted space.
+That’s why physical filing cabinets don’t allocate equal space to each initial
+letter: instead, they often have a single drawer for “VWXYZ”, and so on.
+In other words, our imaginary hash function—taking the first character of
+the filename—doesn’t produce a uniform distribution. Instead, it suffers
+from excessive clustering.
+This doesn’t make it unusable, but we can do better. The more uniform a
+distribution we can produce, the more efficient our hash table will be.
+Collisions
+You could imagine being really mean to the owner of such a disk addressing
+system by supplying them with a bunch of files whose names are all
+specially crafted to produce collisions: that is, to make them all end up in
+the same bucket.
+For example, such a pathological key set might contain files whose names
+all begin with “Z”. Then almost all of the hash table would be empty, while
+the “Z” bucket would be horribly overloaded. Thus, every file access would
+effectively require a full table scan: just what we wanted to avoid.
+So when we’re thinking about the performance of a given hash function, we
+have to consider not just the average or common case, but the potential
+worst case—especially if we have an adversary who wants to make life
+difficult for us.
+For hash tables, some collisions are okay: indeed, they’re useful. If there
+were no collisions at all, every file would hash to a separate bucket, and we
+wouldn’t gain any advantage from having the hash table. On the other hand,
+if the buckets grow too full, then searching them for the key we want takes
+a long time. So we want a moderate rate of collisions for typical key sets.
+Cryptographic hashing
+That’s certainly not true in cryptographic applications, though. The whole
+point of a message digest is that every message should produce a different
+hash. Thus, we want a very large hashspace.
+Some collisions are still inevitable, of course: there are only so many
+possible hash values for a given number of bits, just as there are only so
+many possible keys.
+Even an ideal hash algorithm, then, can’t do better than a certain minimum
+collision rate. It’s easy to work out what that is: if we start with a given
+message, the probability of randomly generating another message with the
+same N-bit hash is 1 in 2N.
+Alternatively, if we pick both messages at random, the chance of them
+having the same hash is 1 in 2N/2.
+Therefore, we should make N large enough that this rate of collision is
+acceptable, and use an algorithm that doesn’t increase it too much above the
+theoretical minimum.
+Simple hash functions
+Let’s put this into context by trying to implement a very simple hash
+function ourselves. First, what kind of input should it take, and what should
+it return?
+We’ve been working with arbitrary bytes throughout this book, so let’s stick
+to that. Our hash function will take a []byte of any size, and it’ll return a 
+[]byte of some fixed size (let’s say 8, giving us a 64-bit digest).
+A naïve algorithm
+What about the algorithm? Well, let’s start with something silly: we’ll just
+take the length of the input! We know intuitively that this won’t be any
+good, but let’s prove it.
+Here’s a test:
+(Listing hash/1)
+In other words, hashing the input “I love you, Bob” should produce the
+value 15, written as a (big-endian) 8-byte slice. Over to you now to make
+func TestLenHashReturnsExpectedResult(t *testing.T) {
+    t.Parallel()
+    input := []byte("I love you, Bob")
+    want := []byte{
+        0x00, 0x00, 0x00, 0x00,
+        0x00, 0x00, 0x00, 0x0f,
+    }
+    got := hash.LenHash(input)
+    if !bytes.Equal(want, got) {
+        t.Errorf("%s: want %x, got %x", input, want, got)
+    }
+}
+this test pass!
+Implementing LenHash
+GOAL: Make the test pass by implementing LenHash.
+HINT: Computing the length of the input isn’t too hard—we can use the
+built-in len function for that. Actually, the only tricky bit might be turning
+its result (an int) into a slice of 8 bytes.
+Remember when we used the standard library encoding/hex package to turn
+a hex value into a []byte? We can use its brother encoding/binary to do
+something similar here.
+For example, if we have some slice digest, we can encode a value val to it
+like this:
+This will turn the integer val into its representative bit pattern, and write
+those bits into the digest slice. For example, if val is 15, the contents of 
+digest should now be:
+0x000000000000000F
+Have you figured out what to do?
+SOLUTION: Here’s something that will do the job:
+binary.BigEndian.PutUint64(digest, val)
+func LenHash(input []byte) []byte {
+    digest := make([]byte, 8)
+    binary.BigEndian.PutUint64(digest, uint64(len(input)))
+    return digest
+}
+(Listing hash/1)
+Let’s add a simple main function so that we can try it out:
+(Listing hash/1)
+We read the input from os.Stdin, as we did with our enciphering and
+deciphering tools. Then we pass it to LenHash and print the result. Here we
+go:
+0000000000000010
+Looks reasonable. The input is 16 characters long, counting the final
+newline, and 16 in decimal is 10 in hex. So, in theory, Alice could use this
+tool to compute a hash digest for her ciphertext message to Bob.
+Problems with LenHash
+But should she? Definitely not, and we already know why: collisions are
+extremely likely. Lots of different messages will produce exactly the same
+hash. That weakens our confidence that the plaintext hasn’t been corrupted,
+accidentally or on purpose.
+It also means it’s relatively easy for Mallory to carry out a brute-force
+attack on the hash. They can just hash lots of random messages until they
+func main() {
+    data, err := io.ReadAll(os.Stdin)
+    if err != nil {
+        fmt.Fprintln(os.Stderr, err)
+        os.Exit(1)
+    }
+    fmt.Printf("%x\n", hash.LenHash(data))
+}
+echo "I love you, Bob" | go run ./cmd/hash
+find one that hashes to the same value as Alice’s. Then they can replace
+Alice’s ciphertext with their own message, and Bob will be none the wiser.
+And, even though we’re using a 64-bit hash (N = 64), our hashes have far
+from a uniform distribution.
+LenHash mostly produces pretty low numbers, even for big inputs. In other
+words, we’re not evenly covering the space of possible hashes. Most of the
+bits in the hash we just computed are zero, and most of the bits for every
+message hash will be zero.
+If that’s not clear, think about how long a message would have to be in
+order for all its hash bits to be 1 with the LenHash function. Since there are
+64 bits, the message would have to be 264 characters long, or about 17
+trillion gigabytes. Alice likes to chit-chat, but even she’s unlikely to send
+messages this long.
+That makes Mallory’s brute-force search far easier than it should be for a
+64-bit hash. Indeed, if we assume that most messages will be smaller than
+one gigabyte, Mallory only has to search the space of 30-bit hashes, which
+is billions of times smaller.
+Preimage attacks
+Even worse, if Mallory knows the hash algorithm, then they don’t even
+need to do a brute-force search. It’s very easy for them to deliberately
+construct a message that produces the same hash.
+Such a message is known as a preimage, and we want it to be hard to find.
+Instead, it’s trivial. Any message of the same length will do:
+0000000000000010
+Oh no! Now Mallory can substitute a message that says the exact opposite
+of what Alice meant to send (ignoring encryption for the moment), and Bob
+echo "I hate you, Bob" | go run ./cmd/hash
+will compute the same hash value, so he’ll think the message is authentic.
+This could spell disaster for Alice and Bob’s blossoming relationship.
+We don’t want to make it quite this easy for Mallory to sunder these two
+hearts, so what would a more sophisticated hash algorithm look like?
+A slight improvement
+One problem with LenHash, as we’ve seen, is that the hash only depends on
+the length of the message, which is something Mallory can easily find out.
+What if we made it depend on something about the actual content of the
+message instead? For example, what if we added together the values of all
+the bytes?
+Implementing SumHash
+GOAL: Write a function SumHash that produces a digest based on the sum
+of the input bytes. It should pass the following test:
+(Listing hash/2)
+func TestSumHashReturnsExpectedResult(t *testing.T) {
+    t.Parallel()
+    input := []byte("I love you, Bob")
+    want := []byte{
+        0x00, 0x00, 0x00, 0x00,
+        0x00, 0x00, 0x04, 0xfb,
+    }
+    got := hash.SumHash(input)
+    if !bytes.Equal(want, got) {
+        t.Errorf("%s: want %x, got %x", input, want, got)
+    }
+}
+HINT: We already have code to take some integer and encode it as a slice
+of 8 bytes, so all we need to do is loop over the input bytes, adding them up
+until we get the grand total. Can you see what to do?
+SOLUTION: How about this?
+(Listing hash/2)
+Testing SumHash
+Let’s try this version with our two different input messages. Will they
+produce different hashes?
+0000000000000505
+00000000000004f1
+This looks promising! Our new hash algorithm doesn’t produce the same
+output if the inputs are the same length. So that makes it harder for Mallory
+func SumHash(input []byte) []byte {
+    digest := make([]byte, 8)
+    var sum uint64
+    for _, b := range input {
+        sum += uint64(b)
+    }
+    binary.BigEndian.PutUint64(digest, sum)
+    return digest
+}
+echo "I love you, Bob" | go run ./cmd/hash 
+echo "I hate you, Bob" | go run ./cmd/hash
+to construct a fake message that hashes to some given value. But is it still
+possible? Let’s try.
+A preimage attack on SumHash
+Suppose we want to produce the hash 0505, which is 1285 in decimal. It
+doesn’t matter what our input bytes are, or even how many of them there
+are, so long as they sum to 1285. Let’s start with a bunch of z characters:
+zzzzzzzzzz
+That’s 10 zs, and the character code for z is 122, so 10 × 122 = 1220. That
+gets us close. We’re just 65 short, and that’s the code for A, so let’s try this
+input:
+000000000000050f
+Darn. We forgot about the newline character that echo silently appends to its
+argument.
+Well, the code for newline is 10 in decimal, so we need the character that’s
+10 less than A, which is 7. Here we go:
+0000000000000505
+Bingo! We’ve broken the preimage resistance of our hash function. Sure,
+Bob might be a little confused to receive a message like this, but when he
+checks the hash value, it’ll be the same as the one Alice computed. We still
+need to do better.
+The avalanche effect
+echo "zzzzzzzzzzA" | go run ./cmd/hash
+echo "zzzzzzzzzz7" | go run ./cmd/hash

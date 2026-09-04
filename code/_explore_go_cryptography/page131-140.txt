@@ -1,0 +1,256 @@
+What do we need to change to make our existing code fit into a 
+cipher.Block-shaped slot, then?
+The Encrypt method
+Well, let’s take our existing Encipher function, for example. Here’s its
+signature:
+It takes the plaintext and the key, as byte slices, and returns the ciphertext.
+This isn’t a million miles away from the signature of the Encrypt method in 
+cipher.Block:
+It takes the plaintext, called src here, but of course you can call it what you
+like; only its type matters for the purposes of the interface. It also takes
+another byte slice dst, intended to hold the ciphertext, once it’s been
+produced.
+So that’s one interesting change: instead of returning the ciphertext, our
+new method will need to accept a byte slice and populate it with the
+ciphertext as it’s generated. We can arrange that, I dare say.
+Where’s the key?
+Here’s something else interesting about the signature of the Encrypt
+method: it doesn’t take a key parameter. So how does Encrypt “know” what
+key to use when enciphering src into dst, then?
+If it can’t be passed in as a parameter, then we must be able to get the key
+from somewhere else. One clue is that, since we want to implement an
+interface, we’re necessarily writing methods on some type. That means our 
+Encrypt method will have a signature like this:
+func Encipher(plaintext []byte, key []byte) (ciphertext []byte)
+Encrypt(dst, src []byte)
+In other words, when Encrypt is called, it will be called on some value of 
+shiftCipher, and that value will be available within the method as the
+receiver variable c. Maybe that’s a good place to put the key: in one of the
+fields on the shiftCipher struct.
+Fixing the key size
+This sounds promising. Now, what type should we declare for the key field?
+We could use []byte, of course, as we did before, and then the key can be
+as large or small as required. However, we’re starting to get a sense of how
+much short keys weaken our encryption, so we’d like to enforce a minimum
+key length.
+We’ve also seen that a 32-byte key is long enough for all practical purposes,
+so we needn’t worry about handling longer keys than this. Let’s make an
+executive decision, then, that the key will always be a fixed size: 32 bytes.
+For simplicity, let’s also say that we’ll use a block size of 32 bytes, too. So
+we can write at least the following:
+(Listing shift/7)
+Not bad! There’s more to do, of course, but this will get us started.
+What if Alice wants to use our program to encipher messages using really
+short keys, though? Won’t our minimum key length restriction be
+annoying? Well, perhaps, but the annoyance is probably worth it.
+func (c shiftCipher) Encrypt(dst, src []byte)
+const BlockSize = 32
+type shiftCipher struct {
+    key [BlockSize]byte
+}
+We could accept short keys, and “lengthen” them transparently to 32 bytes
+to suit the API of our shift package. For example, we could compute the
+SHA-256 hash sum of the key, which works out nicely at 256 bits = 32
+bytes. We’ll talk more about hashing later on in the book, but for now just
+treat it as a way of writing down a short key using an unnecessarily long
+string of bits.
+But there’s no such thing as a free lunch, and the resulting key wouldn’t
+have any more entropy—any more difficulty of guessing—than the original.
+Suppose Alice chose a five-letter word as the key, and we expanded it
+cryptographically to 32 bytes. Well, all Eve would have to do is list all
+possible arrangements of five letters, expand them using the same hash
+algorithm, and try the resulting keys.
+The keyspace is the same size either way. It’s like writing down your
+password in huge letters: it’s not cryptographically stronger, it just takes up
+more space on your monitor.
+In the same way, key expansion makes it look like we’re using a longer key,
+but we’re really not. So let’s show Alice some tough love, and require her
+to supply a full 256-bit key as input. We’ll see some possible ways to
+generate such keys securely later in this book.
+A cipher constructor
+Since we have a new type shiftCipher—the block cipher—we will also
+need a constructor, so users can create instances of it. NewCipher sounds
+like a reasonable name, doesn’t it? Over to you once more.
+The NewCipher function
+GOAL: Write NewCipher, guided by tests. It should take the key, and return
+an error if the key is not exactly BlockSize bytes in length.
+HINT: Since the word “if” occurs in the goal sentence, we already know
+we need at least two tests. There are two possible behaviours: either the key
+is the right size, or it isn’t.
+In either case, the result will be signalled by the error value returned by 
+NewCipher. So both your tests should check this value, and fail if it’s not
+what’s expected for the test input.
+Can you see what to do?
+If the key fits
+SOLUTION: Let’s start with the “right size key” behaviour, since that’s
+slightly easier to test.
+(Listing shift/7)
+It’s evident from this code that NewCipher returns two things, and it seems
+logical that the first one would be the shiftCipher object itself. We don’t
+need it for this particular test, however, so we just ignore it using the blank
+identifier (_).
+The test fails if NewCipher returns a non-nil error, since we’re saying that the
+key must be exactly BlockSize long, and we’ve ensured that by using make
+to construct it.
+The actual key we’re passing is all zeroes, which is weak—the weakest key
+in our system—but that’s okay. We won’t actually be using it for
+encryption. In fact, we don’t even test that the returned cipher object
+“remembers” the key we passed in.
+func TestNewCipher_GivesNoErrorForValidKey(t *testing.T) {
+    t.Parallel()
+    _, err := shift.NewCipher(make([]byte, shift.BlockSize))
+    if err != nil {
+        t.Fatalf("want no error, got %v", err)
+    }
+}
+But, since we’ll be writing tests for enciphering and deciphering using this
+object later on, and those tests will certainly catch that problem, we can
+ignore it for now.
+A polite refusal
+We also need to test the “wrong size key” behaviour, so let’s do that. We
+could write, for example:
+This is fine, and it’s what we asked for. An empty byte slice literal
+([]byte{}) has length zero, so it certainly can’t be the required length. 
+NewCipher should return some non-nil error, then, and this test asserts that it
+does.
+A special error value
+Can we do a little more, though? For example, it might be useful to be able
+to determine (in the calling code) that this specific error was caused by an
+incorrect key size. How could we do that?
+One way would be to create a sentinel error: just some fixed error value
+that we can return in this case.
+(Listing shift/7)
+func TestNewCipher_GivesErrorForInvalidKey(t *testing.T) {
+    t.Parallel()
+    _, err := shift.NewCipher([]byte{})
+    if err == nil {
+        t.Errorf("want error, got nil")
+    }
+}
+var ErrKeySize = errors.New("shift: invalid key size")
+Now that this error value has a name, we could compare the result of 
+NewCipher against it:
+This is okay, too. But, again, could we do a little more? Ideally, we’d
+include some information about the specific key size that caused the
+problem, because this could help a programmer track down exactly why the
+wrong key is being used. A message like this would be great:
+shift: invalid key size 31 (must be 32)
+On the other hand, now we can’t define a fixed error message in advance,
+because we don’t know what the actual invalid size will be until the
+program runs.
+Wrapping errors
+One neat feature of Go that we can use here is error wrapping. We can take
+the sentinel (fixed) value ErrKeySize, and “wrap” it in some extra
+information only available at runtime. To do this, we use fmt.Errorf to
+construct the error, and the special %w “format verb” that wraps errors. We’ll
+see how to do this when we come to write NewCipher in a moment.
+First, let’s finish the test, by checking not only that err is not nil, but
+specifically that it’s a wrapped instance of ErrKeySize, using the errors.Is
+function:
+if err == shift.ErrKeySize {
+    // we know it's a key size error
+}
+func TestNewCipher_GivesErrKeySizeForInvalidKey(t *testing.T) {
+    t.Parallel()
+    _, err := shift.NewCipher([]byte{})
+    if !errors.Is(err, shift.ErrKeySize) {
+        t.Errorf("want ErrKeySize, got %v", err)
+(Listing shift/7)
+Note that this test fails if err is nil, which we had before, but also if it’s any
+error other than ErrKeySize.
+Testing for wrapped sentinel errors using errors.Is is much more robust
+than, for example, inspecting the string value of the error. We wouldn’t
+want tests to start failing just because we tweaked the text of an error
+message slightly.
+Writing NewCipher
+Over to you again to solve the next problem:
+GOAL: Write NewCipher.
+HINT: The signature of NewCipher is effectively already decided for us by
+the tests:
+And we know that if the key is the right length, we should return a 
+shiftCipher object configured with that key. If it’s the wrong length, we
+can return a helpful error message that wraps ErrKeySize using fmt.Errorf
+and the %w verb.
+SOLUTION: Here’s a version that should work:
+    }
+}
+func NewCipher(key []byte) (cipher.Block, error)
+func NewCipher(key []byte) (cipher.Block, error) {
+    if len(key) != BlockSize {
+        return nil, fmt.Errorf("%w %d (must be %d)", ErrKeySize,
+(Listing shift/7)
+We take the key and check its length against BlockSize, returning the
+wrapped error if they’re not equal (note the %w, for “wrap”, in the 
+fmt.Errorf format string). But assuming the key length is okay, we create a 
+shiftCipher struct, initialised with a 32-byte array containing the key, and
+return a pointer to it.
+Implementing the cipher.Block interface
+Note the signature of NewCipher:
+What’s interesting here is that we declare the result type as cipher.Block—
+an interface type—rather than *shiftCipher, which is the concrete type we
+actually return. That tells readers that we intend this object to implement 
+cipher.Block, which is a useful signal.
+It also ensures that, if we should make some mistaken code change that
+means the shiftCipher type no longer satisfies cipher.Block, Go will catch
+it right away.
+Testing Encrypt
+So, are we done? Not quite, because we still need to implement those
+methods. Let’s start with Encrypt:
+            len(key), BlockSize)
+    }
+    return &shiftCipher{
+        key: [BlockSize]byte(key),
+    }, nil
+}
+func NewCipher(key []byte) (cipher.Block, error)
+GOAL: Write a test for the Encrypt method on shiftCipher.
+HINT: We can’t use the existing test cases any more, since they don’t use
+32-byte keys. It’ll be annoying to write out such long keys for every test
+case, so you may like to create a single key that we can re-use for all the
+cases.
+Of course, messages don’t have to be at least 32 bytes long: if they’re
+shorter, enciphering them will just use as many bytes of the key as
+necessary. So you can write some test cases about fairly short messages,
+which also makes the code easier to read and understand.
+Since we’re using the same key for every case, we can also use the same 
+shiftCipher object constructed with that key. When the test loops over the
+cases, all it needs to do is call the cipher’s Encrypt method and check the
+result.
+Circumstances alter cases
+SOLUTION: I think we agree that it would be a little irksome to include a
+different 32-byte key in each test case. Instead, let’s define a single test key
+once and for all, and we won’t even bother to write that out in full. Instead,
+we’ll just generate it:
+(Listing shift/7)
+This, as I’m sure you already figured out, creates a key equivalent to (in
+hex):
+0101010101010101010101010101010101010101010101010101010101010101
+We could have written this key out as a []byte literal, or as a hex string and
+then decoded it, but that all seems like a lot of typing. Instead, bytes.Repeat
+is a convenient way of constructing a long slice of non-zero bytes.
+var testKey = bytes.Repeat([]byte{1}, shift.BlockSize)
+And, assuming we correctly apply this key, we should end up with a
+ciphertext where every byte value is one greater (modulo 256) than the
+plaintext:
+(Listing shift/7)
+That’ll do for now; we can add more cases later.
+Creating the cipher object
+Next, we’re saying that in order to do any enciphering, we need to create a
+cipher object. Since the key is the same for all cases, so is the cipher.
+Accordingly, we can create it just once, before entering the case loop:
+Now we can loop over each case, enciphering it with block.Encrypt:
+And then we’ll compare want and got in the usual way.
+var cipherCases = []struct {
+    plaintext, ciphertext []byte
+}{
+    {
+        plaintext:  []byte{0, 1, 2, 3, 4, 5},
+        ciphertext: []byte{1, 2, 3, 4, 5, 6},
+    },
+}
+block, err := shift.NewCipher(key)
+if err != nil {
+    t.Fatal(err)
+}
+got := make([]byte, len(tc.plaintext))
+block.Encrypt(got, tc.plaintext)

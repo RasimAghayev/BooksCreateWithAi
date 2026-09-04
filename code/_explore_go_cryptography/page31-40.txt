@@ -1,0 +1,271 @@
+Good news, everyone! The bug detector is working—or rather, we’ve
+shown that it detects at least this bug. There may be others it won’t detect.
+But this is a very good start.
+Cutting code
+Now it’s over to you for the next step: write a working version of Encipher
+that passes the test.
+Throughout this book, you’ll see a number of code goals for you to achieve,
+marked with the word GOAL, like this:
+GOAL: Get the test passing.
+When you see this, stop reading at that point and see if you can figure out
+how to solve the problem. You can try to write the code and check it against
+the tests, or just think about what you would do.
+If you reckon you have the answer, or alternatively if you’ve got a bit stuck
+and aren’t sure what to do, you can then read on for a HINT, or read on
+even further for the complete SOLUTION.
+So, go ahead and see if you can get this test passing!
+HINT: Don’t worry if you find this challenge hard, or even impossible at
+first. Everyone feels this way in the beginning. When you’re not fluent in
+the language, expressing even the simplest ideas is a struggle, but it will get
+easier. Just keep practising.
+We know, in principle, what Encipher should do: it should add one to the
+value of every byte in its input, and return the resulting slice. Could we
+write that down as a sequence of steps in pseudo-code: something that looks
+a bit like Go, but is actually just structured English? Let’s try.
+1. Create a []byte variable to hold the result (let’s call it ciphertext,
+since that’s what it will be).
+2. Take each byte of the input slice (let’s call it plaintext) in turn.
+3. Add 1 to this value and assign the result to the corresponding byte of 
+ciphertext.
+4. When done, return ciphertext.
+SOLUTION: We can translate the first step of our pseudo-code directly
+into Go, using the built-in make function to create a new slice of a given
+length, and the built-in len function to tell us how long plaintext is:
+The second step is a bit more complicated; we need a loop, and in Go that
+means a for statement. When we want to loop once for every element of a
+slice, we can use the range operator, like this:
+The opening curly brace { opens a new code block, and anything inside it
+will be executed once for every byte in plaintext. Each time, the i variable
+will hold the index value identifying the byte’s position within the slice: 0,
+1, 2, 3, and so on. The b variable will hold the byte value itself.
+The third step is to add one to the current byte value, and set the
+corresponding byte in ciphertext to the result. That’s pretty
+straightforward:
+And once this loop is done, then we have the ciphertext result we want, so
+we can return it. The complete function looks like this:
+ciphertext := make([]byte, len(plaintext))
+for i, b := range plaintext {
+ciphertext[i] = b + 1
+func Encipher(plaintext []byte) (ciphertext []byte) {
+    ciphertext = make([]byte, len(plaintext))
+    for i, b := range plaintext {
+        ciphertext[i] = b + 1
+(Listing shift/2)
+The smarty-pants answer
+How does your solution compare with this version? It might look quite
+different, and that’s okay. I’m not saying that this is the only way to write 
+Encipher, or even that it’s the best way. It’s a way, and it passes the test, so
+it is by definition correct (if we’re using the test as the definition of
+correctness, which I’m suggesting we should).
+If your version of Encipher passes the test, then it’s also correct, even if it
+works a totally different way. If, on reflection, you prefer my version,
+because it’s shorter, clearer, or more efficient, feel free to refactor your code
+to look more like this (make sure it still passes the test, though).
+On the other hand, if your version seems better, then it probably is. Well
+done! In particular, there’s a very short and elegant way to write this
+function that also passes the test:
+At first glance, you might have a variety of reactions to this solution:
+surprise, amusement, dissatisfaction, even annoyance. Perhaps you feel that
+something is wrong with this, but it’s not easy to put into words. Yet, as
+hard as you search for bugs in this implementation, you won’t find any. It
+passes the test, and that’s that.
+We’re gonna need a bigger test
+    }
+    return ciphertext
+}
+func Encipher(plaintext []byte) []byte {
+    return []byte("IBM")
+}
+You’re right though: something is wrong, but not with the Encipher
+function. The problem is with the test!
+Or rather, there’s nothing actually wrong with the test either. It verifies that,
+when given “HAL” as input, Encipher returns “IBM”, and indeed that’s the
+case. The test faithfully asserts the behaviour we wrote down to describe
+what we wanted Encipher to do.
+On reflection, though, it would seem that we haven’t quite finished
+specifying that behaviour. What we meant, of course, was that Encipher
+should transform any given input according to the cipher scheme we have
+in mind. But we didn’t say that, exactly. We just said that it should turn
+“HAL” into “IBM”, and nothing about what it should do given other inputs.
+Yes, the short version of Encipher turns “HAL” into “IBM”, but it would
+also produce the same ciphertext for any input. For example, “HEY BOB U
+UP”, or “SURE BAE COME ON OVER” would also be enciphered as
+“IBM”. And clearly that’s not a useful cipher scheme.
+A table of cases
+If we’re not allowed to say anything about the workings of Encipher,
+though, how can we express the requirement that different inputs should
+produce different ciphertexts?
+One thing we can do is to combine our existing requirement (“HAL”
+becomes “IBM”) with a slightly different requirement. Something like this,
+perhaps:
+Encipher transforms “ADD” to “BEE”.
+Combining cases
+Sure, by itself this is no more use than what we already had. We can
+imagine a version of Encipher that simply always returns “BEE”, for
+example, which isn’t a big improvement on one that always returns “IBM”,
+even though it would pass this test case.
+But the key point is that by combining these two cases, we eliminate that
+option. If we test both “ADD” and “HAL”, no brain-dead version of 
+Encipher can pass by returning a fixed result.
+Yes, we can imagine a perverse version that would, like this:
+But that’s actually longer than the correct version, and if you’re going to go
+to this much trouble, you might as well just write a version of Encipher that
+really works.
+A suspiciously similar test
+Let’s add this new test, then:
+// Prove me wrong, tests. Prove me wrong.
+func Encipher(plaintext []byte) []byte {
+    switch string(plaintext) {
+    case "HAL":
+        return []byte("IBM")
+    case "ADD":
+        return []byte("BEE")
+    }
+    return nil
+}
+func TestEncipherTransformsADDToBEE(t *testing.T) {
+    t.Parallel()
+    input := []byte("ADD")
+    want := []byte("BEE")
+    got := shift.Encipher(input)
+    if !bytes.Equal(want, got) {
+        t.Errorf("want %q, got %q", want, got)
+    }
+}
+To pass this and the HALToIBM test, it’s clear we’ll need the more
+sophisticated version of Encipher: the one that actually does something.
+And, indeed, that satisfies both of the tests.
+But do we really need two separate, but very similar test functions, just to
+check two different input cases? Since everything about these two tests is
+identical except for input and want, it seems like it would be shorter,
+clearer, and simpler to check both cases in a single test.
+So let’s do just that.
+A test case struct
+This kind of arrangement is called a table test, and it follows a fairly
+straightforward pattern. First, we set up some kind of struct type to hold
+each of our test cases:
+Then we can give a list of cases to consider:
+Looping over the cases
+type testCase struct {
+    input, want []byte
+}
+tcs := []testCase{
+    {
+        input: []byte("HAL"),
+        want:  []byte("IBM"),
+    },
+    {
+        input: []byte("ADD"),
+        want:  []byte("BEE"),
+    },
+}
+As usual in Go when dealing with a slice of things, we’ll use a for ... 
+range loop to check each case in turn. The body of that loop will do what
+our previous tests did: call Encipher with the test input and check the result.
+Here’s the complete test so far, then:
+Both cases should still pass, since we haven’t changed Encipher at all, so
+let’s check. Yes, they pass, so that tells us our test refactoring was
+successful.
+Lighting a fire under the test
+func TestEncipherTransforms(t *testing.T) {
+    t.Parallel()
+    type testCase struct {
+        input, want []byte
+    }
+    tcs := []testCase{
+        {
+            input: []byte("HAL"),
+            want:  []byte("IBM"),
+        },
+        {
+            input: []byte("ADD"),
+            want:  []byte("BEE"),
+        },
+    }
+    for _, tc := range tcs {
+        got := shift.Encipher(tc.input)
+        if !bytes.Equal(tc.want, got) {
+            t.Errorf("want %q, got %q", tc.want, got)
+        }
+    }
+}
+But we’re not quite done yet. However beautifully factored, the test is no
+use unless it fails in the right way when a bug is present. So let’s put a bug
+in Encipher and see what the test does:
+Here’s the result:
+--- FAIL: TestEncipherTransforms (0.00s) 
+    shift_test.go:27: want "IBM", got "" 
+    shift_test.go:27: want "BEE", got ""
+Hmm. Yes, it’s failing, but the output messages aren’t as helpful as they
+could be. For example, the first failing case says that it wants “IBM”, but
+for what input? Similarly, we don’t know what plaintext is supposed to
+produce “BEE” (at least, we can’t tell that without reading the test itself).
+This didn’t matter before, because the input was included in the name of the
+test:
+--- FAIL: TestEncipherTransformsHALToIBM (0.00s) 
+    shift_test.go:16: want "IBM", got ""
+Now that this test checks multiple cases, its name has been reduced to just 
+TestEncipherTransforms, and that’s less helpful. What can we do?
+Introducing subtests
+We could transfer the information about the input to the failure message
+itself, but there’s a neater way to do this: we can use a subtest.
+Subtests and t.Run
+Subtests are a way of grouping together similar cases within a single Go test
+function, and that sounds like exactly what we want. So how do we create a
+func Encipher(plaintext []byte) []byte {
+    return nil
+}
+subtest?
+That’s easy: we call the t.Run method:
+t.Run takes the name of the subtest as a string; in this case, we’ve
+constructed a name like “HAL to IBM”.
+The second thing it takes is a function with this signature:
+What’s that? It’s the subtest function itself. Just like a regular Go test, it
+takes a *testing.T that can be used to fail the test.
+Here’s what the test looks like with this change, then:
+name := fmt.Sprintf("%s to %s", tc.input, tc.want)
+t.Run(name, func(t *testing.T) {
+    got := shift.Encipher(tc.input)
+    if !bytes.Equal(tc.want, got) {
+        t.Errorf("want %q, got %q", tc.want, got)
+    }
+})
+func(*testing.T)
+func TestEncipherTransforms(t *testing.T) {
+    t.Parallel()
+    type testCase struct {
+        input, want []byte
+    }
+    tcs := []testCase{
+        {
+            input: []byte("HAL"),
+            want:  []byte("IBM"),
+        },
+A litany of failure
+In our case, the subtest function body is just the code we already had, to call
+Encipher and compare want with got. There’s no difference in the logic, but
+now when the test fails, we get more information thanks to the subtests:
+--- FAIL: TestEncipherTransforms (0.00s) 
+    --- FAIL: TestEncipherTransforms/HAL_to_IBM (0.00s) 
+        shift_test.go:28: want "IBM", got "" 
+    --- FAIL: TestEncipherTransforms/ADD_to_BEE (0.00s) 
+        shift_test.go:28: want "BEE", got ""
+Note that each case now shows as a separate failure, and the name of the
+parent test and its subtest are combined using a slash:
+FAIL: TestEncipherTransforms/HAL_to_IBM
+Adding more cases
+        {
+            input: []byte("ADD"),
+            want:  []byte("BEE"),
+        },
+    }
+    for _, tc := range tcs {
+        name := fmt.Sprintf("%s to %s", tc.input, tc.want)
+        t.Run(name, func(t *testing.T) {
+            got := shift.Encipher(tc.input)
+            if !bytes.Equal(tc.want, got) {
+                t.Errorf("want %q, got %q", tc.want, got)
+            }
+        })
+    }
+}

@@ -1,0 +1,249 @@
+focus on getting Encipher working again.
+If you wrote Decipher using a call to Encipher, this also won’t compile for
+now, so comment out the Decipher function too. And since Crack uses 
+Decipher, we’ll comment that out too.
+Fixing Encipher
+Even though we’ve now fixed the errors in TestEncipher, the Encipher
+function itself still doesn’t compile yet:
+invalid operation: b + key (mismatched types byte and []byte)
+This also makes sense, since you can only add together values of the same
+type. Adding b (the current byte of the plaintext) to key (a slice of bytes)
+wouldn’t be meaningful. What do we actually want here?
+We don’t want to add the whole key to each plaintext byte. Instead, we
+should add each byte of the key in turn, and once we’ve used them all, we
+should start again at the first key byte.
+A magical solution
+That sounds a bit complicated, so let’s think it through. Suppose there were
+some wonderfully convenient variable magic which would automatically
+select the appropriate byte of key for us.
+Then we could write simply:
+When i is zero—that is, when we’re considering the first byte of the
+plaintext—then magic would also be zero. As i increases, so magic would
+increase also. That would be great, right?
+So could magic be simply i itself? Would this work?
+ciphertext[i] = b + key[magic]
+Unfortunately not:
+FAIL: TestEncipher/HAL_+_[1]_=_IBM (0.00s) 
+panic: runtime error: index out of range [1] with length 1
+Constraining the key index
+What’s happening here? Well, we’re enciphering the plaintext “HAL” with
+the key []byte{1}. The first time through the loop, i is zero, indicating the
+plaintext letter H, and key[0] is the first element of the key, which is the
+byte 1. So far, so good.
+But when i increases to 1, indicating the plaintext letter A, now we have a
+problem, because key[1] doesn’t exist. The key slice is only one element
+long, so that explains the “index out of range” error.
+Which key byte do we want now? Well, zero, because that’s the only valid
+index of key there can ever be: there’s only one element in the slice. For
+longer keys this wouldn’t be true, of course, but we can still expect the key
+to be shorter than the plaintext for most messages.
+So we need a way to compute an index of key that increases along with i,
+but never exceeds the highest valid index of key, instead wrapping around
+back to zero.
+Modulate your enthusiasm
+This sounds like the mathematical operation called modular reduction
+(from “modulus”, the Latin word meaning “a small quantity”). So what’s
+that?
+A modulo B, or just “A mod B” for short, is defined as the remainder—the
+residue—that’s left after dividing A by B as many times as you can. For
+example, 12 modulo 10 is 2, because 10 goes into 12 just once, leaving a
+ciphertext[i] = b + key[i]
+remainder of 2. Similarly, 5 mod 2 is 1, because 2 goes into 5 twice, leaving
+remainder 1.
+Modular arithmetic like this is sometimes called “clock arithmetic”, and
+you can see why, because it’s like adding times on an analogue clock face.
+What time is 12 hours later than 5 o’clock? Simply adding 5 and 12 would
+give us “17 o’clock”, but of course there’s no such time.
+Instead, the clock “wraps around” to 5 o’clock again. To put it another way,
+17 mod 12 is 5.
+Go has a built-in operator for this: %, the integer remainder operator. We can
+use it to find the residue of one number modulo another. For example:
+The modulus operator
+This sounds like just what we want. Since the key index needs to increase
+with i, but be constrained to the length of the key slice, we can use the %
+operator like this:
+Yes, it looks a little forbidding at first, but that’s only because the % operator
+is unfamiliar. In fact, it’s used fairly often in Go for exactly this kind of
+fmt.Println(17%12)
+// Output:
+// 5
+ciphertext[i] = b + key[i%len(key)]
+thing: iterating repeatedly through the elements of a slice as some other
+number increases.
+If you wanted to make it even clearer what’s going on, you could write
+instead:
+Here’s the complete Encipher function, then:
+(Listing shift/6)
+Refactoring will continue until morale improves
+So, does this work? All signs point to yes, because TestEncipher now
+passes. Next, let’s fix deciphering. Uncomment the Decipher and 
+TestDecipher functions and we’ll see what we can do.
+GOAL: Make the corresponding changes to Decipher and TestDecipher so
+that the test passes.
+HINT: Decipher still works in much the same way as Encipher, so a similar
+kind of change should do the job. Note that now we longer have the option
+of calling Encipher with a negative key to do the deciphering. That
+magic := i%len(key)
+ciphertext[i] = b + key[magic]
+func Encipher(plaintext []byte, key []byte) (ciphertext []byte) {
+    ciphertext = make([]byte, len(plaintext))
+    for i, b := range plaintext {
+        ciphertext[i] = b + key[i%len(key)]
+    }
+    return ciphertext
+}
+wouldn’t make sense with multi-byte keys, so we’ll need to use the loop-
+based version of Decipher.
+You’ve got this!
+SOLUTION: The change needed for Decipher to support long keys is more
+or less the same as that for Encipher. We’ll use the % operator to select the
+current key byte as we loop, and of course we’ll subtract it from the
+ciphertext byte, rather than adding.
+Here’s the version of Decipher we need, then:
+(Listing shift/6)
+Testing longer keys
+While our existing test cases were enough to establish that the program
+works for single-byte keys, we’ll need to extend them a bit now, because
+there are new potential bugs to worry about that weren’t possible before.
+To show that Decipher behaves incorrectly with longer keys, we’d need
+some test cases with longer keys, and we don’t have any yet.
+Let’s fix that.
+Designing the test cases
+func Decipher(ciphertext []byte, key []byte) (plaintext []byte) {
+    plaintext = make([]byte, len(ciphertext))
+    for i, b := range ciphertext {
+        plaintext[i] = b - key[i%len(key)]
+    }
+    return plaintext
+}
+GOAL: Add some test cases to demonstrate the correct behaviour of 
+Encipher and Decipher with multi-byte keys.
+HINT: It doesn’t matter what specific cases we use, so long as they
+demonstrate the effect of a few different multi-byte keys on some
+plaintexts.
+In each case, then, we can choose a slice of plaintext bytes and a slice of
+key bytes, and between them we can work out what the corresponding
+ciphertext should be.
+Here’s a simple example:
+(Listing shift/6)
+See what else you can come up with. If you find any cases that don’t pass
+with your version of Decipher, maybe you found a bug! (Or the test case is
+wrong, in which case you still found a bug.)
+SOLUTION: An all-zero plaintext, as in our example, is easy to
+understand, but not as rigorous a bug detector as we’d like.
+For example, suppose that instead of properly combining the key bytes with
+the plaintext bytes, we just ignored the plaintext and used the key bytes
+directly as the ciphertext. That’s wrong, but we can imagine making such a
+mistake.
+What would happen with our suggested test case if that bug were present,
+then? Well, the key is “1 2 3”, and the correct ciphertext is “1 2 3”, so our
+{
+    key:        []byte{1, 2, 3},
+    plaintext:  []byte{0, 0, 0},
+    ciphertext: []byte{1, 2, 3},
+},
+buggy code would still pass the test, even though it’s only by coincidence
+(because the ignored plaintext happened to be “0 0 0”).
+So let’s add a case where that can’t happen:
+(Listing shift/6)
+Not only does this prove (for fairly small values of “prove”) that we
+incorporate the plaintext bytes, it also requires that we repeat the key when
+it’s shorter than the plaintext. That’s another bug we could have imagined:
+forgetting to repeat the key. This case catches that one too.
+You can add more cases, if you like, and that’s usually a good idea, but I
+think you get the point. Providing these new cases pass, and they do, we can
+feel reasonably confident about the changes.
+Sharpening the tools
+Good progress, but since we changed the signature and behaviour of 
+Encipher and Decipher, we’ll also need to make some updates to our
+command-line tools.
+As a refresher, here’s the existing main function from the encipher tool:
+{
+    key:        []byte{1, 2},
+    plaintext:  []byte{0, 1, 2},
+    ciphertext: []byte{1, 3, 3},
+},
+func main() {
+    key := flag.Int("key", 1, "shift value")
+    flag.Parse()
+    plaintext, err := io.ReadAll(os.Stdin)
+    if err != nil {
+        fmt.Fprintln(os.Stderr, err)
+(Listing shift/4)
+We can see that, with the changes we’ve made to Encipher, this no longer
+compiles:
+cannot use byte(*key) (value of type byte) as []byte value in 
+argument to shift.Encipher
+When the right answer is wrong
+It’s the same issue as we had when updating the Encipher test for multi-byte
+keys, isn’t it? Where the function expects a []byte for the key, we’re only
+sending a single byte. So what’s the fix?
+We could turn it into a byte slice by writing a literal, like this:
+Now the compiler is happy, but this still doesn’t seem quite right to me.
+GOAL: Can you figure out what’s wrong?
+HINT: Think about what we’re really trying to do here. Go is pretty smart,
+but it’s not smart enough to understand what our changes to the program are
+about: we’re trying to expand it to use multi-byte keys.
+It correctly identifies the type mismatch between byte and []byte, but it
+doesn’t give us any advice about how to fix it. The wrong way would be to
+convert *key to a []byte, as in the example.
+        os.Exit(1)
+    }
+    ciphertext := shift.Encipher(plaintext, byte(*key))
+    os.Stdout.Write(ciphertext)
+}
+ciphertext := shift.Encipher(plaintext, []byte{byte(*key)})
+Turning a single byte into a slice of bytes would just give us a one-element
+slice, which is pointless. Actually, the problem isn’t on this line, it’s
+somewhere else, because the real issue is that *key should already be a slice
+at this point.
+See if you can arrange that.
+SOLUTION: With the code as it stands, we can still only ever encipher
+with single-byte keys… which was the very thing we came here to fix! As
+we saw, the problem isn’t really at the point in the code where Go
+complains.
+Instead, we need to work backwards to see why *key is a single byte, and
+fix that instead.
+What kind of flag do we need?
+Clearly we need Alice to be able to supply a multi-byte key if she wants to.
+But how to do that? flag.Int creates a flag that takes a single integer as
+argument. It would be nice if there were something like flag.IntSlice,
+allowing us to take any number of numbers, like this:
+Unfortunately there isn’t. But hold up: we already know that the key, in
+some sense, is just a single number, no matter how bytes it takes to express
+it. For example, if we had a 32-byte key, we could express it as either a
+series of 32 integers (one for each byte), or as a single (probably very large)
+integer.
+So it looks like we can stick with supplying a single value for the key after
+all. But we don’t really want to have to deal with potentially enormous
+numbers as integers. A 32-byte (that is, 256-bit) key would be much too big
+to fit in a Go int64, for example, which can only hold 8 bytes (or 64 bits)
+worth of information.
+encipher -key 1,2,3...
+The joy of hex(adecimal)
+Instead, there’s a neat and concise way to write large integers: as a string,
+using hexadecimal notation. This (from the Latin words for “six” and “ten”)
+is a way of writing numbers in base 16. So what’s that?
+Binary notation
+Well, we’re already familiar with base 10 (the plain old decimal system),
+and if you’ve ever seen binary numbers written down then you know what
+base 2 looks like:
+00011001
+The “base” here is another way of saying “place value”. In decimal
+notation, each digit counts as ten times bigger than the one to its right, but
+in binary, or base 2, each place is only worth twice as much as its
+neighbour.
+For binary notation, then, we don’t need many possible digit values: only
+two, in fact. You can use 0 and 1, true and false, or whatever pair of
+symbols you like (call me a traditionalist, but I like 0s and 1s).
+What about base 16, then? Well, just as there are two possible digit values
+in binary, and ten in decimal, in hexadecimal (“hex” for short) there are
+sixteen possible digit values. Can you guess what they all are?
+Well, if you wanted to write in hexadecimal, you might start with the
+decimal digits we’re already familar with: 0 through 9. But we still need
+another six, so what could we use instead of numbers?
+That’s easy: we’ll just borrow some letters! We can use the letters A
+through F for these extra digit values. So hexadecimal digits go from 0-9,
+and then A-F before “carrying” over to the next place.
+For example, what decimal value is represented by this hexadecimal
+number?

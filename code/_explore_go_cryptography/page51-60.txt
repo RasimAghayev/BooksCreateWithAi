@@ -1,0 +1,265 @@
+Since the key is now part of the test case, we should report it as part of the
+subtest name:
+Finally, we need to pass the key as the second argument to Encipher:
+    },
+    {
+        key:   2,
+        input: []byte("SPEC"),
+        want:  []byte("URGE"),
+    },
+    {
+        key:   3,
+        input: []byte("PERK"),
+        want:  []byte("SHUN"),
+    },
+    {
+        key:   4,
+        input: []byte("GEL"),
+        want:  []byte("KIP"),
+    },
+    {
+        key:   7,
+        input: []byte("CHEER"),
+        want:  []byte("JOLLY"),
+    },
+    {
+        key:   10,
+        input: []byte("BEEF"),
+        want:  []byte("LOOP"),
+    },
+}
+name := fmt.Sprintf("%s + %d = %s", tc.input, tc.key, tc.want)
+So here’s what we end up with:
+got := shift.Encipher(tc.input, tc.key)
+func TestEncipherTransforms(t *testing.T) {
+    t.Parallel()
+    tcs := []struct {
+        key         byte
+        input, want []byte
+    }{
+        {
+            key:   1,
+            input: []byte("HAL"),
+            want:  []byte("IBM"),
+        },
+        {
+            key:   2,
+            input: []byte("SPEC"),
+            want:  []byte("URGE"),
+        },
+        {
+            key:   3,
+            input: []byte("PERK"),
+            want:  []byte("SHUN"),
+        },
+        {
+            key:   4,
+            input: []byte("GEL"),
+            want:  []byte("KIP"),
+        },
+        {
+            key:   7,
+            input: []byte("CHEER"),
+(Listing shift/4)
+We know this won’t work yet, since we haven’t modified Encipher to take
+the key parameter, but let’s just see where we are:
+./shift_test.go:51:36: too many arguments in call to shift.Encipher 
+        have ([]byte, byte) 
+        want ([]byte)
+Makes sense: we’re now passing the key to Encipher, but it’s not ready to
+take the key. Let’s fix this error in the next step.
+            want:  []byte("JOLLY"),
+        },
+        {
+            key:   10,
+            input: []byte("BEEF"),
+            want:  []byte("LOOP"),
+        },
+    }
+    for _, tc := range tcs {
+        name := fmt.Sprintf("%s + %d = %s", tc.input, tc.key, tc.wa
+        t.Run(name, func(t *testing.T) {
+            got := shift.Encipher(tc.input, tc.key)
+            if !bytes.Equal(tc.want, got) {
+                t.Errorf("want %q, got %q", tc.want, got)
+            }
+        })
+    }
+}
+go test
+Compiler complaints
+That wasn’t too difficult in principle, was it? The only obstacle is
+psychological: this test is now a work of imagination, just as our first one
+was. Imagination is required, not because Encipher doesn’t exist, but
+because it doesn’t yet take a second argument.
+Let’s address that now.
+GOAL: Modify Encipher so that the test compiles, but fails.
+Don’t fix Encipher so that it passes the updated test: we’re not there yet. We
+need to see how our bug detector performs when we know Encipher doesn’t
+work. In order to do that, though, the test needs to compile. So your goal
+here is only to fix the compile error, not to get the test passing.
+When you’re done, you’ll see lots of test failures, and we’ll deal with those
+shortly. For now, focus on eliminating the compile error.
+HINT: The Go compiler gives very precise and detailed error messages
+when something doesn’t compile. These can be hard to read at first, but it’s
+worth persevering.
+The first and most important information in the error message is the exact
+file, line number, and character position where the error occurred. Use this
+information to find the offending line in your editor.
+Then read the rest of the message carefully. Here it is again:
+too many arguments in call to shift.Encipher 
+    have ([]byte, byte) 
+    want ([]byte)
+Pay particular attention to the “have X, want Y” part. Go is telling you what
+it expected to see under the circumstances (“want”), but what you actually
+wrote (“have”) doesn’t match.
+Stochastic debugging
+It’s tempting, when you see a complicated-sounding error message like this,
+to just let your eyes slide away from it, and start frantically changing bits of
+your code at random, to see if the error goes away. We might call this
+technique “stochastic debugging”, from the Greek for “randomly changing
+stuff”.
+The trouble with stochastic debugging is not that it’s ineffective, but that
+sometimes it works, thus reinforcing the behaviour. More commonly,
+though, your changes introduce new and unrelated problems, which in turn
+obscure the original bug you were trying to fix.
+You’ll find it’s more effective in the long run to read the message properly
+and figure out what’s actually wrong, before you even touch the
+problematic code. Learning to really read and understand compiler error
+messages is a superpower which will amaze your fellow developers.
+Go always knows what’s wrong, and it will even sometimes tell you exactly
+how to fix it. See if you can apply that idea in this case.
+SOLUTION: We’re getting a compile error, and that always includes a
+source file name and line number, so first of all let’s locate the problematic
+line of code. It’s this line in the test:
+Here’s the error message again:
+too many arguments in call to shift.Encipher 
+    have ([]byte, byte) 
+    want ([]byte)
+It’s complaining that, according to its function signature, Encipher only
+wants one argument (the plaintext), but what we have in this function call in
+the test is two arguments: the plaintext and the key.
+That requires us to update the signature of Encipher:
+got := shift.Encipher(tc.input, tc.key)
+Getting back to green
+And that’s actually all we needed to do. The test now fails for most of our
+cases:
+--- FAIL: TestEncipher (0.00s) 
+    --- FAIL: TestEncipher/SPEC_+_2_=_URGE (0.00s) 
+        shift_test.go:53: want "URGE", got "TQFD" 
+    --- FAIL: TestEncipher/PERK_+_3_=_SHUN (0.00s) 
+        shift_test.go:53: want "SHUN", got "QFSL" 
+    --- FAIL: TestEncipher/GEL_+_4_=_KIP (0.00s) 
+        shift_test.go:53: want "KIP", got "HFM" 
+    --- FAIL: TestEncipher/CHEER_+_7_=_JOLLY (0.00s) 
+        shift_test.go:53: want "JOLLY", got "DIFFS" 
+    --- FAIL: TestEncipher/BEEF_+_10_=_LOOP (0.00s) 
+        shift_test.go:53: want "LOOP", got "CFFG"
+I quite like this one:
+want "JOLLY", got "DIFFS"
+Interestingly, the one passing case is the original “HAL + 1 = IBM”. On
+reflection, that makes sense, since Encipher currently ignores the selected
+key and always uses 1 instead. Therefore, we should expect the “key 1” test
+case to pass, but only by accident.
+To make the other cases pass, we’ll need to make a further adjustment to 
+Encipher to correct this.
+GOAL: Get all cases passing.
+HINT: This is a smaller change to Encipher than perhaps it seems.
+Remember, previously we looped over the plaintext, taking each byte and
+adding 1 to its value to produce the corresponding byte of the ciphertext.
+That corresponds to a fixed key of 1, but now instead of using a fixed value,
+the key is passed in as a parameter to Encipher. See if you can work out
+func Encipher(plaintext []byte, key byte) (ciphertext []byte) {
+where to use it.
+SOLUTION: That was easy, right? I’m sure you figured out that we need
+to increase each plaintext byte, not by 1 as before, but instead by the value
+of the new parameter key:
+So here’s the complete, updated version of Encipher that uses variable keys:
+(Listing shift/4)
+Not bad.
+Getting the key
+Great work on implementing multi-byte keys. Now we need to update the 
+cmd/encipher program so that it can use the new facility. How should that
+work, do you think?
+We want Alice to be able to specify the enciphering key as part of the
+command. So one option would be for her to simply give it as a command-
+line argument, like this:
+ciphertext[i] = b + key
+func Encipher(plaintext []byte, key byte) (ciphertext []byte) {
+    ciphertext = make([]byte, len(plaintext))
+    for i, b := range plaintext {
+        ciphertext[i] = b + key
+    }
+    return ciphertext
+}
+encipher 5
+But it’s not really clear what that 5 represents in this command, if you don’t
+happen to know. Does it mean encipher the literal message “5”? Encipher
+something five times? Use Cipher Scheme Five? Who knows.
+To make it clearer what this value represents, let’s use a named flag instead.
+For example, we could use a flag called key.
+Now Alice would run the program like this:
+Defining a key flag
+The standard library’s flag package does just what we need, so let’s import
+it in main.go, and add the following flag definition at the start of main:
+Calling flag.Int defines a new flag of type int, straightforwardly enough,
+and the first argument is the name of the flag.
+On the command line, flags are denoted by a leading dash, and in our case,
+we want the flag to be specified as “-key”. So the name we specify to 
+flag.Int should be just key, no dash.
+The second argument to flag.Int is the default value for the flag; that is,
+what value it should take if Alice doesn’t happen to specify that flag at all.
+Let’s go with 1 in this example. And the third argument is the help text that
+will explain to users what the flag is for.
+As an aside, there’s a lot to say about writing command-line tools in Go that
+we don’t have space to cover here. I’ve dedicated another book to that,
+you’ll be pleased to hear: The Power of Go: Tools will show you how to
+build powerful tools with sophisticated, easy-to-use, and friendly interfaces.
+You might like to read it after you’ve finished this book!
+encipher -key 5
+key := flag.Int("key", 1, "shift value")
+Getting the flag value
+Apparently flag.Int returns something, so what’s that? The documentation
+tells us that its type is *int, that is, a pointer to an int value. Can you guess
+what this is for?
+That’s right: it’s where the actual value of the key flag will end up. In other
+words, suppose Alice runs a command like:
+In this case, after flags have been parsed, our *key variable will contain the
+value 5. That’s reasonable, so now that we’ve finished defining all the flags
+we want to take, let’s tell the flag package to actually parse the program’s
+arguments and set each flag variable to its supplied value:
+Now we have Alice’s key value stored in *key, but there’s one further
+wrinkle before we can use it. Encipher takes an argument of type byte, but
+we have an int (because there’s no flag.Byte, unfortunately).
+So, we need to convert *key to a byte before passing it on:
+Enciphering with arbitrary keys
+Here’s the complete main function, then, updated to use the key flag:
+encipher -key 5
+flag.Parse()
+ciphertext := shift.Encipher(plaintext, byte(*key))
+func main() {
+    key := flag.Int("key", 1, "shift value")
+    flag.Parse()
+    plaintext, err := io.ReadAll(os.Stdin)
+(Listing shift/4)
+Let’s try it out:
+MJ^%GTG%Z%ZUD
+Very nice. And since deciphering is the inverse of enciphering, then it
+follows that enciphering with a negative key is the same as deciphering
+with a positive one. In that case, we should also be able to turn this
+ciphertext back into the original plaintext by enciphering it using the same
+key with a minus sign, shouldn’t we?
+Let’s try:
+HEY BOB U UP?
+Encouraging! So now we can encipher and decipher messages using any
+key we choose (well, any of the 256 possibilities represented by a single 
+byte value).
+    if err != nil {
+        fmt.Fprintln(os.Stderr, err)
+        os.Exit(1)
+    }
+    ciphertext := shift.Encipher(plaintext, byte(*key))
+    os.Stdout.Write(ciphertext)
+}
+echo "HEY BOB U UP?" | go run ./cmd/encipher -key 5
+echo "MJ^%GTG%Z%ZUD" | go run ./cmd/encipher -key -5

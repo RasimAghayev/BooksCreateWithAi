@@ -1,0 +1,260 @@
+HINT: Just as with the shiftCipher object, we’ll need some struct type,
+with the right methods, and a suitable constructor. That’s fairly
+straightforward, but implementing the CryptBlocks method might need a
+little more thought.
+We don’t actually need to write any code to do the enciphering. That’s
+already taken care of by the shiftCipher object. We can pass our plaintext
+to the cipher’s Encrypt method, one block at a time.
+And, since there’s probably more than one block’s worth of plaintext, that
+sounds like a job for a loop, doesn’t it? We’ll want to loop over the plaintext
+a block at a time, enciphering each block and writing the result to our
+destination slice, until there are no more blocks.
+As a warm-up for this problem, you might like to try the following slightly
+simpler exercise. Write a Go function that takes a slice of bytes and prints it
+in groups of five bytes at a time, one group per line. If you can do this, you
+can write CryptBlocks! (Or take a peek at listing groups/1.)
+SOLUTION: Let’s start with the struct type definition. What fields do we
+need?
+Well, one of the nice things about cipher.BlockMode is that it’s entirely
+independent of the specific cipher in use. A cipher mode says, in effect,
+“You give me some block cipher, and I’ll use it to encipher your data for
+you, blockwise.”
+That suggests that we could store the cipher.Block itself on the struct.
+While we’re at it, let’s add a field for the block size, too:
+(Listing shift/7)
+type encrypter struct {
+    block     cipher.Block
+    blockSize int
+}
+Sorry about the confusing name: block here means, as before, not some
+chunk of data, but some block cipher. Calling the cipher object block is
+weird, but the standard library code uses this name everywhere, so let’s
+follow its example.
+Creating the encrypter object
+Just as before, since we’ve defined some new type, we’ll need a constructor
+for it:
+(Listing shift/7)
+Note that we don’t hard-wire blockSize to be shift.BlockSize: that would
+be incorrect. Since we’re saying that, in principle, an encrypter can work
+with any block cipher, we can’t know its block size in advance.
+Instead, we need to ask the block object, “Hey, what’s your block size, by
+the way?” To do that, we call block.BlockSize.
+Implementing CryptBlocks
+Now let’s consider how to write CryptBlocks. Here’s the signature we need:
+As we know, the problem of enciphering any given block is already solved:
+we can just pass it to e.block.Encrypt. So all we need to do is figure out
+how to take the input one block at a time.
+func NewEncrypter(block cipher.Block) cipher.BlockMode {
+    return &encrypter{
+        block:     block,
+        blockSize: block.BlockSize(),
+    }
+}
+func (e *encrypter) CryptBlocks(dst, src []byte)
+Given some byte slice, such as src, it’s straightforward to write an index
+expression that extracts the first n bytes:
+And in fact, we know what n we want in this case: it’s the block size. So we
+can write:
+Having enciphered the first BlockSize bytes of src into dst, we should then
+re-slice both src and dst to remove the bytes we’ve already processed:
+So far, so good. We’ve enciphered the first block. But, assuming there are
+more blocks to come, we’ll need some kind of loop. When should the loop
+terminate? That’s easy: when there’s no data left in src.
+Here’s the complete CryptBlocks method so far, then:
+We can read this as saying “Keep chopping block-sized pieces off the
+plaintext and enciphering them until there are no more pieces.”
+src[:n]
+e.block.Encrypt(dst[:e.blockSize], src[:e.blockSize])
+src = src[e.blockSize:]
+dst = dst[e.blockSize:]
+func (e *encrypter) CryptBlocks(dst, src []byte) {
+    for len(src) > 0 {
+        e.block.Encrypt(dst[:e.blockSize], src[:e.blockSize])
+        src = src[e.blockSize:]
+        dst = dst[e.blockSize:]
+    }
+}
+You might wonder what happens if the length of src isn’t an exact multiple
+of the block size. Won’t we end up trying to encipher an incomplete block in
+that case?
+That’s true, but to simplify things, let’s say that CryptBlocks only has to deal
+with data that’s block-aligned—that is, data that can be split into an exact
+number of blocks, with no leftovers. We’ll see how to arrange this later.
+Phew! That’s the hard part over with. But there’s one more thing we need to
+complete the implementation of BlockMode. Luckily, it’s an easy one:
+(Listing shift/7)
+And there’s no substantive code for us to write, since we already made the
+sensible decision to store the block size in the encrypter struct itself. This
+method is simply an accessor for that field:
+func TestEncrypterCorrectlyReportsCipherBlockSize(t *testing.T) {
+    t.Parallel()
+    block, err := shift.NewCipher(testKey)
+    if err != nil {
+        t.Fatal(err)
+    }
+    enc := shift.NewEncrypter(block)
+    want := shift.BlockSize
+    got := enc.BlockSize()
+    if want != got {
+        t.Errorf("want %d, got %d", want, got)
+    }
+}
+func (e encrypter) BlockSize() int {
+    return e.blockSize
+}
+(Listing shift/7)
+Great! This passes the test, so let’s see if we can plug our new code into the 
+encipher tool.
+Using a BlockMode in encipher
+We’ve already decoded Alice’s key and used it to create a cipher, so we can
+now take that and use it to create a BlockMode. Then enciphering is as simple
+as passing the plaintext to CryptBlocks.
+Here’s the complete main function for encipher:
+func main() {
+    keyHex := flag.String("key", "", "32-byte key in hexadecimal")
+    flag.Parse()
+    key, err := hex.DecodeString(*keyHex)
+    if err != nil {
+        fmt.Fprintln(os.Stderr, err)
+        os.Exit(1)
+    }
+    block, err := shift.NewCipher(key)
+    if err != nil {
+        fmt.Fprintln(os.Stderr, err)
+        os.Exit(1)
+    }
+    enc := shift.NewEncrypter(block)
+    plaintext, err := io.ReadAll(os.Stdin)
+    if err != nil {
+        fmt.Fprintln(os.Stderr, err)
+        os.Exit(1)
+    }
+    ciphertext := make([]byte, len(plaintext))
+    enc.CryptBlocks(ciphertext, plaintext)
+It’s long, but it’s not complicated: it’s just plugging together everything that
+we’ve developed so far. We get the key from Alice, use it to construct a
+block cipher, then use that to construct an encrypter.
+Let’s try it out:
+Uijt!jt!43!czuft-!jodmvejoh!FPG
+Super nice. But you might have noticed that both our test messages were
+exactly 32 bytes, which isn’t a coincidence: that’s the same as our block
+size.
+So what would happen if we tried to encipher something that’s not an exact
+multiple of 32 bytes in length? Let’s find out:
+panic: runtime error: slice bounds out of range [:32] with capacity 
+31 
+ 
+goroutine 1 [running]: 
+github.com/bitfield/shift.(*encrypter).CryptBlocks(...) 
+        shift.go:67 +0x130
+Dang it!
+Block alignment
+    os.Stdout.Write(ciphertext)
+}
+echo "This is 32 bytes, including EOF" | go run ./cmd/encipher -key 
+  0101010101010101010101010101010101010101010101010101010101010101
+echo "This is 31 long, including EOF" | go run ./cmd/encipher -key \
+  0101010101010101010101010101010101010101010101010101010101010101
+We wrote CryptBlocks under the explicit assumption that it’ll have to deal
+only with block-aligned data, remember, so it’s not really a surprise that
+something blew up here.
+But what precisely is the issue that we need to fix? Here’s the CryptBlocks
+loop again:
+When misaligned data attacks
+We’re trying to slice the first 32 bytes off src (and dst) but in our example
+case, there are only 31 bytes, so this index expression panics:
+What can we do? Any time the data isn’t block-aligned, like now, we’ll end
+up with a “short block” at the end. And that’s going to be true the majority
+of the time, so we can’t ignore the problem.
+Checking our assumptions
+We could probably figure out how to check whether src is block-aligned,
+but what if it turns out that it isn’t? What do we do then?
+We can’t return an error, because the signature of CryptBlocks is fixed by
+the cipher.BlockMode interface, and it doesn’t include an error result.
+But that’s okay. The lack of any provision for an error implies that 
+CryptBlocks should only be used on block-aligned data. If it’s called with
+unsuitable data, then that means the programmer has done something wrong
+(in this case, that’s us).
+for len(src) > 0 {
+    e.block.Encrypt(dst[:e.blockSize], src[:e.blockSize])
+    ...
+}
+src[:e.blockSize]
+The conventional way to signal that kind of problem in Go is to call panic,
+so let’s do that:
+(Listing shift/7)
+You might object that we don’t need this extra check, because the code
+already panics in this case! That’s true, but the message, while strictly
+accurate, doesn’t help the programmer figure out what’s wrong:
+panic: runtime error: slice bounds out of range [:32] with capacity  
+31
+Instead, by calling their attention to the underlying problem (“input not full
+blocks”), this panic can be helpful.
+While we’re thinking about possible panic situations, there’s another one.
+Can you spot it? What other implicit assumptions is our code making about
+its input?
+The long and short of it
+This isn’t so easy to see, but we’re assuming that dst is at least as long as 
+src. The block cipher’s Encrypt method loops over src, enciphering each
+byte and writing it to the corresponding index of dst. So if dst is too short,
+eventually that write will panic:
+panic: runtime error: index out of range [X] with length Y
+Again, not super helpful. Let’s add value by checking the slice lengths and
+pre-emptively panicking with a more informative message:
+if len(src)%e.blockSize != 0 {
+    panic("encrypter: input not full blocks")
+}
+if len(dst) < len(src) {
+    panic("encrypter: output smaller than input")
+Should we add tests for these two cases? Well, that’s not quite
+straightforward. First, could we even catch a panic in a test?
+A test about nothing
+Yes, we could, by writing something like this:
+This isn’t necessary, of course, since the test already fails if it panics: we
+don’t need to write special code for that. The bigger problem, though, is that
+we’re saying this code is supposed to panic! In fact, we’d want to fail the
+test if it didn’t:
+Fine. We can write a test for “CryptBlocks panics when input data is not
+block-aligned”, using this recover code, and it will pass. The problem is that
+is if we now comment out the check that len(dst) < len(src), it will still
+pass! So what can it really be testing?
+We already know the code panics with a “slice bounds out of range”
+message when we don’t catch the misalignment. Thus, there’ll be a panic
+either way, meaning that the test can’t tell us anything about whether or not 
+CryptBlocks sanity-checks its input.
+}
+defer func() {
+    if r := recover(); r != nil {
+        t.Fatal(r)
+    }
+}()
+defer func() {
+    if r := recover(); r == nil {
+        t.Fatal("expected panic, but came there none")
+    }
+}()
+So it doesn’t usually make much sense to try to test for panics (though it’s
+nice that we know how to do it, if we really want to). Panics that are likely
+to affect users will pretty soon be noticed when we run the program anyway.
+A panic-proof CryptBlocks
+Here’s the updated version of CryptBlocks, then, now with extra sanity
+checks on its input:
+(Listing shift/7)
+Let’s check that our new, more helpful, error message is shown when we try
+to encipher dodgy data:
+panic: encrypter: input not full blocks
+func (e *encrypter) CryptBlocks(dst, src []byte) {
+    if len(src)%e.blockSize != 0 {
+        panic("encrypter: input not full blocks")
+    }
+    if len(dst) < len(src) {
+        panic("encrypter: output smaller than input")
+    }
+    for len(src) > 0 {
+        e.block.Encrypt(dst[:e.blockSize], src[:e.blockSize])
+        src = src[e.blockSize:]
+        dst = dst[e.blockSize:]
+    }
+}
+echo "This is 31 long, including EOF" | go run ./cmd/encipher -key \
+  0101010101010101010101010101010101010101010101010101010101010101

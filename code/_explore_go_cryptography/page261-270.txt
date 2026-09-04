@@ -1,0 +1,238 @@
+Just like LenHash, the distribution of hashes produced by SumHash isn’t very
+good. The sum of even quite long messages will still be a fairly low
+number, so our hashes will end up all clustered together in one tiny corner
+of the hashspace, like shy teenagers at a school dance.
+Another problem is that small changes in the message only make small
+changes in the hash. For example, if we replace an “A” in the message with
+a “B”, the hash value will only change by one.
+That’s not just a statistical problem: yet again, it makes it easier for Mallory
+to construct a preimage with the desired hash. All they need to do is get
+fairly close, and then make smaller and smaller tweaks to the input until
+they have the exact hash they want.
+By contrast, a good cryptographic hash function would exhibit what’s called
+the avalanche effect. Tiny changes in the input should cause large changes
+in the output, like a snowball rolling down a mountain and eventually
+building up into an avalanche. SumHash certainly doesn’t have this property.
+Real hash algorithms
+We could imagine other simple-minded hash algorithms that are a little
+better than the ones we’ve seen so far. For example, ProductHash would
+distribute the hashes slightly more widely than SumHash, and small changes
+in the message would perturb the hash more.
+But there’s clearly room to do a lot better.
+MD5
+One much better hash algorithm is Message Digest Method 5 (MD5),
+designed by cryptographer Ron Rivest (he’s the “R” in “RSA”, which we’ll
+come to later).
+In comparison with something like SumHash, MD5 is astoundingly
+sophisticated. Even just to describe it in pseudocode takes something like
+90 lines.
+MD5 breaks the input message into blocks, and uses each block in turn to
+modify the final hash value, by putting it through a tortuous sequence of
+bit-twiddling operations. These are so complicated that for about five years,
+MD5 was considered state-of-the-art and used widely in some very high-
+stakes cryptography.
+Time and technology moves on, though, and nowadays you can generate
+MD5 collisions with a simple brute-force search in one or two seconds on
+an ordinary desktop computer. That makes MD5 completely unsuitable for
+any cryptographic purpose.
+Thank u, next?
+SHA-1
+A much stronger replacement for MD5 was Secure Hash Algorithm 1
+(SHA-1), which is even more complicated. And, again, for a while SHA-1
+was considered secure enough for cryptographic work.
+Pretty soon, though, researchers began to find more and more effective
+attacks against SHA-1. A study in 2015 found that its strength had been
+reduced to the point where only about $100,000 of cloud compute time was
+needed to generate a collision. That sounds a lot, but it’s just pocket change
+for a sufficiently motivated Mallory.
+So, while SHA-1 is considerably better than MD5, it’s still not good enough
+for cryptography today. Next please.
+SHA-256
+Secure Hash Algorithm 2 (SHA-2) is an extension and improvement of
+SHA-1, and there are variants for different hash lengths, of which SHA-256
+is the most popular.
+This makes sense, since 256 bits is, as we’ve discussed, already long
+enough to make brute-force attacks impractical. Fewer bits would be
+insecure, but more would be unnecessary.
+There are currently no known practical attacks on SHA-256 hashes. That is
+not, of course, to say that none will be found: in fact, I guarantee that
+sooner or later one will. But it’s secure today, and that’s all we can
+reasonably hope for from any algorithm.
+If you’re really worried, you can use SHA-3, which is newer and
+fundamentally different from the SHA-1 and SHA-2 families. But SHA-256
+is pretty much the de facto standard.
+Go provides an implementation of SHA-256 in the crypto/sha256 package,
+and it’s nice and easy to use. All you need to do to hash some data is:
+Password hashing
+Another common use for hashing is to provide a zero-knowledge proof. In
+other words, to able to prove that we know a secret, but without revealing
+the secret itself.
+Zero-knowledge secret storage
+Think about storing passwords, for example. Suppose we’re designing a
+system, such as a bank, where the user—Alice—logs in by entering her
+password. How does the system know that this is the same password she
+originally set when she created her account?
+The obvious idea—just storing the password somewhere—would be a fatal
+mistake. If we stored passwords in clear, then the security of the whole
+system would depend on the security of that password list.
+Ideally, we’d put it on a USB key and bury it at a lonely crossroads at
+midnight, or something, and never reveal its location. But clearly we can’t
+do that: we need to consult the password list every time Alice logs in!
+hash := sha256.Sum256(data)
+There’s no point protecting secret information with a password which itself
+then has to be kept secret. That’s just kicking the can down the road. Worse,
+if Alice accesses the system over the network, then she has to send her
+password over the network, where Eve can easily intercept and steal it. Bad
+times.
+So, here’s the problem. How can Alice prove to the bank—Bob—that she
+knows the secret password, without sending Bob the password, and ideally
+without Bob knowing the password either?
+At first glance, it seems impossible.
+Password hashing requirements
+That’s where hashing comes in. Suppose when Alice signs up with Bob’s
+bank, the system stores, not her password, but some hash of her password.
+Then, some time later, when she comes to log in, the bank’s website can
+prompt her for the password, compute its hash, and compare it against the
+original stored hash.
+This is an elegant solution, because Alice’s password never has to travel
+over the unsecured network: not when she registers her account, and not
+when she logs in. The hash can be computed and sent by code running in
+Alice’s web browser. The bank never knows or stores her actual password,
+only its hash.
+So what hash algorithm should we use? Clearly we don’t want one with a
+high collision rate. If Eve can choose a password whose hash collides with
+Alice’s, then she could log in as Alice.
+In fact, if Eve can gain access to the list of stored hashes, she can brute-
+force a preimage for any user’s password. We need to make that as difficult
+as possible.
+Rainbow tables
+Of course, we don’t want the password hash list to fall into the hands of
+Eve, or other evil-doers, but we have to assume that’s going to happen, and
+keep our users safe even if it does. So how would Eve’s brute-force attack
+work, exactly?
+One obvious thing she could do is just try hashing every English word in
+the dictionary and see if it matches one of the hashes in the password list.
+She only needs to generate this set of hashes once, and then she can use it as
+a lookup table for any password list that she comes across.
+Needless to say, this doesn’t sound like a good situation. In fact, it sounds
+familiar, doesn’t it? It sounds just like the problem we identified with block
+ciphers in ECB mode: that the same block always encrypts to the same
+ciphertext.
+In this case, the same password always hashes to the same digest, but Eve’s
+exploit is identical. She just creates a “code book” of hashed passwords: all
+the words in the dictionary, plus the usual bad passwords like pa55w0rd and
+friends.
+With this code book—colourfully known as a rainbow table—looking up a
+stored hash and identifying the password that generated it is trivial.
+Salting
+We can solve this problem in the same way that we dealt with ECB. Instead
+of just hashing the password on its own, we mix in some random, unique
+data with it, and then hash it.
+The result is a different hash value for every password. Indeed, even if two
+users happen to have the same password by chance, their stored hash values
+will be different.
+As with a block cipher, it doesn’t actually matter how the additional data—
+the salt—is generated. We have to include it with the stored hash anyway,
+or the banking system wouldn’t be able to check Alice’s password when she
+logs in.
+“But what’s the point of that?” you might well ask. “If we’re giving Eve the
+salt along with the hash, couldn’t she still carry out her dictionary attack by
+hashing each word in conjunction with the salt?”
+Yes, she could. But her job is made very much harder, because now she has
+to re-hash every word in the dictionary for every password that she wants to
+crack. Because the stored salt is different with every stored hash, her one-
+size-fits-all rainbow table is rendered useless.
+It’s certainly not impossible for her to do this, of course, but even with a
+fast hash function, hashing is very much slower than just comparing pre-
+computed values in a rainbow table.
+Slow down, you move too fast
+And that’s one final thing to note about password hashing that makes it
+special. In almost all other applications of hashing, we want our hash
+function to be as fast as possible. That is to say, we want it to run very
+efficiently on general-purpose hardware, or to be easily accelerable by
+special-purpose hardware, such as GPUs.
+With passwords, on the other hand, we want the hashing process to be as
+slow as possible! That sounds strange, but remember, we only need to
+legitimately hash the password once a day or so, when Alice logs in.
+Alice won’t notice or mind a delay of a few milliseconds in checking her
+password. Only bad actors such as Eve need to hash passwords very
+quickly, in vast numbers.
+So we want a hash function that is relatively slow, inefficient, expensive, or
+a combination of all three. SHA-256 wouldn’t be a good choice in this case,
+because it’s extremely fast and efficient, and it’s easy to obtain special-
+purpose hardware for computing it even faster. Indeed, there are strong
+financial incentives for this, as we’ll see in the next chapter.
+Instead, there are dedicated password hashing algorithms such as bcrypt and
+scrypt that make much better choices for storing hashed passwords securely.
+We needn’t say much more about them here, but it’s good to know they
+exist.
+16. Coins
+I speak the pass-word primeval, I give the sign of democracy
+By God! I will accept nothing which all cannot have their counterpart
+of on the same terms.
+—Walt Whitman, “Song of Myself”
+Another important application of hashing is in digital ledgers, or
+blockchains, such as Bitcoin. As we saw in a previous chapter, a cipher
+operating in CBC mode creates a blockchain, in a sense. The term
+“blockchain”, though, is usually used in the context of a cryptocurrency.
+Cryptocurrency
+Suppose Bob wants to branch out beyond traditional banking (Alice was his
+only customer anyway), and create his own secure digital currency:
+“Bobcoin”, perhaps. How could he do that?
+Let there be “Bobcoin”
+The simplest way would just be to declare to the world that Bobcoin is now
+a thing, and invite members of the public to exchange their dollars or
+pounds for the equivalent amount of Bobcoin.
+There’s nothing to stop anyone creating their own fiat currency (Latin for
+“make it so”) in this way, and of course that’s how all currencies got started.
+Traditionally, the exchange is done by a central bank—in this case, the
+Bank of Bob—which determines the rate of conversion. For example, Bob
+might declare that one Bobcoin is convertible to one US dollar. Alice pays
+in $100 and Bob credits her with a balance of 100 Bobcoin.
+So far, so good, but what can Alice do with this balance?
+Well, she can buy a pizza (from Pat, let’s say). No physical tokens, such as
+banknotes, need to change hands. Alice simply uses Bob’s banking system
+to transfer, as it might be, ten Bobcoin from her account to Pat’s. Pat checks
+her own balance, sees that the ten Bobcoin has been added to it, and she
+sends the pizza right along to Alice’s house.
+Then maybe Pat uses the Bobcoin she just earned to buy a really cute torque
+wrench she’s had her eye on. And so forth. Round and round the Bobcoin
+goes: where it stops, nobody knows.
+Or rather, Bob knows, because he keeps careful track of everyone’s balance.
+If Pat decides that she likes the reassuring feel of crisp, green paper (who
+doesn’t?) she simply asks Bob to convert her ten Bobcoin into $10, and then
+withdraws it from a nearby ATM.
+The problem of trust
+So far, so good, but we don’t really need a blockchain for this. Bob can just
+maintain a record of all the transactions and balances in the usual way.
+But, if you think about it, it’s difficult for Bobcoin to scale up. If it really
+took off and everyone in the world started using Bobcoin for every online
+transaction, that would place a huge load on Bob’s servers.
+Worse, it makes Bob a single point of failure for the global financial
+system. If Bob’s electricity goes out, commerce everywhere is brought to a
+shuddering halt. That would be bad, but even if Bob installs a UPS, which
+he should, there’s another problem. Why should everyone trust Bob?
+They shouldn’t. Bob’s a good guy, I’m sure, but who’s to say that the
+prospect of stealing literally all the Bobcoin in the world wouldn’t turn even
+Bob’s head? He could be threatened or blackmailed into handing over the
+keys to the digital vault, or he might just lose them by accident.
+Even if Bob is incorruptible and careful, he can’t know for sure that
+someone hasn’t sneaked into his system and left themselves a little back
+door, and nor can anyone else. As long as all the transactions are kept
+private, no one can see if anything nefarious is going on.
+So the slightly surprising solution is for Bob to make them all public. He
+can take the digital ledger—the ongoing record of all Bobcoin transactions
+—and put it on a public file server for all to see.
+Now if Bob, or anyone else, steals money, he can’t conceal those
+transactions: they’re a matter of public record, literally.
+A distributed digital ledger
+That removes the Bank of Bob as a single point of failure, but now we have
+a new one: the public ledger server. No problem: we’ll distribute copies of
+the ledger all over the place–perhaps to every computer in the world that
+uses Bobcoin for transactions.
+Cool. But what happens when a new transaction needs to be recorded?
+Won’t the ledgers now be out of sync?
+Yes, but only temporarily. Anyone making a transaction can send out a
+message about it on the Bobcoin network. All nodes on the network can
+listen for messages about new transactions, and use them to update their
+own local copy of the ledger.

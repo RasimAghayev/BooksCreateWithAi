@@ -1,0 +1,254 @@
+A test for Encrypt
+So here’s a test that should do the job:
+(Listing shift/7)
+The test for Decrypt will be very similar, as you’d expect:
+func TestEncrypt(t *testing.T) {
+    t.Parallel()
+    block, err := shift.NewCipher(testKey)
+    if err != nil {
+        t.Fatal(err)
+    }
+    for _, tc := range cipherCases {
+        name := fmt.Sprintf("%x + %x = %x", tc.plaintext, testKey,
+            tc.ciphertext)
+        t.Run(name, func(t *testing.T) {
+            got := make([]byte, len(tc.plaintext))
+            block.Encrypt(got, tc.plaintext)
+            if !bytes.Equal(tc.ciphertext, got) {
+                t.Errorf("want %x, got %x", tc.ciphertext, got)
+            }
+        })
+    }
+}
+func TestDecrypt(t *testing.T) {
+    t.Parallel()
+    block, err := shift.NewCipher(testKey)
+    if err != nil {
+        t.Fatal(err)
+    }
+    for _, tc := range cipherCases {
+name := fmt Sprintf("%x
+%x = %x"
+tc ciphertext
+testKey
+(Listing shift/7)
+By the way, we won’t need the tests for our old Encipher and Decipher
+functions any more, since we’re replacing them with the new block-oriented
+code. And we can also delete or comment out the Crack function and its
+test, since it won’t work with the latest cipher code (we’ll update this later).
+So now we can turn to writing the Encrypt and Decrypt methods
+themselves, and (not surprisingly) that’s pretty straightforward. Again, these
+will replace Encipher and Decipher, and we already did the substantive
+work on those (or rather, you did).
+Writing Encrypt and Decrypt
+In fact, we need less code than we did previously. Since the result slice is
+now passed in, we don’t have to create it.
+This is all that’s now required:
+        name := fmt.Sprintf("%x - %x = %x", tc.ciphertext, testKey,
+            tc.plaintext)
+        t.Run(name, func(t *testing.T) {
+            got := make([]byte, len(tc.ciphertext))
+            block.Decrypt(got, tc.ciphertext)
+            if !bytes.Equal(tc.plaintext, got) {
+                t.Errorf("want %x, got %x", tc.plaintext, got)
+            }
+        })
+    }
+}
+func (c *shiftCipher) Encrypt(dst, src []byte) {
+    for i, b := range src {
+        dst[i] = b + c.key[i]
+    }
+(Listing shift/7)
+Are we done? Almost! We missed one thing, but Go picked it up:
+cannot use &shiftCipher{…} (value of type *shiftCipher) as 
+cipher.Block value in return statement: *shiftCipher does not 
+implement cipher.Block (missing method BlockSize)
+That looks a little scary, but you know what to do in this situation. Keep
+calm, grab a snack, and then read the message carefully from beginning to
+end. Let’s break it down.
+First of all, the message is about this return statement, in NewCipher:
+(Listing shift/7)
+And the error is saying that the function promised to return a cipher.Block,
+which as we know is an interface, but what it actually returns is a pointer to
+a shiftCipher struct.
+That’s okay, as long as *shiftCipher implements cipher.Block, but Go is
+telling us that it doesn’t:
+*shiftCipher does not implement cipher.Block
+}
+func (c *shiftCipher) Decrypt(dst, src []byte) {
+    for i, b := range src {
+        dst[i] = b - c.key[i]
+    }
+}
+return &shiftCipher{
+    key: [BlockSize]byte(key),
+}, nil
+We hoped it would; indeed, that was the plan, but apparently we’re not
+quite there yet. Here’s the problem:
+missing method BlockSize
+So, as often happens, the actual code problem is not with the return
+statement, which is perfectly correct. The problem is somewhere else:
+namely, that we haven’t provided anywhere a BlockSize method on our
+struct type.
+It’s tempting, when you see a message like this, to drop into stochastic
+debugging mode and start randomly frobbing the return statement until it
+works. But we already know that’s not a good strategy.
+Instead, careful reading of the error message, tells us exactly what we need
+to do: implement the BlockSize method.
+Forgotten something?
+By the way, this is one nice side-effect of declaring NewCipher’s result type
+as cipher.Block, instead of *shiftCipher. Go can catch cases like this
+where we didn’t finish implementing the interface properly. Over to you to
+fix it, then!
+GOAL: Write BlockSize, guided by a test.
+HINT: The BlockSize method is supposed to report the block size of the
+cipher object we call it on, and we know that this is always a fixed value:
+namely, shift.BlockSize. So that’s what BlockSize should always return.
+It’s not hard to implement, and it’s only slightly more difficult to test.
+SOLUTION: All right, we know what the result of BlockSize should be,
+but first we need a cipher object to call it on. That means calling NewCipher.
+The rest is straightforward:
+(Listing shift/7)
+The implementation is just a little bit of paperwork:
+(Listing shift/7)
+Nicely done! But don’t stop now: we just broke the command-line tools that
+rely on Encipher and Decipher, so the next step is to get those working
+again.
+func TestBlockSize_ReturnsBlockSize(t *testing.T) {
+    t.Parallel()
+    block, err := shift.NewCipher(make([]byte, shift.BlockSize))
+    if err != nil {
+        t.Fatal(err)
+    }
+    want := shift.BlockSize
+    got := block.BlockSize()
+    if want != got {
+        t.Errorf("want %d, got %d", want, got)
+    }
+}
+func (c shiftCipher) BlockSize() int {
+    return BlockSize
+}
+9. Modes
+The mantra of any good security engineer is: “Security is a not a
+product, but a process.” It’s more than designing strong cryptography
+into a system; it’s designing the entire system such that all security
+measures, including cryptography, work together.
+—Bruce Schneier, “Risks of Relying on Cryptography”
+(photo by Pascal Segrette)
+We’ve made some great progress so far. We’ve taken our shift cipher and
+upgraded it to support the cipher.Block interface. This will enable us to do
+some interesting things with it later on.
+Handling data in blocks
+But first, let’s revisit our command-line tools to bring them up to date with
+the new API. These are the programs that Alice and Bob will actually run to
+encipher and decipher messages, and we’ll now need to make a few
+modifications to call the new cipher code in the right way.
+Updating the encipher tool
+Here’s the code we wrote previously for the encipher tool, for example:
+(Listing shift/6)
+Fine, but there’s no longer an Encipher function we can call directly: we
+need to create a block object first:
+func main() {
+    keyHex := flag.String("key", "01",
+        "key in hexadecimal (for example 'FF')")
+    flag.Parse()
+    plaintext, err := io.ReadAll(os.Stdin)
+    if err != nil {
+        fmt.Fprintln(os.Stderr, err)
+        os.Exit(1)
+    }
+    key, err := hex.DecodeString(*keyHex)
+    if err != nil {
+        fmt.Fprintln(os.Stderr, err)
+        os.Exit(1)
+    }
+    ciphertext := shift.Encipher(plaintext, key)
+    os.Stdout.Write(ciphertext)
+}
+block, err := shift.NewCipher(key)
+if err != nil {
+    fmt.Fprintln(os.Stderr, err)
+    os.Exit(1)
+}
+Because NewCipher already checks that the key is the right size, we needn’t
+worry about doing that again here. Instead, we can just report any error to
+Alice and let her deal with it.
+Block by block
+Next, we’ll need to call the Encrypt method on our block cipher, to encipher
+Alice’s plaintext. But there’s one problem: because it’s now a block cipher,
+we can only pass a block’s worth of data to Encrypt at a time.
+We want to deal with the data in chunks of 32 bytes, in other words. And
+maybe it happens that plaintext is exactly that long. That would be
+convenient, but unlikely. Most of the time the message to be enciphered will
+be either longer or shorter than our block size.
+We need some code that can take data of any length, and encipher it a block
+at a time, using our block object. In principle, this is quite straightforward:
+we just keep reading 32-byte chunks of the data and enciphering them until
+we’ve read all the data.
+The cipher.BlockMode interface
+Again, the cipher package provides a useful interface for us to implement
+here:
+(crypto/cipher)
+The BlockSize method is the same as for cipher.Block, but we now also
+have CryptBlocks, which takes a src slice of arbitrary length, and enciphers
+it, blockwise, into dst, in the way that we described.
+type BlockMode interface {
+    BlockSize() int
+    CryptBlocks(dst, src []byte)
+}
+The specific way in which we choose to encipher successive blocks of data
+is called the mode of operation for the cipher. There are several modes used
+in practice, but first let’s consider the simplest mode imaginable: just
+encipher each block independently.
+A simple block mode
+To do this, we need something that implements the BlockMode interface, so
+again it’s over to you:
+GOAL: Write a test for a new type that implements cipher.BlockMode, and
+that enciphers data using the shift cipher.
+HINT: Let’s walk through what we need for a BlockMode implementation,
+step by step.
+Just as with cipher.Block, we’ll define some struct type that will implement
+the interface. Note that, with a BlockMode, we no longer have separate 
+Encrypt and Decrypt methods. Instead, they’re replaced by a single method: 
+CryptBlocks.
+This implies that we’ll need two types, both implementing BlockMode: one
+for encrypting, and another for decrypting. They’ll be almost exactly the
+same, as you’d expect: it’s just that their CryptBlocks methods will work in
+opposite “directions”.
+Let’s start with the encrypter. Indeed, encrypter seems the most obvious
+name to give this type. I’m a big fan of obviousness-oriented programming,
+aren’t you?
+We’ll need a type definition for this struct, and a constructor for it
+(NewEncrypter). And we know, from the interface definition, that we’ll need
+to add a CryptBlocks method to our new type.
+We also know that the encrypter will need to use a given block cipher to do
+the actual enciphering. So a decent test for all this should do something like
+the following:
+1. Create a new cipher object
+2. Use it to create a new encrypter
+3. Use the encrypter’s CryptBlocks method to encipher some data
+4. Check the result
+Testing CryptBlocks
+SOLUTION: Here’s a test that fulfils these requirements:
+(Listing shift/7)
+Straightforward, right? We encipher a 32-byte message and check the result.
+With the test to guide us, we’re ready to write encrypter. Over to you for
+this part.
+GOAL: Implement encrypter.
+func TestEncrypterEnciphersBlockAlignedMessage(t *testing.T) {
+    t.Parallel()
+    plaintext := []byte("This message is exactly 32 bytes")
+    block, err := shift.NewCipher(testKey)
+    if err != nil {
+        t.Fatal(err)
+    }
+    enc := shift.NewEncrypter(block)
+    want := []byte("Uijt!nfttbhf!jt!fybdumz!43!czuft")
+    got := make([]byte, 32)
+    enc.CryptBlocks(got, plaintext)
+    if !bytes.Equal(want, got) {
+        t.Errorf("want %v, got %v", want, got)
+    }
+}

@@ -1,0 +1,227 @@
+data.
+Let’s have a look at it, though, just to make sure it doesn’t reveal anything
+obvious about the plaintext:
+Qebqfdbo^mmb^op^qfqpltkmib^prob+Tebktb_b`ljbsbovpfibkq^qqe^qmi^`b) 
+tfqeklbumb`q^qflklcqebqfdbo)qe^qfptebkeb`ellpbpql^mmb^+++Tebktbpq^ 
+ka^qqebbadblcqebofsbot^fqfkdcloqebqfdbo)fqpbbjpqe^qqebpfibk`bq^hbp 
+lk^nr^ifqvlcfqpltk+Qebjfka`ljbpql^pqlm+FkqebFkaf^kqo^afqflkqe^qfpq 
+ebjljbkqtebkqebqb^`ebop^vp).}.Vlr^obqe^q+Vlr^obqe^qpfibk`b+Vlr^obq 
+e^q+.}..}.Co^k`fpIr`fiib).}.QebMbocrjblcPfibk`b.}.%
+Well, it doesn’t look like anything to me!
+Let’s see if we can recover the plaintext with the crack tool, then:
+And very quickly:
+The tiger appears at its own pleasure. When we become very silent 
+at that place, with no expectation of the tiger, that is when he 
+chooses to appear... When we stand at the edge of the river waiting 
+for the tiger, it seems that the silence takes on a quality of its 
+own. The mind comes to a stop. In the Indian tradition that is the 
+moment when the teacher says, “You are that. You are that silence. 
+You are that.” 
+—Francis Lucille, “The Perfume of Silence”
+That’s encouraging. Given a suitable crib, we can automatically recover the
+plaintext from a message enciphered with an unknown key. Great progress!
+The devil in the details
+We’ve been careful to ensure from the start that our program should be able
+to handle any kind of data, not just text, so let’s try that too. For example,
+cat enciphered.bin
+go run ./cmd/crack -crib 'The tiger' <enciphered.bin
+what if we enciphered an image? Would we still be able to recover the
+original image data using crack?
+It doesn’t matter what kind of image we use, but just for fun, we’ll
+download this little devil, and save it to a file. Here’s what it looks like,
+using any decent image-viewing program:
+Now we’ll encipher it:
+The resulting devil.bin file doesn’t in any way resemble an image, and
+indeed most image-viewing software will refuse to open it. We’ll see what
+we can do to recover the original with crack, but first, what’s our crib?
+0x89 is the magic number
+Well, without access to the original file, we wouldn’t know anything about
+the image data it contains. Luckily, though, most well-known file formats
+begin with some stereotyped byte sequence that identifies the format
+(known as a header, or more romantically a magic number).
+For example, all PNG files begin with the hex byte 0x89, followed by the
+letters “PNG”. (If you’re not familiar with hex notation, don’t worry: we’ll
+return to this later.)
+go run ./cmd/encipher -key 99 <devil.png >devil.bin
+That’s a perfect crib, but there’s one little hiccup: how can we actually
+supply these bytes to the -crib flag on the command line? The value 0x89
+doesn’t correspond to any printable character, so we can’t type it on the
+keyboard. What to do?
+There’s a helpful little Unix utility named printf that can solve this
+problem for us. It prints any string we give it, but within that string we can
+include escape sequences: ways of representing non-printing characters.
+Here’s how we do that:
+This prints PNG, as you’d expect, but prefixed by a weird character that
+looks like a question mark inside a diamond-shaped box (depending on
+your terminal font). This is the Unicode “replacement character” glyph,
+meaning that the byte in question doesn’t correspond to any printable
+character, which we already know it doesn’t.
+Printing the unprintable
+So we can’t just copy and paste this string straight from the terminal,
+because that special glyph won’t be translated back into the byte 0x89.
+Instead, we can embed the call to printf directly into our crack command
+line:
+The $(...) syntax is an instruction to the shell: run the command inside the
+parentheses first, then substitute the result into the full command line.
+Sure enough, the output plain.png file is byte-for-byte identical with the
+original devil.png. If we open it in an image viewer we will see the little
+devil, unharmed by his journey through our shift cipher:
+printf '\x89PNG'
+go run ./cmd/crack -crib $(printf '\x89PNG') <devil.bin >plain.png
+5. Keys
+Humans are incapable of securely storing high-quality cryptographic
+keys, and they have unacceptable speed and accuracy when
+performing cryptographic operations.
+(They are also large, expensive to maintain, difficult to manage, and
+they pollute the environment. It is astonishing that these devices
+continue to be manufactured and deployed. But they are sufficiently
+pervasive that we must design our protocols around their limitations.)
+—Charlie Kaufman et al, “Network Security: Private Communication
+in a Public World”
+Okay, let’s get back to work: we still have a few more things to add before
+we’re able to deal with realistic ciphers.
+Lost in keyspace
+We talked earlier about cipher strength in the context of brute-forcing, and
+it’s clear that the smaller the number of possible keys, the easier it will be
+for Eve to defeat the cipher.
+And we already know that our single-byte shift cipher is pretty weak in this
+respect, because it just doesn’t allow for enough possible keys. The proof is
+that we can write a (fairly) simple Go program to crack any ciphertext in a
+few microseconds. So this cipher scheme, while easy to reason about, isn’t
+strong enough to protect any sensitive information.
+The space of all possible keys
+What would make it stronger, then? One obvious way would be to make the
+key longer than a single byte, thus making the space of all possible keys—
+the keyspace, we say—bigger. The bigger the keyspace, the longer a brute-
+force search of it takes.
+Adding a fourth number wheel to Alice’s office safe, for example, would
+give her ten times as many possible keys. She can set the new wheel to ten
+different digits for each possible arrangement of the original three wheels,
+increasing the keyspace from 1,000 to 10,000 combinations.
+Now Cat the burglar would need to remain undisturbed in Alice’s office
+twiddling the safe for (on average) eighty minutes, and there’s a much
+greater risk of her being caught than when it only took eight minutes.
+How long should the key be?
+In our shift cipher, similarly, we could make the key two bytes instead of
+one. By the same argument as for the safe, that gives us 256 × 256 = 65, 
+536 possible keys. It will therefore take 256 times longer to brute-force,
+which is a big improvement, perhaps surprisingly so.
+You might quite reasonably have guessed, for example, that doubling the
+key length would make Alice’s messages twice as secure, but it’s very much
+better than that.
+In fact, every extra byte she adds to the key makes the keyspace (and thus
+the average crack time) 256 times bigger. This is why reasonably long
+passwords are so astoundingly much more secure than short ones.
+For example, a seven-character password can be cracked (by 2020s
+computers) in about six minutes, but a fourteen-character one would take
+over 200 million years! That’s the counterintuitive power of exponential
+growth (and also the reason why you should use long passwords).
+So we won’t need to make our key too many bytes longer to get a really
+worthwhile increase in the strength of our cipher. 32 bytes, or 256 bits, is
+the biggest practical key size in current use, and we’re unlikely to need
+larger keys for the foreseeable future.
+Even with the help of Moore’s Law, it will take Eve a long time to double
+her available computing power. But when that happens, all Alice needs to
+do is add one more bit to her keys, and she’s put Eve right back where she
+started. It’s an arms race that Eve can’t win.
+Doubling computer power is also a lot more expensive than just making our
+keys one bit longer, as you can imagine. So simply increasing the key
+length is by far the most cost-effective cipher improvement we can make, at
+least until we reach the point where brute-forcing is no longer the quickest
+way to break the cipher.
+A keyspace the size of the universe
+How would lengthening our keys to 32 bytes affect the size of our
+keyspace, then? Well, each extra byte makes it 256 times bigger, so our
+keyspace now becomes 25632, or 2256, which is an absolutely gigantic
+number:
+115,792,089,237,316,195,423,570,985,008,687,907,853,269,984,665,640,5
+64,039,457,
+584,007,913,129,639,935
+Phew! This is roughly 1077, which is of the same kind of order as the
+number of atoms in the visible universe. In other words, brute-forcing a key
+this long is equivalent to counting every atom in a sphere of space 100
+billion light years across. How long would that take, then?
+Well, you can do the math, but a long time, many billions of billions times
+longer than the current age of the Universe, even if Eve throws every
+computer on Earth at the problem (which she could conceivably do, using
+something like a botnet). That’s as close to uncrackable as makes no
+difference, for our purposes.
+Yes, computers get faster over time, so in a hundred years it’ll take much
+less time to crack keys than it does today. And it’s possible to imagine an
+advanced civilisation building vast computers, the size of solar systems,
+dedicated solely to brute-forcing Alice’s messages from long ago.
+But pretty soon, the limiting factor becomes energy, rather than time.
+Computation takes energy, and the bigger the computer, the more energy it
+uses. Bruce Schneier observes (in Applied Cryptography) that the usable
+energy released by the average supernova is about enough to cycle a 219-bit
+counter through all its possible states.
+To enumerate all possible 256-bit (32-byte) keys, then, would need the
+energy equivalent of 237 ≈ 137, 000, 000, 000 supernovae. That’s roughly
+the number of stars in the Milky Way, so an attack like this would require
+burning up a decent-sized galaxy. Even a highly advanced civilisation
+would wince a bit at that. They might need the galaxy to live in, for
+example.
+And packing all that energy into too small a volume would create a black
+hole, so the computer would have to be very large, which makes it slow,
+because even signals at the speed of light would take a long time to travel
+across it. So Galactic Emperor Eve, as powerful as she is, is still going to
+have a hard time cracking Alice’s 256-bit key.
+To put it another way, sufficiently long keys make brute-force cracking a
+poor choice of strategy. It would always be far cheaper for Eve just to steal
+the key, or to bribe someone close to Alice to steal it. (Or to drug them and
+hit them over the head with a $5 wrench until they tell her the key.)
+Multi-byte keys
+Extending our cipher scheme to multi-byte keys, then, would be a long step
+towards the kind of ciphers we need in realistic applications. It sounds
+difficult, but what’s really involved? Let’s have a think.
+Right now, the enciphering process is something like this: for each byte of
+the plaintext, we add the key byte to it to yield the corresponding byte of
+the ciphertext.
+Embiggening the key
+Suppose we had a two-byte key, though. Now what would we do? For the
+first byte of the plaintext, we’d add the first byte of the key. For the second
+byte of the plaintext, we’d add the second byte of the key. That’s
+straightforward.
+And for the third byte of the plaintext, we’d go back to the first byte of the
+key, and so on. Essentially, we’d just keep looping around the key bytes as
+we move through the plaintext. That sounds doable, doesn’t it?
+And this scheme works just as well with a key of three bytes, or even more.
+So let’s say that the key can now be a slice of bytes of any length, instead of
+just a single byte.
+Updating the test cases
+We don’t actually need to change our existing tests that much. We can think
+of the current scheme as using a key of length 1, so all our existing 1-byte-
+key test cases should still pass when we’ve generalised the code to handle
+keys of any length.
+First, we need to change our test case struct, because instead of a single
+byte for the key, we want to supply a slice of bytes. Here goes:
+And the first test case is easily updated to suit this new type definition:
+var cases = []struct {
+    key        []byte
+    plaintext  []byte
+    ciphertext []byte
+}
+This part is worth looking at more closely:
+The curly braces indicate that we’re giving a []byte literal (in this case, a
+slice of just one element, the number 1). This looks very like converting
+something to a []byte, as we do with the other two fields, but that uses
+parentheses, not curly braces.
+Let’s delete the other cases for now, since this will be enough to get us
+started, and we can come back and fill in some more demanding test cases
+later.
+Bytes in, bytes out
+The test currently doesn’t compile, so let’s address that problem first:
+cannot use tc.key (variable of type []byte) as byte value in 
+argument to shift.Encipher
+That makes sense. After all, we’re saying that Encipher will need to take a 
+[]byte as the key now, not just a single byte.
+So let’s make that change to the function signature:
+We’ll see similar compile errors in the tests for Decipher and Crack, of
+course, but that’s expected. Let’s comment out those tests for now, and
+{
+    key:        []byte{1},
+    plaintext:  []byte("HAL"),
+    ciphertext: []byte("IBM"),
+},
+key:        []byte{1},
+func Encipher(plaintext []byte, key []byte) (ciphertext []byte)

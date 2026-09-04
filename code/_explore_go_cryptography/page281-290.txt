@@ -1,0 +1,276 @@
+and compare it with the one Alice sent.
+This clever scheme is called a Message Authentication Code (MAC). Even
+though Mallory could still brute-force a valid preimage for Alice’s hash, it
+won’t fool Bob, because when he appends the key to Alice’s ciphertext and
+hashes the result, it won’t match.
+And Mallory can’t generate a bogus message that produces the required
+hash when the key is appended, because they don’t have the key.
+Checkmate?
+Well, not quite.
+Length extension attacks
+Hashing the ciphertext and key together is much better than hashing just the
+ciphertext, but it’s still not perfect. Some hash algorithms, including SHA-
+256, are vulnerable to what’s called a length extension attack.
+This loophole means that, while Mallory can’t alter the original message
+without being detected, they can append extra text to it. As you can
+imagine, this could be problematic.
+Alice’s original message might be “I love you, Bob”, and Mallory could
+append some text to it like this: “…but for reasons I can’t go into, our love
+can never be. I’m leaving town tonight, goodbye forever.” Even without
+knowing the key, they can use Alice’s original hash plus the new text to
+produce a new, valid hash.
+When Bob checks the hash, it looks to him as though this is a genuine
+message. Oh no! Bob and Alice’s love-boat has been torpedoed before it
+even really got under way. And all because Alice was a bit careless with her
+message discipline.
+HMAC
+We can’t let that happen, so we’ll need to make a slight, but significant,
+improvement to our scheme. We’ll have Alice hash the “key + message”
+combination, as before, but we’ll also add an extra step: hashing the key
+plus the hash.
+Let’s take that step by step:
+1. Alice joins the key and ciphertext and computes the resulting hash
+(called the inner hash).
+2. Then Alice joins the key with the inner hash and uses the result to
+compute the outer hash.
+3. Finally, Alice sends the ciphertext along with the outer hash.
+If our hash function is H, let’s say, then a simple hash of the message would
+be H(message). We know that’s no good, for the reasons we already
+discussed.
+A simple MAC, then, would be H(message + key), or H(key + message).
+These are better, as we’ve seen, but still vulnerable in certain
+circumstances.
+So the improvement we’re making is to compute H(key + H(key + 
+message)) instead. This seems weird, but it’s cryptographically sound. The
+inner hash is obscured, so Mallory can’t use it to carry out a length
+extension attack. The outer hash still requires the key, so Mallory can’t just
+brute-force a preimage.
+This scheme is called a Hash-based MAC (HMAC). It can give a message
+authenticity even without secrecy, which is handy.
+Suppose Alice wants to send a message to the whole world proclaiming her
+love for Bob (love tends to have that effect, after all). She can put it on her
+website, in clear, but also attach an HMAC of the message.
+Only Alice could have generated that HMAC, and only Bob can verify it,
+because they are the only two people who have the key. How satisfying!
+Key exchange
+Actually, that brings us to another problem, and one that we haven’t really
+talked about so far in this book. Every encryption or authentication scheme
+we’ve looked at has relied on exactly this point: Alice and Bob must share a
+copy of the key. But how, exactly, is that to be arranged?
+The problem
+Suppose Alice and Bob decide that they want to communicate securely. It’s
+easy enough for Alice to generate a secure key, especially if she’s read the
+earlier chapters of this book, and has access to a good source of
+cryptographic entropy. But how is she now to get a copy of that key to Bob?
+Meeting in person would obviously be the best way: she can hand over a
+physical device such as a flash drive with the key stored on it, or even just
+write it down on paper.
+But suppose Alice and Bob are too far apart to meet in person, or at least
+that it’s not convenient for them to meet every time they need to exchange a
+new key. What could they do instead?
+Alice could just email the key to Bob, but we know that’s no good: Eve
+might intercept the email. Worse, Mallory might replace Alice’s key with
+one of their own, and then they’d be able to read and modify all of Alice
+and Bob’s cipher traffic undetected.
+The same concerns apply to a phone call, letter, or any other non-secure
+way of communicating.
+Key splitting
+If she’s wise, Alice won’t trust the entire key to a single channel. Instead,
+she’ll split it up into multiple parts, and send each one a different way: half
+by email, for example, and half by phone. That makes Eve and Mallory’s
+job harder, which, as you know, is all we can ever hope to do, but it’s well
+worth doing all the same.
+However, if at all possible, Alice would really like to avoid having to send
+any part of the key over an insecure channel.
+Of course, if Alice and Bob already had a secure way of communicating,
+they wouldn’t need to exchange a key in the first place! So we face a
+seemingly unresolvable problem. The only way for them to communicate
+securely is to share the key, but they can only do that by communicating
+securely. What to do?
+Well, when you put it that way, the answer’s obvious, isn’t it? Don’t share
+the key.
+Asymmetric encryption
+Okay, that might need a little more explanation, so here goes. Suppose there
+were a way for Alice to generate a special kind of key, one that comes in
+two parts. One part is secret, and Alice keeps this to herself, as with an
+ordinary key.
+The other part of the key, though, doesn’t need to be secret. In fact, it can be
+public. She could send it to Bob via some insecure channel such as email,
+or just put it on her website.
+Now Bob—or anyone else—can use the public part of Alice’s key to
+encipher a message in such a way that only Alice can read it. That is, only
+someone in possession of the private part of the key can decipher a message
+encrypted using the public part.
+The neat thing is that Alice and Bob never have to meet, or communicate
+any secret information over a potentially insecure channel. Yet they can still
+have a securely-encrypted conversation. So how does that work? Is it even
+possible?
+As we saw in the first chapter, the history of cryptography is long: people
+have been exchanging hidden messages for thousands of years, at least as
+long as writing has existed, and perhaps before that. But until very recently,
+they’ve always had to rely on being able to communicate keys between the
+sending and receiving parties, and that creates an obvious vulnerability for
+an attacker to exploit.
+This is known as the key exchange problem.
+Public and private keys
+All the cryptography we’ve discussed up to now has been what’s called
+symmetric: the symmetry here is that the enciphering and deciphering
+processes use the same key.
+If there were an alternative scheme where you could encipher with one key,
+but decipher with a different (yet somehow related) key, that would be
+called asymmetric encryption. Wouldn’t that be nice?
+Well, as you probably guessed, I’m about to outline just such a scheme.
+Because the point of it is for one of the keys to be public, it’s also called
+public-key cryptography, which I’m sure you’ve heard of. Now let’s see
+how it works.
+It’s a bit like one of those magician’s tricks where you think of a number,
+they tell you to multiply or divide it a bunch of times, and when you give
+them the result, they miraculously tell you the number you first thought of.
+It’s not really magical, of course: it’s mathemagical. The starting and
+ending numbers are related in a completely deterministic way, just one
+that’s not particularly obvious.
+The Diffie-Hellman-Merkle protocol
+Suppose you could do this kind of trick with a private key; it’s just a
+number, after all. Scramble it in some non-trivial, non-reversible way, and
+you end up with another number that you can safely reveal to the world: the
+public key. (Actually, that sounds a lot like a hash, doesn’t it?)
+And suppose further that if a message were enciphered with this public key,
+you could only decipher it using the corresponding private key. So what
+mathematical function could we use to scramble keys in this sort of system?
+It would have to be a one-way function, similar to the secure hash functions
+we’ve discussed already in this book, though with some different specific
+properties. Let’s look at one such system, named Diffie-Hellman-Merkle
+(DHM), after its inventors.
+While DHM is not a full public-key cryptosystem in itself, it does provide a
+way for two parties to communicate in public to arrive at a shared private
+key, without revealing what it is.
+If Alice and Bob can do this easily, then they can generate and use a new
+key for every conversation (this is known as forward secrecy). Now, even if
+Eve or Mallory can intercept a message and use brute force or cryptanalysis
+to break the key, the damage is limited. They can read that one message, but
+it won’t help them decrypt future messages, which will use new keys.
+A one-way function for key exchange
+The particular asymmetry, or one-way-ness, used by DHM is that between
+the respective difficulties of computing exponents and logarithms (set your
+calculator to “maths” for the following section).
+Exponentiation is when you raise a given number to some power: for
+example, 210. Here, 10 is the exponent, and to calculate the result we
+multiply 2 by itself 10 times: the answer is 1024. Not too hard: you can do
+that with pencil and paper, or a few carefully-arranged transistors.
+On the other hand, computing the logarithm is the inverse operation: you
+start with 1024 and ask how many times you have to multiply 2 by itself to
+get this result. The answer is known as the logarithm of 1024 (to base 2).
+It’s 10, of course, but if we didn’t already have that information, we’d have
+to work it out by trial and error.
+Finding logarithms, then, is a much harder problem than exponentiation. It
+can’t be done analytically: that is, there’s no formula that just gives you the
+answer in a single computation.
+Instead, you have to do it iteratively: guessing the answer, raising 2 to that
+power and seeing how close you got to the required number, then
+successively improving your guess until you think it’s good enough.
+Sounds a lot like a brute-force attack, doesn’t it? And that’s exactly what it
+is.
+In just the same way, enciphering a block with a given key is fast, but
+reverse-engineering a ciphertext when you don’t know the key is extremely
+slow. And, while hashing a block with SHA-256 is fast, especially with a
+custom Bobcoin mining rig, guessing the exact preimage that produces a
+desired hash is much slower, as we saw in the previous chapter.
+A simplified, though inaccurate, way to think about the DHM key exchange
+scheme is like this: imagine Alice generates a private key and sends Bob the
+hash of it. Now imagine Bob generates his own key and sends Alice the
+hash of that.
+Now add a little hand-wavy mathematical fairy dust, like the after-dinner
+magician, and it turns out that Alice and Bob can both independently use
+these different hashes to calculate the same number.
+That number can now be the private session key they use to communicate:
+perhaps they’ll arrange to meet for drinks, and maybe take in a magic show
+afterwards. Who knows where such an enchanted evening might end?
+A DHM worked example
+Okay, the hand-waving was a bit quicker than the eye there, so let’s go
+through the process in more detail with an example.
+First, Alice and Bob agree on a pair of numbers they’ll use for this
+calculation, called the modulus and the base, and these can be public. Let’s
+say they use a modulus p = 13 and base g = 6. Not just any two numbers
+will do, but never mind: these will work for the example.
+The next step is for Alice to generate a secret number a that only she
+knows, perhaps using a random process. We’ll use 5 as an example, but a
+really secure private key would be much larger, as you know. Using a small
+number makes the sums easier for explaining the idea, though.
+Alice now applies her one-way function (exponentiation) to compute the
+result she can send publicly to Bob. Specifically, she computes:
+ga mod  p
+In other words, she raises the pre-agreed base number g to the a-th power
+and takes the result modulo p (remember the modulus operation? Of course
+you do.)
+Substituting in our chosen values, she gets:
+65 mod  13 = 2
+Now over to Bob, who generates his own secret number b = 4, and then
+munges it in the same way that Alice did. That is, he raises the base g to the
+b-th power, mod p. He gets:
+64 mod  13 = 9
+Alice and Bob can now exchange these results in public, quite safely. No
+one can use them to work backwards to the corresponding secret numbers,
+except by brute-force guessing.
+So now Alice knows that the result of Bob’s calculation is 9, and Bob
+knows that the result of Alice’s calculation is 2. Take a deep breath, because
+we’re almost there.
+The reveal
+Here comes the final step. Alice does another modular exponentiation:
+Ba mod  p
+That is, she raises Bob’s result (9) to the power of her own secret number
+(5), mod 13. So:
+95 mod  13 = 3
+This answer is the shared session key that Alice and Bob will use to
+communicate. So, if the DHM scheme works, Bob should be able to
+calculate the same number by a similar process (Ab mod  p). Let’s see:
+24 mod  13 = 3
+Now that’s magic! Or rather, it isn’t, but it seems magical if you don’t know
+how the trick works. It relies on the not particularly surprising fact that:
+(ga)b = (gb)a
+In other words, it doesn’t matter in which order you do the two
+exponentiations: a first, or b first, you get the same answer. For example, if
+you square 2 and then cube the result, you get 64, and if you instead cube 2
+and then square the result of that, you still get 64.
+As we saw earlier, real DHM key exchanges would use much larger
+numbers, and there are a few more fiddly details that we needn’t worry
+about, such as how to choose the base and modulus. You get the basic idea,
+though.
+For more information, please reread, or have a look at Joumana El Alaoui’s 
+kgen project, which implements the DHM protocol in Go:
+https://github.com/joumanae/kgen
+Public-key cryptography
+As neat as it is, DHM, as we’ve seen, isn’t by itself a true public-key
+cryptosystem. Alice and Bob are still using plain old symmetric encryption,
+meaning they have to share a key.
+It’s just that we’ve somewhat streamlined the process of exchanging that
+key, meaning that they can safely use an insecure channel to communicate
+about it. But they still have to have that communication before they can
+start an encrypted conversation.
+By contrast, with a public-key cryptosystem, Alice could send Bob a
+private, encrypted message without any preamble. She wouldn’t have to
+arrange with Bob to do the Diffie-Hellman-Merkle dance, or leave a copy
+of her key behind a loose stone in the garden wall, or anything like that.
+Instead, she could just look up Bob’s public key online, in the cryptographic
+equivalent of the phone book, and send him a message right out of the blue.
+Yet, only Bob (or someone who’s managed to steal his private key) could
+read it. So how would that work?
+RSA
+Again, there are many different ways of doing this, but we’ll take a brief
+look at one fairly well-known scheme. It was invented first by Clifford
+Cocks, and then again independently by Rivest, Shamir, and Adleman,
+which is why it’s now known as RSA.
+RSA relies on the same sort of one-way function trick as DHM, and it
+works like this. Alice chooses two large, random prime numbers, puts them
+into a mathemagical sausage machine, and out pop two related numbers:
+her private key and her public key.
+Alice can quite safely distribute her public key, or register it with some
+public directory, and anyone can use it to send her an encrypted message.
+However, only Alice can decrypt and read it. No one else, not even the
+sender, can unscramble the message.
+In practice, though, it’s usual to encrypt the message to your own public key
+as well as the intended recipient’s, so that you can read messages you’ve
+sent, and RSA allows for that. Indeed, you can encrypt a message to as
+many recipients as you want, including yourself. All you need are the
+corresponding public keys.
+So far, so straightforward. The bit that makes it seem like magic is the
+relationship between the private and public keys. They must be related, or

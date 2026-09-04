@@ -1,0 +1,251 @@
+In the next chapter, we’ll look at some practical ways in which chaotic
+physical processes can be used as a source of entropy. One fun, if slightly
+impractical way, though, is to use a lava lamp, as seen in the photo at the
+beginning of this chapter.
+Cloudflare’s office in San Francisco features a “Wall of Entropy”, using
+about 100 lava lamps. A digital camera takes a picture of the lamps at
+intervals, and the data from these pixels is used as input entropy for
+generating cryptographic keys. So, while the wall of lava lamps makes a
+nice display for visitors, it’s not just a conversation piece.
+A little entropy goes a long way
+The ability to generate random numbers is important for cryptography, as
+we’ve seen, but it’s also useful in other spheres of life. For example, poker
+players need to be able to randomise their behaviour, to avoid their
+opponents learning too much about their play.
+Poker, like cryptography, is a game of information. The more regular and
+predictable your play, the easier it is for opponents to beat you.
+To inject randomness into their game, some players use their analogue
+wristwatches as a simple random generator. For example, if the second hand
+is between 0 and 30, they’ll raise on a middling hand, and if it’s between 30
+and 60, they’ll call.
+This wouldn’t work in every situation, of course: if you needed to generate
+random numbers more than about once a minute, the stream of “bits” would
+start to show obvious regularities. And if your opponents knew your exact
+scheme, they could use their own watches to predict what you’ll do. But
+even a little randomness—even a small amount of entropy—can give you
+an important edge.
+Being unpredictable
+The same idea applies to games like “rock, paper, scissors”. Although it
+doesn’t seem like it, this is very much a game of skill. It takes skill to be
+able to avoid predictability in your moves, and to spot regularities in your
+opponent’s.
+Being unpredictable, indeed, is the hard part: our little meat brains just
+aren’t wired for it. No matter how hard you try, your attempts to generate
+entropy won’t be very successful. Without realising it, you’ll fall into
+relatively predictable patterns, and a more experienced player will easily
+beat you.
+LECTER: Clarice, doesn’t this random scattering of sites seem
+desperately random, like the elaborations of a bad liar?
+—“The Silence of the Lambs”
+The more we try to be random, the more we give ourselves away. Being
+able to produce sufficiently random numbers, then, is a key part of
+cryptography, and we’ll explore this further in the next chapter.
+13. Randomness
+The meat of the book is the “Table of Random Digits”… The table
+goes on for 400 pages and, except for a particularly racy section on
+page 283 which reads “69696,” makes for a boring read.
+—Bruce Schneier, “Applied Cryptography”
+In the previous chapter we saw that choosing good cryptographic keys—or
+making any other kind of choice that opponents mustn’t be able to predict—
+depends on our ability to behave randomly. Or, at least, to behave in a way
+that looks random enough to fool those who are trying to out-guess us, as in
+games such as poker and rock-paper-scissors.
+Pseudo-random generation
+Computer games also often need random-looking behaviour, to make the
+player’s experience a little different each time. But, like the Mandelbrot set,
+random number generators for games only need to appear complex. In
+practice, for speed and ease of implementation, they can be very simple
+indeed.
+Randomness in games
+Games like Elite need a steady stream of random numbers. They are
+used all over the place to add an element of chance to gameplay,
+whether it’s in the main flight loop when deciding whether or not to
+spawn an angry Thargoid in the depths of space, or on arrival in a
+new system where the market prices have a random element mixed into
+the procedural generation, so they are never exactly the same.
+—Mark Moxon, “Generating Random Numbers: Elite on the BBC
+Micro”
+The legendary space game Elite was first implemented on the BBC Micro, a
+decent home computer in 1984, but a tiny machine by today’s standards. It
+had a single 8-bit CPU clocked at 2MHz, and 32K of memory. Into this, the
+authors squeezed a real-time 3D space combat game with dozens of ship
+types, across eight galaxies containing over two thousand unique star
+systems to explore.
+The Fibonacci sequence
+This masterpiece of elegance and efficiency required many clever tricks to
+fit it into the BBC’s tiny memory, and one of them was an ingenious little
+“random” number generator in just 12 machine instructions.
+The idea is based on the Fibonacci sequence, which we’ve met already as
+one of our “regular” sequences:
+0, 1, 1, 2, 3, 5, 8...
+Each number, as I’m sure you’ve spotted, is the sum of the previous two.
+We need two “seed” numbers to start things off, so the actual sequence
+produced depends on which two numbers you pick.
+If you pick zero and one, you get the familiar sequence above. But different
+seeds will give us a different sequence. For example, using seeds of 12 and
+43, we get:
+12, 43, 55, 98, 153, 251, 404...
+This looks a bit random-ish, except that the numbers are always increasing.
+We can solve that quite easily using our old friend modular reduction. For
+example, let’s take the residue of each number mod 10 (or, in plainer
+language, take its last digit):
+2, 3, 5, 8, 3, 1, 4...
+A simple random generator
+This is already perfectly good enough for a simple game like “guess the
+number I’m thinking of between 0 and 9”. If Alice is playing this game with
+Eve, it doesn’t matter if Eve knows that Alice is using the Fibonacci
+sequence, because she’s still missing one crucial piece of information: the
+seeds that Alice chose.
+Alice can get these two numbers, as I did, by looking at the clock, or
+throwing dice, or using any other decent source of randomness. The point is
+that she doesn’t have to keep doing that: once she’s generated the seeds, she
+can just use a very simple algorithm (addition mod N) to produce as long a
+random-looking sequence as she wants.
+A Fibonacci generator in Go
+Here’s a Go program that implements this trick:
+package main
+import (
+    "fmt"
+    "time"
+)
+var (
+    seed1 = 0
+    seed2 = 1
+)
+(Listing random/1)
+Each call to seq generates the next number in the sequence, starting from
+the two configured seeds. And here’s the output:
+1, 2, 3, 5, 8, 3, 1, 4...
+Repeatability
+We have a random-seeming sequence, even though it’s generated by what’s
+clearly a deterministic program: every time we run it, we’ll see the exact
+same numbers. While this is a disadvantage in cryptography (because if Eve
+gets hold of Alice’s key-generating program, she’ll be able to generate the
+same keys), such repeatability can be desirable in games.
+For example, when you destroy an enemy ship in Elite, the random
+generator is used to draw the explosion particles in different locations on
+the screen. For the next frame of the animation, those same particles must
+be overdrawn, to erase them.
+func main() {
+    for range time.Tick(time.Second) {
+        number := seq()
+        fmt.Print(number, ", ")
+    }
+}
+func seq() int {
+    tmp := seed1 + seed2
+    seed1 = seed2
+    seed2 = tmp
+    return tmp % 10
+}
+But storing and retrieving the co-ordinates of every particle would take up
+too much memory, so instead the game simply re-runs the random generator
+with the same seeds, thus producing the same co-ordinates. The results look
+random enough to satisfy players, but the repeatability gives good graphical
+performance.
+Seeding the RNG
+Even in a game, though, it might start to become a bit obvious if the seeds
+were always the same every time you played it. The same enemy would
+appear at the same point, attack at the same moment, and so on. Elite solves
+this by grabbing information from the gameplay to seed its random
+generator (for example, the current screen x-co-ordinate of the nearest
+planet).
+We could use something like the poker player’s wristwatch trick to achieve
+the same goal. For example, suppose that when the program starts, it
+chooses initial values for the two seeds based on the current time. We could
+just take the current “seconds” value of the system time, like this:
+(Listing random/2)
+Even though these are overwhelmingly likely to be the same value, it
+doesn’t matter. The sequence produced is fine:
+4, 1, 5, 6, 1, 7, 8, 5, 3, 8...
+And we’ll run it again to check that we get something different:
+2, 3, 5, 8, 3, 1, 4, 5, 9, 4
+Security problems
+var (
+    seed1 = time.Now().Second()
+    seed2 = time.Now().Second()
+)
+This is certainly good enough for games, and other non-cryptographic
+applications. Indeed, it’s more or less the way that Go’s standard math/rand
+package generates “random” numbers: a deterministic algorithm, seeded
+with the current time.
+Algorithms like this, that produce apparently random results but are
+nonetheless deterministic, are known as pseudo-random number generators
+(PRNGs). The “pseudo” (Greek for “false”) is to remind us that such
+programs can’t be used for cryptography, because they produce fatally
+insecure keys, and we’ll very soon find out why.
+Periodicity
+Let’s see what effect a different choice of seeds has on our program’s
+output:
+Here’s the result:
+0, 5, 5, 0, 5, 5, 0, 5, 5...
+Oh dear. This doesn’t look nearly so good. We’ve stumbled upon one of the
+disadvantages of PRNGs: periodicity. In other words, the sequence
+eventually repeats. If you’re unlucky with your choice of seeds, as we were,
+then the algorithm’s period can be very short.
+No matter how carefully the seeds are chosen, though, any deterministic
+sequence will eventually repeat, and that’s a fatal flaw of PRNGs when
+applied to cryptography. Eve doesn’t even have to know what the algorithm
+is, only that if she waits long enough, the digits of Alice’s key will cycle
+back round to where they began.
+Distribution
+var (
+    seed1 = 5
+    seed2 = 5
+)
+So that’s one important reason why the output of deterministic PRNGs like 
+math/rand isn’t really random: it’s repetitive. Another problem is the
+statistics of such sequences. For example, let’s see what happens if we
+choose the seeds 2 and 4 for our program:
+6, 0, 6, 6, 2, 8, 0, 8, 8, 6, 4
+It’s clear that we’ll never get any odd numbers in this sequence. Adding
+together two even numbers can only ever produce an even result. So, while
+the program hasn’t yet got trapped in an obvious short cycle, it is
+condemned to wander forever among the even digits, never escaping them.
+An apparently random sequence that included no odd numbers wouldn’t
+look very random to most of us. And, thinking about it, that’s another
+quality we intuitively ascribe to random numbers: uniformity.
+Uniformity
+In other words, if we generate 1,000 random digits, we expect that 0 will
+occur roughly as often as 9, or any other particular value. It would be weird,
+by contrast, if we saw some specific digit occurring a lot more often than
+any other, or if even numbers occurred more often than odd ones.
+Similarly, a fair coin should produce roughly equal numbers of heads and
+tails. Of course, over very short runs, we wouldn’t be surprised to see a few
+more of one outcome than the other. But if we toss the coin a few hundred
+or a few thousand times, the results should be extremely close to 50%
+heads, 50% tails.
+That’s not true of our Fibonacci-based generator. We would like it to
+produce 50% odd digits, 50% evens, but it certainly doesn’t do that when
+given even seeds. If we’re planning to seed it using something arbitrary like
+the current time, this would be a disaster waiting to happen.
+“Secure enough” random generators
+So how do secure random number generators work, then? We know they
+exist (at least, for some value of “secure”) because every time you browse a
+website or make a credit card transaction online, your communication with
+the server is encrypted using some randomly-generated key. That can’t be
+produced by a simple deterministic PRNG like the one in our example, or
+you’d soon find your bank account empty.
+Environmental noise
+The answer is that the random generator does something equivalent to
+tossing a coin, which as we discussed earlier is so sensitively dependent on
+initial conditions as to make it impractical for Eve to predict the outcome.
+And there are many sources of such data in a computer: for example, you
+could use the intervals between keystrokes or mouse movements, or the
+differing access times of blocks read from disk.
+Indeed, randomness becomes just one of the many useful resources that
+operating systems provide to applications. “Environmental noise” sources
+such as keystrokes or network packets help to seed the system randomness
+pool, which uses a high-quality PRNG to maintain a sort of entropy
+reservoir. Programs that need random bits (for example, cryptographic key
+generators) can simply read as many as they need from the pool.
+The system entropy pool
+For example, suppose we need to generate a 256-bit key, so we require 256
+bits of entropy. On macOS or Linux, we can get them on the command line
+by reading directly from the /dev/random device, which is connected to the
+system entropy pool:
+0000000 d0 05 b7 68 e5 f7 83 59 bd 2f de 89 c4 8a 98 68 
+0000010 c6 f0 a8 6f 6f eb 38 a1 9e b7 9c 23 12 d7 8c a9
+Similarly, when we use Go’s crypto/rand package to generate secure
+random data, it comes ultimately from this system pool. So, is this good
+hexdump -n 32 /dev/random

@@ -1,0 +1,274 @@
+If you can transmit sound, though, why not just send a spoken message
+instead of a bunch of beeps?
+The answer is that human speech is complex and covers a broad spectrum
+of frequencies, meaning that it takes up a lot of bandwidth (or, equivalently,
+that it needs a high bitrate). If you’ve ever struggled to understand someone
+or to make yourself understood over a poor-quality telephone connection,
+you’ll know what I mean.
+When there isn’t much bandwidth available, for example in a noisy or lossy
+channel such as a long telegraph wire, or a low-power radio transmission,
+Morse and other codes are a far more efficient medium than speech for
+getting your message through, quickly and reliably.
+Note that a code isn’t necessarily intended to hide the contents of the
+message; it’s often just a way of shortening it or making it easier to transmit
+reliably, as with the Morse code.
+Codes can be used to send secret messages, though. For example, if we
+want to have a conversation that may be overheard, we might agree
+beforehand that the word “tomato” means “enemy in sight”, and that
+“parmesan” means “activate the hidden sleeping-gas capsule”. Then I can
+send you the following message in clear (that is, without needing to hide its
+contents):
+TOMATO. PARMESAN.
+If the message should be intercepted, the enemy won’t be able to make
+anything of it. They’ll probably just assume it’s my shopping list. Note that
+it doesn’t matter what code words we choose, only that we both agree on
+what they signify.
+One drawback of such codes is that the list of code words and their
+meanings—the code book—tends to be large, and that makes it difficult to
+keep it secure. Should the code book fall into enemy hands, the code
+becomes useless until you can arrange to distribute a new code book to all
+your agents, which is expensive and time-consuming.
+So another kind of encryption—message hiding—is to use a cipher. This
+works by substituting, usually, one letter for another, instead of a word or
+phrase. If the text is represented digitally (that is, by using numbers to
+represent letters), then the cipher operates by transforming one number into
+another, but the principle is the same.
+A shift cipher
+As long as both the sender and receiver (traditionally known as “Alice” and
+“Bob”, since that’s slightly more fun than just calling them A and B) agree
+on the cipher scheme, or algorithm, they can decrypt each other’s messages.
+Let’s see an example. Suppose Alice and Bob agree that every time the
+letter A occurs in the plaintext—the original message—Alice will replace it
+with B. Each B in the plaintext will be replaced by C, and so on. In effect,
+this scheme just “adds one” to each letter to encipher it.
+What does a plaintext like HEY BOB U UP look like, when enciphered using
+this scheme? If H becomes I, then the first letter of the ciphertext must be I.
+The second letter, E, becomes F, and so on. Encipher the rest of the message
+for yourself.
+How can we decipher such a message, then? Simple: just reverse the
+process. For example, suppose Bob sends the following reply:
+TVSF CBF DPNF PO PWFS
+Can you work out whether Alice and Bob will be getting together tonight?
+Of course you can. Just “subtract one” from each letter to recover the
+plaintext. For example, T becomes S, V becomes U, and so on.
+Key points
+You don’t have to always shift the letters by one place; you can choose a
+different number if you like. Of course, the person reading the message will
+need to know this number too, but you can agree that between you in
+advance. Naturally, it needs to be kept secret: anyone who knows this
+prearranged value will be able to decipher messages (and encipher them
+too).
+This key is an important input to the cipher, along with the plaintext.
+Indeed, we can think of a cipher as combining the plaintext with the key, in
+some arbitrary way, to produce the ciphertext. Deciphering is the reverse of
+this process.
+Wheels within wheels
+A popular children’s toy illustrates this idea: the “decoder ring” or cipher
+wheel, constructed from two rotating discs with the alphabet printed around
+them. It may not exactly be military-grade encryption, but it’s an easy and
+fun way of exchanging secret messages with friends. Just choose your key
+(for example, 1) and rotate the outer disc by that number of places, and
+you’re ready for enciphering and deciphering.
+This kind of scheme—where we shift letters around the alphabet by some
+agreed number of places—is called a shift cipher, or sometimes a “Caesar”
+cipher, since Julius Caesar is popularly supposed to have used one to keep
+his messages secret. Not that it worked out awfully well for him in the end,
+but never mind.
+Modern ciphers are a bit more complicated in their detailed workings than
+Caesar’s shift cipher, but surprisingly similar in principle. So let’s start with
+this one and work our way up.
+Enciphering
+We’ll begin by trying to implement the shift cipher in a Go program. Our
+program should be able to take a message, encipher it using the shift cipher,
+and print out the resulting ciphertext. And let’s generalise the idea of a
+“message” to any arbitrary data. Maybe Julius Caesar didn’t have to worry
+about communicating things like graphics, video, or even binary
+executables, but we do.
+One byte at a time
+In general, the most flexible way to represent arbitrary data in Go is as a 
+[]byte, that is, a slice of values each of which corresponds to one byte of
+data. A slice is the Go name for an ordered collection of values. You can
+think of the type []byte as meaning “a bunch of bytes”.
+For example, if you open and read a file from disk, or read from a network
+connection, you’ll find that you get the data as a bunch of bytes—a []byte
+—regardless of what kind of data the bytes actually represent.
+So the API to our shift cipher package (let’s call it shift, to be
+straightforward) is starting to take shape. We need to be able to accept data
+as bytes, transform it using the cipher scheme, and produce the resulting
+data as output, again in the form of bytes.
+Even with our fairly simple cipher scheme, this still sounds like a hard
+problem. I’ll let you into one of the software engineering fraternity’s best-
+kept secrets now (make sure no one’s reading over your shoulder):
+We don’t like to solve hard problems.
+It can be done, of course, but it’s very much a last resort.
+Instead, we much prefer to turn a complicated problem into a simple
+problem, and solve that first. Then it’s just a case of tweaking our solution
+until it works for the original problem, as well as our simplified version.
+We’re not the only ones who like to do this; scientists call it the “spherical
+cow” technique, after the old joke about the farmer who made the mistake
+of asking a physicist for advice on improving milk production. “First,” said
+the physicist, after a little thought, “assume a spherical cow…”
+Assume a spherical cow
+The simplest, most “spherical” version of our problem that we can think of
+is just some function that transforms a slice of bytes by enciphering it with
+the key of 1. Let’s call this imaginary function Encipher.
+For the moment, we won’t worry about using different keys, and we’ll also
+punt on the issue of getting the data in and out of the program. Let’s get the
+spherical cow working first, then we’ll add things step by step to make it
+more realistic.
+Before trying to implement any function, though, it’s always important to
+have a clear and specific idea of what it should do. Otherwise, it’s easy for
+us to get confused by trying to solve two problems at once: what the
+function should do, and how it should do it. So let’s take the first problem
+first.
+It helps to start by writing down a brief sentence or two describing the
+function’s behaviour, ideally with specific examples: given some value as
+input, what should the function return as a result?
+This step forces us to clarify our ideas, makes our assumptions explicit, and
+gives us a way of checking that the code we’ll eventually write is correct.
+So what sentence could we write to describe the specific behaviour of 
+Encipher? We can choose a short message to encipher, and work out the
+expected result in advance. Here’s one possibility, for example:
+Encipher transforms “HAL” to “IBM”.
+Notice how short and simple this statement is. In particular, it says what
+happens, but it doesn’t say anything about how it should happen. It doesn’t
+specify a key, or a cipher scheme, or anything like that. It describes the
+function’s behaviour purely in terms of inputs and outputs, treating 
+Encipher as though it were a black box whose inner workings are
+completely hidden from the caller.
+That’s good, because callers shouldn’t need to know about a function’s
+implementation, only its behaviour. In fact, as programmers we reserve the
+right to change the implementation later, and so long as it doesn’t change
+the behaviour, everything will continue to work just as well as before.
+From behaviour to test
+To enforce this implementation-hiding, we’ll turn our behaviour sentence
+into an automated test, so that whatever we do to Encipher, we’ll always
+have a reliable (and quick) method of checking that we haven’t altered its
+behaviour in any user-visible way.
+I’ve given you a head start by writing a Go test for Encipher that expresses
+the behaviour sentence we just wrote. You’ll find it in the example
+repository for this book, and here it is:
+(Listing shift/1)
+Choose your own adventure
+Throughout this book, we’ll be working our way gradually towards a full
+implementation of the shift cipher, and associated programs. If you like,
+you can join in right away and tackle the various code challenges as we
+package shift_test
+import (
+    "bytes"
+    "testing"
+    "github.com/bitfield/shift"
+)
+func TestEncipherTransformsHALToIBM(t *testing.T) {
+    t.Parallel()
+    input := []byte("HAL")
+    want := []byte("IBM")
+    got := shift.Encipher(input)
+    if !bytes.Equal(want, got) {
+        t.Errorf("want %q, got %q", want, got)
+    }
+}
+encounter them. If so, read on for instructions on setting up your own Go
+project to hold your solutions.
+Alternatively, you may prefer to read through the whole book first, focusing
+on understanding, then come back and work through the challenges in
+order. If you’d like to do it this way, skip to the next section (“A first test”),
+and return to this point later, when you’re ready to start coding.
+Here’s how to set up a new project for the shift cipher. Create a new folder
+on your computer to work in (for example, shift). Open a terminal and,
+within that folder, run:
+Getting the module name (the argument to go mod init) right is important,
+because otherwise people won’t be able to import your package. Replace 
+YOUR_GITHUB_ID with your GitHub username.
+Create a new file named shift_test.go and paste in the test code from
+listing shift/1. Change the import path from:
+to:
+Now you’re ready to start work. Let’s start by reading through this test to
+see what it does.
+A first test
+If you’ve read The Deeper Love of Go, or if you already have some
+experience with Go programming, I’m sure you’ll be able to follow the test
+git init
+go mod init github.com/YOUR_GITHUB_ID/shift
+"github.com/bitfield/shift"
+"github.com/YOUR_GITHUB_ID/shift"
+code just fine. But let’s walk through it anyway, just as a refresher.
+Anatomy of a test
+First, all Go files begin with a package declaration saying which package
+the file is part of. In this case, it’s the shift_test package.
+Next, we import some standard library packages we’ll need: bytes and 
+testing.
+Because we want to test functions in the shift package, we need to import
+that too, under its full import path: github.com/YOUR_GITHUB_ID/shift.
+Next, all test functions in Go have names beginning with the word Test,
+and this one is no exception. We could name it anything we like (as long as
+it begins with Test). Here we’ve chosen to use the behaviour sentence itself
+as the name (using “camel case” to avoid spaces, which aren’t allowed in
+Go function names).
+We call t.Parallel to tell Go that it’s okay to run this test in parallel with
+others (there aren’t any others yet, but that will soon change).
+Then we set up our input to be the slice of bytes representing the string
+“HAL”, and also we establish in advance the result we want when this is
+enciphered: namely, the slice of bytes “IBM”.
+In the middle of our test sandwich is the meat: we call the shift.Encipher
+function with our input, and save the result as what we got.
+When should the test fail?
+All this is important, but if we stopped here, it wouldn’t really be a useful
+test. To be useful, a test has to be able to fail, and the only question for us is
+when that should happen.
+Well, you know the answer to that: the test should fail when got is not equal
+to want. The bytes.Equal function will tell us this. If want and got are
+equal, then everything’s fine: we just reach the end of the test function and
+exit.
+On the other hand, if want and got are different, then the value of got must
+be something we didn’t expect. That would mean we have a bug in 
+Encipher (or possibly in the test… or even both). Whatever the cause, we’d
+like to know what we actually did get, so we print got using t.Errorf,
+along with a reminder of what it should have been (want).
+That all sounds a bit exhausting, but it’s a very simple idea: call the function
+with some input, compare the result with what you expected, and fail the
+test if they’re not the same. Almost all tests work this way, and the only
+important things that vary are the inputs and expectations.
+The world’s greatest bug detector
+Great! We have a test. So what’s next? Should we go ahead and write 
+Encipher now and check if the test passes?
+Well, we could, but there’s something else we should do first. We should
+see the test fail. What’s the point of that?
+Well, what is a test, actually? Yes, it’s a kind of executable specification of
+what the function should do, and a way of verifying that the implementation
+conforms to that spec. But there’s another way to think about tests: as bug
+detectors.
+Imagine you buy a smoke detector for your home, and the sales droid
+assures you that it’s the finest smoke detector available on the market today.
+It looks beautiful, it has a long battery life, wi-fi integration, and it literally
+has bells and whistles.
+All of that is wonderful, but it doesn’t tell you the one important thing you
+need to know: will it sound the alarm when there’s a fire? Because if it
+doesn’t, none of the other features matter at all. And for all you know, it’s
+just a fancy box with no works inside. So how can the sales droid prove to
+you that it really does detect fires?
+Only by actually lighting a fire underneath it and seeing if the alarm goes
+off, right? And exactly the same thing applies to our test. As long as it’s
+passing, that’s very nice, but it tells us nothing about whether it would
+actually detect bugs in Encipher. It could just be the equivalent of an empty
+box.
+To know whether it would really detect a fire, we need to light one. Or
+rather, if it’s supposed to detect bugs, let’s put a bug in Encipher on purpose
+and see whether the test catches it.
+A function about nothing
+What bug should we try? Well, probably the simplest thing that could be
+wrong with Encipher is that it does nothing at all! We’d definitely want to
+detect that, and this test looks like it should.
+So let’s write just such a null implementation of Encipher and see what
+happens. Something like this would be fine:
+(Listing shift/1)
+That’s clearly wrong, I hope you’ll agree. Whatever the input, Encipher
+always just returns nil. If we can’t detect this bug, then we don’t have
+much of a bug detector, do we?
+Here goes:
+--- FAIL: TestEncipherTransformsHALToIBM (0.00s) 
+    shift_test.go:16: want "IBM", got ""
+func Encipher(plaintext []byte) (ciphertext []byte) {
+    return nil
+}
+go test

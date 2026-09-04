@@ -1,0 +1,277 @@
+The problem is that with a block cipher, we’re only allowed to think about
+enciphering or deciphering a whole block at once. That’s what it means to
+be a block cipher.
+In effect, our cracking code is trying to “reach inside” the cipher’s
+implementation and bypass the standard cipher.Block interface. But what if
+the cipher scheme involves shuffling parts of a block around before, after,
+or during enciphering?
+In fact, many real cipher schemes do just this. So it’s not, in principle,
+meaningful to ask what effect changing the key has on individual bytes in
+isolation. It happens to work with the shift cipher, but only by coincidence,
+because the shift cipher doesn’t do any intra-block shuffling.
+If we’re to crack more realistic cipher schemes, we must take the API
+defined by cipher.Block seriously, and that means we’re only allowed to
+test our guessed key against a whole block at a time.
+GOAL: Update Crack to test its guesses by calling block.Decrypt, so that it
+no longer relies on specific knowledge about the cipher scheme in use.
+HINT: This is really a two-part problem. Part 1 is generating all possible
+32-byte keys. Part 2 is trying each key against a block of the ciphertext, to
+see if the result matches the crib.
+Enumerating long keys
+Key enumeration is simple in principle, but a little fiddly in practice. If the
+key were a Go uint64, for example, we could write something like this:
+for key := uint64(0); key <= math.MaxUint64; key++ {
+    // translate 'key' value into a byte slice
+    // try key against ciphertext
+}
+Unfortunately, a uint64 is only 64 bits (8 bytes) wide, as the name suggests.
+Our keys are 256 bits (32 bytes), which is much too large to fit into any
+built-in Go numeric type.
+There is a standard library math/big package for arbitrary-precision
+arithmetic, and we could use this, but let’s first see if we can solve the
+problem by just twiddling bytes directly.
+Suppose someone gave you a slice of 32 bytes representing a 256-bit
+number, and asked you what the next higher number would be. If you could
+answer that question, you could in principle iterate through all possible
+values representable by the slice. Does that give you any ideas?
+Key trying is comparatively straightforward, since we already wrote code to
+decrypt ciphertexts using a block cipher object. The body of your key-
+trying loop would have to first create the cipher object using key, then call
+its Decrypt method with the first block of the ciphertext (because that’s the
+only block we have a crib to check against).
+Over to you!
+SOLUTION: As we’ve just seen, one way to approach the key
+enumeration problem is to write some generalised Next function that takes
+the current key and tells you what value to try next. All the Crack function
+has to do, then, is start with the zero key, then keep calling Next and trying
+the result until it runs out of possibilities.
+Designing a Next function
+That last part also implies that Next can fail, when it can’t increment the key
+any further without overflowing the number of bytes available. So let’s
+suppose Next has a signature something like:
+func Next(key []byte) ([]byte, error) {
+We don’t need to hard-wire it to operate only on 32-byte arrays; in fact,
+taking a slice of any length means we can write a more concise test. Here’s
+one that might work:
+func TestNextCorrectlyIncrementsInputWithoutOverflow(t *testing.T) 
+    t.Parallel()
+    tcs := []struct {
+        input, want []byte
+    }{
+        {
+            input: []byte{0, 0, 0},
+            want:  []byte{1, 0, 0},
+        },
+        {
+            input: []byte{255, 0, 0},
+            want:  []byte{0, 1, 0},
+        },
+        {
+            input: []byte{255, 255, 0},
+            want:  []byte{0, 0, 1},
+        },
+        {
+            input: []byte{255, 255, 254},
+            want:  []byte{0, 0, 255},
+        },
+    }
+    for _, tc := range tcs {
+        t.Run(fmt.Sprintf("%x", tc.input), func(t *testing.T) {
+            got, err := shift.Next(tc.input)
+            if err != nil {
+                t.Fatal(err)
+            }
+            if !bytes.Equal(tc.want, got) {
+                t.Errorf("want %v, got %v", tc.want, got)
+Testing Next
+Let’s look at one of these test cases in detail:
+We’re saying that calling Next on input should change the first byte from a
+zero to a one. Wait, what?
+You might have expected that it would change the last byte, since we’re
+used to seeing numbers where the digits are given in decreasing order of
+size. For example, in the decimal number “123”, the first digit is the most
+significant (representing 100), and the last is the least significant
+(representing 3).
+Big endians and little endians
+This way of ordering digits is known as big-endian, because we start with
+the big end of the number first. By contrast, then, little-endian byte order
+would put the least significant byte first. For some applications, big-
+endianness makes sense, and for others, little-endianness is more
+appropriate.
+Since we’ll be looping over these bytes, it’s just simpler in Go to start at the
+beginning of the slice and work forwards. That’s why we construct the test
+cases this way. In fact, endianness is irrelevant for what we’re doing,
+because we never said that we have to try all the keys in a specific order. So
+long as we end up generating every possible 32-byte slice, it’s all good.
+            }
+        })
+    }
+}
+input: []byte{0, 0, 0},
+want:  []byte{1, 0, 0},
+We’ve also said that Next needs to return an error when it can’t generate the
+next key, because there are no more possible keys, so let’s test that, too:
+A simple implementation
+Here’s one version that could work:
+There are many other ways we could have done this, of course, and this one
+is by no means the most efficient way, but it does have the advantage of
+being fairly easy to write and understand. Here’s how it works.
+Given a particular key value, as a slice of bytes, we loop over each byte in
+turn, seeing if it’s possible to increment it without exceeding the maximum
+value that a byte can hold (255).
+func TestNextReturnsErrorWhenNextKeyWouldOverflow(t *testing.T) {
+    t.Parallel()
+    _, err := shift.Next([]byte{255, 255, 255})
+    if err == nil {
+        t.Fatal("want error on key overflow, but got nil")
+    }
+}
+func Next(key []byte) ([]byte, error) {
+    for i := range key {
+        if key[i] < 255 {
+            key[i]++
+            return key, nil
+        }
+        key[i] = 0
+    }
+    return nil, errors.New("overflow")
+}
+If it’s possible to increment the byte without overflow, then we do just that,
+and return the result. With the test case that we saw earlier, for example, {0, 
+0, 0}, it is possible to increment the first byte, so that’s our result: Next
+should return {1, 0, 0}.
+On the other hand, if the byte is already 255, then its next value should be
+zero, and we need to “carry” 1 to the next byte. So we zero this byte and
+move on to the next. The second test case {255, 0, 0} is an example of
+this. We rotate the first byte around to zero, like a car odometer, and the
+next digit clocks up from zero to one, with the result {0, 1, 0}.
+But suppose all the bytes are already 255, as in the “overflow” test. In that
+case, we try to increment the first, rotating it to zero, and carry one. Then
+we try to increment the second, rotating it to zero and carrying one. We try
+to increment the third, rotating it to zero—but now we’ve reached the end
+of the loop. There’s no next byte to carry the 1 to.
+In this case, we can’t represent the next value within the bytes we have
+available (the value overflows our storage capacity) so we return an error
+indicating “no more keys”.
+Checking our key guesses
+That’s part 1 of the problem solved, so let’s turn to part 2: checking all keys
+against the crib. We’ve already written the test:
+func TestCrack(t *testing.T) {
+    t.Parallel()
+    plaintext := []byte("This message is exactly 32 bytes")
+    ciphertext := []byte("Uijt!nfttbhf!jt!fybdumz!43!czuft")
+    want := testKey
+    got, err := shift.Crack(ciphertext, plaintext)
+    if err != nil {
+        t.Fatal(err)
+    }
+    if !bytes.Equal(want, got) {
+We’re using the (now) familiar plaintext enciphered with the “010101…”
+test key. Crack should be able to iterate through all the possible 32-byte
+keys until it finds the test key, at which point the deciphering will succeed
+in matching the crib.
+The soul of a new cracker
+So let’s write the new version of Crack and see how it does. Here’s the code:
+Very simple. We start with a key that’s all zeroes (thanks to make). If that
+happens to decipher the input, then we’re done (gosh, that was lucky!). If
+        t.Fatalf("want %q, got %q", want, got)
+    }
+}
+func Crack(ciphertext, crib []byte) (key []byte, err error) {
+    plaintext := make([]byte, len(crib))
+    key = make([]byte, BlockSize)
+    for {
+        block, err := NewCipher(key)
+        if err != nil {
+            panic(err)
+        }
+        block.Decrypt(plaintext, ciphertext[:len(crib)])
+        if bytes.Equal(crib, plaintext) {
+            return key, nil
+        }
+        key, err = Next(key)
+        if err != nil {
+            return nil, errors.New("no key found")
+        }
+    }
+}
+not, though, we get the next key with Next, and keep repeating this process
+forever, or more precisely until Next returns an error indicating that there
+are no more keys.
+We apologise for the delay
+Let’s run the test:
+Hmm. Nothing’s happening. Let’s give it a bit longer and see if it eventually
+terminates.
+Quite a while later:
+panic: test timed out after 10m 
+running tests: 
+        TestCrack (10m)
+Oh dear. A timeout doesn’t necessarily mean a failure, but it does mean that
+we need to check our expectations. Assuming Crack is working properly,
+how long would we expect it to take to find the key for this test case?
+Benchmarking key cracking
+Let’s write a benchmark to find out. As you probably know, Go’s testing
+package has benchmarking built in, so this is a nice opportunity to use it.
+All we need to do is write some function whose name begins with 
+Benchmark. For example:
+go test
+func BenchmarkCrack(b *testing.B) {
+    plaintext := []byte("This message is exactly 32 bytes")
+    ciphertext := []byte("Uiis message is exactly 32 bytes")
+    b.ResetTimer()
+    for range b.N {
+        _, _ = shift.Crack(ciphertext, plaintext)
+Within that benchmark function, we’re expected to call the function under
+test (Crack, in this case) many times inside a loop. How many times? Well,
+that’s determined by the benchmark machinery.
+It makes sense that if we want an accurate measurement of how long Crack
+takes, we should call it multiple times and take the average. Looping up to 
+b.N takes care of this for us: the benchmark will be executed with different
+values of b.N, and we’ll get some hopefully meaningful stats.
+Pick an easier problem
+Notice that in this benchmark we’re not asking Crack to find the key that
+we used in the previous test (01 01 01...). We already know that this test
+times out, so maybe it’s just taking too long to find this key. To get a rough
+idea how long that would actually take, we’ll try cracking a shorter key
+first, and then extrapolate from that result.
+We know that Crack will try keys in the following order: first, 00 00 00...,
+then 01 00 00..., 02 00 00... and so on. So we’ve set up a ciphertext
+which enciphers the plaintext using the key 01 01 00..., where the
+remaining bytes are all zero.
+That should be relatively quick to find. The first 256 guesses will be wrong,
+since they will all have the second byte equal to 0, where we know it needs
+to be 1. But as soon as the first byte rotates around back to zero and we
+carry one to the next byte, we will be at the key 00 01 00..., and then the
+next attempt will be the correct key.
+That’s 257 tries in all, so now let’s see how long that takes. First, we’ll need
+to comment out TestCrack, because running a benchmark also runs all tests,
+and we can’t do that at the moment because of the timeout problem.
+Understanding benchmark output
+    }
+}
+With the Crack test disabled for now, we can go ahead and run:
+goos: darwin 
+goarch: amd64 
+pkg: github.com/bitfield/shift 
+cpu: Intel(R) Core(TM) i7-3615QM CPU @ 2.30GHz 
+BenchmarkCrack-8           48979             24456 ns/op
+We can ignore the preamble, as it’s just telling us some metadata about the
+system we’re running the benchmark on: an 8-way Core i7 with macOS.
+The interesting line here is the last one:
+BenchmarkCrack-8           48979             24456 ns/op
+The “48979” is the number of times the benchmark loop was executed
+(that’s the b.N value). The “24456 ns/op” is the number of “nanoseconds
+per operation”, that is, the mean average execution time for Crack was
+24,000 nanoseconds and change.
+This works out to 90-odd nanoseconds per key attempt. Let’s see if we can
+use that number to predict how long it’ll take to find the key 01 01 01 
+00..., in other words, the equivalent of a three-byte key as opposed to a
+two-byte key.
+Cranking up the difficulty
+We know from our prior study of keyspaces that this should take roughly
+256 times longer, since each additional byte makes the keyspace 256 times
+bigger. Let’s find out. First, we’ll adjust the input ciphertext so that the first
+three bytes are offset by 1:
+And try the benchmark again:
+go test -bench .
+ciphertext := []byte("Uijs message is exactly 32 bytes")

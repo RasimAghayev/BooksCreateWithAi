@@ -1,0 +1,248 @@
+Great. If we were to amuse ourselves by turning this back into an English
+sentence describing the required behaviour, it would read:
+Encipher transforms “HAL” to “IBM”.
+Which is what we started with, but we now have a concise way of adding a
+bunch of other, similar cases. Let’s do that:
+It’s fun to think of English words that should produce other English words
+when enciphered in this way (see if you can find more, or write a program
+to find them for you).
+tcs := []testCase{
+    {
+        input: []byte("HAL"),
+        want:  []byte("IBM"),
+    },
+    {
+        input: []byte("ADD"),
+        want:  []byte("BEE"),
+    },
+    {
+        input: []byte("ANA"),
+        want:  []byte("BOB"),
+    },
+    {
+        input: []byte("INKS"),
+        want:  []byte("JOLT"),
+    },
+    {
+        input: []byte("ADMIX"),
+        want:  []byte("BENJY"),
+    },
+But, since we’re saying Encipher should operate just as well on arbitrary
+numeric data, let’s include some:
+Note the sneaky inclusion of 255 as an input value. That’s not random; we’d
+like to make sure that this edge case wraps around back to zero when
+enciphered.
+A working table test for Encipher
+Here’s the complete, updated test:
+    {
+        input: []byte{0, 1, 2, 3, 255},
+        want:  []byte{1, 2, 3, 4, 0},
+    },
+func TestEncipherTransforms(t *testing.T) {
+    t.Parallel()
+    tcs := []struct {
+        input, want []byte
+    }{
+        {
+            input: []byte("HAL"),
+            want:  []byte("IBM"),
+        },
+        {
+            input: []byte("ADD"),
+            want:  []byte("BEE"),
+        },
+        {
+            input: []byte("ANA"),
+            want:  []byte("BOB"),
+        },
+        {
+(Listing shift/3)
+Notice that we simplified things slightly by not bothering to create a named
+type definition for the struct here. Instead, we specify it with an anonymous
+type literal, as part of the assignment to tcs:
+            input: []byte("INKS"),
+            want:  []byte("JOLT"),
+        },
+        {
+            input: []byte("ADMIX"),
+            want:  []byte("BENJY"),
+        },
+        {
+            input: []byte{0, 1, 2, 3, 255},
+            want:  []byte{1, 2, 3, 4, 0},
+        },
+    }
+    for _, tc := range tcs {
+        name := fmt.Sprintf("%s to %s", tc.input, tc.want)
+        t.Run(name, func(t *testing.T) {
+            got := shift.Encipher(tc.input)
+            if !bytes.Equal(tc.want, got) {
+                t.Errorf("want %q, got %q", tc.want, got)
+            }
+        })
+    }
+}
+    tcs := []struct {
+        input, want []byte
+    }{
+        // ... data goes here
+    }
+This is common in table tests, as you can imagine, because we always have
+some test case type, and it’s usually obvious from context that that’s what it
+is, so it doesn’t need a name.
+If we restore the Encipher function to its working version, we should find
+that it passes all these test cases, and indeed it does. Reassuring!
+By the way, if you want to learn more about testing in Go (which I heartily
+encourage), I’ve written a whole book on the subject. The Power of Go:
+Tests is a complete guide to Go’s built-in testing features, as well as lots of
+practical tips, techniques, and ideas for tackling hard-to-test things in real
+codebases.
+2. Enciphering
+The Kāma-sūtra recommends that women should study 64 arts, such as
+cooking, dressing, massage and the preparation of perfumes. The list
+also includes some less obvious arts, namely conjuring, chess,
+bookbinding and carpentry.
+Number 45 on the list is mlecchita-vikalpā, the art of secret writing,
+advocated in order to help women conceal the details of their liaisons.
+—Simon Singh, “The Code Book”
+We now have a program that applies our simple shift cipher to arbitrary
+data. Or do we?
+Well, not so fast. Actually, although we’ve written some useful code, we
+don’t yet have a program, in the sense of some command we could run that
+would actually encipher real data. Let’s see if we can add that now.
+A simple enciphering filter
+First, how should it behave? The simplest user interface we can imagine is
+for the program to act as a filter: it just reads from standard input and writes
+to standard output. Many familiar tools work this way, and it means we can
+include our enciphering program as part of a pipeline, maybe including
+other transformations.
+When Alice wants to send a secure message to Bob, she can write the
+plaintext in her favourite text editor, and then “pipe” that text into our
+enciphering tool. Its output will be the ciphertext message she transmits to
+Bob (and we’ll worry about how he’s going to decipher it later). First let’s
+take care of the enciphering.
+A command package
+You probably know that in order to produce a command—that is, an
+executable binary—from a Go program, we need to compile a package
+named main. Let’s create a new subfolder for this package, named after the
+command it implements:
+And now we’ll add a main.go file to this folder. This is the “glue code” that
+connects our shift package with the user’s command line, and turns it into
+a useful tool. So what does it need to do?
+Garbage in, garbage out
+Not much, as it happens. It just needs to read data from standard input, pass
+it to Encipher, and write the resulting enciphered data to standard output,
+and that’s straightforward:
+mkdir -p cmd/encipher
+package main
+import (
+    "fmt"
+    "io"
+    "os"
+    "github.com/bitfield/shift"
+)
+(Listing shift/3)
+Because we need to import the shift module, we have to tell Go where to
+find it. Change the “github.com” import path in your main.go to whatever
+you declared your module name to be. For example:
+For testing, we can use the echo command and the shell’s “pipe” operator
+(|) to pass some text into the program’s standard input:
+Ifmmp-!xpsme
+Nice! Let’s try a longer message:
+UIFTF!QSFU[FMT!BSF!NBLJOH!NF!UIJSTUZ
+Looks pretty incomprehensible, unless you know the cipher scheme (and
+the key). But, on closer inspection, there are some interesting patterns in the
+ciphertext.
+func main() {
+    plaintext, err := io.ReadAll(os.Stdin)
+    if err != nil {
+        fmt.Fprintln(os.Stderr, err)
+        os.Exit(1)
+    }
+    ciphertext := shift.Encipher(plaintext)
+    os.Stdout.Write(ciphertext)
+}
+"github.com/YOUR_GITHUB_ID/shift"
+echo "Hello, world" | go run ./cmd/encipher
+echo "THESE PRETZELS ARE MAKING ME THIRSTY" | go run ./cmd/encipher
+All about Eve
+We’ve already met Alice and Bob, the traditional sender and receiver in the
+cryptographic literature. They want to have a private conversation, but
+private from whom?
+We’ll assume that Alice and Bob can’t meet in person, or otherwise arrange
+some kind of communication channel whose security is guaranteed. If they
+could, they wouldn’t need cryptography. So Alice must be able to protect
+her messages in such a way that they can be sent, effectively, in public.
+To put it another way, if some eavesdropping third party should get hold of
+the ciphertext, they shouldn’t be able to learn anything about the enciphered
+message—at least, if the cipher is any good.
+This new addition to our cast of characters is traditionally named “Eve”
+(yes, computer scientists are just as prone to dad jokes as physicists). So
+let’s put ourselves in Eve’s place for a moment and see how she might go
+about analysing the intercepted ciphertext.
+The aim of this cryptanalysis is to figure out the key, or otherwise to
+recover the plaintext. If that’s not possible, Eve might still be able to exploit
+weaknesses in the key or cipher, or in Alice and Bob’s way of using them,
+to learn at least something useful about the conversation.
+Reverse engineering
+One way that Eve could analyse the ciphertext is to look at the relative
+frequency of the different letters in it. Here’s our message again:
+UIFTF!QSFU[FMT!BSF!NBLJOH!NF!UIJSTUZ
+Can you see any interesting patterns? Let’s start by looking for the most
+common letter in the ciphertext, and assume that it represents E, which is
+the most common letter in English text.
+There are six occurrences of F, more than any other letter, so perhaps the
+cipher transforms E to F. That would be a key—a shift value—of 1, so let’s
+apply the inverse transformation and see what we get:
+THESE PRETZELS ARE MAKING ME THIRSTY
+Oh dear. Our seemingly-impenetrable cipher wasn’t actually all that hard to
+crack, given a couple of sensible guesses, and a single well-known fact
+about the English language. If Alice and Bob want to keep their snack-chat
+from Eve’s ears, they’ll have to work a little harder.
+Variable keys
+And, if Eve happens to get hold of a copy of Alice’s enciphering program,
+she doesn’t even need to break out the frequency analyser. With the current
+version of the program, there can be only one key: namely, 1.
+This is officially the world’s weakest cipher! So let’s fix that problem first,
+by adding a way for Alice to select a different key.
+Adding a keyhole
+GOAL: Modify the test so that it expects Encipher to take an additional
+argument specifying the cipher key. Make sure the test cases include
+different key values other than 1.
+Don’t worry about implementing this change yet, just update the test as
+though Encipher already worked this way. You won’t be able to run it just
+yet, because the code won’t compile—this is expected, and we’ll deal with
+that after we’ve sorted out the test.
+HINT: We’re saying that the key will be different for each test case, so that
+sounds like we’ll need a new field on our test case struct type.
+We’ll also need some new cases, testing a range of different keys. Finally,
+we’ll need to modify the test logic itself to pass each key to Encipher. See
+what you can do!
+SOLUTION: Let’s take things step by step. First, since we’ll be using
+different keys for different test cases, we’ll need to add a new key field to
+our test case struct:
+We could have used int for the key, of course, but since we’ll be adding
+this value to a byte, it makes sense to use a byte here, too. And, since there
+are only 255 useful keys, we don’t need anything bigger than a byte to store
+them in.
+Why are there only 255 useful keys, by the way? Well, the maximum value
+you can store in a byte is 255. If you try to increment a byte value beyond
+that, it just flips around back to zero, as one of our test cases demonstrates.
+If you include zero, that gives us 256 possible values for key. But
+enciphering with a key of zero would leave the plaintext unchanged: in
+other words, zero is a weak key. So our cipher scheme is currently limited to
+255 useful keys.
+New keys, new cases
+Now let’s give some test cases, using a few different keys:
+tcs := []struct {
+    key         byte
+    input, want []byte
+}
+tcs := []struct {
+    key         byte
+    input, want []byte
+}{
+    {
+        key:   1,
+        input: []byte("HAL"),
+        want:  []byte("IBM"),

@@ -1,0 +1,254 @@
+In other words, if there are N possible messages, then the entropy of any
+particular choice of message is the number of bits required to uniquely
+express which of those possibilities you chose. Equivalently, it’s the number
+of coin tosses required to generate that message.
+Note that this needn’t be the same as the number of bits in the message
+itself. Some of those bits might be redundant: that is, they don’t add
+anything to the unique information content of the message.
+This is true of English texts as well. You might have seen the old billboard
+adverts for a secretarial college which said something like this:
+F U CN RD THIS, U CAN BCM A SEC & GT A GD JB W HI PA
+And you can read it, right? That’s the point: English spelling is redundant
+enough that we can remove many of the letters without impairing the
+content of the message.
+That’s a good thing for us in general, but it’s not so good in the context of
+cryptography. If a key contains redundant bits, for example, then by
+definition those bits don’t contribute anything to the security of the key. We
+should subtract them from the effective length of the key for cryptographic
+purposes.
+A 256-bit key that contains 250 redundant bits is really no more secure than
+a 6-bit key: it just looks as though it is. So we would say that, even though
+the key is 256 bits long, its entropy—the number of useful bits—is only 6.
+Entropy of digital messages
+This gives us a powerful way of calculating just how hard Eve’s task of
+brute-force guessing will be, for a given key or message. It even applies to
+things that are non-textual in nature.
+For example, suppose Alice wants to send a photo privately to Bob. We
+won’t be so intrusive as to ask what’s in the photo, but we would like to
+know how much entropy there might be in Alice’s message.
+If Eve wants to peep on Alice and Bob’s encrypted communications, this is
+equivalent to asking how many possible plaintexts she has to consider if she
+doesn’t know the cipher key. So, can we work it out?
+Well, the raw sensor data from Alice’s camera might be something like
+100MiB per frame, but as we now know, the entropy will probably be
+somewhat less. Image data usually contains some redundancy.
+Pictures often contain a lot of adjacent pixels of the same colour, so Alice
+may be able to compress the image file without losing any information. For
+example, run-length encoding specifies that a given pixel should be
+repeated a number of times. If the image contains many long runs of
+identical pixels, it can be compressed a lot, but the original image can still
+be recovered exactly.
+Compression
+And this is another way of thinking about entropy: it’s what’s left after
+you’ve applied as much of this lossless compression as possible.
+You can still go ahead and apply lossy compression too, of course, but
+unlike lossless compression, that does reduce the entropy of the message.
+That’s often okay for data such as images or movies, since what’s lost in
+lossy compression is usually information we can manage fairly well
+without.
+For example, many image compression schemes sacrifice some of the
+dynamic range of the image (the maximum difference in brightness
+between dark and light areas). Or they give up some of the original colour
+depth: the range of available colours for each pixel. Digital sensors can
+discriminate finer shades of colour than the human eye, so we can lose a
+surprising number of bits per pixel without affecting the image too
+noticeably.
+The same principle applies to compressing music, voices, or other sounds.
+Humans don’t hear frequencies above about 20KHz very well, so we can
+remove most such frequencies from a digital music file without making it
+sound terrible. Indeed, the worse the sound quality you’re willing to accept,
+the more you can compress the audio data.
+Effective lossy compression, then, depends on knowing something about
+the domain of the data you’re dealing with. If it’s still images or video, you
+can take advantage of the characteristics of the human eye to eliminate
+some less important information. If it’s audio, you can do the same by
+knowing about the differential frequency response of the ear, and so on.
+Enciphered data
+So what about compressing enciphered data? In principle, that shouldn’t be
+possible. Every bit of the ciphertext should be essential for reconstructing
+the plaintext. Any redundant bits, by definition, can be removed without
+affecting the decipherability of the message.
+Redundancy is great when we want our message to be easily understood, as
+in the billboard example, or in circumstances of noisy or imperfect
+transmission. But when we want to conceal the message, the same
+reasoning implies that there should be little or no redundancy in the
+ciphertext.
+It shouldn’t be possible to compress the ciphertext by much, then, because
+there should be no redundant bits to remove.
+Identifying ciphertexts
+This is something it’s useful for Eve to know, too. As she pores over the
+stream of intercepted binary data from Alice and Bob’s communication
+channel, her first challenge is simply to identify which of the messages are
+actually enciphered.
+Many of them won’t be, so how can Eve tell if a given sequence of bits
+represents ciphertext or not?
+That’s easy: she can try to compress it! If this doesn’t appreciably reduce its
+size, then either it’s already compressed, or it’s ciphertext (or both).
+Complexity
+This idea of stripping out redundant information gives us another
+interesting way of thinking about the entropy of a key or message.
+Suppose Alice wants to send Bob a list of all the positive, even integers less
+than a million. What’s the most efficient way she could do that?
+Describing sequences
+The obvious, but inefficient, way would be to simply write them all out:
+2, 4, 6, 8...
+But that would be a long message: many millions of bytes. And we
+instinctively recognise that this long-windedness isn’t necessary.
+Because the concept of “positive and even numbers” is familiar to most
+people, Alice could use it to shorten her message:
+Dear Bob, 
+ 
+I hope this letter finds you well. I am writing to inform you of 
+the positive, even integers less than one million. 
+ 
+I beg to remain, 
+Your obedient servant, 
+Alice
+Perhaps this message could be made even shorter, at the risk of being
+slightly less courteous, but you see the point, I’m sure.
+Instead of laboriously writing out every even number, all Alice has to do to
+convey that information to Bob is to unambiguously describe that set of
+numbers instead.
+A generating algorithm
+In a sense, what she’s sending him is not the list of numbers itself, but a
+kind of recipe for producing it. Or, as a computer scientist would say, an
+algorithm.
+Although she didn’t say so explicitly, Alice is telling Bob that if he writes
+out all the positive, even integers less than one million, he will have the list
+she wants to communicate to him. Because the numbers form an easily-
+described sequence, it’s much more efficient to send the description than it
+is to send the sequence itself.
+To eliminate any ambiguities or uncertainties, Alice could make this
+description so explicit that even a machine could understand it. This would
+naturally take the form of a computer program.
+It happens that we know a very good programming language she could use,
+so we might suggest to her something like the following:
+Bob doesn’t need to know how any of this works, or even to understand Go
+code. He can simply copy and paste it into the Go Playground, or a text file,
+and run the program. The result is, of course, the message that Alice
+intended to communicate:
+2, 4, 6, 8...
+package main
+import "fmt"
+func main() {
+    for i := 1; i < 1_000_000; i++ {
+        if i%2 == 0 {
+            fmt.Print(i, ", ")
+        }
+    }
+}
+The shortest program that describes a sequence
+Now, although this program is a little longer than the English words “the
+positive, even integers less than one million”, it is very precise. It’s also a
+great deal shorter than writing out all the numbers in full. In fact, it takes up
+just 123 bytes, or 984 bits.
+So Alice can send Bob just 984 bits of information, and contained within
+them is everything necessary to reconstruct the original message (except for
+a Go compiler, of course).
+This, then, is a very effective kind of lossless compression. Instead of
+sending the data itself, send a program that generates the data.
+This is a good way to discover how much entropy is contained in a
+message, isn’t it? For a given string of bits, let’s say, we can ask “What is
+the shortest program that generates exactly these bits?”
+Kolmogorov complexity
+This measure is called the Kolmogorov complexity, or algorithmic entropy
+of the message. When we have to pay by the bit to transmit some message
+s, we want its Kolmogorov complexity K(s) to be as low as possible, to
+minimise our phone bill.
+Some apparently very long messages—such as the sequence of integers in
+our example—turn out to have a very low K. This is equivalent to saying
+that they can be losslessly compressed into a much smaller message.
+Indeed, many infinite sequences are like this, such as:
+all the even integers
+all the integers
+the digits of π
+and so on. All these sequences can be completely described by very concise
+programs, making them very compressible (infinitely so, indeed).
+How does this low entropy relate to randomness? While the integer
+sequences don’t look random, the digits of π certainly do:
+3.14159265358979323846264338327950288419716...
+There’s apparent complexity here, but in fact the sequence is completely
+described by a very regular-looking formula:
+$$ \frac{\pi}{4} = 1 - \frac{1}{3} + \frac{1}{5} - \frac{1}{7} + \cdots $$
+And I don’t even really need to send you the formula. I can just say “pi”,
+and you’ll know what I mean. That’s enough information for you to extract
+any specific set of digits you need, given enough time and computer power.
+This really highlights the difference between information and entropy,
+doesn’t it? π would take an infinite number of bits to write out in full, but I
+can completely specify the values of all those bits by a single Greek letter,
+which takes 32 bits to encode in a Go program.
+Therefore, in this particular scheme the entropy of π is just 32 bits. It
+wouldn’t make a good encryption key!
+Complexity from simplicity
+Similarly, consider the famous Mandelbrot set:
+(image by Wolfgang Beyer)
+This looks complex, but it’s generated from this simple formula:
+z → z2 + c
+According to Kolmogorov, a system is only as complex as its simplest
+description, and this description is pretty simple!
+That’s the opposite of what we want for a cryptographic key, though. A key
+that looks long and complex, but that is completely described by a short and
+simple rule, is a gift for Eve, and thus a disaster for Alice. Such a low-
+entropy key is insecure.
+The security of an algorithm rests in the key. If you’re using a
+cryptographically weak process to generate keys, then your whole
+system is weak.
+—Bruce Schneier, “Applied Cryptography”
+Security
+Not all complexity is illusory, though. Some complex-looking things really
+are complex: they have a very high K, meaning that they contain a lot of
+entropy.
+Randomness is high entropy
+For example, consider these lists of numbers: the diameters of each sand
+grain on every beach in the world, or the masses of each star in the galaxy.
+These are high-K messages: the shortest program to generate them would be
+no shorter than the messages themselves.
+This gives us another clue about what makes random sequences random:
+they contain a lot of entropy. Equivalently, they have high Kolmogorov
+complexity.
+To say that you can’t write a short program to generate a given sequence is
+the same as saying that the sequence is unpredictable: that is, random.
+While the digits of π look random, they aren’t, because they form a
+completely predictable sequence.
+Key generation
+The reason this is significant for things like passwords and keys is that
+Eve’s chance of guessing them is directly related to the amount of entropy
+they contain.
+Even if Alice’s password is a million bits long, it won’t be very secure if
+most of those bits are redundant. For example, maybe the whole bit-string
+can be generated by a program no more than 128 bits long. This is the same
+as saying Alice’s key contains only 128 bits of entropy, even though it looks
+much longer.
+To break Alice’s key, Eve only has to search the space of 128-bit programs,
+not the space of 1-million-bit numbers. Alice would have done better to
+simply toss a coin a million times (or even just 129 times) to generate her
+key.
+Sure, she might end up by pure chance with a very low-K number, such as
+all zeroes, or alternating ones and zeroes. But such numbers are a
+vanishingly small subset of the 21, 000, 000 possible keys. Most of these,
+statistically, won’t form easily-described predictable sequences.
+Choosing random bits, then, is a good way to create secure keys, because
+by definition they have a lot of entropy.
+Pragmatic non-determinism
+But how can we choose bits randomly with a program? A computer can’t
+toss a coin, after all. Or can it?
+I mean, the result of a coin toss isn’t unpredictable in principle. If you knew
+the exact shape and mass distribution of the coin, its initial velocity and
+spin, the location and momentum of every air molecule nearby, and so on,
+you could work out whether it’s going to land heads or tails.
+But, in practice, you don’t, so you can’t.
+The reason a coin toss is “acceptably” random for most human purposes is
+that even though the result is deterministic, actually determining it is more
+trouble than anyone’s usually willing to go to. This is because it’s the result
+of a chaotic system. “Chaos”, in the mathematical sense, means that the
+way such a system evolves over time is highly sensitive to initial
+conditions.
+That’s true of many processes in the physical world, in fact. Reality has a
+lot of decimal places. It doesn’t take many interactions between physical
+things for the results of future measurements to become, in practice,
+impossible to calculate with any useful level of accuracy. That’s why our
+ability to predict the weather falls off so sharply with time.
+A coin toss is a good example, because a small difference in the force with
+which the coin is tossed could change a heads outcome to a tails, or vice
+versa. Similarly, tiny air movements or slight differences in the weight
+distribution of the coin can have a large effect on the result.

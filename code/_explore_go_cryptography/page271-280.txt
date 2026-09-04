@@ -1,0 +1,251 @@
+This distributed ledger will be, in the term of art, eventually consistent. That
+is, if you wait long enough, every transaction will show up in every copy of
+the ledger, and everyone’s balances will agree. Not moment-by-moment, for
+sure, but within a few seconds or minutes, which is fine.
+Security
+Or is it? I mean, electronic transactions can happen very fast. What’s to
+prevent some scammer, Sam, from spending the same Bobcoin twice in
+succession?
+For example, suppose that Sam has a starting balance of ten Bobcoin, and
+they use it to buy a pizza from Pat. But then, moving quickly, before the
+transaction has had a chance to propagate across the network, Sam spends
+the same ten Bobcoin on an ice cream from Irene.
+The double-spending problem
+The distributed ledger will eventually reconcile these two transactions, of
+course. At that point, Sam will be overdrawn—they’ll have a negative
+balance—but maybe they don’t care about that. After all, they have the
+pizza and ice cream. It’s Irene who’s actually out of pocket—or Pat,
+depending on which transaction the network accepts first.
+If Sam wants to make further transactions in the future, there’s nothing to
+stop them just opening a new account with a fake name. Then they can
+overdraw that account, and so on.
+This would be bad news for Pat and Irene, and junk food vendors
+everywhere, not to mention the credibility of the Bobcoin system.
+Clearly we need some way for Irene to verify that Sam actually has the
+money to pay for their ice cream. How could we do that?
+Ordering transactions
+Suppose Sam opens their account with a deposit of ten Bobcoin, and then
+makes two transactions: spending ten Bobcoin on a pizza, and spending ten
+Bobcoin on ice cream.
+The second of those two transactions should fail, because Sam doesn’t have
+any money. But, given that Irene’s computer receives these transactions
+after a delay, and in an unknown order, how can she determine which one
+came first?
+Let’s assume that the stream of transaction data is divided into equal-sized
+blocks, for convenience. Now the problem reduces to ordering those blocks.
+To put it another way, we need a way to chain the blocks so that we can
+detect any out-of-sequence (or modified) block.
+Does that sound familiar? It should.
+We already know about a kind of blockchain whose ordering is fixed,
+because each block depends on the previous one. That would be a block
+cipher operated in CBC mode.
+But we’re not encrypting the Bobcoin transactions, because they must be
+public. How could we use the contents of a given Bobcoin block to produce
+a unique input to the next block, in a way that makes it impossible (or very
+difficult) to synthesise fake blocks?
+That sounds a lot like a job for a hash function, doesn’t it?
+The blockchain
+And that’s what we use. When each node—each computer in the Bobcoin
+network—has received a block’s worth of transactions, it starts trying to
+compute the next block. It hashes the contents of the previous block
+together with the transaction data, and the result is the next block, which it
+then sends out to the network.
+Now we have a way for nodes to verify the order of blocks: by verifying
+their hashes. Since the hash of any block depends uniquely (or very nearly
+uniquely) on the previous block, a given set of blocks can only be verified
+in their true order.
+This means we can order all transactions, and thus Irene can detect Sam
+trying to double-spend their Bobcoin on empty calories. Success!
+Well, nearly. There’s still a problem: what if two nodes independently
+compute and send out different versions of the “next” block? Won’t the
+chain then split into two independently-evolving versions?
+To avoid that, a kind of consensus voting takes place. If a node receives two
+different candidates for the “current” block, it keeps both of them until it
+can decide which is the authoritative block.
+Doomed stubs
+How can the node decide which block wins this race? Well, sooner or later
+it’ll receive another block from the rest of the network. This will be
+“chained” to one or other of the two blocks.
+In other words, the new block will be verifiable only against the hash of
+either Block A or Block B. Whichever it is, that’s what the network
+considers to be the authoritative block, and the node can safely discard the
+other one.
+This doomed “stub” version of the chain might still grow for another block
+or two, depending on the speed of propagation, but eventually it will be
+discarded. When faced with two competing versions of the chain, nodes
+will always opt for the longer one, because it represents the majority
+opinion that this is the “correct” chain. More work has gone into it, so the
+network votes with its feet—or rather, with its hashes.
+Verifying a given transaction, then, is simply a matter of looking at the
+block that contains it. The more valid blocks that follow this one, the more
+confident we can be that the transaction has been accepted by other nodes.
+Since hashing takes some non-zero amount of computing power, it’s in a
+node’s interest not to waste time, heat, and money by computing hashes for
+a doomed stub. Thus, the network rapidly converges on a single
+authoritative ordering of Bobcoin transactions.
+To repay nodes for their hard work in keeping the blockchain going, the
+node that successfully creates the next block earns a small fee, made up of
+the leftover fractional bits of Bobcoin from each transaction. Each node’s
+version of the next block includes a transaction in which this fee is paid to
+their account. Thus, their reward for winning the race is to have their fee-
+earning transaction validated by the rest of the network.
+Integrity
+In a decentralised scheme like this where each node marks its own
+homework, isn’t there a danger of fraud?
+Surely all a malicious node has to do is compute the next block, based on a
+bogus transaction (“Alice pays Mallory one million Bobcoin”, let’s say),
+and then keep this stub chain going by computing all future blocks based on
+it (plus the subsequent genuine transactions). What’s to prevent this?
+Consensus
+First, transactions are signed by the person who makes them, and we’ll talk
+more about this in the next chapter. Suffice it to say for now that only Alice
+can create a transaction where Alice pays money to someone else, and
+anyone can independently verify it.
+Second, hashing is hard work. It costs some amount of money to compute
+the hash of each block, so the longer this “fake” chain is kept up, the more
+it costs Mallory. Eventually it’ll cost them more than they could steal with
+the fake transaction.
+In effect, Mallory is fighting the combined hashing power of all the other
+nodes in the network, which are collaborating to keep the genuine chain
+going.
+The genuine chain will rapidly become longer than the fake one, because it
+simply has more hashing power behind it. Very soon, all nodes will discard
+the shorter chain as invalid, and Mallory’s efforts will be for nothing.
+Sure, Mallory could recruit other nodes into their Bobcoin-stealing gang,
+but they’ll still be defeated by the honest nodes. Only if Mallory can
+commandeer more than half of the total hashrate in the network can they
+hope to subvert the blockchain.
+Such a 51% attack is expensive and infeasible for large networks, which
+means that the more nodes join a given blockchain network, the more
+secure it is: safety in numbers.
+Proof of work
+A third way in which malicious blocks are discouraged is to make the
+hashing process as slow and expensive as possible, rather like the password
+storage hashes we looked at in the previous chapter.
+In the case of the real-life Bitcoin network, for example, the hashing
+problem is made harder by requiring miners—nodes that want to produce
+blocks—to produce a hash value within a specific range.
+For example, suppose you’re given some transaction data and asked to hash
+it so that the 256-bit hash value is less than, say, a million. Of course you
+can only do this by mixing in some extra data of your own—some nonce—
+to produce the required value. And since you can’t reverse the SHA-256
+algorithm to find the input number you need (it’s preimage-resistant), the
+only way you can do it is by guessing.
+It’s like a kind of benign brute-force attack, or a version of the “guess the
+number I’m thinking of” game for extremely patient players. You just keep
+guessing a different value for the nonce and hashing the block until, by pure
+chance, your hash value comes out as some number less than 1,000,000.
+That might take a while: given the size of the 256-bit hashspace, your odds
+of producing an acceptable hash are about one in 1071 for each attempt. It
+therefore costs quite a bit of money just to produce each block, making
+attempted fraud less attractive. Mining fees are structured so as to make it
+more rewarding to mine genuine blocks than fake ones.
+In Bitcoin, the required difficulty target is a little easier than our example: at
+the time of writing, the chances of producing an acceptable hash are
+currently about one in 1064. The difficulty target gradually increases over
+time, to keep pace with the expected increase in computing power.
+Up in smoke
+If I tell you that, despite this astronomical difficulty, a new Bitcoin block is
+mined, on average, about every ten minutes, that gives you some idea of the
+enormous computing resources devoted to the network.
+Tens of thousands of Bitcoin nodes are all hashing as fast as they can, five
+hundred billion billion hashes a second, trying to guess a nonce that will
+produce a valid hash, and only one node can win that race. All the work
+done by the losing nodes is wasted, and simply goes up in smoke. Literally,
+since most of the electricity they use comes from burning fossil fuels.
+This proof of work scheme, then, depends on wasting a massive amount of
+precious energy. Bitcoin alone consumes over 120 terawatt-hours of
+electricity every year, which is more than many countries.
+In effect, Bitcoin adds another energy-hungry country to the world, and we
+don’t really need another one of those.
+It seems a shame that the most powerful distributed supercomputer in
+human history is being wasted on polluting our atmosphere and heating up
+the planet by solving math problems that are totally useless to humanity.
+Proof of stake
+Proof of work, then, is perhaps the worst idea ever, but fortunately there are
+some alternatives in prospect.
+One is so-called proof of stake. In this scheme, rather than the most trusted
+nodes being the ones that have burnt up the most energy, they are simply
+the ones who have the most money. These nodes, the reasoning goes, have
+the biggest stake in the network, so they’re least inclined to undermine it.
+That’s true to some extent, but those who find the democratising nature of
+cryptocurrency appealing may think that this is just another way of rigging
+the system in favour of its richest participants. And we have that already:
+it’s called “capitalism”.
+Clearly we need a fair, efficient way of preventing fraud and double-
+spending that doesn’t literally set fire to the planet, and we don’t have that
+at the moment. Maybe someone will have a bright idea about this soon.
+Maybe it’ll be you.
+17. Authentication
+Cryptography is the art of transforming information security problems
+into key management problems.
+—Soatok Dreamseeker, “Database Cryptography Fur the Rest of Us”
+In the chapter on hashing, we saw how a secure hash algorithm such as
+SHA-256 can be used to create a cryptographic digest of a message.
+That’s a good start, but for Alice and Bob to have a reliable way of
+exchanging secure mash notes, we’ll need to do a little more. Let’s see why.
+Message integrity
+The hash digest, or simply “hash”, gives Bob an independent check on the
+integrity of Alice’s message. He can compute the hash value of the message
+for himself, and compare it with the one Alice attached. If they disagree,
+then the message has changed since Alice sent it.
+Maybe it was modified by Mallory, or maybe a few bits just got flipped in
+transit by an errant cosmic ray. Either way, at least Bob can detect that
+something’s gone wrong, and ask Alice to re-send her billet-doux.
+But if the hash values agree, Bob can be pretty confident that the message is
+the same one that Alice sent, even if it’s sent in clear. There’s no way for
+Mallory or anyone else to modify the message in such a way that it hashes
+to the same digest, without carrying out a brute-force preimage search.
+Hash preimage attacks
+While a good hash algorithm, as we’ve seen, does everything possible to
+make this brute-force attack hard, it’s still just a matter of time. If Mallory
+has a lot of resources to throw at the problem, they can eventually find a
+modified message that produces the same hash as Alice’s original. They
+might get lucky and find a hash collision on the first try, or it might take
+years, but it can be done, and there’s no way to prevent it.
+Or is there? What if Alice also enciphers the message, and then sends Bob
+the ciphertext, accompanied by its hash? Won’t that frustrate Mallory’s evil
+plan?
+Well, partly. If the hash value is sent in clear, Mallory can still brute-force a
+ciphertext that produces the same hash, which isn’t ideal.
+Sure, that ciphertext may not be decipherable at all by Bob, or it might
+produce a meaningless plaintext. That’s not as serious as if Mallory could
+send a meaningful fake message, but it’s still annoying, and interferes with
+Alice and Bob’s communications.
+Hashing was supposed to help us with that problem, so clearly there’s a
+little more work to do.
+Chosen ciphertext attacks
+What if Alice enciphers, not just the plaintext, but the plaintext plus its
+hash? For example, suppose she starts with the message “I love you, Bob”,
+computes its hash, appends it to the message, and then enciphers the whole
+thing?
+Well, that’s okay on the face of it, but it opens Bob up to something called a
+chosen ciphertext attack. This is where Mallory forces Bob to decrypt a
+number of ciphertexts of their choosing, and by doing so can gain some
+knowledge about the key.
+We don’t need to know the exact details of how chosen ciphertext attacks
+work against particular cryptosystems. It stands to reason, though, that if
+Mallory can send an unlimited number of messages, and Bob keeps
+deciphering them, eventually something bad will happen. In fact, this is
+known as the Cryptographic Doom Principle.
+To prevent this, Bob should never even try to decipher any message that
+doesn’t have a valid hash. And that implies that the hash digest must be
+readable without any decryption.
+If a cipher is like an envelope for a letter, then the hash should go on the
+outside of the envelope. That way, Bob doesn’t even have to open the
+envelope to know that the message is bogus.
+But now we’re back where we started, with Mallory able to brute-force
+bogus messages with valid hashes. How can we prevent this, and give Bob
+a way to verify that the message really comes from Alice, without also
+making him vulnerable to a chosen ciphertext attack?
+MAC
+One neat idea is for Alice to hash, not just the plaintext, or even the
+ciphertext of her message on its own, but the ciphertext plus the key. Then
+it’s impossible, or at least very difficult, for anyone without the key to even
+verify the hash.
+That’s because in order to verify the hash, Mallory needs to compute it, and
+that means they need the whole text that Alice used to compute hers. But
+they don’t have this, because Alice, naturally enough, doesn’t include the
+key in her message.
+Bob, of course, has the key, so he can check the hash very easily. All he has
+to do is append his own copy of the key to the ciphertext, compute the hash,
