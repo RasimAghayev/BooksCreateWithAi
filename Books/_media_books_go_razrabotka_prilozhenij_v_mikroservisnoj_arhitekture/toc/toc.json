@@ -1,0 +1,123 @@
+{
+  "book": {
+    "title": "Go: разработка приложений в микросервисной архитектуре с нуля",
+    "author": "Попова Ю.Ю.",
+    "year": 2026,
+    "version": 1,
+    "pages": 322
+  },
+  "chapters": [
+    {
+      "chapter": 0,
+      "title": "Введение",
+      "start_page": 7,
+      "end_page": 12,
+      "sections": [
+        {"number": "0.1", "title": "Для кого эта книга?", "start_page": 7, "end_page": 7},
+        {"number": "0.2", "title": "Обзор Golang", "start_page": 7, "end_page": 8},
+        {"number": "0.3", "title": "Сравнение монолитной и микросервисной архитектуры", "start_page": 9, "end_page": 10},
+        {"number": "0.4", "title": "Список литературы и источников", "start_page": 11, "end_page": 12}
+      ]
+    },
+    {
+      "chapter": 1,
+      "title": "Разработка первого микросервиса (User)",
+      "start_page": 13,
+      "end_page": 86,
+      "sections": [
+        {"number": "1.1", "title": "Настройка локального окружения", "start_page": 13, "end_page": 13},
+        {"number": "1.2", "title": "Редактор кода", "start_page": 13, "end_page": 13},
+        {"number": "1.3", "title": "Go", "start_page": 14, "end_page": 16},
+        {"number": "1.4", "title": "GVM", "start_page": 17, "end_page": 17},
+        {"number": "1.5", "title": "Установка Protobuf", "start_page": 18, "end_page": 18},
+        {"number": "1.6", "title": "Git", "start_page": 19, "end_page": 20},
+        {"number": "1.7", "title": "Codestyle", "start_page": 21, "end_page": 21},
+        {"number": "1.8", "title": "Docker и Docker-Compose", "start_page": 22, "end_page": 23},
+        {"number": "1.9", "title": "Тестирование API", "start_page": 24, "end_page": 26},
+        {"number": "1.10", "title": "Создание структуры проекта", "start_page": 27, "end_page": 33},
+        {"number": "1.11", "title": "Подключение необходимых библиотек", "start_page": 34, "end_page": 34},
+        {"number": "1.12", "title": "Переменные окружения", "start_page": 34, "end_page": 35},
+        {"number": "1.13", "title": "Логирование", "start_page": 36, "end_page": 39},
+        {"number": "1.14", "title": "ORM", "start_page": 40, "end_page": 42},
+        {"number": "1.15", "title": "Swagger", "start_page": 43, "end_page": 46},
+        {"number": "1.16", "title": "Проектирование базы данных PostgreSQL", "start_page": 47, "end_page": 51},
+        {"number": "1.17", "title": "Разработка бизнес-логики и маршрутизации для модуля User", "start_page": 52, "end_page": 78},
+        {"number": "1.18", "title": "Тестирование микросервиса", "start_page": 79, "end_page": 85},
+        {"number": "1.19", "title": "Список литературы и источников", "start_page": 86, "end_page": 86}
+      ]
+    },
+    {
+      "chapter": 2,
+      "title": "Разработка микросервиса авторизации и аутентификации (Auth)",
+      "start_page": 87,
+      "end_page": 110,
+      "sections": [
+        {"number": "2.1", "title": "Теоретический обзор способов авторизации и аутентификации", "start_page": 87, "end_page": 95},
+        {"number": "2.2", "title": "Разработка модуля Auth", "start_page": 96, "end_page": 109},
+        {"number": "2.3", "title": "Список литературы и источников", "start_page": 110, "end_page": 110}
+      ]
+    },
+    {
+      "chapter": 3,
+      "title": "Способы взаимодействия между микросервисами",
+      "start_page": 111,
+      "end_page": 156,
+      "sections": [
+        {"number": "3.1", "title": "HTTP-протокол", "start_page": 111, "end_page": 115},
+        {"number": "3.2", "title": "gRPC", "start_page": 116, "end_page": 119},
+        {"number": "3.3", "title": "RabbitMQ", "start_page": 120, "end_page": 122},
+        {"number": "3.4", "title": "Apache Kafka", "start_page": 123, "end_page": 124},
+        {"number": "3.5", "title": "Redis", "start_page": 125, "end_page": 125},
+        {"number": "3.6", "title": "Разработка сервиса Gateway", "start_page": 126, "end_page": 155},
+        {"number": "3.7", "title": "Список литературы и источников", "start_page": 156, "end_page": 156}
+      ]
+    },
+    {
+      "chapter": 4,
+      "title": "Разработка модуля Transaction",
+      "start_page": 157,
+      "end_page": 266,
+      "sections": [
+        {"number": "4.1", "title": "Проектирование базы данных", "start_page": 157, "end_page": 160},
+        {"number": "4.2", "title": "Понятия миграций и транзакций в контексте базы данных PostgreSQL", "start_page": 161, "end_page": 186},
+        {"number": "4.3", "title": "Интеграция Transaction и Account", "start_page": 187, "end_page": 226},
+        {"number": "4.4", "title": "Проблема распределенных транзакций", "start_page": 227, "end_page": 230},
+        {"number": "4.5", "title": "Реализация паттерна Saga", "start_page": 231, "end_page": 264},
+        {"number": "4.6", "title": "Список литературы и источников", "start_page": 265, "end_page": 266}
+      ]
+    },
+    {
+      "chapter": 5,
+      "title": "Развертывание микросервисов",
+      "start_page": 267,
+      "end_page": 310,
+      "sections": [
+        {"number": "5.1", "title": "Обертывание микросервисов в docker-контейнеры", "start_page": 294, "end_page": 305},
+        {"number": "5.2", "title": "Масштабирование при помощи оркестратора Kubernetes", "start_page": 306, "end_page": 310}
+      ]
+    },
+    {
+      "chapter": 6,
+      "title": "Заключение",
+      "start_page": 311,
+      "end_page": 312,
+      "sections": [
+        {"number": "6.1", "title": "Список литературы и источников", "start_page": 311, "end_page": 312}
+      ]
+    },
+    {
+      "chapter": 7,
+      "title": "Приложение. Описание файлового архива",
+      "start_page": 313,
+      "end_page": 314,
+      "sections": []
+    },
+    {
+      "chapter": 8,
+      "title": "Предметный указатель",
+      "start_page": 315,
+      "end_page": 320,
+      "sections": []
+    }
+  ]
+}

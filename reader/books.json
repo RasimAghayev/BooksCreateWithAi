@@ -1,0 +1,16 @@
+{
+  "books": [
+    {
+      "book_id": "go-microservices-popova-2026-v1",
+      "title": "Go: разработка приложений в микросервисной архитектуре с нуля",
+      "author": "Попова Ю.Ю.",
+      "year": 2026,
+      "version": "1",
+      "pages": 322,
+      "status": "processing",
+      "started_at": "2026-09-04",
+      "completed_chapters": [0],
+      "current_chapter": 1
+    }
+  ]
+}
