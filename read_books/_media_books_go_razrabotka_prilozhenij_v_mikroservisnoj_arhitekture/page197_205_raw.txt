@@ -1,0 +1,362 @@
+196 
+// Пополнение 
+message DepositRequest 
+uint64 user id = 1; 
+int64 amount = 2; 
+uint64 operation_id 
+З; 
+message DepositResponse { 
+string status 
+1; // "completed" / "failed" 
+int64 balance = 2; 
+// Списание 
+message WithdrawRequest 
+uint64 user id = 1; 
+int64 amount = 2; 
+string operation_id = З; 
+message WithdrawResponse 
+string status 
+1; 
+int64 balance = 2; 
+// Перевод 
+message TransferRequest 
+uint64 user id = 1; 
+uint64 recipient_id = 2; 
+int64 amount = З; 
+string operation_id = 4; 
+message TransferResponse 
+string status = 1; 
+int64 user balance = 2; 
+int64 recipient_balance 
+З; 
+// Получение баланса 
+message GetBalanceRequest 
+uint64 user id = 1; 
+message GetBalanceResponse 
+int64 balance = 1; 
+Глава 4 
+Разработка модуля Transaction 
+197 
+Не забывайте также после каждого изменения контрактов обновлять их версию 
+и подтягивать ее в сервис. 
+Теперь можно приступить к логике, связанной с балансом, а именно -
+с пополне­
+нием, списанием и переводом средств. В repository добавим метод updateBalance, ко­
+торый будет отвечать за изменение баланса, а для перевода -
+отдельный метод 
+transferBalance (листинг 4.17). 
+package repository 
+import ( 
+"context" 
+"errors" 
+11 fffit" 
+"account/internal/rnodel" 
+"account/internal/repository/rnapper" 
+repornodel "account/internal/repository/rnodel" 
+"githuЬ.corn/rs/zerolog" 
+"gorrn.io/gorrn" 
+"gorrn.io/gorrn/clause" 
+type Repository struct { 
+dЬ 
+*gorrn. DB 
+logger *zerolog.Logger 
+func NewRepository(dЬ *gorrn.DB, logger *zerolog.Logger) *Repository { 
+return &Repository{ 
+dЬ: 
+dЬ, 
+logger: logger, 
+func (r *Repository) CreateUser (ctx context .Context, user rnodel. User) (rnodel. User, error) { 
+userRepo := rnapper.UserToRepoUser(user) 
+frnt.Println(userRepo) 
+res := r.dЬ.WithContext(ctx). 
+Clauses(clause.OnConflict{UpdateAll: true)). 
+//Clauses(clause.Returning{I). 
+Create(&userRepo) 
+if res.Error != nil { 
+r.logger.Err(res.Error) .Msg("failed to save user") 
+return rnodel.User{I, frnt.Errorf("failed to save user: %w", res.Error) 
+198 
+fmt.Println(userRepo) 
+return mapper.RepoUserToUser(userRepo), nil 
+func (r *Repository) GetUser(ctx context.Context, userID uint64) (model.User, error) { 
+var user repomodel.User 
+res := r.dЬ.WithContext(ctx). 
+Model(&repomodel.User()). 
+Where("id =? AND is deleted = 
+First ( &user) 
+?" 
+• 
+1 userID, false) . 
+if errors.Is(res.Error, gorm.ErrRecordNotFound) ( 
+return model. User (), fmt. Errorf ( "user not found") 
+else if res.Error != nil ( 
+r.logger.Err(res.Error) .Msg("failed to get user id") 
+return mapper.RepoUserToUser(user), nil 
+Глава 4 
+func (r *Repository) GetUsers(ctx context.Context, limit int, offset int) ([)model.User, 
+error) ( 
+var users [)repomodel.User 
+res := r.dЬ.WithContext(ctx). 
+Model(&repomodel.User{)). 
+Where("is deleted = ?", false). 
+Offset (offset) . 
+Limi t (limi t) . 
+Find ( &users) 
+if errors.Is(res.Error, gorm.ErrRecordNotFound) 
+return nil, fmt. Errorf ( "user not found") 
+else if res.Error != nil { 
+r.logger.Err(res.Error) .Msg("failed to get user id") 
+return mapper.RepoUsersToUsers(users), nil 
+func (r *Repository) DeleteUser(ctx context.Context, userID uint64) error { 
+res := r.dЬ.WithContext(ctx). 
+Model(&repomodel.User()). 
+Where("id = ?", userID). 
+Update("is_deleted", true) 
+if res.Error != nil { 
+r.logger.Err(res.Error) .Msg("failed to delete user") 
+return fmt .Errorf ("failed to delete user") 
+return nil 
+Рвзрвботкв модуля Trвnsвction 
+199 
+func (r *Repository) UpdateUser(ctx context.Context, userID uint64, user model.UpdateUser) 
+error { 
+repoUser := mapper.UpdateUserToRepoUser(user) 
+res := r.dЬ.WithContext(ctx). 
+Model(&repomodel.User()). 
+Where("id =? AND is_deleted = 
+Updates(repoUser) 
+if res.Error != nil { 
+?" 
+• 
+1 userID, false), 
+r.logger.Err(res.Error) .Msg("failed to update user") 
+return fmt. Errorf (" failed to update user") 
+return nil 
+// GetBalance получает текущий баланс пользователя 
+func (r *Repository) GetBalance(ctx coпtext.Context, userID uint64) (float32, error) { 
+var user repomodel.User 
+res := r.dЬ.WithContext(ctx). 
+Model(&repomodel.User{)). 
+Select ( "balance") . 
+Where("id =? AND is deleted = 
+First ( &user) 
+?" 
+• 
+1 userID, false). 
+if errors.Is(res.Error, gorm.ErrRecorc!NotFound) 
+return О, fmt.Errorf("user not found") 
+else if res.Error != nil { 
+r.logger.Err(res,Error) .Msg("failed to get user balance") 
+return О, fmt.Errorf("failed to get user balance: %w", res.Error) 
+return user.Balance, nil 
+// UpdateBalance обновляет баланс пользователя 
+func (r *Repository) UpdateBalance(ctx context.Context, userID uint64, amount float32, 
+operationType model. BalanceOperationType) 1 float32, float32, error) { 
+var user repomodel.User 
+// Сначала получаем текущий баланс 
+res := r.dЬ.WithContext(ctx). 
+Model(&repomodel.User{I). 
+Where("id =? AND is deleted = 
+First(&user) 
+?" 
+• 
+1 userID, false) . 
+if errors.Is(res.Error, gorm.ErrRecorc!NotFound) 
+return О, 
+О, fmt.Errorf("user not found") 
+else if res.Error != nil { 
+r.logger.Err(res.Error) .Msg("failed to get user for balance update") 
+200 
+return О, 
+О, fmt.Errorf("failed to get user for balance update: %w", res.Error) 
+oldВalance := user.Balance 
+var newBalance float32 
+// Вычисляем новый баланс в зависимости от типа операции 
+switch operationType { 
+case model.BalanceOperationDeposit: 
+newBalance = oldВalance + amount 
+case model.BalanceOperationCredit: 
+newBalance = oldВalance - amount 
+if newBalance < О { 
+Глава 4 
+return О, 
+О, fmt.Errorf("insufficient balance: current balance %.2f, requested 
+amount %.2f", 
+oldВalance, amount) 
+default: 
+return О, 
+О, fmt.Errorf("invalid balance operation type: %s", operationType) 
+// Обновляем баланс в базе данных 
+res = r.dЬ.WithContext(ctx). 
+Model(&repomodel.User{)). 
+Where("id =? AND is deleted 
+?", userID, false). 
+Update("balance", newBalance) 
+if res.Error != nil { 
+r. logger. Err (res. Error) .Msg ( "failed to update user balance") 
+return О, 
+О, fmt.Errorf{"failed to update user balance: %w", res.Error) 
+return oldВalance, newBalance, nil 
+// TransferBalance переводит средства между пользователями 
+func {r *Repository) TransferBalance(ctx context.Context, fromUserID, toUserID uint64, amount 
+float32) error { 
+if amount <= О { 
+return fmt.Errorf{"transfer amount must Ье positive") 
+if fromUserID == toUserID { 
+return fmt.Errorf{"cannot transfer to the same user") 
+// Начинаем транзакцию 
+return r.dЬ.WithContext{ctx) .Transaction(func(tx *gorm.DB) error { 
+Разработка модуля Transaction 
+// Проверяем существование получателя 
+var toUser repomodel.User 
+res := tx.Model(&repomodel.User{)). 
+Where("id =? AND is_deleted = ?", toUserID, false). 
+First(&toUser) 
+if errors.Is(res.Error, gorm.ErrRecordNotFound) 
+return fmt. Errorf ( "recipient user not found") 
+else if res.Error != nil { 
+return fmt.Errorf("failed to get recipient user: %w", res.Error) 
+// Получаем текущий баланс отправителя 
+var fromUser repomodel.User 
+res = tx.Model(&repomodel.User{)). 
+Where("id =? AND is_deleted = ?", fromUserID, false). 
+First(&fromUser) 
+if errors.Is(res.Error, gorm.ErrRecordNotFound) 
+return fmt.Errorf("sender user not found") 
+else if res.Error != nil { 
+return fmt.Errorf("failed to get sender user: %w", res.Error) 
+// Проверяем достаточность средств 
+if fromUser.Balance < amount { 
+return fmt.Errorf("insufficient balance: current balance %.2f, transfer amount 
+201 
+%.2f", fromUser.Balance, amount) 
+)) 
+// Списываем средства с отправителя 
+res = tx.Model(&repomodel.User{)). 
+Where("id =? AND is_deleted = ?", fromUserID, false). 
+Update("balance", fromUser.Balance-amount) 
+if res.Error != nil { 
+return fmt.Errorf("failed to deduct from sender balance: %w", res.Error) 
+// Зачисляем средства получателю 
+res = tx.Model(&repomodel.User{)). 
+Where("id =? AND is_deleted = ?", toUserID, false). 
+Update("balance", toUser.Balance+amount) 
+if res.Error != nil { 
+return fmt.Errorf("failed to add to recipient balance: %w", res.Error) 
+return nil 
+202 
+Глава 4 
+Метод updateBalance инкапсулирует логику изменения средств в зависимости от типа 
+операции -
+пополнение или списание, при этом сразу проверяется достаточность 
+средств на счете, чтобы предотварить уход в отрицательный баланс. Для перевода 
+средств добавлен метод TransferBalance, который содержит более сложную логи­
+ку, -
+в рамках одной транзакции базы данных выполняется перевод средств от 
+одного пользователя к другому: сперва проверяется наличие обоих пользователей и 
+корректность суммы, затем средства списываются с отправителя и зачисляются по­
+лучателю. Так что операция либо проходит целиком, либо полностью откатывается. 
+Эти методы делают работу с балансом надежной из-за таких проверок и использо­
+вания транзакций. 
+В сервис же добавим следующую логику (листинг 4.18). 
+package service 
+import ( 
+"context" 
+"fmt" 
+"account/internal/model" 
+"account/ internal/ reposi tory /map.per" 
+"githuЬ.com/rs/zerolog" 
+type AccountService struct 
+repo 
+Repository 
+logger *zerolog.Logger 
+func New(repo Repository, logger *zerolog.Logger) *AccountService 
+return &AccountService{repo: repo, logger: logger} 
+type Repository interface 
+CreateUser(context.Context, model.User) (model.User, error) 
+GetUser(context.Context, uint64) (model.User, error) 
+GetUsers(context.Context, int, int) ([]model.User, error) 
+DeleteUser(context.Context, uint64) error 
+UpdateUser(context.Context, uint64, model.UpdateUser) error 
+GetBalance(context.Context, uint64) (float32, error) 
+UpdateBalance(context.Context, uint64, float32, model.BalanceOperationType} (float32, 
+float32, error) 
+TransferBalance(context.Context, uint64, uint64, float32) error 
+Рвзрвботкв модуля Trвnsвction 
+func (s *AccountService) CreateUser(ctx context.Context, newUser model.CreateUser) 
+(model.User, error) { 
+repoUser := mapper.CreateUserToRepoUser(newUser) 
+user := mapper.RepoUserToUser(repoUser) 
+return s.repo.CreateUser(ctx, user) 
+203 
+func (s *AccountService) GetUsers(ctx context.Context, limit int, offset int) ([]model.User, 
+error) ( 
+return s.repo.GetUsers(ctx, limit, offset) 
+func (s *AccountService) GetUser ( ctx context. Context, userID uint64) (model. User, error) { 
+return s.repo.GetUser(ctx, userID) 
+func (s *AccountService) DeleteUser(ctx context.Context, userID uint64) error { 
+return s.repo.DeleteUser(ctx, userID) 
+func (s *AccountService) UpdateUser(ctx context.Context, userID uint64, user 
+model.UpdateUser) error ( 
+return s.repo.UpdateUser(ctx, userID, user) 
+// GetBalance получает текущий баланс пользователя 
+func (s *AccountService) GetBalance(ctx context.Context, userID uint64) 
+(model.GetBalanceResponse, error) ( 
+balance, err := s.repo.GetBalance(ctx, userID) 
+if err != nil ( 
+s. logger. Err (err) . Uint64 ( "userID", userID) .Msg ( "failed to get user Ьаlапсе") 
+return model.GetBalanceResponse(), err 
+return model.GetBalanceResponse( 
+UserID: 
+userID, 
+Balance: balance, 
+} , nil 
+// UpdateBalance обновляет баланс пользователя 
+func (s *AccountService) UpdateBalance(ctx context.Context, req model.UpdateBalanceRequest) 
+(model.UpdateBalanceResponse, error) ( 
+// Валидация входных данных 
+if req.Amount < О ( 
+return model.UpdateBalanceResponse(), fmt.Errorf("amount cannot Ье negative") 
+204 
+Глава 4 
+if req.Type = model.BalanceOperationCredit && req.Amount == 
+О { 
+return model.UpdateBalanceResponse{f, fmt.Errorf{"amount must Ье positive for suЬtract 
+operation") 
+oldВalance, newBalance, err ·= s.repo.UpdateBalance(ctx, req.UserID, req.Amount, req.Type) 
+if err != nil { 
+s.logger.Err(err). 
+Uint64 ( "userID", req. UserID) . 
+Float32("amount", req.Amount). 
+Str("operation", string(req.Type)). 
+Msg("failed to update user balance") 
+return model.UpdateBalanceResponse{}, err 
+s.logger.Info(). 
+Uint64("userID", req.UserID). 
+Float32("oldВalance", oldВalance). 
+Float32 ("newBalance", newBalance). 
+Float32("amount", req.Amount). 
+Str("operation", string(req.Type)). 
+Msg("user balance updated successfully") 
+return model.UpdateBalanceResponse{ 
+UserID: 
+req.UserID, 
+OldВalance: oldВalance, 
+NewBalance: newBalance, 
+Amount: 
+req.Amount, 
+Operation: 
+req.Type, 
+1, nil 
+// TransferBalance переводит средства между пользователями 
+func (s *AccountService) TransferBalance(ctx context.Context, fromUserID, toUserID uint64, 
+amount float32) error { 
+if amount <= 
+О { 
+return fmt.Errorf("transfer amount must Ье positive") 
+if fromUserID == toUserID { 
+return fmt.Errorf("cannot transfer to the same user") 
+err := s.repo.TransferBalance(ctx, fromUserID, toUserID, amount) 
+if err != nil { 
+s.logger.Err(err). 
+Uint64 ("fromUserID", fromUserID). 

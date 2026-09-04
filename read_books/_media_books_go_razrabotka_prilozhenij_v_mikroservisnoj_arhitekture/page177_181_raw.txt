@@ -1,0 +1,232 @@
+176 
+') 
+transaction_id BIGINT NOT NULL, 
+account_id BIGINT NOT NULL, 
+direction ТЕХТ NOT NULL СНЕСК (direction IN ('DEBIT', 'CREDIT')), 
+amount DECIМAL(20,2) NOT NULL, 
+created_at TIMESTAМP NOT NULL DEFAULT NOW(), 
+updated_at TIMESTAМP NOT NULL DEFAULT NOW(), 
+FOREIGN КЕУ (transaction_id) REFERENCES transactions(id) ON DELETE CASCADE 
+) ; 
+if err != nil { 
+return err 
+, err = tx,Exec(' 
+CREATE INDEX IF NOT EXISTS idx transaction entries transaction id ON 
+-
+-
+-
+-
+Глава 4 
+transaction_entries(transaction_id); 
+CREATE INDEX IF NOT EXISTS idx transaction entries account id ON 
+') 
+-
+-
+-
+-
+transaction_entries(account_id); 
+CREATE INDEX IF NОТ EXISTS idx transaction entries direction ON 
+-
+-
+-
+transaction_entries(direction); 
+if err != nil { 
+return err 
+, err = tx,Exec(' 
+CREATE INDEX IF NOT EXISTS idx_transactions_user_id ON transactions(user_id); 
+CREATE INDEX IF NOT EXISTS idx_transactions_status ON transactions(status); 
+CREATE INDEX IF NОТ EXISTS idx_transactions_created_at ON transactions(created_at); 
+return err 
+func downCreateTransactionsTaЫe(ctx context,Context, tx *sql,Tx) error { 
+queries := []string{ 
+'DROP INDEX idx_transaction_entries_transaction_id ON transaction_entries;', 
+'DROP INDEX idx_transaction_entries_account_id ON transaction_entries; ·, 
+'DROP INDEX idx_transaction_entries_direction ON transaction_entries;', 
+'DROP INDEX idx_transactions_user_id ON transactions;', 
+'DROP INDEX idx_transactions_status ON transactions;', 
+'DROP INDEX idx_transactions_created_at ON transactions; ', 
+'ALTER ТАВLЕ transaction entries DROP PRIМARY КЕУ;', 
+'ALTER ТАВLЕ transactions DROP PRIМARY КЕУ;', 
+for , q := range queries 
+, err := tx,Exec(q) 
+Разработка модуля Transaction 
+if err != nil 
+return err 
+queries = []string{ 
+'DROP ТАВLЕ IF EXISTS transactions;', 
+'DROP ТАВLЕ IF EXISTS transaction_entries;', 
+for , q := range queries 
+, err := tx.Exec(q) 
+if err != nil 
+return err 
+return nil 
+177 
+Такая миграция описывает схему таблиц для хранения транзакций и записей, а 
+также создает набор индексов для ускорения выборов по ключевым полям ( user _ id, 
+status, created_at). Важно отметить порядок действий при откате: сначала должны 
+удаляться все индексы и первичные ключи, чтобы разорвать их зависимость от 
+таблиц, и только потом сами таблицы. Такой подход гарантирует корректное вы­
+полнение миграции и предотвращает ошибки, возникающие при попытке удалить 
+таблицу, к которой всё еще привязаны индексы. 
+Чтобы дальше бьmо проще понять код репозитория, посмотрим еще и на gо-струк­
+туру, через которую будем взаимодействовать с базой данных (листинг 4.8). 
+-
+package model 
+import "time" 
+type Transaction struct 
+ID 
+uint64 
+UserID 
+uint64 
+Amount 
+int64 
+Status 
+string 
+Туре 
+string 
+CreatedAt time.Time 
+'gorm:"column:id"' 
+'gorm:"column:user_id"' 
+'gorm: "column:amount"' 
+'gorm:"column:status"' 
+'gorm:"column:type"' 
+'gorm:"column:created_at"' 
+UpdatedAt time.Time 'gorm:"column:updated_at"' 
+func (Transaction) TaЬleName() string { 
+return "transactions" 
+-
+178 
+type TransactionEntry struct 
+ID 
+uint64 
+'gorrn: "coltпnn: id"' 
+TransactionID uint64 
+'gorrn:"coltпnn:transaction_id"' 
+AccountID 
+uint64 
+'gorrn:"coltпnn:account_id"' 
+Direction 
+string 
+'gorrn:"coltпnn:direction"' 
+Amount 
+float64 
+'gorrn:"coltпnn:amount"' 
+CreatedAt 
+time.Time ·gorrn:"coltпnn:created_at"' 
+UpdatedAt 
+time. Time • gorrn: "coltпnn:updated_ at" • 
+func (TransactionEntry) TaЬleName() string { 
+return "transaction entries" 
+Глава 4 
+Теперь всё готово, чтобы перейти к коду репозитория. Здесь будет вся логика рабо­
+ты транзакций: не только чтение и фильтрация данных, но и операции снятия, 
+пополнения и перевода средств. Эrо можно было бы сделать и в сервисном слое, но 
+нам важна атомарность этих операций, поэтому принципиально оборачивать такие 
+действия в механизм транзакции базы данных, чтобы гарантировать целостность 
+и согласованность данных (листинг 4.9). 
+Лисsи 
+package repository 
+import ( 
+"context" 
+"errors" 
+"fmt" 
+"transaction/internal/model" 
+"transaction/internal/repository/mapper" 
+repomodel "transaction/internal/repository/model" 
+"githuЬ.com/rs/zerolog" 
+"gorrn. io/gorrn" 
+"gorrn.io/gorrn/clause" 
+type Repository struct 
+dЬ 
+*gorrn. DB 
+logger *zerolog.Logger 
+-
+func NewRepository(dЬ *gorrn.DB, logger *zerolog.Logger) *Repository { 
+return &Repository{ 
+dЬ: 
+dЬ, 
+logger: logger, 
+Разработка модуля Transaction 
+179 
+func (r *Repository) GetTransactions(ctx context.Context, params model.GetTransactionsParams) 
+([]model.Transaction, error) { 
+var transactions []repomodel.Transaction 
+query := r.clЬ.WithContext(ctx) .Model(&repomodel.Transaction{)) 
+// Применяем фильтры 
+if params.UserID != nil 
+query = query.Where("user_id = ?" 
+• 
+1 *params.UserID) 
+if params.Type != nil { 
+query = query.Where("type 
+?", *params.Type) 
+if params.Status != nil { 
+query = query.Where("status 
+?", *params.Status) 
+if params.DateFrom != nil { 
+query = query.Where("created_at >= 
+if params.DateTo != nil { 
+query = query.Where("created_at <= 
+// Применяем пагинацию и сортировку 
+res := query. 
+Offset(params.Offset). 
+Limit(params.Limit). 
+Order("created_at DESC"). 
+Find(&transactions) 
+if res.Error 1= nil { 
+?" 
+• 
+1 *params.DateFrom) 
+?" 
+. , *params.DateTo) 
+r.logger.Err(res.Error) .Msg("failed to get transactions") 
+return nil, fmt.Errorf("failed to get transactions: %w", res.Error) 
+return mapper.RepoTransactionsToTransactions(transactions), nil 
+func (r *Repository) GetTransactionDetails(ctx context.Context, transactionID uint64) 
+(model.TransactionDetails, error) { 
+// Получаем транзакцию 
+var transaction repomodel.Transaction 
+res := r.dЬ.WithContext(ctx). 
+Model(&repomodel.Transaction{)). 
+Where("id = ?", transactionID). 
+First(&transaction) 
+if errors.Is(res.Error, gorm.ErrRecorc!NotFound) { 
+return model.TransactionDetails{), fmt.Errorf("transaction not found") 
+180 
+Глава 4 
+else if res.Error != nil { 
+r.logger.Err(res.Error) .Msg("failed to get transaction") 
+return model. TransactionDetails { 1, fmt. Errorf ("failed to get transaction: %w", res .Error) 
+// Получаем записи транзакции 
+var entries []repomodel.TransactionEntry 
+res = r.dЬ.WithContext(ctx). 
+Model(&repomodel.TransactionEntry{I). 
+Where("transaction_id = ?", transactionID). 
+Order("created at ASC"). 
+Find(&entries) 
+if res.Error != nil { 
+r.logger.Err(res.Error) .Msg("failed to get transaction entries") 
+return model.TransactionDetails(I, fmt.Errorf("failed to get transaction entries: 
+return model.TransactionDetails{ 
+Transaction: mapper.RepoTransactionToTransaction(transaction), 
+Entries: 
+1, nil 
+mapper.RepoTransactionEntriesToTransactionEntries(entries), 
+// Deposit вьшолняет оnерацию деnозита в рамках одной транзакции БД 
+func (r *Repository) Deposit(ctx context.Context, params model.DepositParams) 
+(model.TransactionDetails, errorl { 
+var result model.TransactionDetails 
+err := r.dЬ.WithContext(ctxl .Transaction(func(tx *gorm.DBI error { 
+// Создаем транзакцию 
+transaction := model.Transaction{ 
+UserID: params.UserID, 
+Amount: int64(params.Amount * 1001, // конвертируем в копейки 
+Status: model.TraпsactionStatusPending, 
+Туре: 
+model.TransactionTypeDeposit, 
+transactionRepo := mapper.TransactionToRepoTransaction(transaction) 
+%w", res.Error) 
+res := tx.Clauses(clause.OnConflict(UpdateAll: truel) .Create(&transactionRepo) 
+if res.Error != nil { 
+r.logger.Err(res.Error) .Msg("failed to create transaction in deposit") 
+return fmt.Errorf("failed to create transaction: %w", res.Errorl 

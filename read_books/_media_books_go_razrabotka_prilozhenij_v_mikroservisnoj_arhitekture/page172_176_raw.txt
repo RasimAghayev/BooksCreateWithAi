@@ -1,0 +1,222 @@
+Разработка модуля Transaction 
+171 
+с транзакцией. Такое разделение дает нам возможность моделировать и простые 
+операции вроде пополнений и списаний, и более сложные, например переводы, 
+которые включают одновременно две операции: уменьшение средств отправителя и 
+увеличение баланса получателя. 
+В результате такого подхода получится универсальная схема: каждое действие 
+фиксируется транзакцией, и каждая транзакция состоит из одной или нескольких 
+записей движений, а все взаимодействие с транзакциями будет собрано в сервис 
+Transaction. 
+В первую очередь опишем контракты, по которым будет работать сервис, а также 
+создадим новый каталог transaction для этого (листинги 4.4 и 4.5). 
+syntax = "protoЗ"; 
+package transaction; 
+option go_package = "githuЬ.com/yuliaapopova/contracts/transaction/go;transaction"; 
+import "google/protobuf/timestamp.proto"; 
+import "google/protobuf/empty.proto"; 
+import "transaction_model.proto"; 
+import "pagination/pagination.proto"; 
+service TransactionService { 
+rpc Deposit(DepositRequest) returns (google.protobuf.Empty); 
+rpc Withdraw(WithdrawRequest) returns (google.protobuf.Empty); 
+rpc Transfer(TransferRequest) returns (google.protobuf.Empty); 
+rpc GetTransactions(GetTransactionsRequest) returns (GetTransactionsResponse); 
+message DepositRequest { 
+uint64 user_id = 1; 
+uint64 amount = 2; 
+message WithdrawRequest 
+uint64 user_id = 1; 
+uint64 amount = 2; 
+message TransferRequest 
+uint64 user_id = 1; 
+uint64 amount = 2; 
+uint64 recipient = З; 
+172 
+message GetTransactionsRequest { 
+optional uint64 user id = 1; 
+optional string type = 2; 
+optional string status = 3; 
+optional google.protobuf.Timestamp date from = 4; // фильтр no дате от 
+optional google.protobuf.Timestamp date_to = 5; 
+// фильтр no дате до 
+optional pagination.Pagination pagination = 6; 
+message GetTransactionsResponse 
+repeated TransactionDetails transactions 
+1; 
+syntax = "proto3"; 
+package transaction; 
+option go_package = "githuЬ.com/yuliaapopova/contracts/transaction/go;transaction"; 
+import "google/protobuf/timestamp. proto"; 
+message Transaction { 
+string id = 1; 
+string type = 2; // TRANSFER 
+I DEPOSIT 
+I WITHDRAW 
+string status = 3; // INITIATED 
+I OONE 
+I FAILED 
+google.protobuf.Timestamp created_at 
+4; 
+google.protobuf.Timestamp updated_at 
+5; 
+message TransactionEntry { 
+string id = 1; 
+string transaction_id = 2; 
+string account_id = 3; 
+string direction = 4; // DEBIT I CREDIT 
+douЬle amount = 5; 
+message TransactionDetails 
+Transaction transaction = 1; 
+repeated TransactionEntry entries 
+2; 
+Глава 4 
+Тут мы реализуем минимально необходимый набор вызовов: пополнение, списа­
+ние, перевод и получение списка транзакций с фильтрацией. Теперь можем перейти 
+к разработке самого сервиса. 
+Разработка модуля Traлsaction 
+173 
+Так как мы определились, что будем использовать, так называемую «бухгалтер­
+скую» двойную запись с направлением, опишем структуры данных в Go (лис­
+тинг 4.6). 
+. internal/ 
+package model 
+irnport "time" 
+// TransactionStatus представляет статус транзакции 
+type TransactionStatus string 
+const ( 
+TransactionStatusPending 
+TransactionStatus 
+TransactionStatusCompleted TransactionStatus 
+TransactionStatusFailed 
+TransactionStatus 
+TransactionStatusCancelled TransactionStatus 
+type TransactionType string 
+const ( 
+"pending" 
+"completed" 
+"failed" 
+"cancelled" 
+TransactionTypeDeposit TransactionType 
+TransactionTypeWithdraw TransactionType 
+TransactionTypeTransfer TransactionType 
+"deposit" 
+"withdraw" 
+"transfer" 
+type Transaction struct 
+ID 
+uint64 
+UserID 
+Amount 
+Status 
+Туре 
+uint64 
+int64 // сумма в копейках 
+TransactionStatus 
+TransactionType 
+CreatedAt time.Time 
+UpdatedAt time.Time 
+type UpdateTransaction struct 
+Status TransactionStatus 
+// TransactionEntryDirection представляет направление записи транзакции 
+type TransactionEntryDirection string 
+const ( 
+TransactionEntryDirectionDebit 
+TransactionEпtryDirection = "DEBIT" 
+TransactionEntryDirectionCredit TransactionEntryDirection = "CREDIT" 
+174 
+// TransactionEntry представляет запись транзакции (дебет/кредит) 
+type TransactionEntry struct 
+ID 
+uint64 
+TransactionID uint64 
+AccountID 
+uint64 
+Direction 
+Arnount 
+CreatedAt 
+UpdatedAt 
+TransactionEntryDirection 
+float64 
+time. Time 
+time.Time 
+// CreateTransactionEntry представляет данные для создания записи транзакции 
+type CreateTransactionEntry struct { 
+TransactionID uint64 
+AccountID 
+uint64 
+Direction 
+Amount 
+TransactionEntryDirection 
+float64 
+// TransactionDetails представляет детали транзакции с записями 
+type TransactionDetails struct { 
+Transaction Transaction 
+Entries 
+[]TransactionEntry 
+// GetTransactionsParams представляет параметры для получения транзакций 
+type GetTransactionsParams struct { 
+UserID 
+*uint64 
+Туре 
+*string 
+Status 
+*string 
+DateFrom *time.Time 
+DateTo 
+*time.Time 
+Limit 
+int 
+Offset 
+int 
+// DepositParams представляет параметры для операции депозита 
+type DepositParams struct { 
+UserID uint64 
+Amount float64 
+// WithdrawParams представляет параметры для операции снятия средств 
+type WithdrawParams struct 
+AccountID uint64 
+Arnount 
+float64 
+Глввв 4 
+Разработка модуля Transaction 
+// TransferParams nредставляет nараметры для оnерации nеревода средств 
+type TransferParams struct { 
+OserID 
+uint64 
+Recipient uint64 
+Amount 
+float64 
+175 
+Помимо основных моделей, тут также добавлены структуры для передачи пара­
+метров в репозиторий: DepositParams, WithdrawParams, TransferParams, GetTransactionsParams. 
+Это частая практика -
+создавать структуры под параметры, когда они сложнее, 
+чем просто передать одно поле (листинг 4.7). 
+Лиcт~IJll~tion: internal/~,, .... ~Q~p0825102441_i~~l9 < 
+package rnigrations 
+irnport ( 
+"context" 
+"database/sql" 
+"githuЬ.corn/pressly/goose/vЗ" 
+func init() { 
+goose.AddNamedМigrationContext("20250825102441 initdЬ.go", upCreateTransactionsTaЬle, 
+downCreateTransactionsTaЬle) 
+func upCreateTransactionsTaЬle(ctx context.Context, tx *sql.Tx) error { 
+, err := tx.Exec(' 
+') 
+CREATE TABLE IF NOT EXISTS transactions 
+id BIGSERIAL PRIМARY КЕУ, 
+) ; 
+user_id BIGINT NOT NOLL, 
+amount BIGINT NOT NOLL, 
+type ТЕХТ NOT NOLL СНЕСК (type IN ('transfer', 'deposit', 'withdraw')), 
+status ТЕХТ NOT NOLL DEFAOLT 'pending' СНЕСК (status IN ('pending', 'cornpleted', 
+'failed', 'cancelled') ), 
+created at TIMESTAМP NOT NOLL DEFAOLT NOW(), 
+updated_at TIMESTAМP NOT NOLL DEFAOLT NOW() 
+if err != nil ( 
+return err 
+, err = tx.Exec(' 
+CREATE TABLE IF NOT EXISTS transaction entries 
+id BIGSERIAL PRIМARY КЕУ, 
