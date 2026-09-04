@@ -1,0 +1,465 @@
+190 
+func (r *Repository) GetUser (ctx context. Context, userID uint64) (model. User, error) 
+var user repomodel.User 
+res := r.dЬ.WithContext(ctx). 
+Model(&repomodel.User{)). 
+Where("id =? AND is deleted = 
+First 1 &user) 
+?" 
+• ' userID, false) . 
+if errors.Is(res.Error, gorm.ErrRecordNotFound) ( 
+return model.User{), fmt.Errorf("user not found") 
+else if res.Error != nil { 
+r.logger.Err(res.Error) .Msg("failed to get user id") 
+return mapper.RepoUserToUser(user), nil 
+Глава 4 
+func (r *Repository) GetUsers(ctx context.Context, limit int, offset int) ([)model.User, 
+error) { 
+var users [)repomodel.User 
+res := r.dЬ.WithContext(ctx). 
+Model(&repomodel.User()). 
+Where("is deleted = ?", false). 
+Offset(offset). 
+Limit (limit). 
+Find ( &users) 
+if errors.Is(res.Error, gorm.ErrRecordNotFound) 
+return nil, fmt.Errorf("user not found") 
+else if res.Error != nil { 
+r. logger. Err (res. Error) .Msg ( "failed to get user id") 
+return mapper.RepoUsersToUsers(users), nil 
+func (r *Repository) DeleteUser(ctx context.Context, userID uint64) error { 
+res := r.dЬ.WithContext(ctx). 
+Model(&repomodel.User{}). 
+Where("id = ?", userID). 
+Update("is_deleted", true) 
+if res.Error != nil { 
+r. logger. Err (res. Error) .Msg ( "failed to delete user") 
+return fmt.Errorf("failed to delete user") 
+return nil 
+func (r *Repository) UpdateUser(ctx context.Context, userID uint64, user model.UpdateUser) 
+error ( 
+repoUser := mapper.UpdateUserToRepoUser(user) 
+Разработка модуля Transaction 
+res := r.dЬ.WithContext(ctx). 
+Model(&repomodel.User{}). 
+Where("id =? AND is_deleted = 
+Updates(repoUser) 
+if res.Error != nil { 
+?" 
+. , userID, false) . 
+r.logger.Err(res.Error) .Msg("failed to update user") 
+return fmt.Errorf("failed to update user") 
+return nil 
+191 
+Сам сервис и контроллер при этом редактировать не требуется -
+сделанного дос­
+таточно, чтобы логика работала корректно. Остается только отредактировать мап­
+перы -
+чтобы в ответе возвращались еще и новые поля (листинги 4.14 и 4.15). 
+package mapper 
+import ( 
+accountpb "githuЬ.com/yuliaapopova/contracts/account/go" 
+"google.golang.org/protobuf/types/known/timestamppb" 
+"account/internal/model" 
+func PbToUser(userpb *accountpb.User) model.User { 
+return model.User{ 
+ID: 
+userpb. Id, 
+Login: 
+Email: 
+Phone: 
+userpb.Login, 
+userpb. Email, 
+userpb.Phone, 
+FirstName: 
+userpb.FirstName, 
+LastName: 
+userpb.LastName, 
+MiddleName: userpb.MiddleName, 
+Age: 
+Balance: 
+IsDeleted: 
+CreatedAt: 
+UpdatedAt: 
+userpb.Age, 
+float32(userpb.Balance), 
+userpb.IsDeleted, 
+userpb.CreatedAt.AsTime(), 
+userpb.UpdatedAt.AsTime(), 
+func UserToPЬ(user model.User) *accountpb.User { 
+return &accountpb.User{ 
+Id: 
+user. ID, 
+Login: 
+user.Login, 
+192 
+Email: 
+Phone: 
+FirstName: 
+LastName: 
+MiddleName: 
+Age: 
+Balance: 
+IsDeleted: 
+CreatedAt: 
+UpdatedAt: 
+user.Email, 
+user.Phone, 
+user. FirstName, 
+user.LastName, 
+user.MiddleName, 
+user.Age, 
+float32(user.Balance), 
+user. IsDeleted, 
+timestamppb.New(user.CreatedAt), 
+timestamppb.New(user.UpdatedAt), 
+func UsersToPbs(users []model.User) [)*accountpb.User 
+pbs := make([]*accountpb.User, len(users)) 
+for i, user := range users 
+pbs(i] = UserToPЬ(user) 
+return pbs 
+func PbsToUsers(pbs []*accountpb.User) []model.User 
+users := make([]model.User, len(pbs)) 
+for i, рЬ := range pbs { 
+users[i) = PbToUser(pb) 
+return users 
+func PbToUserCreate(accountpbUser *accountpb.CreateUser) model.CreateUser { 
+return model.CreateUser{ 
+Login: 
+accountpbUser.Login, 
+Email: 
+accountpbUser.Email, 
+Phone: 
+accountpbUser.Phone, 
+FirstName: 
+accountpbUser.FirstName, 
+LastName: 
+accountpbUser.LastName, 
+MiddleName: accountpbUser.MiddleName, 
+Age: 
+Balance: 
+accountpbUser.Age, 
+float32(accountpbUser.Balance), 
+func PbToUserUpdate(userpb *accountpb.User) model.UpdateUser { 
+return model.UpdateUser{ 
+Email: 
+userpb.Email, 
+Phone: 
+userpb.Phone, 
+FirstName: 
+userpb.FirstName, 
+Глава 4 
+Разработка модуля Transaction 
+LastName: 
+userpb.LastName, 
+MiddleName: userpb.MiddleName, 
+Age: 
+Balance: 
+011sin4 
+package mapper 
+userpb.Age, 
+float32(userpb.Balance), 
+• 2121· 1212т,иm:' 
+iroport ( 
+"account/internal/model" 
+repomodel "account/internal/repository/model" 
+•rтеееег ае r+1111LIIIIII 
+func UserToRepoUser(user model.User) repomodel.User ( 
+return repomodel.User( 
+1D: 
+user. ID, 
+Login: 
+user.Login, 
+Email: 
+user. Email, 
+Phone: 
+user. Phone, 
+FirstName: 
+user.FirstName, 
+LastName: 
+user.LastName, 
+MiddleName: user.MiddleName, 
+Age: 
+Balance: 
+IsDeleted: 
+CreatedAt: 
+UpdatedAt: 
+user.Age, 
+user.Balance, 
+user. IsDeleted, 
+user.CreatedAt, 
+user. UpdatedAt, 
+func RepoUserToUser(user repomodel.User) model.User ( 
+return model.User( 
+ID: 
+user. ID, 
+Login: 
+user.Login, 
+Email: 
+user.Email, 
+Phone: 
+user.Phone, 
+FirstName: 
+user.FirstName, 
+LastName: 
+user.LastName, 
+MiddleName: user.MiddleName, 
+Age: 
+user.Age, 
+Balance: 
+user.Вalance, 
+IsDeleted: 
+user. IsDeleted, 
+CreatedAt: 
+user.CreatedAt, 
+UpdatedAt: 
+user.UpdatedAt, 
+193 
+194 
+func RepoUsersToUsers(users []repomodel.User) []model.User ( 
+res : = make ( [] model. User, len (users) ) 
+for i, user := range users { 
+res[i] = RepoUserToUser(user) 
+return res 
+func UpdateUserToRepoUser(user model.UpdateUser) repomodel.User { 
+return repomodel.User{ 
+Email: 
+user. Email, 
+Phone: 
+user. Phone, 
+FirstName: 
+user.FirstName, 
+LastName: 
+user.LastName, 
+MiddleName: user.MiddleName, 
+Age: 
+user.Age, 
+Balance: 
+user.Balance, 
+func CreateUserToRepoUser(user model.CreateUser) repomodel.User { 
+return repomodel.User{ 
+Login: 
+user.Login, 
+Email: 
+user.Email, 
+Phone: 
+user.Phone, 
+FirstName: 
+user.FirstName, 
+LastName: 
+user.LastName, 
+MiddleName: user.MiddleName, 
+Age: 
+user.Age, 
+Balance: 
+user.Balance, 
+Глава 4 
+Помимо добавления баланса, в схемы нужно также добавить методы для изменения 
+и получения баланса (листинг 4.16). 
+syntax = "protoЗ"; 
+package account; 
+option goyackage = "githuЬ.com/yuliaapopova/contracts/account/go;account"; 
+import "google/api/annotations.proto"; 
+import "google/protobuf/empty.proto"; 
+import "account_model.proto"; 
+import "pagination/pagination.proto"; 
+Разработка модуля Transaction 
+service Account { 
+rpc CreateUser(CreateUserRequest) returns {CreateUserResponse); 
+rpc GetUser{GetUserRequest) returns (GetUserResponse); 
+rpc GetUsers(GetUsersRequest) returns (GetUsersResponse); 
+rpc DeleteUser(DeleteUserRequest) returns (google.protobuf.Empty); 
+rpc UpdateUser(UpdateUserRequest) returns (google.protobuf.Empty); 
+// управление балансом 
+rpc Deposit(DepositRequest) returns (DepositResponse); 
+rpc Withdraw(WithdrawRequest) returns (WithdrawResponse); 
+rpc Transfer(TransferRequest) returns (TransferResponse); 
+rpc GetBalance(GetBalanceRequest) returns (GetBalanceResponse); 
+message CreateUserRequest { 
+account.CreateUser user 
+1; 
+message CreateUserResponse 
+account.User user = 1; 
+message GetUserRequest { 
+uint64 user id = 1; 
+message GetUserResponse 
+User user = 1; 
+message GetUsersRequest 
+pagination.Pagination pagination = 1; 
+message GetUsersResponse { 
+repeated account.User users = 1; 
+pagination.Pagination pagination = 2; 
+message DeleteUserRequest 
+uint64 user id = 1; 
+message UpdateUserRequest 
+uint64 user id = 1; 
+User user = 2; 
+195 
+196 
+// Пополнение 
+message DepositRequest 
+uint64 user id = 1; 
+int64 amount = 2; 
+uint64 operation_id 
+З; 
+message DepositResponse { 
+string status 
+1; // "completed" / "failed" 
+int64 balance = 2; 
+// Списание 
+message WithdrawRequest 
+uint64 user id = 1; 
+int64 amount = 2; 
+string operation_id = З; 
+message WithdrawResponse 
+string status 
+1; 
+int64 balance = 2; 
+// Перевод 
+message TransferRequest 
+uint64 user id = 1; 
+uint64 recipient_id = 2; 
+int64 amount = З; 
+string operation_id = 4; 
+message TransferResponse 
+string status = 1; 
+int64 user balance = 2; 
+int64 recipient_balance 
+З; 
+// Получение баланса 
+message GetBalanceRequest 
+uint64 user id = 1; 
+message GetBalanceResponse 
+int64 balance = 1; 
+Глава 4 
+Разработка модуля Transaction 
+197 
+Не забывайте также после каждого изменения контрактов обновлять их версию 
+и подтягивать ее в сервис. 
+Теперь можно приступить к логике, связанной с балансом, а именно -
+с пополне­
+нием, списанием и переводом средств. В repository добавим метод updateBalance, ко­
+торый будет отвечать за изменение баланса, а для перевода -
+отдельный метод 
+transferBalance (листинг 4.17). 
+package repository 
+import ( 
+"context" 
+"errors" 
+11 fffit" 
+"account/internal/rnodel" 
+"account/internal/repository/rnapper" 
+repornodel "account/internal/repository/rnodel" 
+"githuЬ.corn/rs/zerolog" 
+"gorrn.io/gorrn" 
+"gorrn.io/gorrn/clause" 
+type Repository struct { 
+dЬ 
+*gorrn. DB 
+logger *zerolog.Logger 
+func NewRepository(dЬ *gorrn.DB, logger *zerolog.Logger) *Repository { 
+return &Repository{ 
+dЬ: 
+dЬ, 
+logger: logger, 
+func (r *Repository) CreateUser (ctx context .Context, user rnodel. User) (rnodel. User, error) { 
+userRepo := rnapper.UserToRepoUser(user) 
+frnt.Println(userRepo) 
+res := r.dЬ.WithContext(ctx). 
+Clauses(clause.OnConflict{UpdateAll: true)). 
+//Clauses(clause.Returning{I). 
+Create(&userRepo) 
+if res.Error != nil { 
+r.logger.Err(res.Error) .Msg("failed to save user") 
+return rnodel.User{I, frnt.Errorf("failed to save user: %w", res.Error) 
+198 
+fmt.Println(userRepo) 
+return mapper.RepoUserToUser(userRepo), nil 
+func (r *Repository) GetUser(ctx context.Context, userID uint64) (model.User, error) { 
+var user repomodel.User 
+res := r.dЬ.WithContext(ctx). 
+Model(&repomodel.User()). 
+Where("id =? AND is deleted = 
+First ( &user) 
+?" 
+• 
+1 userID, false) . 
+if errors.Is(res.Error, gorm.ErrRecordNotFound) ( 
+return model. User (), fmt. Errorf ( "user not found") 
+else if res.Error != nil ( 
+r.logger.Err(res.Error) .Msg("failed to get user id") 
+return mapper.RepoUserToUser(user), nil 
+Глава 4 
+func (r *Repository) GetUsers(ctx context.Context, limit int, offset int) ([)model.User, 
+error) ( 
+var users [)repomodel.User 
+res := r.dЬ.WithContext(ctx). 
+Model(&repomodel.User{)). 
+Where("is deleted = ?", false). 
+Offset (offset) . 
+Limi t (limi t) . 
+Find ( &users) 
+if errors.Is(res.Error, gorm.ErrRecordNotFound) 
+return nil, fmt. Errorf ( "user not found") 
+else if res.Error != nil { 
+r.logger.Err(res.Error) .Msg("failed to get user id") 
+return mapper.RepoUsersToUsers(users), nil 
+func (r *Repository) DeleteUser(ctx context.Context, userID uint64) error { 
+res := r.dЬ.WithContext(ctx). 
+Model(&repomodel.User()). 
+Where("id = ?", userID). 
+Update("is_deleted", true) 
+if res.Error != nil { 
+r.logger.Err(res.Error) .Msg("failed to delete user") 
+return fmt .Errorf ("failed to delete user") 
+return nil 
+Рвзрвботкв модуля Trвnsвction 
+199 
+func (r *Repository) UpdateUser(ctx context.Context, userID uint64, user model.UpdateUser) 
+error { 
+repoUser := mapper.UpdateUserToRepoUser(user) 
+res := r.dЬ.WithContext(ctx). 
+Model(&repomodel.User()). 
+Where("id =? AND is_deleted = 
+Updates(repoUser) 
+if res.Error != nil { 
+?" 
+• 
+1 userID, false), 
+r.logger.Err(res.Error) .Msg("failed to update user") 
+return fmt. Errorf (" failed to update user") 
+return nil 
+// GetBalance получает текущий баланс пользователя 
+func (r *Repository) GetBalance(ctx coпtext.Context, userID uint64) (float32, error) { 
+var user repomodel.User 
+res := r.dЬ.WithContext(ctx). 
+Model(&repomodel.User{)). 
+Select ( "balance") . 
+Where("id =? AND is deleted = 
+First ( &user) 
+?" 
+• 
+1 userID, false). 
+if errors.Is(res.Error, gorm.ErrRecorc!NotFound) 
+return О, fmt.Errorf("user not found") 
+else if res.Error != nil { 
+r.logger.Err(res,Error) .Msg("failed to get user balance") 
+return О, fmt.Errorf("failed to get user balance: %w", res.Error) 
+return user.Balance, nil 
+// UpdateBalance обновляет баланс пользователя 
+func (r *Repository) UpdateBalance(ctx context.Context, userID uint64, amount float32, 
+operationType model. BalanceOperationType) 1 float32, float32, error) { 
+var user repomodel.User 
+// Сначала получаем текущий баланс 
+res := r.dЬ.WithContext(ctx). 
+Model(&repomodel.User{I). 
+Where("id =? AND is deleted = 
+First(&user) 
+?" 
+• 
+1 userID, false) . 
+if errors.Is(res.Error, gorm.ErrRecorc!NotFound) 
+return О, 
+О, fmt.Errorf("user not found") 
+else if res.Error != nil { 
+r.logger.Err(res.Error) .Msg("failed to get user for balance update") 

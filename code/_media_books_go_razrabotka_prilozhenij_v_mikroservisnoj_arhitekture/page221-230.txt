@@ -1,0 +1,412 @@
+220 
+return nil 
+1) 
+if err != nil { 
+return model.TransactionDetails{I, err 
+return result, nil 
+// Withdraw выnолняет операцию снятия средств в рамках одной транзакции БД 
+func {r *Repository) Withdraw(ctx context.Context, params model.WithdrawParams) 
+(model.TransactionDetails, error) { 
+var result model.TransactionDetails 
+err :х r.dЬ.WithContext(ctxl .Transaction(func(tx *gorm.DB) error { 
+// Создаем транзакцию 
+transaction := model.Transaction{ 
+UserID: params.AccountID, 
+// UserID теперь -
+это accountID 
+Amount: int64(params.Amount * 100), // конвертируем в копейки 
+Status: model.TransactioпStatusPending, 
+Туре: 
+model.TransactionTypeWithdraw, 
+transactionRepo := mapper.TransactionToRepoTransaction(transaction) 
+res := tx.Clauses(clause.OnConflict{UpdateAll: truel) .Create(&transactionRepol 
+if res.Error != nil { 
+r.logger.Err(res.Error) .Msg("failed to create transaction in withdraw") 
+return fmt.Errorf("failed to create transaction: %w", res.Error) 
+// Создаем запись кредита (уменьшение баланса) 
+entry := model.TransactionEntry{ 
+TransactionID: transactionRepo.ID, 
+AccountID: 
+params.AccountID, 
+Direction: 
+Amount: 
+model.TransactionEntryDirectionCredit, 
+params.Amount, 
+entryRepo := mapper.TransactionEntryТoRepoTransactionEntry(entry) 
+res = tx.Clauses(clause.OnConflict{UpdateAll: truel) .Create(&entryRepo) 
+if res.Error 1= nil { 
+r.logger.Err(res.Error) .Msg("failed to create transaction entry in withdraw") 
+return fmt.Errorf("failed to create transaction entry: %w", res.Error) 
+// Получаем детали созданной транзакции (оставляем в статусе pending) 
+transactionRepo.Status = string(model.TransactionStatusPending) 
+Глава 4 
+Разработка модуля Transaction 
+221 
+result = model.TransactionDetails{ 
+Transaction: mapper.RepoTransactionToTransaction(transactionRepo), 
+Entries: 
+[]model.TransactionEntry{mapper.RepoTransactionEntryToTransactionEntry(entryRepo) ), 
+return nil 
+}) 
+if err != nil { 
+return model.TransactionDetails{}, err 
+return result, nil 
+// Transfer выполняет операцию перевода средств в рамках одной транзакции БД 
+func (r *Repository) Transfer(ctx context.Context, params model.TransferParams) 
+(model.TransactionDetails, error) { 
+var result model.TransactionDetails 
+err := r.dЬ.WithContext(ctx) .Transaction(func(tx *gorm.DB) error { 
+// Создаем транзакцию 
+transaction := model.Transaction{ 
+UserID: params.UserID, 
+// UserID -
+автор перевода 
+Amount: int64(params.Amount * 100), // конвертируем в копейки 
+Status: model.TransactionStatusPending, 
+Туре: 
+model.TransactionTypeTransfer, 
+transactionRepo := mapper.TransactionToRepoTransaction(transaction) 
+res := tx.Clauses(clause.OnConflict{UpdateAll: true}) .Create(&transactionRepo) 
+if res.Error != nil ( 
+r.logger.Err(res.Error) .Msg("failed to create transaction in transfer") 
+return fmt.Errorf("failed to create transaction: %w", res.Error) 
+// Создаем запись кредита для счета отправителя (уменьшение баланса) 
+creditEntry := model.TransactionEntry{ 
+TransactionID: transactionRepo.ID, 
+AccountID: 
+Direction: 
+Amount: 
+params. UserID, 
+model.TransactionEntryDirectionCredit, 
+params.Amount, 
+creditEntryRepo := mapper.TransactionEntryТoRepoTransactionEntry(creditEntry) 
+res = tx.Clauses(clause.OnConflict{UpdateAll: true}} .Create(&creditEntryRepo) 
+222 
+Глава 4 
+if res.Error != nil { 
+r.logger.Err(res.Error) .Msg("failed to create credit transaction entry in transfer") 
+return fmt.Errorf("failed to create credit transaction entry: %w", res.Error) 
+1) 
+// Создаем заnись дебета для счета получателя (увеличение баланса) 
+debitEntry := model.TransactionEntry{ 
+TransactionID: transactionRepo.ID, 
+AccountID: 
+Direction: 
+Amount: 
+params.Recipient, 
+model.TransactionEntryDirectionDebit, 
+params.Amount, 
+debitEntryRepo := mapper.TransactionEntryToRepoTransactionEntry(debitEntry) 
+res = tx.Clauses(clause.OnConflict{UpdateAll: truel) .Create(&debitEntryRepol 
+if res.Error != nil { 
+r.logger.Err(res.Error) .Msg("failed to create debit transaction entry in transfer") 
+return fmt.Errorf("failed to create deЬit transaction entry: %w", res.Error) 
+// Получаем детали созданной транзакции (оставляем в статусе pending) 
+transactionRepo.Status = string(model.TransactionStatusPending) 
+result = model.TransactionDetails{ 
+Transaction: mapper.RepoTransactionToTransaction(transactionRepo), 
+Entries: []model.TransactionEntry{ 
+mapper.RepoTransactionEntryToTransactionEntry(creditEntryRepo), 
+mapper.RepoTransactionEntryToTransactionEntry(deЬitEntryRepo), 
+1, 
+return nil 
+if err != nil { 
+return model.TransactionDetails{I, err 
+return result, nil 
+// UpdateTransactionStatus обновляет статус транзакции 
+func (r *Repository) UpdateTransactionStatus(ctx context.Context, transactionID uint64, 
+status model.TransactionStatus) error { 
+updateData := mapper.UpdateTransactionToRepoTransaction(model.UpdateTransaction{ 
+Status: status, 
+1) 
+Разработка модуля Transaction 
+res := r.dЬ.WithContext(ctx). 
+Model(&repomodel.Transaction{)). 
+Where("id = ?", transactionID). 
+Updates(&updateData) 
+if res.Error != nil { 
+223 
+r.logger.Err(res.Error) .Uint64("transaction id", transactionID) .Str("status", 
+string(status)).Msg("failed to update transaction status") 
+return fmt.Errorf("failed to update transaction status: %w", res.Error) 
+if res.RowsAffected == О { 
+return fmt.Errorf("transaction with id %d not found", transactionID) 
+return nil 
+В репозитории мы убрали установку успешного статуса прямо внуrри транзакции и 
+вынесли обновление статуса в отдельный метод Updateтransactionstatus (листинг 4.25). 
+package service 
+import ( 
+"context" 
+"transaction/internal/model" 
+"githuЬ.com/rs/zerolog" 
+type TransactionService struct 
+repo 
+Repository 
+logger *zerolog.Logger 
+accountService AccountService 
+func New(repo Repository, accountService AccountService, logger *zerolog.Logger) 
+*TransactionService { 
+return &TransactionService{ 
+repo: 
+repo, 
+accountService: accountService, 
+logger: 
+logger, 
+224 
+type Repository interface { 
+// Transaction methods 
+Глава 4 
+GetTransactions(context.Context, model.GetTransactionsParams) ([]model.Transaction, error) 
+// TransactionEntry methods 
+GetTransactionDetails(context.Context, uint64) (model.TransactionDetails, error) 
+// Business operations 
+Deposit(context.Context, model.DepositParams) (model.TransactionDetails, error) 
+Withdraw(context.Context, model.WithdrawParams) (model.TransactionDetails, error) 
+Transfer(context.Context, model.TransferParams) (model.TransactionDetails, error) 
+// Update transaction status 
+UpdateTransactionStatus(context.Context, uint64, model.TransactionStatus) error 
+type AccountService interface { 
+GetBalance(ctx context.Context, userID uint64) (int64, error) 
+Deposit(ctx context.Context, userID uint64, amount int64, operationID uint64) (int64, error) 
+Withdraw(ctx context.Context, userID uint64, amount int64, operationID uint64) (int64, error) 
+Transfer(ctx context.Context, fromAccountID, toAccountID uint64, amount int64, operationID 
+uint64) (string, error) 
+func (s *TransactionService) GetTransactionsWithDetails(ctx context.Context, params 
+model.GetTransactionsParams) ([]model.TransactionDetails, error) ( 
+// Получаем список транзакций с фильтрацией 
+transactions, err := s.repo.GetTransactions(ctx, params) 
+if err != nil { 
+s.logger.Error() .Err(err) .Msg("failed to get transactions") 
+return nil, err 
+// Для каждой транзакции получаем детали 
+var transactionDetails []model.TransactionDetails 
+for , transaction := range transactions ( 
+details, err := s.repo.GetTransactionDetails(ctx, transaction.ID) 
+if err != nil ( 
+s.logger.Error() .Err(err) .Uint64("transaction_id", transaction.ID) .Msg("failed 
+to get transaction details") 
+continue 
+transactionDetails 
+append(transactionDetails, details) 
+return transactionDetails, nil 
+Разработка модуля Transaction 
+// Deposit Business logic methods 
+func (s *TransactionService) Deposit(ctx context.Context, userID uint64, amount float64) 
+(model.TransactionDetails, error) ( 
+params := model.DepositParams( 
+UserID: userID, 
+Amount: amount, 
+// Создаем транзакцию в pending статусе 
+res, err := s.repo.Deposit(ctx, params) 
+if err != nil { 
+225 
+s.logger.Error() .Err(err) .Uint64("user_id", userID) .Msg("failed to create deposit 
+transaction") 
+return model.TransactionDetails(), err 
+// Выполняем операцию с балансом через account service 
+, err = s.accountService.Deposit(ctx, userID, int64(amount*l00), res.Transaction.ID) 
+// конвертируем в копейки 
+if err != nil ( 
+s.logger.Error() .Err(err) .Uint64("user id", userID) .Uint64("transaction id", 
+res.Transaction.ID) .Msg("failed to deposit to account") 
+// Обновляем статус транзакции на failed 
+updateErr := s.repo.UpdateTransactionStatus(ctx, res.Transaction.ID, 
+model.TransactionStatusFailed) 
+if updateErr 1= nil ( 
+s.logger.Error() .Err(updateErr) .Uint64("transaction_id", 
+res.Transaction.ID) .Msg("failed to update transaction status to failed") 
+return model.TransactionDetails(), err 
+// Обновляем статус транзакции на completed 
+err = s.repo.UpdateTransactionStatus(ctx, res.Transaction.ID, model.TransactionStatusCompleted) 
+if err 1= nil ( 
+s.logger.Error() .Err(err) .Uint64("transaction_id", res.Transaction.ID) .Msg("failed to 
+update transaction status to completed") 
+return model.TransactionDetails(), err 
+// Обновляем статус в возвращаемом результате 
+res.Transaction.Status = model.TransactionStatusCompleted 
+return res, nil 
+func (s *TransactionService) Withdraw(ctx context.Context, accountID uint64, amount float64) 
+(model.TransactionDetails, error) ( 
+params := model.WithdrawParams( 
+AccountID: accountID, 
+226 
+Глава 4 
+Amount: 
+amount, 
+// Создаем транзакцию в pending статусе 
+res, err :; s.repo.Withdraw(ctx, params) 
+if err I; nil ( 
+s.logger.Error() .Err(err) .Uint64("account id", accountID) .Msg("failed to create 
+withdraw transaction") 
+return model.TransactionDetails(), err 
+// Выполняем операцию с балансом через account service 
+, err; s.accountService.Withdraw(ctx, accountID, int64(amount*100), res.Transaction.ID) 
+// конвертируем в копейки 
+if err !; nil ( 
+s.logger.Error() .Err(err) .Uint64("accouпt_id", accountID) .Uint64("traпsaction_id", 
+res.Transaction.ID) .Msg("failed to withdraw from account") 
+// Обновляем статус транзакции на failed 
+updateErr :; s.repo.UpdateTraпsactioпStatus(ctx, res.Transaction.ID, 
+model.TransactionStatusFailed) 
+if updateErr !; nil ( 
+s. logger. Error () . Err (updateErr) . Uiпt64 ( "traпsaction _ id", 
+res.Transaction.ID) .Msg("failed to update transaction status to failed") 
+return model.TraпsactionDetails(), err 
+// Обновляем статус транзакции на completed 
+err; s.repo.UpdateTransactionStatus(ctx, res.Traпsaction.ID, 
+model.TransactionStatusCompleted) 
+if err !; nil ( 
+s.logger.Error() .Err(err) .Uint64("transaction_id", res.Transaction.ID) .Msg("failed to 
+update transaction status to completed") 
+returп model.TransactionDetails(), err 
+// Обновляем статус в возвращаемом результате 
+res.Transaction.Status; model.TransactionStatusCompleted 
+return res, nil 
+func (s *TransactionService) Transfer(ctx context.Context, userID, recipient uint64, amount 
+float641 (model. TransactionDetails, error) ( 
+params :; model.TransferParams( 
+UserID: 
+userID, 
+Recipient: recipient, 
+Amount: 
+amount, 
+Разработка модуля Transaction 
+// Создаем транзакцию в pending статусе 
+res, err :; s.repo.Transfer(ctx, params) 
+if err !; nil { 
+s. logger. Error () . Err (err) . Uint64 ( "user _ id", userID) . Uint64 ( "recipient", 
+227 
+recipient) .Msg("failed to create transfer transaction") 
+return model.TransactionDetails{), err 
+// Выnолняем оnерацию с балансом через account service 
+, err; s.accountService.Transfer(ctx, userID, recipient, int64(amount*100), 
+res.Transaction.ID) // конвертируем в коnейки 
+if err !; nil { 
+s. logger. Error () . Err (err) . Uint64 ( "user _ id", userID) . Uint64 ( "recipient", 
+recipient) .Uint64("transaction_id", res.Transaction.ID) .Msg("failed to transfer 
+between accounts") 
+// Обновляем статус транзакции на failed 
+updateErr :; s.repo.UpdateTransactionStatus(ctx, res.Transaction.ID, 
+model.TransactionStatusFailed) 
+if updateErr 1; nil ( 
+s.logger.Error() .Err(updateErr) .Uint64("transaction_id", 
+res.Transaction.ID) .Msg("failed to update transaction status to failed") 
+return model.TransactionDetails(), err 
+// Обновляем статус транзакции на completed 
+err; s.repo.UpdateTransactionStatus(ctx, res.Transaction.ID, 
+model.TransactionStatusCompleted) 
+if err !; nil ( 
+s.logger.Error() .Err(err) .Uint64("transaction_id", res.Transaction.ID) .Msg("failed to 
+update transaction status to completed") 
+return model.TransactionDetails(), err 
+// Обновляем статус в возвращаемом результате 
+res.Transaction.Status; model.TransactionStatusCompleted 
+return res, nil 
+А в самой логике переделали суть так, что теперь сначала создается транзакция, 
+потом изменяется баланс у пользователя, и только после этого транзакция меняет 
+статус на completed. 
+Проблема распределенных транзакций 
+Сейчас наша транзакция реализована таким образом, что в ней производятся запро­
+сы в другой сервис -
+в Account. И если в случае ошибки транзакции откатятся, то 
+изменения в Account останутся актуальными. Можно -
+в случае ошибки -
+реали-
+228 
+Глава 4 
+зовать обратное списание и пополнение средств, только вот если ошибка возникнет 
+как раз в запросе изменения баланса, есть шанс, что мы в попытке откатить изме­
+нения только всё усугубим. Для пояснения предположим, что у первого пользова­
+теля запрос на изменение баланса не выполнился, -
+тогда ему на счет будут зачис­
+лены средства, а у пользователя, которому перевод предназначался, произойдет 
+списание. То есть окажется, что запрос создавался на перевод от Саши к Пете, а 
+при откате изменений произошел перевод от Пети к Саше. Что абсолютно непра­
+вильно, и такого допускать нельзя. 
+Можно попытаться получать статус ответа запроса, проверять, на каком этапе тран­
+закция сломалась, и в зависимости от этого выполнять определенные действия по 
+откату. Но как быть, если с сервисом просто что-то случится -
+банально выключат 
+электричество? Мы не сможем достучаться до Account, и в ответе нам будет прихо­
+дить сообщение об ошибке, связанной с тем, что время запроса истекло. Транзак­
+ция таким образом может зависнуть на неопределенное время, а если таких тран­
+закций окажется еще и много, весьма вероятно, что это повлияет на работоспособ­
+ность всей системы. 
+Такая транзакция, которая распространяется на несколько баз данных, во множест­
+ве систем называется распределенной. Главная проблема, которая возникает при 
+этом, -
+несогласованность данных, т. е. нарушение принципов ACID. Есть два 
+способа решения проблем, связанных с распределенными транзакциями ( они 
+описаны далее), однако совет номер один: постараться полностью их избежать. 
+К сожалению, в больших системах это практически невозможно. 
+Двухфазная фиксация 
+Как можно понять из названия, двухфазная фиксация состоит из двух фаз: подго­
+товки данных и их фиксации. При этом должен существовать координатор тран­
+закций, который отвечает за их жизненный цикл. 
+На первом этапе все микросервисы, участвующие в транзакции, выполняют необ­
+ходимые для фиксации подготовительные работы и уведомляют координатора 
+о том, что готовы завершить транзакцию. На втором этапе либо происходит фикса­
+ция, либо координатор выдает команду всем микросервисам произвести откат [6]. 
+Если применить этот подход к разрабатываемой нами системе, то получится, что 
+нам понадобится отдельный координатор транзакций, который при получении за­
+проса от пользователя на проведение операции направлял бы сервису Account ко­
+манду зарезервировать средства на балансе, а сервису Transaction -
+команду под­
+готовить данные для сохранения транзакции. Когда сервисы Account и Transaction 
+будут готовы выполнить запрос, они заблокируют записи в своих таблицах от 
+дальнейших изменений и уведомят об этом координатора транзакций. Как только 
+координатор транзакций подтвердит, что Account и Transaction готовы внести свои 
+изменения, он даст им команду сохранить их, запросив фиксацию транзакции. 
+В этот момент все записи, участвующие в транзакции, будут разблокированы. Если 
+же вдруг какой-либо из сервисов, Transaction или Account, не успеет приготовиться 
+к фиксации, координатор транзакций отменит транзакцию и начнет сценарий отка-
+Разработка модуля Transaction 
+229 
+та. Когда все данные будут приведены в консистентное состояние -
+с успешным 
+выполнением транзакции или нет, -
+координатор транзакций запросит разблоки­
+ровку объектов баз данных. 
+Такой подход обеспечивает атомарность операции -
+она выполнится в любом слу­
+чае: либо когда все участники транзакции внесут свои изменения, либо если они не 
+внесут никаких изменений. Обеспечивает он также и изолированность транзакций, 
+поскольку у других транзакций к изменениям не будет доступа, пока координатор 
+эти изменения не зафиксирует. Причем весь процесс выполняется синхронно­
+т. е. сразу после его завершения можно будет уведомить пользователя о результате 
+выполнения его запроса. 
+Оrрицательные моменты этого подхода заключаются в том, что описанное взаимо­
+действие способно значительно снизить скорость работы системы, поскольку осу­
+ществляется гораздо медленнее, чем если бы операции выполнялись в одном мик­
+росервисе. К тому же все микросервисы здесь сильно зависят от координатора 
+транзакций, что также способно неблагоприятно сказаться на скорости работы сис­
+темы в период высокой нагрузки. Да и блокировка записей в базах данных может 
+создать узкое место, тоже влияющее на производительность, причем не исключено 
+возникновение взаимных блокировок, когда две транзакции мешают друг другу 
+выполниться. 
+Saga 
+Saga -
+это еще один паттерн, предложенный для решения проблемы распределен­
+ных транзакций, и к тому же самый распространенный. Определение Saga [7]: 
+□ каждый сервис публикует событие всякий раз, когда обновляет свои данные; 
+□ другие сервисы подписываются на события; 
+□ при получении события сервис обновляет свои данные. 
+Если пытаться адаптировать этот паттерн под нашу систему, то получится, что сер­
+висы Transaction и Account должны будут выполнять свои операции отдельно и 
+асинхронно и обмениваться результатами через шину событий. В качестве шины 
+событий чаще всего выступают брокеры сообщений, которые мы уже рассматрива­
+ли ранее. 
+Разберемся с этим подробнее. Первое, с чего начинается наша транзакция, -
+со­
+хранение записи в базу данных transaction-dЬ, после чего идет вызов в сервис 
+Account на списание либо пополнение баланса. На этом этапе, если действовать 
+согласно Saga, мы должны отправить в брокер сообщений событие, что транзакция 
+сохранена. А со стороны Account должны подписаться на это событие, и когда по­
+лучим сигнал о том, что на стороне сервиса Transaction всё выполнено, приступим 
+к изменению баланса. Однако здесь появляется промежуток времени, когда тран­
+закция будет видна, а баланс еще не изменен. Эrо можно смягчить, добавив для 
+транзакций статусы. Например, при первой итерации в сервисе Transaction устано­
+вить статус «created» или «in processed» -
+т. е. транзакция создана. Когда Account 
+изменит баланс у себя, то Transaction будет ожидать соответствующего события, 
+при получении которого изменит статус на «completed». При этом для пользователя 

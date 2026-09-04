@@ -1,0 +1,543 @@
+300 
+Глава 5 
+Имя 
+л 
+Дата изменения 
+Размер 
+Тип 
+> • 
+account 
+Сегодня, 21:09 
+Папка 
+> • 
+auth 
+Сегодня, 21:08 
+Папка 
+1 docker-compose.yaml 
+Сегодня, 21:17 
+4 КБ YAML 
+> • 
+gateway 
+Сегодня, 21:09 
+Папка 
+> • 
+transaction 
+Сегодня, 21:26 
+Папка 
+Рис. 5.9. Структура проекта для контейнеризации 
+Рис. 5.10. book-all с запущенными dосkеr-контейнерами 
+На следующем шаге мы можем доставить докер-образы на виртуальную машину -
+для этого нужно собранный образ залить в Docker Hub. Но сначала придется там 
+зарегистрироваться -
+по адресу: https://hub.docker.com/. 
+Затем открыть терминал и авторизоваться в Docker: 
+docker login 
+Если всё выполнено верно, то вы увидите такой ответ: 
+Login Succeeded 
+Logging in with your password grants your terminal cornplete access to your account. 
+For better security, log in with а lirnited-privilege personal access token. Learn rnore at 
+https://docs.docker.corn/go/access-tokens/ 
+Развертывание микросервисов 
+301 
+Теперь нужно пометить созданные нами образы тегами и закоммитить их в Docker 
+Hub. Но сначала посмотрим, какие образы у нас есть: 
+docker image ls 
+REPOSITORY 
+TAG 
+IМAGE ID 
+CREATED 
+SIZE 
+transaction 
+latest 
+9fd2c7c61955 
+3 minutes ago 
+53.8МВ 
+account 
+latest 
+efcc5810a079 
+3 minutes ago 
+53.бМВ 
+auth 
+latest 
+7524c8820fc4 
+3 minutes ago 
+49. lMB 
+gateway 
+latest 
+2a517Ьf236f3 
+3 minutes ago 
+38.4МВ 
+Здесь нас интересуют все четыре образа -
+их как раз и необходимо залить 
+в Docker Hub. Для этого выполним команду: 
+docker tag book_all-auth yuliapopova/book_all-auth:latest 
+Здесь: 
+□ book _ all -auth -
+название образа в локальном репозитории; 
+□ yuliapopova -
+логин пользователя; 
+□ book _ all-auth -
+имя для образа на хабе, а latest -
+версия. 
+Теперь образ готов к коммиту: 
+docker push yuliapopova/book_all-auth:latest 
+Повторим то же самое и для остальных образов. В результате на главной странице 
+Docker Hub в вашей учетной записи можно будет увидеть все созданные докер­
+образы (рис. 5.11 ), причем доступ к ним сейчас возможен откуда угодно. Соответ­
+ственно, мы можем запустить эти образы и на удаленном сервере. 
+Оrредактируем файл docker-compose.yaml так, чтобы образы теперь загружались из 
+облака, а не собирались локально (листинг 5.9). 
+Рис. 5.11. Опубликованные dосkеr-обраэы 
+302 
+services: 
+account dЬ: 
+image: postgres:15-alpine 
+environment: 
+POSTGRES_USER: postgres 
+POSTGRES_PASSWORD: postgres 
+POSTGRES DB: account 
+ports: 
+- "5432:5432" 
+volumes: 
+-
+postgres_account_data:/var/liЬ/postgresql/data 
+healthcheck: 
+test: ["CMD-SHELL", "pg_isready -U postgres"] 
+interval: 5s 
+timeout: 5s 
+retries: 5 
+networks: 
+- app-network 
+auth dЬ: 
+image: postgres:15-alpine 
+environment: 
+POSTGRES USER: postgres 
+POSTGRES_PASSWORD: postgres 
+POSTGRES DB: auth 
+ports: 
+- "5433:5432" 
+volumes: 
+-
+postgres_auth_data:/var/liЬ/postgresql/data 
+healthcheck: 
+test: [ "CMD-SHELL", "pg_isready -U postgres"] 
+interval: 5s 
+timeout: 5s 
+retries: 5 
+networks: 
+- app-network 
+transaction dЬ: 
+image: postgres:15-alpine 
+environment: 
+POSTGRES_USER: postgres 
+POSTGRES_PASSWORD: postgres 
+POSTGRES DB: transaction 
+ports: 
+- "5434:5432" 
+Глава 5 
+Развертывание микросервисов 
+volumes: 
+-
+postgres_transaction_data:/var/liЬ/postgresql/data 
+healthcheck: 
+test: [ "CMD-SHELL", "pg_ isready -U postgres") 
+interval: 5s 
+timeout: 5s 
+retries: 5 
+networks: 
+- app-network 
+kafka: 
+image: confluentinc/cp-kafka:7.5.0 
+container name: book-kafka 
+platform: linux/x86_64 
+environment: 
+CLUSTER_ID: 5DG6k02sQY6c81Ufs8nG5A 
+КАFКА NODE ID: 1 
+КAFКA_PROCESS_ROLES: broker,controller 
+УАFКА CONTROLLER LISTENER NAМES: CONTROLLER 
+-
+-
+-
+# объявляем все виды listeners, 
+в том числе PLAINTEXT_HOST 
+КAFКA_LISTENERS: PLAINTEXT://:9092,CONTROLLER://:9093,PLAINTEXT_HOST://:29092 
+# объявляем external/host endpoints 
+КAFКA_ADVERTISED_LISTENERS: PLAINTEXT://kafka:9092,PLAINTEXT_HOST://localhost:29092 
+КАFКА LISTENER SECURITY PROTOCOL МАР: 
+-
+-
+-
+-
+303 
+PLAINTEXT:PLAINTEXT,PLAINTEXT_HOST:PLAINTEXT,CONTROLLER:PLAINTEXT 
+КАFКА INTER BROKER LISTENER NАМЕ: PLAINTEXT 
+-
+-
+-
+-
+КAFКA_CONTROLLER_QUORUM_VOTERS: l@kafka:9093 
+КАFКА OFFSETS TOPIC REPLICATION FACTOR: 1 
+-
+-
+-
+КАFКА TRANSACTION STATE LOG REPLICATION FACTOR: 1 
+-
+-
+-
+-
+-
+КАFКА TRANSACTION STATE LOG MIN ISR: 1 
+-
+-
+-
+-
+-
+КАFКА GROUP INITIAL REBALANCE DELAY MS: 
+О 
+-
+-
+-
+-
+-
+КАFКА LOG DIRS: 
+/var/liЬ/kafka/data 
+ports: 
+- "29092:29092" 
+# внешний порт 
+- "9092:9092" 
+# внутренняя сеть docker 
+restart: unless-stopped 
+networks: 
+-
+app-пetwork 
+kafka-ui: 
+image: provectuslabs/kafka-ui:latest 
+coпtainer name: book-kafka-ui 
+platform: linux/x86 64 
+304 
+envirorшtent: 
+-
+КАFКА CLUSTERS 
+О NAМE=local 
+-
+-
+-
+-
+КАFКА CLUSTERS 
+О BOOTSTRAPSERVERS=kafka:9092 
+depends_on: 
+- kafka 
+ports: 
+- "29093:8080" 
+restart: unless-stopped 
+transaction: 
+image: yuliapopova/transaction:latest 
+build: ./transaction 
+ports: 
+- "50054:8080" 
+envirorшtent: 
+Глава 5 
+DB_DSN: 
+postgres://postgres:postgres@transaction_dЬ:5432/transaction?sslmode=disaЫe 
+ACCOUNT GRPC HOST: account:8080 
+КАFКА BROКER HOST: kafka:9092 
+-
+-
+КАFКА CONSUМER GROUP: consumer 
+-
+-
+КAFКA_TRANSACTION_TOPIC: transaction response 
+GRPC 'роRт: 50054 
+depends_on: 
+- transaction dЬ 
+- kafka 
+networks: 
+- app-network 
+account: 
+image: yuliapopova/account:latest 
+build: ./account 
+ports: 
+- "50051:8080" 
+envirorшtent: 
+DB_DSN: postgres://postgres:postgres@account dЬ:5432/account?sslmode=disaЫe 
+КАFКА BROКER HOST: kafka:9092 
+-
+-
+КАFКА CONSUМER GROUP: consumer-account 
+-
+-
+КAFКA_TRANSACTION_TOPIC: transaction_request 
+GRPC PORT: 50051 
+depends_on: 
+- account dЬ 
+- kafka 
+networks: 
+- app-network 
+auth: 
+image: yuliapopova/auth:latest 
+build: . / auth 
+Развертывание микросервисов 
+ports: 
+- "50052:8080" 
+environment: 
+JWГ SECRET: secret 
+ACCESS ТОКЕN TTL MINUTES: 60 
+-
+-
+-
+REFRESH ТОКЕN TTL DAYS: 30 
+-
+-
+-
+DB_DSN: 
+postgres://postgres:postgres@auth_dЬ:5432/auth?sslmode=disaЫe 
+GRPC PORT: 50052 
+depends_on: 
+- auth dЬ 
+networks: 
+- app-network 
+gateway: 
+image: yuliapopova/gateway:latest 
+build: ./gateway 
+ports: 
+- "50053:8080" 
+environment: 
+JWT SECRET: secret 
+ACCOUNT GRPC HOST: account:8080 
+AUTH GRPC HOST: auth:8080 
+TRANSACTION GRPC HOST: transaction:8080 
+GRPC PORT: 50053 
+networks: 
+- app-network 
+volumes: 
+postgres account data: 
+postgres_auth_data: 
+postgres_transaction_data: 
+networks: 
+app-network: 
+driver: bridge 
+305 
+Остается только доставить Docker-Compose и переменные окружения на виртуаль­
+ную машину и запустить. Сделать это можно, например, через GitHub. 
+В этом разделе мы рассмотрели третий способ развертывания микросервисов. 
+В результате его применения работы по настройке приложения на сторонних сер­
+верах или компьютерах заметно сократились. 
+306 
+Глава 5 
+Масштабирование 
+при помощи оркестратора Kubernetes 
+Kubemetes -
+это мощный инструмент для оркестровки контейнеризированных 
+приложений с открытым исходным кодом, позволяющий автоматизировать процесс 
+развертывания, масштабирования и координации сервисов в условиях кластера [2]. 
+Kubernetes предоставляет следующие возможности [3]: 
+□ планирование распределения рабочей нагрузки для множества хостов; 
+□ предоставление декларативного, расширяемого АРl-интерфейса для взаимодей­
+ствия с системой; 
+□ утилиту командной строки kubectl для взаимодействия с АРl-сервером в ручном 
+режиме; 
+□ приведение объектов от текущего состояния к желаемому; 
+□ предоставление базового служебного слоя для направления запросов к прило­
+жениям и обратно; 
+□ несколько интерфейсов для поддержки подключаемых модулей, отвечающих 
+за работу с сетью. хранилищем и т. д. 
+Есть несколько важных понятий, которые необходимо знать, перед тем как про­
+должить разбираться дальше. 
+□ Узел (node). 
+Отдельная физическая или виртуальная машина. на которой развернуты и вы­
+полняются контейнеры приложений. Каждый узел содержит сервисы для запус­
+ка приложений в контейнерах и компоненты для централизованного управления 
+узлом. 
+□ Под (pod). 
+Базовая единица для запуска и управления приложениями. Под представляет со­
+бой один или несколько контейнеров, гарантированных для запуска на одном 
+узле. В поде обеспечивается разделение ресурсов и межпроцессное взаимодей­
+ствие, а также предоставляется уникальный IР-адрес в пределах кластера. Это 
+позволяет приложениям использовать фиксированные номера портов без риска 
+конфликта. Управление подами можно осуществлять через API Kubernetes или 
+контроллер. 
+□ Том (volume). 
+Общий ресурс хранения для совместного использования контейнерами в преде­
+лах одного пода. Том обеспечивает доступ к данным между контейнерами внут­
+ри пода. 
+□ Контроллер реплик (replication controllers). 
+Обеспечивает масштабирование, запуская необходимое количество копий пода 
+в кластере. Так,1,е реализует запуск новых экземпляров пода, если какие-то 
+выходят из строя. 
+Развертывание микросервисов 
+307 
+□ Сервис (services). 
+Сервис в Kubernetes -
+это абстракция, которая определяет логический объеди­
+ненный в группу под и политику доступа к нему. 
+Более подробно разбираться с тем, что такое Kubernetes, мы не будем, а перейдем 
+лучше к практике. Первое, что необходимо сделать, -
+это установить Kubernetes, 
+выполнив соответствующие инструкции 1 . 
+Когда всё установится, создадим для простоты примера под nginx: 
+kuЬectl run nginx --image=nginx:latest --port=80 
+Чтобы посмотреть информацию об этом поде, необходимо ввести в терминале: 
+kuЬectl describe pods nginx 
+В ответ будет выведена следующая информация: 
+Name: 
+Namespace: 
+Priority: 
+Service Account: 
+Node: 
+Start Time: 
+Labels: 
+Annotations: 
+Status: 
+IP: 
+IPs: 
+Containers: 
+nginx: 
+Container ID: 
+Image: 
+Image ID: 
+Port: 
+Host Port: 
+State: 
+Reason: 
+Ready: 
+Restart Count: 
+Environment: 
+Mounts: 
+nginx 
+default 
+о 
+default 
+minikuЬe/192.168.49.2 
+Wed, 10 Sep 2025 20:04:01 +0000 
+run=nginx 
+<none> 
+Pending 
+<none> 
+nginx:latest 
+80/ТСР 
+0/ТСР 
+Waiting 
+ContainerCreating 
+False 
+о 
+<none> 
+/var/run/secrets/kuЬernetes.io/serviceaccount from kuЬe-api-access-zmkkr (ro) 
+Conditions: 
+Туре 
+Status 
+PodReadyToStartContainers 
+False 
+Initialized 
+True 
+Ready 
+False 
+1 См. https://kubernetes.io/docs/tasks/tools/install-kubectl-linux/. 
+308 
+ContainersReady 
+PodScheduled 
+Volшnes: 
+kuЬe-api-access-zmkkr: 
+False 
+True 
+Глава 5 
+Туре: 
+Projected (а volшne that contains injected data from multiple 
+sources) 
+TokenExpirationSeconds: 
+3607 
+ConfigМapName: 
+kuЬe-root-ca. crt 
+Optional: 
+false 
+DownwardAPI: 
+true 
+QoS Class: 
+BestEffort 
+Node-Selectors: 
+<none> 
+Tolerations: 
+node.kuЬernetes.io/not-ready:NoExecute op=Exists for 300s 
+node.kuЬernetes.io/unreachaЫe:NoExecute op=Exists for 300s 
+Events: 
+Туре 
+Reason 
+Age 
+From 
+Message 
+Normal 
+Scheduled 6s 
+default-scheduler Successfully assigned default/nginx to minikuЬe 
+Normal 
+Pulling 
+5s 
+kuЬelet 
+Pulling image "nginx:latest" 
+Но так создавать поды не рекомендуется -
+желательно делать это через конфигу­
+рацию, которая в контексте Kubemetes называется манифестом (листинг 5 .1 О). 
+apiVersion: apps/vl 
+kind: Deployment 
+metadata: 
+name: my-nginx-deployment 
+spec: 
+replicas: 1 
+selector: 
+matchLaЬels: 
+арр: nginx 
+template: 
+metadata: 
+laЬels: 
+арр: nginx 
+spec: 
+containers: 
+- name: nginx 
+image: 
+cr.yandex/crpv7tlcpgb30qpgkiij/uЬuntu-nginx:latest 
+Разберемся, из чего состоит этот манифест: 
+□ apiVersion -
+определяет, для какой версии Kubemetes он написан. В разных вер­
+сиях это значение может различаться; 
+Развертывание микросервисов 
+309 
+□ kind -
+механизм использования, может принимать различ1-1ые заданные значе­
+ния. Чтобы развернуть приложение, указываем Deployment; 
+□ rnetadata -
+определяет метаданные приложения. Через них можно производить 
+различные манипуляции с объектами кластера; 
+□ spec -
+описание объектов Kubemetes; 
+□ containers -
+контейнеры, которые будут загружены. 
+Чтобы применить настройки манифеста, нужно выполнить команду: 
+kuЬectl apply -f pod.yarnl 
+В результате появится сообщение: 
+deployment.apps/rny-nginx-deployment created 
+Попробуем теперь перенести в Kubemetes наше приложение, для чего воспользуем­
+ся инструментом kompose, созданным специально для упрощения перехода из 
+Docker-Compose в Kubemetes. В использовании kompose есть нюанс -
+он не рабо­
+тает с переменными окружения, если их больше одной, но у нас все переменные 
+окружения и так уже в docker-compose. 
+Теперь нужно установить сам kompose. Если вы работаете под macOS, то достаточ­
+но выполнить команду: 
+brew install kornpose 
+В противном случае перейдите по ссылке: https://kompose.io/installation/ и устано­
+вите kompose удобным для вас способом в зависимости от вашей операционной 
+системы. 
+Теперь перейдите в каталог с файлом docker-compose.yaml и выполните миграцию: 
+kornpose convert -f docker-cornpose.yarnl 
+В результате для каждого сервиса будут созданы отдельные файлы-манифесты 
+deployment и service (рис. 5.12). 
+Остается только перенести всю систему на нашу виртуальную машину. Снова вос­
+пользуемся для этого GitHub: запушим сгенерированные файлы-манифесты туда, а 
+на виртуальной машине просто склонируем репозиторий. Но перед тем как запус­
+тить поды по этим манифестам, нужно удалить оттуда файл docker-compose.yaml, 
+т. к. утилита kubectl попытается счесть его манифестом и не даст выполниться 
+остальным. 
+Запустить поды можно командой: 
+kuЬectl apply -f 
+В ответ вы увидите сообщение о том, что файлы service и deployment сконфигуриро­
+ваны. Убедиться в этом можно, посмотрев, какие поды существуют сейчас: 
+kuЬectl get pods 
+Это выведет в вашем Kubemetes все поды, а также покажет их статус (рис. 5 .13 ). 

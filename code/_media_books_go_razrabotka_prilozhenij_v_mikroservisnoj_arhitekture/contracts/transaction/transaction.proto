@@ -1,0 +1,95 @@
+syntax = "proto3";
+
+package transaction;
+
+option go_package = "github.com/yuliapopova/book_all/contracts/transaction;transaction";
+
+import "google/protobuf/timestamp.proto";
+
+service TransactionService {
+  rpc Deposit (DepositRequest) returns (DepositResponse);
+  rpc Withdraw (WithdrawRequest) returns (WithdrawResponse);
+  rpc Transfer (TransferRequest) returns (TransferResponse);
+  rpc GetTransactions (GetTransactionsRequest) returns (GetTransactionsResponse);
+  rpc HandleAccountResponse (google.protobuf.Empty) returns (google.protobuf.Empty);
+}
+
+enum TransactionStatus {
+  PENDING = 0;
+  COMPLETED = 1;
+  FAILED = 2;
+}
+
+enum TransactionType {
+  DEPOSIT = 0;
+  WITHDRAW = 1;
+  TRANSFER = 2;
+}
+
+message DepositRequest {
+  uint64 user_id = 1;
+  double amount = 2;
+}
+
+message DepositResponse {
+  bool success = 1;
+  string message = 2;
+  TransactionDetails details = 3;
+}
+
+message WithdrawRequest {
+  uint64 account_id = 1;
+  double amount = 2;
+}
+
+message WithdrawResponse {
+  bool success = 1;
+  string message = 2;
+  TransactionDetails details = 3;
+}
+
+message TransferRequest {
+  uint64 user_id = 1;
+  uint64 recipient = 2;
+  double amount = 3;
+}
+
+message TransferResponse {
+  bool success = 1;
+  string message = 2;
+  TransactionDetails details = 3;
+}
+
+message GetTransactionsRequest {
+  uint64 user_id = 1;
+  uint32 limit = 2;
+  uint32 offset = 3;
+}
+
+message GetTransactionsResponse {
+  bool success = 1;
+  repeated TransactionDetails transactions = 2;
+}
+
+message TransactionEntry {
+  uint64 id = 1;
+  uint64 transaction_id = 2;
+  int64 amount = 3;
+  string type = 4;
+}
+
+message Transaction {
+  uint64 id = 1;
+  uint64 user_id = 2;
+  uint64 account_id = 3;
+  int64 amount = 4;
+  TransactionStatus status = 5;
+  TransactionType type = 6;
+  google.protobuf.Timestamp created_at = 7;
+  google.protobuf.Timestamp updated_at = 8;
+}
+
+message TransactionDetails {
+  Transaction transaction = 1;
+  repeated TransactionEntry entries = 2;
+}

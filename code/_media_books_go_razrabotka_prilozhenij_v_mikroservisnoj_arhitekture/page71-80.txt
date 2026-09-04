@@ -1,0 +1,398 @@
+70 
+DeleteUser(context.Context, uint64) error 
+UpdateUser(context.Context, uint64, model.UpdateUser) error 
+Глава 1 
+func (s *AccountService) CreateUser(ctx context.Context, newUser model.CreateUser) error { 
+user := model.User{ 
+Login: 
+newUser.Login, 
+Email: 
+Phone: 
+FirstName: 
+LastName: 
+MiddleName: 
+Age: 
+CreatedAt: 
+UpdatedAt: 
+newUser.Email, 
+newUser.Phone, 
+newUser.FirstName, 
+newUser.LastName, 
+newUser.MiddleName, 
+newUser.Age, 
+time.Now(), 
+time.Now(), 
+return s.repo.CreateUser(ctx, user) 
+func (s *AccountService) GetUsers(ctx context.Context, limit int, offset int) ([]model.User, 
+error) { 
+return s.repo.GetUsers(ctx, limit, offset) 
+func (s *AccountService) GetUser (ctx context. Context, userID uint64) (model. User, error) { 
+return s.repo.GetUser(ctx, userID) 
+func (s *AccountService) DeleteUser(ctx context.Context, userID uint64) error { 
+return s.repo.DeleteUser(ctx, userID) 
+func (s *AccountService) UpdateUser(ctx context.Context, userID uint64, 
+user model.UpdateUser) error { 
+return s.repo.UpdateUser(ctx, userID, user) 
+Тут мы используем интерфейс репозитория и не ссылаемся на пакет, в котором он 
+реализован, -
+именно так достигается изоляция слоев между собой. Мы описыва­
+ем в интерфейсе методы, которые должны быть реализованы, и когда будем созда­
+вать сервисный слой, при вызове New должны будем передать repository, удовлетво­
+ряющий описанному интерфейсу. Еще одно неочевидное преимущество такого 
+подхода -
+тестируемость. Чтобы покрыть код unit-тестами, достаточно будет соз­
+дать заглушку для слоя репозитория и «скормить» ее сервису, -
+при этом тестиро­
+вать можно будет без реальной базы. 
+Разработка первого микросервиса (User) 
+71 
+Определив слои миграций, репозитория и бизнес-логики, мы выходим на следую­
+щую нерешенную пока задачу: каким образом запросы из внешнего мира будут об­
+ращаться к этой логике? Это означает, что нужен еще один слой, готовый принять 
+запрос, разобрать его, превратить во внутренние сущности и передать на обработку 
+сервису. В архитектуре это называется серверный, или транспортный, слой. Сер­
+верный слой служит своеобразным передатчиком между двумя средами. Снаружи 
+он говорит на языке протоколов, а внутри же обращается к бизнес-логике, для ко­
+торой важны не форматы сетевых сообщений, а сами факты и правила, по которым 
+живет система. 
+Принципиально важно, что серверный уровень (листинг 1.26) не содержит бизнес­
+правил. Он не решает, как именно зарегистрировать пользователя или какие усло­
+вия наложить на его пароль. Это остается задачей сервисного слоя. 
+package server 
+irnport ( 
+"account/internal/rnapper" 
+"account/internal/rnodel" 
+"context" 
+accountpb "githuЬ.corn/yuliaapopova/contracts/account/go" 
+"google.golang.org/protobuf/types/known/ernptypb" 
+"githuЬ.corn/rs/zerolog" 
+type Server struct { 
+accountpb.UnirnplernentedAccountServer 
+accountService AccountService 
+logger 
+*zerolog.Logger 
+func New(accountService AccountService, logger *zerolog.Logger) *Server 
+return &Server{accountService: accountService, logger: logger) 
+type AccountService interface { 
+CreateUser(context.Context, rnodel.CreateUser) error 
+GetUser(ctx context.Context, userID uint64) (rnodel.User, error) 
+GetUsers(ctx context.Context, lirnit int, offset int) ([]rnodel.User, error) 
+DeleteUser(ctx context.Context, userID uint64) error 
+UpdateUser(ctx context.Context, userID uint64, user rnodel.UpdateUser) error 
+72 
+func (s *Server) CreateUser(ctx context.Context, req *accountpb.CreateUserRequest) 
+(*emptypb.Empty, error) { 
+user := rnapper.PbToUserCreate(req.GetUser()) 
+if err := s.accountService.CreateUser{ctx, user); err != nil { 
+return nil, err 
+return &ernptypb.Empty{}, nil 
+func (s *Server) GetUser(ctx context.Context, req *accountpb.GetUserRequest) 
+(*accountpb.GetUserResponse, error) { 
+res, err := s.accountService.GetUser(ctx, req.GetUserid()) 
+if err != nil { 
+return nil, err 
+return &accountpb.GetUserResponse{ 
+User: rnapper.UserToPb(res), 
+} , nil 
+func (s *Server) GetUsers(ctx context.Context, req *accountpb.GetUsersRequest) 
+(*accountpb.GetUsersResponse, error) { 
+Глава 1 
+res, err := s.accountService.GetUsers(ctx, int(req.GetPagination() .GetLirnit() ), 
+int(req.GetPagination() .GetOffset())) 
+if err != nil { 
+return nil, err 
+return &accountpb.GetUsersResponse{ 
+Users: rnapper.UsersToPbs{res), 
+} , nil 
+func (s *Server} UpdateUser(ctx context.Context, req *accountpb.UpdateUserRequest) 
+(*ernptypb.Empty, error) { 
+user := rnapper.PbToUserUpdate(req.User) 
+if err := s.accountService.UpdateUser(ctx, uint64(req.GetUserid()), user); err != nil { 
+return nil, err 
+return &ernptypb.Empty{}, nil 
+func (s *Server} DeleteUser(ctx context.Context, req *accountpb.DeleteUserRequest) 
+(*emptypb.Empty, error) { 
+if err := s.accountService.DeleteUser{ctx, uint64(req.GetUserid(})}; err 1= nil 
+return nil, err 
+return &ernptypb.Empty{}, nil 
+Разработка первого микросервиса (User) 
+73 
+Всё, что тут происходит, -
+это подготовка данных для передачи в сервисный слой, 
+вызов соответствующего метода и преобразование результата в формат ответа, ко­
+торый ожидается. 
+Теперь у нас есть все необходимые модули, четко разграниченные между собой: 
+хранение данных, сервисная логика и серверный слой, принимающий запросы и 
+отправляющий ответь~. Остается только собрать всё это воедино (листинг 1.27). 
+package main 
+import ( 
+"account/internal/config" 
+"account/internal/logger" 
+"account/internal/migrations" 
+"account/internal/repository" 
+"account/internal/server" 
+"account/internal/service" 
+"dataЬase/sql" 
+"fmt" 
+"log" 
+'1net" 
+"githuЬ.com/pressly/goose/vЗ" 
+accountpb "githuЬ.com/yuliaapopova/contracts/account/go" 
+"google.golang.org/genproto/googleapis/api/annotations" 
+"githuЬ.com/yuliaapopova/contracts/pagination/go" 
+"google.golang.org/grpc" 
+"gorm.io/driver/postgres" 
+"gorm. io/ gorm" 
+"githuЬ.com/liЬ/pq" 
+func main() 
+// Загружаем конфигурацию 
+cfg, err := config.Load() 
+if err != nil { 
+log.Fatalf("Failed to load config: %v", err) 
+// Инициализируем общий логгер с названием сервиса 
+logger := logger.New(cfg) 
+// Подключаемся к базе данных 
+dЬ, err := gorm.Open(postgres.Open(cfg.DbDsn), &gorm.Config{)) 
+74 
+if err != nil { 
+logger.Error{) .Msgf("Failed to connect to dataЬase: %v", err) 
+return 
+logger.Info() .Msg("database connected") 
+// 
+Настраиваем миграции 
+migrationConn, err := dЬ.DB() 
+if migrationConn == nil { 
+logger.Fatal() .Err(err) .Msg("dЬ connection is nil") 
+if err := goose.SetDialect("postgres"); err != nil { 
+logger. Fatal () . Err (err) .Msg ( "failed to select migrations dialect") 
+dЬGoose, err := sql.Open("postgres", cfg.DbDsn) 
+if err != nil { 
+logger. Fatal () .Err (err) .Msg ( "failed to create sql connection") 
+// Запуск миграций 
+if err := goose.Up(dЬGoose, "internal/migrations"); err != nil 
+logger.Fatal() .Err(err) .Msg("failed to run up migrations") 
+// Инициализируем реnозиторий 
+repo := repository.NewRepository(dЬ, &logger) 
+// 
+Инициализируем сервис 
+service := service.New(repo, &logger) 
+// 
+Инициализируем сервер 
+server := server.New(service, &logger) 
+// Создание gRPC сервера 
+s := grpc.NewServer() 
+accountpb.RegisterAccountServer(s, server) 
+listenAddr := fmt.Sprintf("%s:%d", cfg.Host, cfg.Port) 
+lis, err := net.Listen("tcp", listenAddr) 
+if err != nil { 
+logger. Fatal () .Msg ( "failed to listen") 
+logger. Info () . Msg ( "gRPC server listening") 
+if err = s.Serve(lis); err != nil { 
+logger.Err(err) .Msg("failed to serve") 
+return 
+Глава 1 
+Разработка первого микросервиса (User) 
+75 
+Комментариями в коде отмечены основные моменты старта сервера. 
+На текущем этапе видно, как файл cmd/main.go начинает разрастаться: в нем уже 
+сконцентрировано подключение конфигурации, инициализация логирования, на­
+стройка подключения к базе данных и запуск gRPC-cepвepa. Подобная концентра­
+ция ответственности затрудняет поддержку и понимание кода, -
+ведь входная 
+точка приложения должна выполнять в основном роль старта процесса, а не содер­
+жать всю логику подготовки окружения. 
+Чтобы вернуть архитектуре ясность, используют подход, который принято назы­
+вать dependency injection (внедрение зависимости) или сокращенно DI. Его суть 
+проста: каждая часть системы должна получать свои зависимости извне, а не созда­
+вать их внутри себя. Мы не позволяем сервису напрямую решать, какой репозито­
+рий ему использовать, или обработчику- выбирать конкретный сервис. Всё это 
+решается на уровне «сборки» приложения, вне границ собственно бизнес-логики. 
+В Go для этого часто создают дополнительный слой -
+например, в каталоге 
+internal/app. Там пишется «компоновщик», который отвечает только за одно -
+со­
+брать зависимости в правильном порядке и вернуть готовое приложение. В таком 
+варианте main.go остается максимально легким: загрузить конфигурацию, передать 
+ее в сборщик арр, а затем запустить сервер. Всё остальное сосредоточено внутри 
+internal/app/app.go. 
+Сам файл app.go (листинг 1.28) можно представить как примитивный D1-контейнер, 
+написанный вручную. Он создает подключение к базе, оборачивает его в репозито­
+рий, затем формирует сервисы, передает их в обработчики и, наконец, прокидывает 
+в сервер. Здесь хорошо видно, как зависимости складываются каскадом. Сервис 
+зависит от интерфейса репозитория, репозиторий -
+от подключения к базе, и т. д. 
+Нигде внутри слоев мы не создаем новые объекты, а только принимаем уже гото­
+вые. Благодаря этому каждый слой можно изолировать и тестировать отдельно. 
+package арр 
+import ( 
+"account/internal/config" 
+"account/internal/migrations" 
+"account/internal/repository" 
+"account/internal/server" 
+"account/internal/service" 
+"context" 
+"database/sql" 
+11 fmt 11 
+11net" 
+"githuЬ.com/pressly/goose/vЗ" 
+accountpb "githuЬ.com/yuliaapopova/contracts/account/go" 
+"google.golang.org/genproto/googleapis/api/annotations" 
+"google.golang.org/grpc" 
+76 
+"githuЬ.com/liЬ/pq" 
+"githuЬ.com/rs/zerolog" 
+"gorm.io/driver/postgres" 
+"gorm.io/gorm" 
+type Арр struct { 
+cfg 
+*config.Config 
+logger *zerolog.Logger 
+accountRepository *repository.Repository 
+accountService 
+accountServer 
+grpcServer 
+*service.AccountService 
+*server.Server 
+*grpc.Server 
+func New(logger *zerolog.Logger, cfg *config.Config) 
+*Арр { 
+return &Арр{ 
+cfg: 
+cfg, 
+logger: logger, 
+func 
+(а *Арр) Run(ctx context.Context) error ( 
+// Инициализируем gRPC сервер 
+accountServer, err := a.getAccountServer(ctx) 
+if err 1= nil ( 
+return fmt.Errorf("failed to get account server: %w", err) 
+// Создаем gRPC сервер 
+a.grpcServer = getGRPCServer(accountServer) 
+listenAddr := fmt.Sprintf("%s:%d", a.cfg.Host, a.cfg.Port) 
+lis, err := net.Listen("tcp", listenAddr) 
+if err 
+1= nil ( 
+a.logger.Fatal() .Err(err) .Msg("failed to listen") 
+return err 
+a.logger.Info() .Msg("gRPC server listening") 
+serveErrCh := make(chan error, l) 
+go func() ( 
+serveErrCh <- a.grpcServer.Serve(lis) 
+) () 
+Глава 1 
+Разработка первого микросервиса (User) 
+select { 
+case <-ctx.Done(): 
+a.grpcServer.GracefulStop() 
+return ctx.Err() 
+case err := <-serveErrCh: 
+if err != nil ( 
+a.logger.Error() .Err(err) .Msg("failed to serve") 
+return err 
+func 
+(а *Арр) getRepository(ctx context.Context) (*repository.Repository, error) { 
+if a.accountRepository == nil { 
+if err := a.runМigrations(ctx); err != nil 
+return nil, fmt.Errorf("failed to get repository: %w", err) 
+с!Ь, err := gorm.Open(postgres.Open(a.cfg.DbDsn), &gorm.Config{)) 
+if err != nil { 
+return nil, fmt.Errorf("gorm init failed: %w", err) 
+a.accountRepository = repository.NewRepository(dЬ, a.logger) 
+return a.accountRepository, nil 
+func 
+(а *Арр) runМigrations(ctx context.Context) error { 
+if err := goose.SetDialect("postgres"); err != nil { 
+return fmt.Errorf("failed to select migrations dialect: %w", err) 
+dЬGoose, err := sql.Open("postgres", a.cfg.DbDsn) 
+if err != nil { 
+return fmt.Errorf("failed to create sql connection: %w", err) 
+if err := goose.UpContext(ctx, dЬGoose, "internal/migrations"); err != nil { 
+return fmt.Errorf("failed to run up migrations: %w", err) 
+return nil 
+func 
+(а *Арр) getAccountService(ctx context.Context) (*service.AccountService, error) { 
+if a.accountService = nil ( 
+repo, err := a.getRepository(ctx) 
+if err != nil { 
+return nil, fmt .Errorf ("failed to get repository: %w", err) 
+77 
+78 
+a.accountService = service.New(repo, a.logger) 
+return a.accountService, nil 
+func 
+(а *Арр) getAccountServer(ctx context.Context) (*server.Server, error) { 
+if a.accountServer == nil ( 
+service, err := a.getAccountService(ctx) 
+if err != nil { 
+return nil, fmt.Errorf("failed to get service: %w", err) 
+a.accountServer = server.New(service, a.logger) 
+return a.accountServer, nil 
+func getGRPCServer(srv *server.Server) *grpc.Server 
+grpcSrv := grpc.NewServer() 
+accountpb.RegisterAccountServer(grpcSrv, srv) 
+return grpcSrv 
+// Close корректно завершает работу приложения 
+func 
+(а *Арр) Close() error { 
+if a.grpcServer != nil { 
+a.grpcServer.GracefulStop() 
+return nil 
+Глава 1 
+Метод New возвращает новый контейнер, сохраняя в нем минимально необходимое: 
+конфигурацию и логгер, всё остальное будет добавляться постепенно. Запуском 
+приложения служит метод Run -
+здесь инициализируется gRPC-cepвep, создается 
+прослушивание ТСР-порта и запускается цикл обработки запросов. При этом при­
+ложение остается отзывчивым к сигналам остановки: используется context.Context 
+и канал для ошибок, чтобы корректно завершать работу и делать Gracefulstop при 
+получении сигнала завершения. 
+Особое внимание стоит обратить на отложенное создание серверного слоя. Вызов 
+а. getAccountserver тащит за собой цепочку: если не создан сервис -
+он создается, 
+если не создан репозиторий -
+он тоже поднимется. Эта цепочка отражает нашу 
+архитектуру: сверху вниз от транспорта к бизнес-логике и дальше к данным. 
+Метод getReposi tory отвечает еще и за подготовку базы данных. Но перед тем, как 
+открыть соединение, он обязательно запускает миграции -
+отдельный шаг, кото­
+рый гарантирует, что структура базы соответствует текущей версии приложения. 
+Такой подход позволяет вернуть файлу main.go роль настоящей точки входа -
+он 
+больше не перегружен логикой инициализации (листинг 1.29). Кроме того, сборка 
+Разработка первого микросервиса (User) 
+79 
+становится прозрачной -
+вся инфраструктурная часть сосредоточена в одном мес­
+те. Файл сборки также легче расширять: можно заменить базу данных на другую, 
+добавить новый сервис или протокол не затрагивая основной код. Фактически 
+app.go играет роль каркаса, скрепляющего отдельные кирпичики системы. 
+package main 
+import 1 
+"account/internal/app" 
+"account/internal/config" 
+"account/internal/logger" 
+"context" 
+func main() 
+ctx := context.Background() 
+cfg, еп := config.Load() 
+if err != nil { 
+panic(err) 
+1 := logger.New(cfg) 
+application := app.New(&l, cfg) 
+if err := application.Run(ctx); err != nil { 
+l.Fatal() .Err(err) .Msg("error") 
+В отличие от полноценных D1-контейнеров, которые часто встречаются в больших 
+фреймворках других языков, в Go такой контейнер обычно делают руками, без ма­
+гии и автогенерации. Это сознательный выбор -
+код сборки остается предельно 
+явным, а значит, управляемым и прогнозируемым. Каждый программист видит, как 
+устроена композиция приложения, и может легко изменить ее при необходимости. 
+Таким образом, вынося инфрастуктурный код из main.go в internal/app/app.go, мы не 
+просто очищаем точку входа. Мы вводим четкую дисциплину зависимости: кто от 
+кого зависит и в каком порядке строится приложение. Это создает архитектуру, ко­
+торая легко тестируется, поддерживается и развивается. 
+Тестирование микросервиса 
+Перед тем как приступить к проверке разработанной функциональности, необхо­
+димо настроить интерфейс Postman (рис. 1. 7) для удобной работы -
+чтобы в даль­
+н~йшем не приходилось выполнять лишние действия. 

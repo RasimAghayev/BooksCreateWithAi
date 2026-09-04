@@ -1,0 +1,515 @@
+270 
+Глава 5 
+ка nginx будет еще сложнее, поскольку там его ключевая задача -
+именно балан­
+сировка нагрузки. 
+Перед тем как перейти к рассмотрению оставшихся способов развертывания мик­
+росервисов, хотелось бы немного поговорить о CI/CD -
+механизме непрерывной 
+интеграции / непрерывной доставки (Continuous Integration/Continuous Delivery). 
+~U nano б. 2 
+/etc/n inx/sites-avaitaЫe/default 
+# P\ease see /usг/share/doC/nginx-doc/examp\es/ fог more detai\ed examptes. 
+11# 
+11 Drfault scr·vt.ч· conf 1qurat1on 
+• 
+server 
+i Неtр 
+iП Exit 
+tisten 80 default_seгver; 
+tisten (:: 1 : 80 defau tt_seгver; 
+# SSL cont1gurat1on 
+# 
+# listen 443 ssl default_scrver; 
+# \isten [::):443 ss\ defau\t_seгver; 
+# 
+# Note: You shou\d d1saЫe gпр for SSL t raff н
+, 
+lt See: https://bugs.debian.org/773332 
+# 
+# Read up оп ssl_c1phers to en.sure а secure conf 1qurat 10n. 
+# See: https://bugs.debian.org/765782 
+11 
+# Se\f signed ceгts generated Ьу the ss\-ccrt package 
+11 Don't use them in а product1on servrr! 
+# 
+# inc\ude sn1ppets/snakeo1\.conf; 
+root /var/www/htmt; 
+# Add index.php to the \ist 1f you are us1ng РНР 
+index index.htmt index. htm index. nginx-debian.htmt; 
+server _пате _; 
+tocation / { 
+# first attempt to serve request as f ile, then 
+} 
+11 as dнectory , then fa\\ back to dlSplaying а 404. 
+try_files $uri $uri/ =404; 
+# pass РНР scripts to FastCGI server 
+~ 
+;Е Write Out 
+i! Read File 
+11 Where Is 
+а, Reptace 1 
+Cut 
+Paste ii Execute 
+11 Justify ii Location I Undo 
+IJ Go То Line 
+Redo 
+Рис. 5.2. Редактирование конфигурации nginx 
+lfi1 Set Mark 
+1С Сору r 
+То Bracket 
+Where Was 
+Механизм CI/CD используется для обеспечения автоматической доставки кода на 
+серверы, где он должен выполняться, для предварительной проверки качества кода, 
+а также и для других, не менее важных процессов, которые необходимо автомати­
+зировать . 
+Для коммерческих проектов на основе механизма CVCD обычно применяют GitLab 
+и внедренный в него GitLab Runner. Впрочем, у GitHub есть и своя альтернатива 
+в виде GitHub Actions. Эти методологии разработки больше относятся уже к прак­
+тике DevOps и позволяют автоматизировать различные процессы -
+проверку того, 
+что все тесты выполняются, что код соответствует всем принятым соглашениям, а 
+Развертывание микросервисов 
+271 
+само приложение успешно собирается. Также -
+через настройку CI/CD -
+произво­
+дится и выкатка микросервиса на стенды. 
+Мы рассмотрим, как всё это устроено, на примере GitHub Actions -
+бесплатного 
+плана для наших целей более чем достаточно, и дополнительные затраты не потре­
+буются. 
+Свои эксперименты мы будем производить над проектом Transaction -
+для этого 
+понадобится залить его на GitHub. При этом мы подразумеваем, что все необходи­
+мые действия с Git уже проделаны и подключение по SSH активно 1 • 
+Для заливки проекта на GitHub выполните специальную команду : 
+git init 
+В открывшемся окне создайте в GitHub репозиторий, назвав его transaction (рис. 5.3). 
+Q Туре (2) to search 
+Create а new repository 
+А repository contains all project files, lncludlng the revislon history, Already have а project reposltory 
+elsewhere? lmport а repository, 
+Required fields are marked wfth ап asterisk ('}. 
+Owner • 
+Reposltory name • 
+il!\i yullaapopova • 
+/ I transactlo~ 
+--------
+0 trans1ction ls availaЫe . 
+Great repository names are shon and memoraЫe . Need inspiration? How about musicat~disco ? 
+Descriptlon (optional) 
+О ~ =~У~~: оп the lnternet сап see this repository. Vou choose wtю сап comm1t 
+Private 
+о 8 You choose who can see and commit to this repository. 
+lnltlallze thls reposltory wlth: 
+0 Add а README llle 
+This ls where you can wrlte а long description for your project. Learn more about READMEs. 
+Add .gltlgnore 
+.gltignore template;None ... 
+Choose which flles not to trIck from а 11st of templates. Learn more aьout lgnoring files. 
+Choose а llcense 
+lk:ense:None ... 
+А license tells others what they can and can't do with your code. learn more about licenses. 
+Рис. 5.3. Создание репозитория в GitHub 
+1 В любом случае сделать это можно по следующей инструкции: 
+https://docs.github.com/ru/authentication/connecting-to-github-with-ssh. 
+0 
+l'l 
+272 
+il:,i transaction """"" 
+~ Pin 
+0 Unwatch 1 
+• 
+У Fotk 
+О 
+(В 
+р.,• 
+Set up GitHub Copilot 
+Add co llaЬorator., to this repository 
+Use GitHub's AJ pair programmer to autoc:omplete sЩJgesfions as you code. 
+Search for peopte using thelr GrtНub username о, email address. 
+G.t started with GitНub Copilot 
+lnvite cotlaЬorators 
+Quick setup - if you've done this kind of thing Ьefore 
+(;1 Set up in Oиktop 
+or 
+НПРS 
+SSН 
+gittgit huЬ, сом ; :;u\1aapopovc1/transactton.9tt 
+Get started Ьу cr"tlng а new fd• or uploadlng an exlstlng flle. we reconvnend every reposito,y lnclude а RЕАОМЕ, UCENSE, ano .gn!gnore . 
+... or create а new repository on the command line 
+echo "I transaction" >> READНE.lld 
+git init 
+git ackl RfADМE . lld 
+git commit -111 "first COllllllit" 
+git branch -М main 
+git reaiote add origin gittgithub.c011:yu\1.lapopova/transaction.9it 
+git push - u origin main 
+... or push an existing repository from the command line 
+git reaюte add origin git@github.ca11:yutiaapopova/transaction.git 
+g1t branch -f1 1111ain 
+git push -u origin мain 
+Рис. 5.4. Инструкция по подключению к удаленному репозиторию 
+Глава 5 
+Нажмите кнопку Create repository и пролистайте открывшуюся страницу до само­
+го низа- вы увидите инструкцию по работе с новым репозиторием (рис. 5.4). 
+Нас здесь интересует вторая часть инструкции, которая прописана в разделе ... or 
+push an existing repository from command line ( ... или нажмите существующий 
+репозиторий из командной строки). Именно это мы и выполним, предварительно 
+закоммитив наши изменения, так что вместо ветки main у нас будет ветка master. 
+В результате весь код окажется на GitHub в созданном только что репозитории. 
+Теперь можно переключиться непосредственно в GitHub Actions. Для этого на 
+странице репозитория откройте вкладку Actions. Там приведены различные гото­
+вые варианты сценариев непрерывной интеграции, но чтобы лучше в этом разо­
+браться, создадим свой сценарий с нуля сами. Для этого надо перейти по ссылке: 
+set up а workflow yourself (рис. 5.5). 
+GitHub Actions -
+это платформа непрерывной интеграции и непрерывной доставки 
+(CI/CD), позволяющая автоматизировать многие процессы, связанные с репозито­
+рием и кодом, который в нем хранится. 
+GitHub Actions использует Workflow- определенный набор инструкций в формате 
+У AML, описывающий последовательность выполнения задач и работающий на 
+основе событий. Например, можно настроить запуск тестов и билд-проекта на каж­
+дый коммит, поскольку коммит -
+это событие. Или настроить его на определен-
+Развертывание микросервисов 
+273 
+ные ветки -
+например, на develop. Или настроить его таким образом, чтобы для 
+веток develop или master в порядке непрерывной интеграции выполнялись одни 
+действия, а для новых веток -
+другие. 
+>-
+<) Code 
+0 lssues n Putl requests 
+0 Actlons 
+fEI ProjeclS 
+Q) Seourlty 
+!о:: lnslghts 
+l8J Settlngs 
+Get started with GitHub Actions 
+Вuitd. test, and depk>y yout code. Make cocte revlews, tnnch management1 and ls.sue tr1aging work the way you want. Setect а workflow to get started. 
+Skip thts wк1 set· UD-а workflow .....-:w.1nei~ ➔ 
+Suggested fOf' this repository 
+Grunt 
+8у GitНub 1-,ctlons 
+• 
+Gulp 
+• 
+WeЬpack 
+ByG1tНubAc1ions 
+• 
+Вuld а Node.JS project with nprn and grunt 
+Вu1kf • NodeJS project with npm юd gulp 
+Вuild а NodeJS project with npm •nd vweЬpack . 
+Contigure 
+Deno 
+SyGIТНub№iona 
+Test your Deno pro;tct 
+Configure 
+Deployment 
+JaYJScript 
+Conflgure 
+PuЫish Node.js Package to 
+GitНub Pack-• 
+Ву GltHub AC:tions 
+JavaScrlpt 
+PuЬhhes а Node.js package to GitНub 
+Pкkages. 
+Configuf'8 
+Ja'4Script • 
+Configure 
+Pub6sh Node.js Package 
+Ву G1fНUb AC:tlons 
+PuЫlshes • Node.Js p,ckage to npm. 
+Contigure 
+Рис. 5.5. GitHub Actions: переходим по ссылке set up а workflow yourself 
+JavaScflpl 
+l1'J 
+J,1V,1Scnpl 8 
+-·· 
+Благодаря WorkFlow мы можем тестировать и автоматизировать сборку проекта 
+или заливать его, куда нужно. GitHub Actions также позволяет полностью интегри­
+ровать CI/CD при работе с репозиторием. 
+WorkFlow можно создавать на каждый репозиторий . Кроме того, может быть соз­
+дано также несколько W orkFlow для одного проекта. 
+Начнем мы с простого варианта и создадим WorkFlow, выполняющий просто 
+печать в консоль (листинг 5 .1 ). 
+Листинг 5.1. Файл .githuЬ/workflows/master.yaml 
+name: Transaction 
+on: workflow_dispatch 
+jobs: 
+stage_dev: 
+runs-on: uЬuntu-latest 
+steps : 
+- name: lint 
+run: echo Hello 
+274 
+Глава 5 
+Рассмотрим подробнее имеющиеся здесь параметры: 
+□ name -
+имя WorkFlow задается произвольно. В нашем случае мы выбрали его по 
+названию сервиса, но часто его также называют по стенду, для которого выпол­
+няются команды; 
+□ on -
+подписка на событие. Их довольно много для выбора: можно задать одно 
+событие или перечислить их массивом событий, при триггере которых будут 
+выполняться описанные процессы. _Событие workflow_dispatch означает, что триг­
+герить выполнение их мы будем вручную, пока без автоматизации; 
+□ jobs -
+некоторые работы, которые предстоит выполнить; 
+□ stage_dev- произвольное имя для первого из jobs; 
+□ runs-on -
+здесь указывается операционная система, на которой необходимо вы­
+полнять все действия. Поддерживаются Linux, macOS, Windows и множество 
+версий для них; 
+□ steps -
+шаги, которые выполняются в рамках jobs. Шагов может быть сколько 
+угодно; 
+□ - name -
+название шага, задается произвольно; 
+□ run -
+команда, которую необходимо выполнить для заданного шага в указанном 
+jobs. Сейчас мы ожидаем, что будет выведено Hello, а ключевое слово echo обо­
+значает печать в консоль (так в Linux, которую мы указали как систему. Если вы 
+укажете другую систему, то команды могут отличаться). 
+Теперь мы можем сохранить изменения, сделав коммит. После чего перейти 
+в Actionsffransaction (название, которое мы задали для WorkFlow) и запустить 
+наши инструкции (рис. 5.6). 
+Как можно здесь видеть, сначала были выполнены все подготовительные работы, 
+затем запущен образ, соответствующий выбранной нами системе, и в консоли на­
+печатано Hello. После завершения выполнения процесс был очищен. 
+Теперь попробуем задать команды посерьезнее -
+например, выполнить проверку 
+на соответствие кода лингеру. Для начала воспользуемся специальным Marketplace 
+от GitHub. Там содержится большое количество дополнительной функционально­
+сти, которая способна упростить как разработку, так и работу с Actions, -
+нас же 
+сейчас ингересует как раз последнее. Marketplace позволяет не описывать всё пря­
+мо с нуля, а воспользоваться уже готовыми наборами. Применим набор Actions 
+Checkout от GitHub1 -
+он извлекает исходный код из репозитория, чтобы CI мог 
+получить к нему доступ (листинг 5.2). 
+name: Transaction 
+on: workflow_dispatch 
+1 См. https://github.com/marketplace/actions/checkout. 
+Развертывание микросервисов 
+с: 
+о 
+iЗ 
+(U 
+"' 
+с: 
+!О 
+~ 
+~ 
+u:: 
+~ 
+~ 
+С1) 
+s 
+:i:: 
+С1) 
+:i:: 
+с: 
+о 
+с: 
+:Ji 
+1D 
+CQ 
+lt) 
+u 
+s 
+D.. 
+275 
+276 
+jobs: 
+stage_dev: 
+runs-on: uЬuntu-latest 
+steps: 
+- name: get code 
+uses: actions/checkout@vЗ.5.3 
+- name: install deps 
+run: go mod download 
+Здесь мы задаем распаковку проекта и установку зависимостей. 
+Глава 5 
+Далее выполняется проверка линтером и запускаются тесты. Но чтобы запустить 
+тесты, предварительно следует их написать -
+хотя бы один -
+для демонстрации 
+работы команды: 
+go test -v -race -coverprofile=coverage.out ./ ... 
+Так что напишем тесты на создание транзакции. 
+Перед этим необходимо доустановить недостающие пакеты для написания тестов: 
+go get go.uЬer.org/mock/gomock githuЬ.com/stretchr/testify/assert 
+И добавить (листинг 5.3) автоматическую генерацию моков для юнит-тестов 
+в Makefile (команда generate-mocks). 
+# Go application Makefile 
+АРР NАМЕ ?= transaction 
+BINARY_NAМE ?= bin/$(APP_NAМE) 
+МAIN РАТН ?= ./cmd 
+VERSION ?= $ (shell git descriЬe --tags --always --dirty 2>/dev/null 11 echo "dev") 
+BUILD_TIME ?= $(shell date -и '+%Y-%m-%d_%H:%M:%S') 
+LDFLAGS ?= -ldflags "-Х main.Version=$(VERSION) 
+-Х main.BuildTime=$(BUILD_TIМE)" 
+# Go files to format and lint 
+GOFILES ?= $(shell find. -name "*.go" -type f -not -path "./vendor/*" -not -path "./.git/*") 
+# Default target 
+.DEFAULT GOAL := build 
+# Build the application 
+build: 
+@echo "Building $(АРР_NАМЕ) ... " 
+@mkdir -р Ьin 
+go build $(LDFLAGS) 
+-о $(BINARY_NAМE) $(МAIN_PATH) 
+# Run the application 
+run: clean build 
+@echo "Running $(АРР_NАМЕ) ... " 
+. /$ (ВINARY _ NАМЕ) 
+Развертывание микросервисов 
+# Run without building (if binary exists) 
+run-only: 
+@echo "Running $(АРР_NАМЕ) ... " 
+./$ (ВINARY_NAМE) 
+# Install dependencies 
+deps: 
+@echo "Installing dependencies ... " 
+go mod download 
+go mod tidy 
+# Opdate dependencies 
+deps-update: 
+@echo "Opdating dependencies ... " 
+go get -u ./ ... 
+go mod tidy 
+# Format code 
+fшt: 
+@echo "Formatting code ... " 
+gofmt -s -w $(GOFILES) 
+gofumpt -1 -w -s $(GOFILES) 
+goimports -1 -w $(GOFILES) 
+# Run linter 
+lint: 
+@echo "Running linter ... " 
+golangci-lint run --timeout=lOm -v ./ ... 
+# Run tests 
+test: 
+@echo "Running tests ... " 
+go test -v ./ ... 
+# Run tests with coverage 
+test-coverage: 
+@echo "Running tests with coverage ... " 
+go test -v -coverprofile=coverage.out ./ ... 
+go tool cover -html=coverage.out -о coverage.html 
+@echo "Coverage report generated: coverage.html" 
+# Run benchmarks 
+bench: 
+@echo "Running benchmarks ... " 
+go test -bench= .. / ... 
+277 
+278 
+# Clean build artifacts 
+clean: 
+@echo "Cleaning build artifacts ... " 
+rm -rf Ьin/ 
+rm -f coverage.out coverage.html 
+# Install the application 
+install: build 
+@echo "Installing $(АРР_NАМЕ) ... " 
+go install $(LDFLAGS) 
+$(МAIN_PATH) 
+generate-rnocks: 
+@echo "Generating rnocks ... " 
+@go install go.uЬer.org/rnock/rnockgen@latest 
+Глава 5 
+@rnockgen -source=internal/service/service.go -destination=internal/service/rnocks/rnocks.go 
+-package=rnocks 
+# Generate docurnentation 
+docs: 
+@echo "Generating docurnentation ... " 
+godoc -http=:6060 
+# Show help 
+help: 
+@echo "AvailaЬle targets:" 
+@echo " build 
+- Build the application" 
+@echo" run 
+@echo" 
+run-only 
+@echo" deps 
+@echo" deps-update 
+@echo " frnt 
+@echo" lint 
+@echo" test 
+- Build and run the application" 
+- Run the application (without building)" 
+Install dependencies" 
+- Update dependencies" 
+Forrnat code" 
+- Run linter" 
+- Run tests" 
+@echo" test-coverage - Run tests with coverage report" 
+@echo " bench 
+- Run benchrnarks" 
+@echo" clean 
+@echo" install 
+@echo" docs 
+@echo" help 
+# Developrnent workflow 
+dev: frnt lint test build 
+# CI/CD workflow 
+Clean build artifacts" 
+Install the application" 
+- Generate docurnentation" 
+Show this help" 
+ci: deps frnt lint test build 
+.PHONY: build run run-only deps deps-update frnt lint test test-coverage bench clean install 
+docs help dev ci 
+Развертывание микросервисов 
+279 
+Сгенерировав маки, мы теперь можем написать тесты на методы транзакций (лис­
+тинг 5.4). Все файлы с тестами имеют в названии фрагмент *_test.go. 
+package service 
+import ( 
+"context" 
+"encoding/json" 
+"errors" 
+"testing" 
+"tirne" 
+"transaction/internal/model" 
+"transaction/internal/service/mocks" 
+"githuЬ.com/rs/zerolog" 
+"githuЬ.com/stretchr/testify/assert" 
+"go.uЬer.org/mock/gomock" 
+func TestTransactionService_Deposit(t *testing.T) { 
+tests := [)struct 
+){ 
+name 
+userID 
+amount 
+string 
+uint64 
+float64 
+setupMocks 
+func(*mocks.MockRepository, 
+*mocks.MockКafkaPuЬlisher) 
+expectec!Error bool 
+expectedResult model.TransactionDetails 
+name: 
+"successful deposit", 
+userID: 1, 
+amount: 100.50, 
+setupMocks: func(mockRepo *mocks.MockRepository, mockКafka *mocks.MockКafkaPuЬlisher) { 
+expectedParams := model.DepositParams{ 
+UserID: 1, 
+Amount: 100. 50, 
+expectedResult := model.TransactionDetails{ 
+Transaction: model.Transaction( 
+ID: 
+UserID: 
+Amount: 
+Status: 
+1, 
+1, 
+10050, // 100. 50 * 100 
+model.TransactionStatusPending, 

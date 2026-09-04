@@ -1,0 +1,388 @@
+180 
+Глава 4 
+else if res.Error != nil { 
+r.logger.Err(res.Error) .Msg("failed to get transaction") 
+return model. TransactionDetails { 1, fmt. Errorf ("failed to get transaction: %w", res .Error) 
+// Получаем записи транзакции 
+var entries []repomodel.TransactionEntry 
+res = r.dЬ.WithContext(ctx). 
+Model(&repomodel.TransactionEntry{I). 
+Where("transaction_id = ?", transactionID). 
+Order("created at ASC"). 
+Find(&entries) 
+if res.Error != nil { 
+r.logger.Err(res.Error) .Msg("failed to get transaction entries") 
+return model.TransactionDetails(I, fmt.Errorf("failed to get transaction entries: 
+return model.TransactionDetails{ 
+Transaction: mapper.RepoTransactionToTransaction(transaction), 
+Entries: 
+1, nil 
+mapper.RepoTransactionEntriesToTransactionEntries(entries), 
+// Deposit вьшолняет оnерацию деnозита в рамках одной транзакции БД 
+func (r *Repository) Deposit(ctx context.Context, params model.DepositParams) 
+(model.TransactionDetails, errorl { 
+var result model.TransactionDetails 
+err := r.dЬ.WithContext(ctxl .Transaction(func(tx *gorm.DBI error { 
+// Создаем транзакцию 
+transaction := model.Transaction{ 
+UserID: params.UserID, 
+Amount: int64(params.Amount * 1001, // конвертируем в копейки 
+Status: model.TraпsactionStatusPending, 
+Туре: 
+model.TransactionTypeDeposit, 
+transactionRepo := mapper.TransactionToRepoTransaction(transaction) 
+%w", res.Error) 
+res := tx.Clauses(clause.OnConflict(UpdateAll: truel) .Create(&transactionRepo) 
+if res.Error != nil { 
+r.logger.Err(res.Error) .Msg("failed to create transaction in deposit") 
+return fmt.Errorf("failed to create transaction: %w", res.Errorl 
+Разработка модуля Transaction 
+// Создаем запись дебета (увеличение баланса) 
+entry := model.TransactionEntry{ 
+TransactionID: transactionRepo.ID, 
+AccountID: 
+Direction: 
+Amount: 
+params.UserID, 
+model.TransactionEntryDirectionDebit, 
+params.Amount, 
+entryRepo := mapper.TransactionEntryТoRepoTransactionEntry(entry) 
+res = tx.Clauses(clause.OnConflict{UpdateAll: true)) .Create(&entryRepo) 
+if res.Error != nil { 
+r.logger.Err(res.Error) .Msg("failed to create transaction entry in deposit") 
+return fmt.Errorf("failed to create transaction entry: %w", res.Error) 
+// Обновляем статус транзакции на completed 
+updateData := mapper.UpdateTransactionToRepoTransaction(model.UpdateTransaction{ 
+Status: model.TransactionStatusCompleted, 
+)) 
+res = tx.Where("id = ?", transactionRepo.ID) .Updates(&updateData) 
+if res.Error != nil { 
+r.logger.Err(res.Error) .Msg("failed to update transaction status in deposit") 
+return fmt.Errorf("failed to update transaction status: %w", res.Error) 
+// Получаем детали созданной транзакции 
+transactionRepo.Status = string(model.TransactionStatusCompleted) 
+result = model.TransactionDetails{ 
+Transaction: mapper.RepoTransactionToTransaction(transactionRepo), 
+181 
+Entries: 
+[)model.TransactionEntry(mapper.RepoTransactionEntryToTransactionEntry(entryRepo) ), 
+return nil 
+)) 
+if err != nil { 
+return model.TransactionDetails{), err 
+return result, nil 
+// Withdraw выполняет оnерацию снятия средств в рамках одной транзакции БД 
+func (r *Repository) Withdraw(ctx context.Context, params model.WithdrawParams) 
+(model.TransactionDetails, error) { 
+var result model.TransactionDetails 
+182 
+Глава 4 
+err := r.dЬ.WithContext(ctx) .Transaction(func(tx *gorm.DB) error ( 
+// Создаем транзакцию 
+transaction := model.Transaction{ 
+UserID: params.AccountID, 
+Amount: int64(params.Amount * 100), 
+// UserID теnерь -
+это accountID 
+// конвертируем в копейки 
+Status: model.TransactionStatusPending, 
+Туре: 
+model.TransactionTypeWithdraw, 
+transactionRepo := mapper.TransactionToRepoTransaction(transaction) 
+res := tx.Clauses(clause.OnConflict{UpdateAll: true)) .Create(&transactionRepo) 
+if res.Error != nil { 
+r.logger.Err(res.Error) .Msg("failed to create transaction in withdraw") 
+return fmt.Errorf("failed to create transaction: %w", res.Error) 
+// Создаем запись кредита (уменьшение баланса) 
+entry := model.TransactionEntry{ 
+TransactionID: transactionRepo.ID, 
+AccountID: 
+params.AccountID, 
+Direction: 
+Amount: 
+model.TransactionEntryDirectionCredit, 
+params .Amount, 
+entryRepo := mapper.TransactionEntryТoRepoTransactionEntry(entry) 
+res = tx.Clauses(clause.OnConflict{UpdateAll: true)) .Create(&entryRepo) 
+if res.Error != nil { 
+r.logger.Err(res.Error) .Msg("failed to create transaction entry in withdraw") 
+return fmt.Errorf("failed to create transaction entry: %w", res.Error) 
+// Обновляем статус транзакции на completed 
+updateData := mapper.UpdateTransactionToRepoTransaction(model.UpdateTransaction{ 
+Status: model.TransactionStatusCompleted, 
+)) 
+res = tx.Where("id = ?", transactionRepo.ID) .Updates(&updateData) 
+if res.Error != nil { 
+r.logger.Err(res.Error) .Msg("failed to update transaction status in withdraw") 
+return fmt.Errorf("failed to update transaction status: %w", res.Error) 
+// Получаем детали созданной транзакции 
+transactionRepo.Status = string(model.TransactionStatusCompleted) 
+result = model.TransactionDetails{ 
+Transaction: mapper.RepoTransactionToTransaction(transactionRepo), 
+Entries: 
+[]model.TransactionEntry{mapper.RepoTransactionEntryToTransactionEntry(entryRepo) ), 
+Разработка модуля Transaction 
+return nil 
+)) 
+if err != nil { 
+return model.TransactionDetails{), err 
+return result, nil 
+// Transfer выnолняет оnерацию nеревода средств в рамках одной транзакции БД 
+func (r *Repository) Transfer(ctx context.Context, params model.TransferParams) 
+(model.TransactionDetails, error) { 
+var result model.TransactionDetails 
+err := r.dЬ.WithContext(ctx) .Transaction(func(tx *gorm.DB) error { 
+// Создаем транзакцию 
+transaction := model.Transaction{ 
+UserID: params. UserID, 
+/ / UserID -
+автор перевода 
+Amount: int64(params.Amount * 100), li конвертируем в копейки 
+Status: model.TransactionStatusPending, 
+Туре: 
+model.TransactionTypeTransfer, 
+transactionRepo := mapper.TransactionToRepoTransaction(transaction) 
+res := tx.Clauses(clause.OnConflict{UpdateAll: true)) .Create(&transactionRepo) 
+if res.Error != nil { 
+r.logger.Err(res.Error) .Msg("failed to create transaction in transfer") 
+return fmt.Errorf("failed to create transaction: %w", res.Error) 
+// Создаем запись кредита для счета отправителя (уменьшение баланса) 
+creditEntry := model.TransactionEntry{ 
+TransactionID: transactionRepo.ID, 
+AccountID: 
+params.UserID, 
+Direction: 
+Amount: 
+model.TransactionEntryDirectionCredit, 
+params.Amount, 
+creditEntryRepo := mapper.TransactionEntryToRepoTransactionEntry{creditEntry) 
+res = tx.Clauses(clause.OnConflict{UpdateAll: true)) .Create(&creditEntryRepo) 
+if res.Error 1= nil { 
+183 
+r.logger.Err(res.Error) .Msg("failed to create credit transaction entry in transfer") 
+return fmt.Errorf("failed to create credit transaction entry: %w", res.Error) 
+184 
+1) 
+// Создаем запись дебета для счета получателя (увеличение баланса) 
+debitEntry :; model.TransactionEntry{ 
+TransactionID: transactionRepo.ID, 
+AccountID: 
+Direction: 
+Amount: 
+params.Recipient, 
+model.TransactionEпtryDirectionDebit, 
+params.Amount, 
+debitEntryRepo :; mapper.TransactionEntryТoRepoTransactionEntry(debitEntry) 
+res; tx.Clauses(clause.OnConflict{UpdateAll: truel) .Create(&debitEntryRepo) 
+if res.Error !; nil { 
+Глава 4 
+r.logger.Err(res.Error) .Msg("failed to create deЫt transaction entry iп traпsfer"I 
+return fmt.Errorf("failed to create deЫt transactioп entry: %w", res.Errorl 
+// Обновляем статус транзакции на completed 
+updateData :; mapper.UpdateTransactioпToRepoTransaction(model.UpdateTraпsaction{ 
+Status: model.TraпsactionStatusCompleted, 
+1) 
+res; tx.Where("id; ?", 
+traпsactionRepo.ID) .Updates(&updateData) 
+if res.Error !; пil { 
+r.logger.Err(res.Error) .Msg("failed to update transactioп status in transfer") 
+return fmt.Errorf("failed to update transaction status: %w", res.Error) 
+// Получаем детали созданной транзакции 
+transactionRepo.Status; string(model.TransactionStatusCompletedl 
+result; model.TransactionDetails{ 
+Transaction: mapper.RepoTransactionToTransaction(transactionRepo), 
+Entries: []model.TransactionEntry{ 
+mapper.RepoTransactionEntryToTransactionEntry(creditEntryRepo), 
+mapper.RepoTransactionEntryToTransactionEntry(deЬitEntryRepol, 
+1, 
+return nil 
+if err !; nil { 
+return model.TransactionDetails(), err 
+return result, nil 
+Обратите внимание, что у нас нет методов для удаления транзакций, т. к. они нам 
+не понадобятся, -
+ведь работа с финансами всегда должна быть зафиксирована, 
+Разработка модуля Transaction 
+185 
+поэтому мы реализовали в Repository только методы, которые создают, обновляют 
+или извлекают транзакции. Согласно паттерну У AGNI (англ. You ain 't gonna need it, 
+что переводится как «Вам это не понадобится») следует реализовывать только ту 
+функциональность, которая нужна прямо сейчас. Создавать функции, которые не 
+факт что когда-либо понадобятся, считается плохой практикой, потому что это за­
+хламляет код, а в дальнейшем может быть уже трудно определить, нужны они, или 
+их можно удалить. 
+Во всех операциях связанных с добавлением/изменением данных, логика построена 
+по одному принципу: сначала создается запись о самой транзакции в статусе 
+pending, затем добавляются связанные движения по счетам (дебит или кредит -
+в зависимости от операции). После успешного выполнения всех действий статус 
+обновляется на completed, а наружу возвращаются уже готовые детали транзакции. 
+Такой подход обеспечивает консистентность данных и позволяет безопасно рабо­
+тать с финансовыми операциями, минимизируя риск рассинхронизации между 
+основной транзакцией и ее проводками (листинг 4.1 О). 
+package service 
+import ( 
+"context" 
+"transaction/internal/model" 
+"githuЬ.com/rs/zerolog" 
+type TransactionService struct 
+repo 
+Repository 
+logger *zerolog.Logger 
+func New(repo Repository, logger *zerolog.Logger) *TransactionService 
+return &TransactionService(repo: repo, logger: logger) 
+type Repository interface 
+// Transaction methods 
+GetTransactions(context.Context, model.GetTransactionsParams) ([]model.Transaction, error) 
+// TransactionEntry methods 
+GetTransactionDetails(context.Context, uint64) (model.TransactionDetails, error) 
+// Business operations 
+Deposi t ( context. Context, model. Deposi tParams) (model. TransactionDetails, error) 
+186 
+Withdraw(context.Context, model.WithdrawParams) (model.TransactionDetails, error) 
+Transfer ( context. Context, model. TransferParams) (model. TransactionDetails, error) 
+func (s *TransactionService) GetTransactionsWithDetails(ctx context.Context, params 
+model. GetTransactionsParams) ( [] model. TransactionDetails, error) { 
+// Получаем список транзакций с фильтрацией 
+transactions, err := s.repo.GetTransactions(ctx, params) 
+if err != nil { 
+s.logger.Error() .Err(err) .Msg("failed to get transactions") 
+return nil, err 
+// Для каждой транзакции получаем детали 
+var transactionDetails []model.TransactionDetails 
+for , transaction := range transactions { 
+details, err := s.repo.GetTransactionDetails(ctx, transaction.ID) 
+if err != nil { 
+Глава 4 
+s.logger.Error() .Err(err) .Uint64("transaction_id", transaction.ID) .Msg("failed to 
+get transaction details") 
+continue 
+transactionDetails 
+append(transactionDetails, details) 
+return transactionDetails, nil 
+// Deposit Business logic methods 
+func (s *TransactionService) Deposit(ctx context.Context, userID uint64, amount float64) 
+(model.TransactionDetails, error) ( 
+params := model.DepositParams{ 
+UserID: userID, 
+Amount: amount, 
+return s.repo.Deposit(ctx, params) 
+func (s *TransactionService) Withdraw(ctx context.Context, accountID uint64, amount float64) 
+(model.TransactionDetails, error) { 
+params := model.WithdrawParams{ 
+AccountID: accountID, 
+Amount: 
+amount, 
+return s.repo.Withdraw(ctx, params) 
+Разработка модуля Transaction 
+187 
+func (s *TransactionService) Transfer(ctx context.Context, userID, recipient uint64, arnount 
+float64) (model.TransactionDetails, error) ( 
+pararns := model.TransferPararns( 
+UserID: 
+userID, 
+Recipient: recipient, 
+Amount: 
+arnount, 
+return s.repo.Transfer(ctx, params) 
+При таком подходе к репозиторию сервисный слой у нас получится теперь совсем 
+простым. 
+Интеграция Transaction и Account 
+Мы реализовали сервис с транзакциями, однако содержащийся в нем список опе­
+раций сейчас ни на что не влияет, а должен быть напрямую связан с балансом. 
+В больших системах принято разделять логику с учетными записями о пользовате­
+лях и их баланс, но у нас цель немного другая, и мы позволим себе объединить ин­
+формацию об учетной записи пользователя с его «кошельком)). Поэтому добавим 
+в таблицу user в сервисе Account информацию о балансе. И соответственно отре­
+дактируем все связанные с этим методы (листинг 4.11 ). 
+syntax = "protoЗ"; 
+package account; 
+option go_package = "githuЬ.com/yuliaapopova/contracts/account/go;account"; 
+import "google/protobuf/timestarnp.proto"; 
+message CreateUser { 
+string login = 1; 
+string phone = 2; 
+string first_narne = 3; 
+string last_narne = 4; 
+string middle_narne = 5; 
+string email = 6; 
+uint32 age = 7; 
+float balance = В; 
+message User 
+uint64 id = 1; 
+string login = 2; 
+188 
+string phone = 3; 
+string first_name = 4; 
+string last_name = 5; 
+string rniddle_name = 6; 
+string ernail = 7; 
+uint32 age = 8; 
+google.protobuf.Tirnestamp created_at 
+9; 
+google.protobuf.Tirnestamp updated_at 
+10; 
+float balance = 11; 
+bool is deleted = 12; 
+Глава 4 
+Помимо баланса, мы добавили сюда также поле isDeleted, по которому будем отли­
+чать активных пользователей от удаленных. Это нужно для того, чтобы в какой-то 
+момент у нас не оказались транзакции с userid, которых не существует. Поэтому 
+теперь мы будем не удалять полностью пользователей, а менять значение флага 
+isDeleted на true. По умолчанию значение isDeleted должно быть false, а баланс ра­
+вен О. 
+Сгенерируем и выполним миграцию для дальнейших работ (листинг 4.12). 
+package rnigrations 
+irnport ( 
+"context" 
+"dataЬase/sql" 
+func upAddВalanceToUsers(ctx context.Context, tx *sql.Tx) error { 
+_, err := tx.Exec(' 
+ALTER ТАВLЕ users 
+ADD COLUМN balance DECIМAL(15,2) NOT NULL DEFAULT 0.00, 
+ADD COLUМN is deleted BOOLEAN NOT NULL DEFAULT FALSE; 
+return err 
+func downAddВalanceToUsers(ctx context.Context, tx *sql.Tx) error { 
+, err := tx.Exec(' 
+ALTER ТАВLЕ users 
+DROP COLUМN balance, 
+DROP COLUМN is deleted; 
+return err 
+,_ 
+Разработка модуля Transaction 
+189 
+Подробнее останавливаться на созданной миграции нет смысла -
+в ней ничего 
+интересного нет. А нам теперь надо отредактировать userRepository и учесть, что 
+удаленных пользователей возвращать мы не должны (листинг 4.13). 
+package repository 
+import ( 
+"context" 
+"errors" 
+"fmt" 
+"account/internal/model" 
+"account/internal/repository/mapper" 
+repomodel "account/internal/repository/model" 
+"githuЬ.com/rs/zerolog" 
+"gorm. io/gorm" 
+"gorm.io/gorm/clause" 
+type Repository struct ( 
+dЬ 
+*gorm.DB 
+logger *zerolog.Logger 
+func NewRepository(dЬ *gorm.DB, logger *zerolog.Logger) *Repository { 
+return &Repository{ 
+dЬ: 
+dЬ, 
+logger: logger, 
+func (r *Repository) CreateUser (ctx context. Context, user model. User) (model. User, error) { 
+userRepo := mapper.UserToRepoUser(user) 
+fmt.Println(userRepo) 
+res := r.dЬ.WithContext(ctx). 
+Clauses(clause.OnConflict{UpdateAll: true)). 
+//Clauses(clause.Returning{I). 
+Create(&userRepo) 
+if res.Error 1= nil { 
+r.logger.Err(res.Error) .Msg("failed to save user") 
+return model.User{I, fmt.Errorf("failed to save user: %w", res.Error) 
+fmt.Println(userRepo) 
+return mapper.RepoUserToUser(userRepo), nil 
