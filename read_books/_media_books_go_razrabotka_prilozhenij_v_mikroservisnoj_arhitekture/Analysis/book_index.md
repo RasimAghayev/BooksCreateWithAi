@@ -10,7 +10,7 @@
 
 | Chapter | Start Page | End Page | Progress | Status |
 |---------|-----------|----------|----------|--------|
-| Introduction | 1 | 15 | 15/15 | ✅ |
+| Introduction (Chapter 00) | 1 | 14 | 14/14 | ✅ |
 | Chapter 1 | 13 | 86 | 0/74 | ⏳ |
 | Chapter 2 | 87 | 110 | 0/24 | ⏳ |
 | Chapter 3 | 111 | 156 | 0/46 | ⏳ |
