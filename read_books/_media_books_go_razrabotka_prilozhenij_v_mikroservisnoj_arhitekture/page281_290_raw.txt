@@ -1,0 +1,498 @@
+280 
+1, 
+1, 
+}, 
+Туре: 
+model.TransactionTypeDeposit, 
+CreatedAt: time.Now(), 
+UpdatedAt: time.Now(), 
+}, 
+Entries: [ ]model. TransactionEntry{}, 
+mockRepo.EXPECT(). 
+Deposit(gomock.Any(), expectedParams). 
+Return(expectedResult, nil) 
+mockКafka.EXPECT{). 
+PuЫish(gomock.Any(), "transaction_data", "1", gomock.Any()). 
+Return (nil) 
+expectedError: false, 
+expectedResult: model.TransactionDetails{ 
+Transaction: model.Transaction{ 
+1, 
+1, 
+ID: 
+UserID: 
+Amount: 
+Status: 
+1, 
+1, 
+10050, 
+model.TransactionStatusPending, 
+Туре: 
+model.TransactionTypeDeposit, 
+CreatedAt: time.Now(), 
+UpdatedAt: time.Now(), 
+Entries: []model.TransactionEntry{I, 
+name: 
+"repository error", 
+userID: 1, 
+amount: 100.50, 
+Глава 5 
+setupMocks: func(mockRepo *mocks.MockRepository, mockКafka. 
+*mocks.MockКafkaPuЬlisher) 
+expectedParams := model.DepositParams{ 
+UserID: 1, 
+Amount: 100.50, 
+mockRepo.EXPECT(). 
+Deposit(gomock.Any(), expectedParams). 
+Return(model.TransactionDetails{I, errors.New("dataЬase error")) 
+1, 
+expectedError: 
+true, 
+expectedResult: model.TransactionDetails{}, 
+Развертывание микросервисов 
+name: 
+"kafka puЬlish error", 
+userID: 1, 
+amount: 100.50, 
+281 
+setupMocks: func(rnockRepo *rnocks.MockRepository, rnockКafka 
+*rnocks.MockКafkaPuЫisher) 
+1, 
+1, 
+expectedPararns := rnodel.DepositPararns{ 
+UserID: 1, 
+Arnount: 100.50, 
+expectedResult := rnodel.TransactionDetails{ 
+Transaction: rnodel.Transaction{ 
+ID: 
+UserID: 
+Arnount: 
+Status: 
+Туре: 
+1, 
+1, 
+10050, 
+rnodel.TransactionStatusPending, 
+rnodel.TransactionTypeDeposit, 
+CreatedAt: tirne. Now (), 
+UpdatedAt: tirne. Now (), 
+1, 
+Entries: [] rnodel. TransactionEntry{ 1, 
+rnockRepo.EXPECT(I. 
+Deposit(gornock.Any(I, expectedPararns). 
+Return(expectedResult, nill 
+rnockКafka.EXPECT(). 
+PuЬlish (gornock.Any (), "transaction _ data", "1", gornock.Any () 1 . 
+Return (errors. New ( "kafka error")) 
+rnockRepo.EXPECT(I. 
+UpdateTransactionStatus(gornock.Any(I, uint64(1), rnodel.TransactionStatusFailed). 
+Return(nill 
+expectedError: 
+true, 
+expectedResult: rnodel.TransactionDetails{I, 
+for , tt := range tests { 
+t.Run(tt.name, func(t *testing.T) 
+ctrl := gornock.NewController(tl 
+defer ctrl.Finish() 
+rnockRepo := rnocks.NewМockRepository(ctrl) 
+rnockAccountService := rnocks.NewМockAccountService(ctrl) 
+282 
+)) 
+mockKafka := mocks.NewMockКafkaPuЬlisher(ctrl) 
+logger := zerolog.Nop() 
+tt.setupMocks(mockRepo, mockKafka) 
+service .- New(mockRepo, mockAccountService, mockКafka, &logger) 
+result, err := service.Deposit(context.Background(), tt.userID, tt.amount) 
+if tt.expectedError { 
+assert.Error(t, err) 
+else { 
+assert.NoError(t, err) 
+Глава 5 
+assert.Equal(t, tt.expectedResult.Transaction.ID, result.Transaction.ID) 
+assert.Equal(t, tt.expectedResult.Transaction.UserID, result.Transaction.UserID) 
+assert.Equal(t, tt.expectedResult.Transaction.Amount, result.Transaction.Amount) 
+assert.Equal(t, tt.expectedResult.Transaction.Status, result.Transaction.Status) 
+assert.Equal(t, tt.expectedResult.Transaction.Type, result.Transaction.Type) 
+func TestTransactionService Withdraw(t *testing.T) { 
+tests := []struct 
+}{ 
+name 
+accountID 
+amount 
+string 
+uint64 
+float64 
+setupMocks 
+func(*mocks.MockRepository, 
+*mocks.MockКafkaPuЫisher) 
+expectedError bool 
+expectedResult model.TransactionDetails 
+name: 
+"successful withdraw", 
+accountID: 1, 
+amount: 
+50. 25, 
+setupMocks: func(mockRepo *mocks.MockRepository, mockKafka 
+*mocks.MockKafkaPuЫisher) 
+expectedParams := model.WithdrawParams( 
+AccountID: 1, 
+Amount: 
+50. 25, 
+expectedResult := model.TransactionDetails{ 
+Transaction: model.Transaction{ 
+ID: 
+2, 
+UserID: 
+1, 
+Развертывание микросервисов 
+283 
+), 
+), 
+Amount: 
+Status: 
+Туре: 
+5025, // 50.25 * 100 
+model.TransactionStatusPending, 
+model.TransactionTypeWithdraw, 
+Createc!At: time.Now(), 
+Updatec!At: time.Now(), 
+), 
+Entries: [ )model. TransactionEntry(), 
+mockRepo.EXPECT(). 
+Withdraw(gomock.Any(), expectedParams). 
+Return(expectedResult, nil) 
+mockКafka.EXPECT(). 
+PuЬlish(gomock.Any(), "transaction_data", "1", gomock.Any()). 
+Return (nil) 
+expectedError: false, 
+expectedResult: model.TransactionDetails{ 
+Transaction: model.Transaction( 
+), 
+), 
+ID: 
+UserID: 
+Amount: 
+Status: 
+2, 
+1, 
+5025, 
+model.TransactionStatusPending, 
+Туре: 
+model. TransactionTypeWi thdraw, 
+Createc!At: time.Now(), 
+Updatec!At: time.Now(), 
+Entries: [) model. TransactionEntry{), 
+name: 
+"repository error", 
+accountID: 1, 
+amount: 
+50.25, 
+setupMocks: func(mockRepo *mocks.MockRepository, mockКafka 
+*mocks,MockКafkaPuЬlisher) 
+expectedParams := model.WithdrawParams{ 
+AccountID: 1, 
+Amount: 
+50.25, 
+mockRepo.EXPECT(). 
+Withdraw(gomock.Any(), expectedParams). 
+Return (model. TransactionDetails { ) , errors. New { "dataЬase error") ) 
+), 
+284 
+Глава 5 
+expectedError: 
+true, 
+expectedResult: model.TransactionDetails{}, 
+}, 
+for 
+, tt := range tests { 
+t.Run(tt.name, func(t *testing.T) 
+ctrl := gomock.NewController(t) 
+defer ctrl.Finish() 
+}) 
+mockRepo := mocks.NewМockRepository(ctrl) 
+mockAccountService := mocks.NewМockAccountService(ctrl) 
+mockКafka := mocks.NewMockКafkaPuЬlisher(ctrl} 
+logger := zerolog.Nop(} 
+tt.setupMocks(mockRepo, mockKafka) 
+service := New(mockRepo, mockAccountService, mockКafka, &logger) 
+result, err := service.Withdraw(context.Background(}, tt.accountID, tt.amount) 
+if tt.expectedError { 
+assert.Error(t, err) 
+else { 
+assert.NoError(t, err) 
+assert.Equal(t, tt.expectedResult.Transaction.ID, result.Transaction.ID) 
+assert.Equal(t, tt.expectedResult.Transaction.UserID, result.Transaction.UserID) 
+assert.Equal(t, tt.expectedResult.Transaction.Amount, result.Transaction.Amount) 
+assert.Equal(t, tt.expectedResult.Transaction.Status, result.Transaction.Status) 
+assert.Equal(t, tt.expectedResult.Transaction.Type, result.Transaction.Type) 
+func TestTransactionService_Transfer(t *testing.T) { 
+tests := []struct 
+}{ 
+name 
+userID 
+string 
+uint64 
+recipient 
+uint64 
+amount 
+float64 
+setupMocks 
+func(*mocks.MockRepository, 
+*mocks.MockКafkaPuЬlisher) 
+expectedError bool 
+expectedResult model.TransactionDetails 
+name: 
+userID: 
+"successful transfer", 
+1, 
+Развертывание микросервисов 
+285 
+), 
+recipient: 2, 
+arnount: 
+75. 00, 
+setupMocks: func(rnockRepo *rnocks.MockRepository, rnockКafka 
+*rnocks.MockКafkaPuЫisher) 
+), 
+expectedPararns :; rnodel.TransferPararns{ 
+UserID: 
+1, 
+Recipient: 2, 
+Arnount: 
+75.00, 
+expectedResult :; rnodel.TransactionDetails{ 
+Transaction: rnodel.Transaction{ 
+), 
+ID: 
+UserID: 
+Arnount: 
+Status: 
+з, 
+1, 
+7500, // 75.00 * 100 
+rnodel.TransactionStatusPending, 
+Туре: 
+rnodel.TransactionTypeTransfer, 
+CreatedAt: tirne.Now(), 
+UpdatedAt: tirne.Now(), 
+Entries: [ ]rnodel. TransactionEntry{), 
+rnockRepo.EXPECT(). 
+Transfer(gornock.Any(), expectedPararns). 
+Return(expectedResult, nil) 
+rnockКafka.EXPECT(). 
+PuЬlish(gornock.Any(), "transaction_data", "1", gornock.Any()). 
+Return(nil) 
+expectedError: false, 
+expectedResult: rnodel.TransactionDetails{ 
+Transaction: rnodel.Transaction{ 
+), 
+ID: 
+UserID: 
+Arnount: 
+Status: 
+Туре: 
+з, 
+1, 
+7500, 
+rnodel.TransactionStatusPending, 
+rnodel.TransactionTypeTransfer, 
+CreatedAt: tirne.Now(), 
+UpdatedAt: tirne.Now(), 
+), 
+Entries: [ ]rnodel. TransactionEntry{), 
+пате: 
+userID: 
+"repository error", 
+l, 
+286 
+), 
+Глава 5 
+recipient: 2, 
+amount: 
+75.00, 
+setupMocks: func(mockRepo *mocks.MockRepository, mockKafka 
+*mocks.MockKafkaPuЬlisher) 
+expectedParams := model.TransferParams{ 
+UserID: 
+1, 
+Recipient: 2, 
+Amount: 
+75. 00, 
+mockRepo.EXPECT(). 
+Transfer(gomock.Any(), expectedParams). 
+Return(model.TransactionDetails{}, errors.New("database error")) 
+), 
+expectedError: 
+true, 
+expectedResult: model.TransactionDetails{}, 
+for , tt := range tests { 
+t.Run(tt.name, func(t *testing.T) 
+ctrl := gomock.NewController(t) 
+defer ctrl.Finish() 
+)) 
+mockRepo := mocks.NewMockRepository(ctrl) 
+mockAccountService := mocks.NewMockAccountService(ctrl) 
+mockKafka := mocks.NewMockКafkaPuЬlisher(ctrl) 
+logger := zerolog.Nop() 
+tt.setupMocks(mockRepo, mockKafka) 
+service := New(mockRepo, mockAccountService, mockKafka, &logger) 
+result, err := service.Transfer(context.Background(), tt.userID, tt.recipient, 
+tt.amount) 
+if tt.expectedError { 
+assert.Error(t, err) 
+else { 
+assert.NoError(t, err) 
+assert.Equal(t, tt.expectedResult.Transaction.ID, result.Transaction.ID) 
+assert.Equal(t, tt.expectedResult.Transaction.UserID, result.Transaction.UserID) 
+assert.Equal(t, tt.expectedResult.Transaction.Amount, result.Transaction.Amount) 
+assert.Equal(t, tt.expectedResult.Transaction.Status, result.Transaction.Status) 
+assert.Equal(t, tt.expectedResult.Transaction.Type, result.Transaction.Type) 
+Развертывание микросервисов 
+287 
+func TestTransactionService_HandleAccountResponse(t *testing.T) { 
+tests := []struct { 
+){ 
+name 
+response 
+setupMocks 
+string 
+AccountResponse 
+func(*rnocks.MockRepository) 
+expectedError bool 
+), 
+), 
+name: "successful response - transaction cornpleted", 
+response: AccountResponse{ 
+RequestType: "deposit", 
+UserID: 
+1, 
+OperationID: 1, 
+Result: 
+true, 
+), 
+setupMocks: func(rnockRepo *rnocks.MockRepository) { 
+rnockRepo.EXPECT(). 
+UpdateTransactionStatus(gornock.Any(), uint64(1), 
+rnodel.TransactionStatusCornpleted). 
+Return (nil) 
+), 
+expectedError: false, 
+name: "failed response - transaction failed", 
+response: AccountResponse{ 
+RequestType: "withdraw", 
+UserID: 
+1, 
+OperationID: 2, 
+Resul t: 
+false, 
+), 
+setupMocks: func(rnockRepo *rnocks.MockRepository) { 
+rnockRepo.EXPECT(). 
+), 
+UpdateTransactionStatus(gornock.Any(), uint64(2), rnodel.TransactionStatusFailed). 
+Return(nil) 
+expectedError: false, 
+name: "repository error", 
+response: AccountResponse{ 
+RequestType: "deposit", 
+UserID: 
+1, 
+OperationID: 1, 
+Result: 
+true, 
+), 
+288 
+), 
+}, 
+}, 
+}, 
+setupMocks: func(mockRepo *mocks.MockRepository) { 
+mockRepo.EXPECT(). 
+Глава 5 
+UpdateTransactionStatus(gomock.Any{), uint64{1), 
+model.TransactionStatusCompleted). 
+Return (errors. New ( "dataЬase error")) 
+), 
+expectedError: true, 
+name: "invalid response - missing request type", 
+response: AccountResponse{ 
+RequestType: "", 
+UserID: 
+1, 
+OperationID: 1, 
+Result: 
+true, 
+}, 
+setupMocks: func{mockRepo *mocks.MockRepository) { 
+// No repository calls expected for invalid response 
+}, 
+expectedError: true, 
+name: "invalid response - missing user ID", 
+response: AccountResponse{ 
+RequestType: "deposit", 
+UserID: 
+О, 
+OperationID: 1, 
+Result: 
+true, 
+}, 
+setupMocks: func(mockRepo *mocks.MockRepository) { 
+// No repository calls expected for invalid response 
+}, 
+expectedError: true, 
+name: "invalid response - missing operation ID", 
+response: AccountResponse{ 
+RequestType: "deposit", 
+UserID: 
+1, 
+OperationID: 
+О, 
+Result: 
+true, 
+}, 
+setupMocks: func(mockRepo *mocks.MockRepository) { 
+// No repository calls expected for invalid response 
+}, 
+expectedError: true, 
+Развертывание микросервисов 
+for , tt := range tests { 
+t.Run(tt.name, func(t *testing.T) 
+ctrl := gomock.NewController(t) 
+defer ctrl.Finish() 
+mockRepo := mocks.NewМockRepository(ctrl) 
+mockAccountService := mocks.NewМockAccountService(ctrl) 
+mockКafka := mocks.NewMockКafkaPuЬlisher(ctrl) 
+logger := zerolog.Nop() 
+tt.setupМocks(mockRepo) 
+service .- New(mockRepo, mockAccountService, mockКafka, &logger) 
+// Convert response to JSON bytes 
+responseBytes, err := json.Marshal(tt.response) 
+assert.NoError(t, err) 
+289 
+err = service.HandleAccountResponse(context.Background(), "test_topic", "test_key", 
+responseBytes) 
+)) 
+if tt.expectedError { 
+assert.Error(t, err) 
+else { 
+assert.NoError(t, err) 
+func TestTransactionService_GetTransactionsWithDetails(t *testing.T) { 
+tests := []struct ( 
+){ 
+name 
+string 
+params 
+model.GetTransactionsParams 
+setupMocks 
+func(*mocks.MockRepository) 
+expectedError bool 
+expectedCount int 
+name: "successful get transactions", 
+params: model.GetTransactionsParams( 
+), 
+UserID: func() *uint64 { id := uint64(1); return &id ) (), 
+Limit: 
+10, 
+Offset: О, 
+setupMocks: func(mockRepo *mocks.MockRepository) 
+transactions := []model.Transaction{ 
