@@ -118,5 +118,84 @@ location / {
 
 ---
 
-## What's Next
-Chapter 6 likely covers final project wrap-up, Docker containerization, and production deployment considerations.
+## Docker Containerization
+
+### Multi-stage Dockerfile (listing 5.6)
+```dockerfile
+FROM golang:1.24.5-alpine AS build
+WORKDIR /app
+COPY go.mod go.sum ./
+RUN go mod download
+COPY .
+RUN go build -o app ./cmd
+# ---
+FROM alpine:3.18
+WORKDIR /app
+COPY --from=build /app/app
+COPY --from=build /app/internal/migrations ./internal/migrations
+CMD ["./app"]
+```
+**Key techniques:**
+- Multi-stage build: compile in first stage, deploy minimal Alpine image
+- `COPY go.mod go.sum` before `COPY .` for Docker layer caching
+- `golang:1.24.5-alpine` for build, `alpine:3.18` for runtime (~5MB)
+
+### .dockerignore (listing 5.7)
+```
+.idea
+vendor
+```
+
+### docker-compose.yaml (listing 5.8 — local build)
+- PostgreSQL containers per service (account_db, auth_db, transaction_db)
+- Kafka (`confluentinc/cp-kafka:7.5.0`) with KRaft mode
+- Kafka UI (`provectuslabs/kafka-ui:latest`) on port 29093
+- All app services (transaction, account, auth, gateway) built locally
+- Services connect internally via service names (not localhost)
+
+### Publishing to Docker Hub (pages 300-304)
+1. `docker login`
+2. `docker image ls` — list all images
+3. `docker tag book_all-auth yuliapopova/book_all-auth:latest`
+4. `docker push yuliapopova/book_all-auth:latest` (repeat for all services)
+5. Update `docker-compose.yaml` to use `image: yuliapopova/...:latest` instead of `build:`
+6. Deploy to remote VM with docker-compose
+
+---
+
+## Kubernetes (Масштабирование при помощи оркестратора Kubernetes)
+
+> Kubernetes — мощный инструмент для оркестровки контейнеризированных приложений с открытым исходным кодом
+
+### Key Capabilities
+1. Workload distribution across hosts
+2. Declarative API for system interaction
+3. kubectl CLI for manual management
+4. Self-healing (current → desired state)
+5. Basic service layer for request routing
+6. Pluggable modules (network, storage)
+
+### Core Concepts
+| Term (RU) | Term (EN) | Definition |
+|-----------|-----------|------------|
+| Узел | Node | Physical/virtual machine running container workloads |
+| Под | Pod | Basic deployable unit — one or more containers on same node, unique cluster IP |
+| Том | Volume | Shared storage for containers within a pod |
+| Контроллер реплик | Replication Controller | Scales pods to desired count, replaces failed instances |
+| Сервис | Service | Groups pods + access policy |
+
+### Quick Start
+```bash
+# Install kubectl: https://kubernetes.io/docs/tasks/tools/install-kubectl-linux
+kubectl run nginx --image=nginx:latest --port=80
+kubectl describe pods nginx
+```
+
+---
+
+## Book Conclusion
+
+This is the final chapter (Chapter 5) and the end of the book. The book covered three deployment approaches:
+1. Manual deployment (nginx proxy to localhost services)
+2. CI/CD with GitHub Actions + VPS deployment
+3. Containerization with Docker + Docker Hub publishing + Kubernetes orchestration concepts
