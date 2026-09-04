@@ -1,0 +1,620 @@
+Разработка микросервиса авторизации и аутентификации (Auth) 
+101 
+В конфигурацию сервиса (листинг 2.3) должны добавиться несколько полей, 
+важных для 
+создания 
+и 
+проверки токенов: JwtSecret, 
+AccessTokenTTLМinutes 
+и 
+RefreshTokenTTLDays. 
+package config 
+import ( 
+"log" 
+"githuЬ.com/caarlosO/env/vlO" 
+"githuЬ.com/joho/godotenv" 
+// Config содержит конфигурацию приложения 
+type Config struct { 
+ServiceName string 'env:"SERVICE NАМЕ" jsoп:"service_name" required:"true" 
+default:"auth-service"' 
+AppEnv 
+string 'env:"APP_ENV" json:"app_environment" required:"true" 
+default:"development"' 
+Host 
+string 'env:"GRPC HOST" json:"host" required:"true" default:"localhost"' 
+Port 
+LogLevel 
+DbDsn 
+int 
+'env:"GRPC PORT" json:"port" required:"true" default:"50052"' 
+string 'env:"LOG LEVEL" json:"log_level" required:"true" default:"info"' 
+string 'env:"DB DSN" 
+json:"dЬ_dsn" required:"true"' 
+JwtSecret 
+string 'env:"JWT SECRET" json:"jwt_secret" required:"true"' 
+AccessTokenTTLМinutes int 
+'env:"ACCESS_TOКEN_TTL_МINUTES" json:"access_ttl_min" 
+required:"true" default:"60"' 
+RefreshTokenTTLDays 
+int 
+'env:"REFRESH ТОКЕN TTL_DAYS" json:"refresh_ttl_days" 
+required:"true" default:"30"' 
+// Load загружает конфигурацию из переменных окружения 
+func Load () ( *Conf ig, error) { 
+// Загружаем .env файл 
+if err := godotenv.Load(); err != nil { 
+log.Println("Warning: .env file not found, using system environment variaЫes") 
+cfg .- &Config{ 1 
+err .- env.Parse(cfg) 
+if err != nil { 
+return nil, err 
+return cfg, nil 
+102 
+Глава 2 
+Так как мы будем хранить и некоторую информацию о пользователях (логин, поч­
+ту, пароль) в этом сервисе, и ещё токены, создадим для этого две таблицы и две 
+модели (листинг 2.4). 
+f,f:lff~i:нr 2.4. Файл i~..,~i,~9ry/model/mod~l~8 ,, 
+package model 
+import "time" 
+type User struct 
+ID 
+uint64 
+Login 
+Email 
+string 
+str±ng 
+'gorm: "column: id"' 
+'gorm: "column: login"' 
+'gorm:"column:email"' 
+Passworc!Нash string 
+'gorm:"column:password_hash"' 
+CreatedAt 
+time.Time 'gorm:"column:created_at"' 
+UpdatedAt 
+time.Time 'gorm:"column:updated_at"' 
+func (User) 
+TaЬleName() string { 
+return "users" 
+type RefreshToken struct 
+ID 
+uint64 
+UserID 
+uint64 
+Token 
+string 
+ExpiresAt time.Time 
+RevokedAt *time.Time 
+CreatedAt time.Time 
+'gorm:"column:id"' 
+'gorm:"column:user_id"' 
+'gorm:"column:token"' 
+'gorm:"column:expires_at"' 
+'gorm:"column:revoked_at"' 
+'gorm:"column:created_at"' 
+func (RefreshToken) 
+TaЫeName() string { 
+return "refresh tokens" 
+А миграция и возможность ее «откатить» будут выглядеть так (листинг 2.5). 
+package migrations 
+import ( 
+"context" 
+"dataЬase/sql" 
+"githuЬ.com/pressly/goose/vЗ" 
+Разработка микросервиса авторизации и аутентификации (Auth) 
+func init() { 
+goose.AddNamedМigrationContext("2025082510244l_initdЬ.go", upinitdЬ, downinitdЬ) 
+func upinitdЬ(ctx context.Context, tx *sql.Tx) error 
+query := 'CREATE ТАВLЕ IF NOT EXISTS users 
+id BIGSERIAL PRIМARY КЕУ, 
+login ТЕХТ NOT NULL UNIQUE, 
+ernail ТЕХТ NOT NULL UNIQUE, 
+password_hash ТЕХТ NOT NULL, 
+created_at TIMESTAМP NOT NULL DEFAULT NOW(), 
+updated_at TIMESTAМP NOT NULL DEFAULT NOW() 
+, err := tx.Exec(query) 
+if err != nil { 
+return err 
+query = 'CREATE ТАВLЕ IF NOT EXISTS refresh_tokens 
+id BIGSERIAL PRIМARY КЕУ, 
+user id BIGINT NOT NULL REFERENCES users(id) ON DELETE CASCADE, 
+token ТЕХТ NOT NULL UNIQUE, 
+expires_at TIMESTAМP NOT NULL, 
+revoked_at TIMESTAМP NULL, 
+created_at TIMESTAМP NOT NULL DEFAULT NOW() 
+) ; 
+, err = tx.Exec(query) 
+if err != nil { 
+return err 
+return qil 
+func downinitdЬ(ctx context.Context, tx *sql.Tx) error 
+query := 'DROP ТАВLЕ IF EXISTS refresh_tokens;' 
+, err := tx.Exec(query) 
+if err != nil ( 
+return err 
+query = 'DROP ТАВLЕ IF EXISTS refresh tokens; DROP ТАВLЕ IF EXISTS users;' 
+, err = tx.Exec(query) 
+if err != nil { 
+return err 
+103 
+104 
+Глава 2 
+return nil 
+Эта миграция, по сути, такая же, как и в Account, но с небольшим дополнением. 
+Тут в рамках одной транзакции мы создадим сразу две таблицы и также две уда­
+лим, если что-то пойдет не так. Созданные таблицы и будут обеспечивать хранение 
+минимальной информации о пользователях и их токенах обновления. 
+Работа с данными также будет вестись через слой repository (листинг 2.6). 
+package repository 
+import ( 
+"context" 
+11errors 11 
+11 fmt 11 
+"githuЬ.com/rs/zerolog" 
+"githuЬ.com/yuliaapopova/auth/internal/model" 
+"githuЬ.com/yuliaapopova/auth/internal/repository/mapper" 
+repomodel "githuЬ.com/yuliaapopova/auth/internal/repository/model" 
+"gorm. io/gorm" 
+"gorm.io/gorm/clause" 
+type Repository struct ( 
+dЬ 
+*gorm.DB 
+logger *zerolog.Logger 
+func NewRepository(dЬ *gorm.DB, logger *zerolog.Logger) *Repository ( 
+return &Repository( 
+dЬ: 
+dЬ, 
+logger: logger, 
+func (r *Repository) CreateUser(ctx context.Context, user model.User) error { 
+userRepo := mapper.UserToRepoUser(user) 
+res := r.dЬ.WithContext(ctx). 
+Clauses(clause.OnConflict(UpdateAll: true}). 
+Create(&userRepo} 
+if res.Error != nil ( 
+r.logger.Err(res.Error) .Msg("failed to save user") 
+return fmt.Errorf("failed to save user: %w", res.Error) 
+Разработка микросервиса авторизации и аутентификации (Auth) 
+return nil 
+func (r *Repository) GetUserByID(ctx context.Context, userID uint64) (model.User, error) { 
+var user repomodel.User 
+res := r.dЬ.WithContext(ctx). 
+Model(&repomodel.User()). 
+Where("id = ?", userID). 
+First(&user) 
+if errors.Is(res.Error, gorm.ErrRecordNotFound) ( 
+return model.User(I, fmt.Errorf("user not found"I 
+else if res.Error 1= nil ( 
+r.logger.Err(res.Error) .Msg("failed to get user id") 
+return model.User(I, res.Error 
+return mapper.RepoUserToUser(user), nil 
+func (r *Repository) GetUserByLoginOrEmail(ctx context.Context, loginOrEmail string) 
+(model.User, error) ( 
+var user repomodel.User 
+res := r.dЬ.WithContext(ctx). 
+Model(&repomodel.User(I). 
+Where("login =? OR email = 
+First(&user) 
+?" 
+. , loginOrEmail, loginOrEmail). 
+if errors.Is(res.Error, gorm.ErrRecordNotFound) 
+return model.User(I, fmt.Errorf("user not found") 
+else if res.Error 1= nil ( 
+r.logger.Err(res.Errorl .Msg("failed to get user Ьу login/email") 
+return model.User(I, res.Error 
+return mapper.RepoUserToUser(userl, nil 
+105 
+func (r *Repository) SaveRefreshToken(ctx context.Context, token model.RefreshToken) error ( 
+m := mapper.RefreshTokenToRepoRefresh(tokenl 
+res := r.dЬ.WithContext(ctx) .Create(&m) 
+if res.Error != nil ( 
+r.logger.Err(res.Error) .Msg("failed to save refresh token"I 
+return fmt.Errorf("failed to save refresh token: %w", res.Error) 
+return nil 
+func (r *Repository) GetRefreshToken(ctx context.Context, token string) (model.RefreshToken, 
+error) { 
+var refreshToken repomodel.RefreshToken 
+106 
+res := r.dЬ.WithContext(ctx). 
+Model(&repomodel.RefreshToken{)). 
+Where( 11token = ?11 1 token). 
+First(&refreshToken) 
+if errors.Is(res.Error, gorm.ErrRecordNotFound) 
+return model.RefreshToken{), fmt.Errorf( 11refresh token not found 11 ) 
+else if res.Error != nil { 
+r. logger. Err (res. Error) .Msg ( 11failed to get refresh token 11 ) 
+return model.RefreshToken{), res.Error 
+return mapper.RepoRefreshTokenToRefresh(refreshToken), nil 
+func (r *Repository) RevokeRefreshToken(ctx context.Context, token string) error { 
+res := r.dЬ.WithContext(ctx). 
+Model(&repomodel.RefreshToken{)). 
+Where( 11token = ? 11 , token). 
+Update ( "revoked_at 11 , gorm.Expr (11 NOW () 11 )) 
+if res.Error != nil { 
+r. logger. Err ( res. Error) . Msg ( 11 failed to revoke refresh token 11 ) 
+return fmt.Errorf( 11failed to revoke refresh token 11 ) 
+return nil 
+Глава 2 
+Тут можно заметить, что где-то указывается Model как схема базы данных, а в каких­
+то запросах нет. Это связано с тем, что в запросах на создание записей мы схему 
+неявно передаем вместе с данными. Тогда gonn считает, что именно этот тип 
+и есть модель, и автоматически строит SQL-операцию вида INSERT INTO users ( ... ) 
+VALUES ( ... ). То есть объект самой модели уже явно передан в метод, и поэтому gonn 
+понимает, какую таблицу и поля использовать. Когда же мы выполняем поиск, 
+gonn должен знать, к какой таблице привязать условия. Только если модель опре­
+деляется по приемнику (First(&user)), модель указывать не обязательно, но жела­
+тельно -
+это придает ясности коду. 
+Мапперы рассматривать отдельно не станем -
+там всё предельно банально, а вот 
+логика сервиса интересна (листинг 2. 7). 
+package service 
+import ( 
+11context 11 
+"crypto/sha256 11 
+11encoding/hex 11 
+"frnt" 
+"time" 
+Разработка микросервиса авторизации и аутентификации (Auth) 
+"githuЬ.com/golang-jwt/jwt/vS" 
+"githuЬ.com/rs/zerolog" 
+"githuЬ.com/yuliaapopova/auth/internal/config" 
+"githuЬ.com/yuliaapopova/auth/internal/model" 
+"golang.org/x/crypto/bcrypt" 
+type AuthService struct { 
+repo 
+Repository 
+cfg 
+*config.Config 
+logger *zerolog.Logger 
+type Repository interface { 
+CreateUser(context.Context, model.User) error 
+GetUserByID (context. Context, uint64) (model. User, error) 
+GetUserByLoginOrEmail(context.Context, string) (model.User, error) 
+SaveRefreshToken(context.Context, model.RefreshToken) error 
+GetRef reshToken ( context. Context, s tr ing) (model. Ref reshToken, error) 
+RevokeRefreshToken(context.Context, string) error 
+func New(repo Repository, cfg *config.Config, logger *zerolog.Logger) *AuthService { 
+return &AuthService{repo: repo, cfg: cfg, logger: logger} 
+func (s *AuthService) Register(ctx context.Context, req model.Register) error { 
+hash, err := bcrypt.GenerateFromPassword([]byte(req.Password), bcrypt.DefaultCost} 
+if err 1= nil { 
+return fmt.Errorf("failed to hash password: %w", err) 
+user := model.User{ 
+Login: 
+req.Login, 
+Email : 
+req. Emai 1, 
+PasswordНash: string(hash), 
+CreatedAt: 
+UpdatedAt: 
+time. Now () , 
+time.Now(), 
+return s.repo.CreateUser(ctx, user) 
+107 
+func (s *AuthService) Login (ctx context. Context, req model. Login) (model. TokenPair, error) { 
+user, err := s.repo.GetUserByLoginOrEmail(ctx, req.LoginOrEmail) 
+if err != nil { 
+return model.TokenPair{), fmt.Errorf("invalid credentials") 
+108 
+Глава 2 
+if err := bcrypt.CornpareHashAndPassword([]byte(user.PasswordНash), [)byte(req.Password)); 
+err != nil { 
+return rnodel. TokenPair{}, frnt.Errorf ("invalid credentials") 
+return s.issueTokens(ctx, user.ID) 
+func (s *AuthService) Refresh(ctx context.Context, refreshToken string) (rnodel.TokenPair, 
+error) { 
+rt, err := s.repo.GetRefreshToken(ctx, refreshToken) 
+if err != nil { 
+return rnodel.TokenPair(}, frnt.Errorf("invalid refresh token") 
+if rt.RevokedAt != nil 11 tirne.Now() .After(rt.ExpiresAt) 
+return rnodel.TokenPair{}, frnt.Errorf("refresh token expired or revoked") 
+return s.issueTokens(ctx, rt.UserID) 
+func (s *AuthService) Validate(ctx context.Context, accessToken string) (uint64, error) { 
+clairns .- jwt.MapClaims{} 
+}} 
+err .- jwt. ParseWithClaims (accessToken, clairns, func (token *jwt. Token) (interface (}, 
+error) 
+return [)byte(s.cfg.JwtSecret), nil 
+if err != nil { 
+ret11rn О, frnt.Errorf("invalid token: %w", err) 
+uidFloat, ok : = clairns ["suЬ"] . (float64) 
+if !ok ( 
+return О, frnt.Errorf("invalid suЬject") 
+return uint64(uidFloat), nil 
+func (s *AuthService) Logout(ctx context.Context, refreshToken string) error { 
+return s.repo.RevokeRefreshToken(ctx, refreshToken) 
+func (s *AuthService) issueTokens (ctx context. Context, userID uint64) (rnodel. TokenPair, 
+error) { 
+now := tirne.Now() 
+accessExp := now.Add(time.Duration(s.cfg.AccessTokenTTLМinutes) * tirne.Minute) 
+clairns := jwt.MapClaims{ 
+"suЬ": userID, 
+"ехр": accessExp.Unix(), 
+Разработка микросервиса авторизации и аутентификации (Auth) 
+access := jwt.NewWithClaims(jwt.SigningMethodНS256, claims) 
+accessStr, err := access.SignedString([]byte(s.cfg.JwtSecret)) 
+if err != nil { 
+return model.TokenPair{), fmt.Errorf("failed to sign access token: %w", err) 
+refreshRaw := fmt.Sprintf("%d:%d:%s", userID, now.UnixNano(), s.cfg.JwtSecret) 
+h := sha256.Sum256([]byte(refreshRaw)) 
+refreshStr := hex.EncodeToString(h[:]) 
+refresh := model.RefreshToken{ 
+UserID: 
+userID, 
+Token: 
+refreshStr, 
+ExpiresAt: now.Add(time.Duration(s.cfg.RefreshTokenTTLDays) * 24 * time.Hour), 
+CreatedAt: now, 
+if err := s.repo.SaveRefreshToken(ctx, refresh); err != nil { 
+return model.TokenPair{), err 
+return model.TokenPair{AccessToken: accessStr, RefreshToken: refreshStr), nil 
+109 
+Этот код реализует сервис аутентификации AuthService, который отвечает за регист­
+рацию пользователей, вход в систему, выпуск и обновление токенов доступа, а 
+также их валидацию и отзыв. Сервис опирается на абстракцию Repository -
+интер­
+фейс к базе данных, через который выполняются основные операции ( создание 
+пользователя, поиск по логину или email, сохранение и отзыв refresh-тoкeнa). Это 
+делает бизнес-логику независимой от конкретной реализации хранилища. 
+При регистрации пользователя пароль предварительно хешируется алгоритмом 
+bcrypt, что обеспечивает его безопасное хранение. В случае входа проверяется 
+совпадение хеша, после чего вызывается метод issueTokens, генерирующий пару то­
+кенов: 
+□ access-token -
+короткоживущий JWT с идентификатором пользователя и време­
+нем истечения; 
+□ refresh-token -
+уникальная строка, полученная на основе хеширования случай-
+ных данных через SHA-256. 
+Refresh-тoкeн сохраняется в базе и может быть отозван, что позволяет управлять 
+сессиями и завершать их досрочно. 
+Метод Refresh используется для получения новой пары токенов по действующему 
+refresh-тoкeнy, метод Validate проверяет подпись и срок годности JWT и возвращает 
+индентификатор пользователя, а метод Logout отзывает refresh-тoкeн, прерывая свя­
+занную сессию. 
+Таким образом, сервис инкапсулирует всю логику, связанную с безопасной аутен­
+тификацией: от хранения пользователей и проверки паролей до управления токе­
+нами и их «жизненным циклом». Это позволяет использовать его как центральный 
+110 
+Глава 2 
+компонент системы авторизации, изолированный от деталей базы данных и инфра­
+структуры. 
+Тут есть юоанс, на который хотелось бы обратить внимание, -
+это работа с паро­
+лем. Учитывая требования безопасности, недопустимо хранить его в открытом 
+виде, -
+любая утечка базы данных, и вся конфиденциальная информация пользо­
+вателей под угрозой! Поэтому здесь используется пакет bcrypt, предоставляющий 
+криптографическую функцию для хеширования паролей. Хеш bcrypt подмешивает 
+в пароль «солы> -
+произвольную последовательность байтов, а это гаранти­
+рует, что одинаковые пароли будут иметь разные хеши. Передается также 
+bcrypt.DefaultCost- стандартное значение «стоимости», равное 10. Оно задает дос­
+таточно медленное вычисление хеша, значительно усложняющее атакующей 
+стороне перебор паролей, но при этом не тормозящее работу приложения. Такое 
+замедление делает брутфорс практически невозможным. 
+Список литературы и источников 
+1. Джейсон Андресс. Защита данных. От авторизации до аудита. 2021 
+(https://goo.su/7cBj7). 
+2. https://golang-jwt.github.io/jwt/. 
+ГЛАВА 3 
+Способы взаимодействия 
+между микросервисами 
+Взаимодействие между микросервисами может быть организовано двумя различ­
+ными методами: синхронными и асинхронными. Синхронные методы предполага­
+ют, что пользователь должен получить ответ сразу же, а асинхронные -
+что, воз­
+можно, когда-нибудь потом. Примером асинхронного взаимодействия являются 
+уведомления: вы делаете запрос на какую-либо операцию -
+допустим, вывод 
+средств, а уведомление о том, что вывод средств прошел успешно или неуспешно, 
+вы можете получить спустя некоторое время. К синхронным методам взаимодейст­
+вия (из рассматриваемых нами) относятся протоколы НТТР и gRPC, а к асинхрон­
+ным -
+Kafka и RabЬitMQ. Существуют и другие инструменты взаимодействия, но, 
+как правило, они менее популярны. 
+НТТР-протокол 
+НТТР -
+самый распространенный протокол передачи данных. Изначально он раз­
+рабатывался для передачи гипертекстовых документов, о чем и говорит аббревиа­
+тура НТТР -
+HyperText Transfer Protocol. Чтобы лучше понять, как устроен этот 
+протокол, нужно сначала разобраться со спецификацией OSI. 
+Модель OSI 
+OSI (Open System Interconnection) -
+это набор стандартов, описывающих процесс 
+взаимодействия устройств по сети, первая стандартная модель в области сетевых 
+коммуникаций. В модели OSI процесс передачи данных осуществляется от одного 
+уровня к другому. Все взаимодействия происходят между двумя устройствами, ко­
+торые выступают в роли отправителя и получателя, а главная задача -
+доставить 
+данные . Такой обмен информацией и описывается моделью OSI [ 1]. 
+Модель OSI состоит из семи уровней: 
+1. Физический уровень. 
+2. Канальный уровень. 
+3. Сетевой уровень. 
+112 
+Глава 3 
+4. Транспортный уровень. 
+5. Сеансовый уровень. 
+6. Уровень представления. 
+7. Прикладной уровень. 
+Физический уровень 
+На физическом уровне производится передача данных в одной физической среде 
+с помощью аппаратуры передачи данных. Каналы передачи данных квалифициру­
+ют в зависимости от характера носителя сигналов на: 
+□ оптические; 
+□ проводные; 
+□ радиоканалы. 
+Как можно понять из названия уровня, он имеет дело с передачей битов по физиче­
+ским каналам связи. На этом уровне описываются характеристики физических 
+средств передачи данных -
+такие как полоса пропускания и волновое сопротивле­
+ние, а также определяются характеристики электрических сигналов, уровень на­
+пряжения сигнала и тип кодирования. Кроме того, здесь стандартизируются типы 
+разъемов и назначение каждого их контакта. Функции физического уровня реали­
+зуются во всех устройствах, подключенных к сети. Со стороны компьютера выпол­
+нение функций физического уровня обеспечивается сетевым адаптером или после­
+довательным портом. 
+Канальный уровень 
+На физическом уровне просто пересылаются биты. При этом не учитывается, что 
+в некоторых сетях, где линии связи используются (разделяются) попеременно не­
+сколькими парами взаимодействующих компьютеров, физическая среда передачи 
+может быть занята. Поэтому одной из задач канального уровня становится провер­
+ка доступности среды передачи. Другой задачей канального уровня является реали­
+зация механизмов обнаружения и коррекции ошибок. Для этого на канальном 
+уровне биты группируются в наборы, называемые кадрами. Канальный уровень 
+обеспечивает корректность передачи кадров, помещая специальную последова­
+тельность битов в начало и конец каждого кадра для его выделения, а также вычис­
+ляет контрольную сумму, обрабатывая все байты кадра определенным способом и 
+добавляя к кадру их контрольную сумму. Когда кадр приходит по сети, получатель 
+снова вычисляет контрольную сумму полученных данных и сравнивает результат 
+с контрольной суммой из кадра. Если они совпадают, кадр считается правильным 
+и принимается. Если контрольные суммы не совпадают, то фиксируется ошибка. 
+Канальный уровень может не только обнаруживать ошибки, но и исправлять их за 
+счет повторной передачи поврежденных кадров, хотя функция исправления ошибок 
+и не является обязательной для канального уровня. 
+Способы взаимодействия между микросервисами 
+113 
+Сетевой уровень 
+Протоколом сетевого уровня является IP (англ. Internet Protocol, межсетевой прото­
+кол) -
+маршрутизируемый сетевой протокол. 
+При передаче данных по протоколу IP доставка данных не является гарантирован­
+ной. Данные разделяются на так называемые пакеты, передаваемые от одного узла 
+сети к другому. При этом на уровне протокола IP не дается гарантий надежной дос­
+тавки пакета до адресата. Пакеты могут поступать не в том порядке, в котором 
+были отправлены, а также могут дублироваться (когда приходят две копии одного 
+пакета, что на самом деле бывает крайне редко) и быть поврежденными (чаще все­
+го поврежденные пакеты удаляются) или не прийти вовсе. 
+Транспортный уровень 
+За транспортный уровень в сетевой модели OSI отвечают несколько протоколов -
+чаще всего упоминаются ТСР и UDP, хотя есть и другие, менее распространенные. 
+Они предназначены в первую очередь для управления передачей данных в сетях и 
+подсетях. 
+□ ТСР (англ. Transmission Control Protocol, протокол управления передачей) -
+это 
+транспортный механизм, предоставляющий поток данных, где соединение уста­
+навливается заранее, благодаря чему гарантируется достоверность полученных 
+данных. Если данные в процессе передачи были потеряны, осуществляется по­
+вторный запрос данных и устраняется дублирование при получении двух копий 
+одного пакета. 
+□ UDP (англ. User Datagram Protocol, протокол пользовательских датаграмм)­
+транспортный механизм, в котором, в отличие от ТСР, датаграм.Аtы (а не паке­
+ты) могут прийти не по порядку, дублироваться или вовсе исчезнуть без следа, 
+но если они придут, то гарантируется, что в целостном состоянии. Это обеспе­
+чивается за счет использования простой модели передачи -
+без предваритель­
+ной установки соединения. Протокол UDP задействуется, когда критично время 
+доставки датаграмм. Это может быть актуально для загрузки трафика мультиме­
+диа, где потери не так критичны, как возможные задержки. 
+Сеансовый уровень 
+Далее уже идут уровни, которые работают непосредственно с данными, а не с паке­
+тами. 
+Как можно понять из названия, сеансовый уровень обеспечивает поддержание се­
+анса связи или сессии, благодаря чему приложения могут общаться между собой 
+длительное время. На этом уровне происходит координация коммуникации между 
+приложениями, и здесь можно управлять установлением, завершением и поддер­
+жанием связи в моменты неактивности приложения, синхронизацией задач и обме­
+ном информацией. Примером использования сеансового уровня являются группо­
+вые звонки или прямые трансляции. Во время сессии поддерживается синхронизи­
+рованная передача аудио- и видеоданных для всех участников, а также сама связь. 
+114 
+Глава З 
+Есть множество протоколов, обеспечивающих соединение на этом уровне, -
+на­
+пример: RPC, RTCP, SMPP и Н.245. 
+Уровень представления 
+На уровне представления обеспечивается преобразование протоколов и преобразо­
+вание данных. При отправке данные преобразуются сначала в формат для передачи 
+по сети, а при получении преобразуются в формат приложений. На этом уровне 
+с данными могут происходить разные манипуляции: сжатие и распаковка, кодиро­
+вание и декодирование, шифрование и дешифрование. 
+Прикладной уровень 
+Это верхний уровень модели OSI, который вы ежедневно используете. Он обеспе­
+чивает взаимодействие приложений с сетью, а с помощью его протоколов данные 
+отображаются конечному пользователю в понятном ему формате. Сюда как раз и 
+относятся протоколы НТТР, SMTP, РОР3 и другие. 
+При этом понятия определения протокола прикладного уровня и уровня представ­
+ления очень размыты, и принадлежность протокола может зависеть от сервиса. На­
+пример, если протокол HTTPS используется для просмотра сайтов, он расценивает­
+ся как протокол прикладного уровня. А если HTTPS применяется для передачи 
+важной зашифрованной информации -
+например, по протоколу ISO 8583, то тогда 
+его можно расценивать как протокол уровня представления, а уже ISO 8583 будет 
+протоколом приложения. 
+* * * 
+Функции всех уровней модели OSI могут быть отнесены к одной из двух групп: 
+к функциям, зависящим от конкретной технической реализации сети, или к функ­
+циям, нацеленным на работу с приложениями. 
+Физический, канальный и сетевой уровни являются сетезависимыми, т. е. они часто 
+тесно связаны с технической реализацией сети и используемым коммуникацион­
+ным оборудованием. В то же время прикладной, представительный и сеансовый 
+уровни ориентированы на приложения и слабо зависят от технических особенно­
+стей построения сети. Транспортный же уровень является промежуточным -
+он 
+скрывает детали функционирования нижних уровней от верхних. 
+Устройство с сетевой операционной системой взаимодействует с другими устрой­
+ствами по протоколам всех семи уровней. Это взаимодействие происходит через 
+коммутаторы, маршрутизаторы, модемы и подобные им средства. В зависимости от 
+типа коммуникационное устройство может работать либо на физическом уровне, 
+либо на физическом и канальном, либо на физическом, канальном и сетевом, ино­
+гда захватывая транспортный уровень. 
+Устройство НТТР-протокола 
+Как мы уже выяснили, НТТР является протоколом прикладного уровня, предназна­
+ченным для передачи данных по сети Интернет с использованием стека протоколов 
+Способы взаимодействия между микросервисами 
+115 
+TCP/IP. Это основной протокол обмена данными в сети. НТТР опирается на кли­
+ент-серверную архитектуру -
+т. е. инициатором взаимодействия обычно выступа­
+ет клиент, который отправляет запрос к серверу, например, с помощью веб­
+браузера. Хотя иногда инициатором обмена может быть и сервер, классический 
+пример этого -
+рush-уведомления. Ответ от сервера может состоять из различных 
+поддокументов, которые являются частью итогового документа, -
+например, от­
+дельно может приходить структура документа, а отдельно текст, изображения, 
+скрипты и многое другое. 
+Клиенты обычно -
+это устройства пользователей, т. е., когда вы открываете при­
+ложение в своем смартфоне или браузере ПК, ваше устройство выступает в роли 
+клиента, и чтобы загрузить информацию на ваше устройство, сначала с него от­
+правляется соответствующий НТТР-запрос на сервер. 
+Сервер -
+это некоторая виртуальная машина, на которой исполняется код и кото­
+рая выполняет запросы пользователя. В роли сервера также может выступать груп­
+па виртуальных машин, объединенных балансировщиком, распределяющим на­
+грузку между ними. При этом сервер не обязательно расположен на одной машине, 
+точно так же как и на одной виртуальной машине может быть организовано не­
+сколько серверов, и у них даже может числиться один хост на всех. 
+Участниками обмена, кроме клиента и сервера, также могут являться посредни­
+ки -
+так называемые прокси-серверы. Они могут использоваться в качестве шлюза 
+или хранителей кеша. Кеш -
+это некоторые ответы сервера, которые хранятся на 
+нем какое-то время, чтобы переиспользовать эти ответы, а не нагружать систему 
+одними и теми же запросами. 
+Особенно прокси-серверы актуальны в микросервисной архитектуре. Самым рас­
+пространенным прокси-сервером сейчас считается nginx. Обычно на каждый запрос 
+создается один поток выполнения, однако nginx разделяет этот поток на меньшие 
+однотипные структуры, которые называются рабочими соединенuя.Jwu. Каждое та­
+кое соединение обрабатывается отдельным рабочим процессом, а после выполне­
+ния они формируются в единый блок и возвращают результат в основной процесс 
+обработки данных. Одно рабочее соединение может обрабатывать до 1024 запросов 
+одного вида одновременно. 
+Структура НТТР-запроса 
+Каждый НТТР-запрос состоит их трех частей, которые передаются в строгом по­
+рядке: 
+□ НТТР-метод: 
+• GET -
+запрашивает данные, никак не изменяя их при этом; 
+• HEAD -
+запрашивает ресурс как и GET, но без тела ответа; 
+• POST -
+служит для отправки сущностей к ресурсу, чаще всего используется 
+для создания записей; 
+• PUT -
+обновление записи. Метод заменяет текущие данные конкретной за­
+писи на переданные, а если какие-то значения переданы не были, то затирает 
+существующие; 

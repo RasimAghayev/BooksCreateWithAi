@@ -1,0 +1,205 @@
+136 
+Глава З 
+4. Извлечение идентификатора пользователя из токена. 
+5. Добавление идентификатора пользователя в контекст. 
+6. Запрос уходит в бизнес-логику. 
+Таким образом можно централизовать аутентификацию. При следующих вызовах 
+сервисов, которые будут происходить из Gateway, нет необходимости проверять 
+JWT каждый раз -
+достаточно подключить интерсептор к серверу, и он автомати­
+чески будет проверять все методы, кроме публичных. Это защищает API без дуб­
+лирования кода, позволяет получить метаданные (в нашем случае идентификатор 
+пользователя) внутри сервиса, а запросы выполняются быстрее за счет того, что 
+проверка выполняется без вызова auth. 
+Подключение обработчика к серверу будет выглядить следующим образом (лис­
+тинг 3.3). 
+Листинг 3.3. Файл intemal/app/app.go 
+package арр 
+iroport ( 
+"context" 
+"fmt" 
+"net" 
+accountpb "githuЬ.com/yuliaapopova/contracts/account/go" 
+authpb "githuЬ.com/yuliaapopova/contracts/auth/go" 
+"githuЬ.com/yuliaapopova/gateway/internal/account" 
+"githuЬ.com/yuliaapopova/gateway/internal/auth" 
+"githuЬ.com/yuliaapopova/gateway/internal/config" 
+"githuЬ.com/yuliaapopova/gateway/internal/interceptor" 
+"githuЬ.com/yuliaapopova/gateway/internal/server" 
+"githuЬ.com/yuliaapopova/gateway/internal/service" 
+"google.golang.org/grpc/credentials/insecure" 
+gatewaypb "githuЬ.com/yuliaapopova/contracts/gateway/go" 
+"google.golang.org/genproto/googleapis/api/annotations" 
+"google.golang.org/grpc" 
+"githuЬ.com/liЬ/pq" 
+"githuЬ.com/rs/zerolog" 
+type Арр struct { 
+cfg 
+*config.Config 
+logger *zerolog.Logger 
+service 
+authService 
+*service.GatewayService 
+*auth.Service 
+accountService *account.Service 
+Способы взаимодействия между микросервисами 
+server 
+*server.Server 
+grpcServer *grpc.Server 
+func New(logger *zerolog.Logger, cfg *config.Config) 
+*Арр { 
+return &Арр{ 
+cfg: 
+cfg, 
+logger: logger, 
+func 
+(а *Арр) Run(ctx context.Context) error { 
+// Инициализируем gRPC-cepвep 
+gatewayServer, err := a.getGatewayServer(ctx) 
+if err != nil { 
+return fmt.Errorf("failed to get gateway server: %w", err) 
+// Создаем gRPC-cepвep 
+a.grpcServer = a.getGRPCServer(gatewayServer) 
+listenAddr := fmt.Sprintf("%s:%d", a.cfg.Host, a.cfg.Port) 
+lis, err := net.Listen("tcp", listenAddr) 
+if err 1= nil { 
+a.logger.Fatal() .Err(err) .Msg("failed to listen") 
+return err 
+а. logger. Info () . Msg ( "gRPC server listening") 
+serveErrCh := make(chan error, 1) 
+go func () { 
+serveErrCh <- a.grpcServer.Serve(lis) 
+1 () 
+select 
+case <-ctx.Done(): 
+a.grpcServer.GracefulStop() 
+return ctx.Err() 
+case err := <-serveErrCh: 
+if err != nil { 
+a.logger.Error() .Err(err) .Msg("failed to serve") 
+return err 
+137 
+138 
+func 
+(а *Арр) getGatewayService(ctx context.Context) (*service.GatewayService, error) 
+if a.service == nil ( 
+authService, err := a.getAuthService(ctx) 
+if err != nil ( 
+return nil, fmt.Errorf("failed to get auth service: %w", err) 
+accountService, err := a.getAccountService(ctx) 
+if err != nil { 
+return nil, fmt.Errorf("failed to get account service: %w", err) 
+a.service = service.New(accountService, authService, a.logger) 
+return a.service, nil 
+func 
+(а *Арр) getAuthService(ctx context.Context) (*auth.Service, error) { 
+if a.authService == nil ( 
+conn, err := grpc.NewClient( 
+a.cfg.AuthGrpcHost, 
+grpc.WithTransportCredentials(insecure.NewCredentials()), 
+if err != nil ( 
+return nil, fmt.Errorf("failed to create auth service: %w", err) 
+client := authpb.NewAuthClient(conn) 
+a.authService = auth.NewService(client) 
+return a.authService, nil 
+func 
+(а *Арр) getAccountService(ctx context.Context) (*account.Service, error) ( 
+if a.accountService == nil { 
+conn, err := grpc.NewClient( 
+a.cfg.AccountGrpcHost, 
+grpc.WithTransportCredentials(insecure.NewCredentials()), 
+if err != nil { 
+return nil, fmt.Errorf("failed to create account service: %w", err) 
+client := accountpb.NewAccountClient(conn) 
+a.accountService = account.New(client) 
+return a.accountService, nil 
+func 
+(а *Арр) getGatewayServer(ctx context.Context) (*server.Server, error) ( 
+if a.server == nil { 
+service, err := a.getGatewayService(ctx) 
+Глава 3 
+Способы взаимодействия между микросервисами 
+if err != nil { 
+return nil, fmt.Errorf("failed to get service: %w", err) 
+a.server = server.New(service, a.logger) 
+return a.server, nil 
+func 
+(а *Арр) getGRPCServer(srv *server.Server) *grpc.Server { 
+jwtlnterceptor := interceptor.NewJWТinterceptor(a.cfg.JwtSecret) 
+// Создаем gRPC-cepвep с интерсептором 
+grpcSrv := grpc.NewServer( 
+grpc.Unarylnterceptor(jwtlnterceptor.Unarylnterceptor() ), 
+gatewaypb.RegisterGatewayServer(grpcSrv, srv) 
+return grpcSrv 
+// Close корректно завершает работу приложения 
+func 
+(а *Арр) Close() error { 
+if a.grpcServer != nil ( 
+a.grpcServer.GracefulStop() 
+return nil 
+139 
+Обратить внимание тут стоит на метод getGRPCServer -
+именно с его помощью соз­
+дается объект интерсептора, который будет проверять JWТ-токены в каждом за­
+просе, а секретный ключ передается из конфигурации приложения. А при инициа­
+лизации сервера теперь передаем ему в параметрах интерсептор -
+в нашем случае 
+только для обычных запросов. Если нужен интерсептор и для потоковой передачи 
+данных, тогда следует создавать сервер так: 
+grpcSrv := grpc.NewServer( 
+grpc.Unarylnterceptor(jwtlnterceptor.Unarylnterceptor() ), 
+grpc.Streamlnterceptor(jwtlnterceptor.Streamlnterceptor()), 
+Поскольку Gateway -
+это не только про единую точку аутентификации и получе­
+ние информации из токена, а еще и про вызовы внутренних сервисов, добавим 
+интеграцию с auth и account. Для этого нужно в первую очередь добавить адреса сер­
+висов в переменные окружения (листинг 3.4) и их получение -
+в конфиг (лис­
+тинг 3.5). 
+Листи 
+SERVICE_NAМE=gateway 
+АРР ENV=dev 
+v.example 
+140 
+GRPC PORT=S00SЗ 
+GRPC HOST=localhost 
+LOG_LEVEL=debug 
+ACCOUNT GRPC HOST=localhost:50051 
+AUTH GRPC HOST=localhost:50052 
+JWТ SECRET=secret 
+package config 
+import ( 
+"log" 
+"githuЬ.com/caarlos0/env/vl0" 
+"githuЬ.com/joho/godotenv" 
+// Config содержит конфигурацию приложения 
+type Config struct { 
+Глава З 
+ServiceName 
+string 'env:"SERVICE NАМЕ" json:"service_name" required:"true" 
+default:"account-service"' 
+AppEnv 
+Host 
+Port 
+string 'env:"APP_ENV" json:"app_environment" required:"true" 
+default:"development"' 
+string 'env:"GRPC HOST" json:"host" required:"true" default:"localhost"' 
+int 
+'env:"GRPC PORT" json:"port" required:"true" default:"50053"' 
+LogLevel 
+string 'env:"LOG LEVEL" json:"log_level" required:"true" default:"info"' 
+AccountGrpcHost string 'env:"ACCOUNТ_GRPC_HOST" json:"account_grpc_host" required:"true"' 
+AuthGrpcHost 
+string 'env:"AUTH_GRPC_HOST" json:"auth_grpc_host" required:"true"' 
+JwtSecret 
+string 'env:"JWТ SECRET" json:"jwt_secret" required:"true"' 
+// Load загружает конфигурацию из nеременных окружения 
+func Load() (*Config, error) { 
+// Загружаем .env файл 
+if err := godotenv.Load(); err != nil { 
+log.Println("Warning: .env file not found, using system environment variaЫes") 
+cfg ·= &Config{) 
+err ·= env.Parse(cfg) 
+if err != nil { 
+return nil, err 
+return cfg, nil 
