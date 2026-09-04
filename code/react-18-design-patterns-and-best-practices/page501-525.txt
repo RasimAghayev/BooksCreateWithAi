@@ -1,0 +1,837 @@
+=== PAGE 501 ===
+Deploying to Production
+472
+4.	
+As you can see from the preceding screenshot, the first build failures at the bottom say 
+Build Error, and the second one says build-deploy under WORKFLOW, as shown in Figure 
+17.38. This basically means that in the first build, I had a syntax error in the config.yml file.
+5.	 After you fix all the syntax errors in the config.yml file and all the issues with the linter 
+or the unit tests, you should see a Success build like this:
+Figure 17.38: SUCCESS build
+6.	
+If you click on the build number, you can see all the steps that CircleCI executed before 
+publishing the new changes in your Droplet:
+Figure 17.39: Steps executed by CircleCI
+
+=== PAGE 502 ===
+Chapter 17
+473
+7.	
+As you can see, the order of the steps is the same as we specified in our config.yml file; 
+you can even see the output of each step by clicking on it:
+Figure 17.40: Lint and test steps
+
+=== PAGE 503 ===
+Deploying to Production
+474
+8.	 Now, let’s suppose you have an error on your linter validation or in some unit tests. Let’s 
+see what happens in that case, as follows:
+Figure 17.41: Linter error
+As you can see, once an error is detected, it will exit with code 1. This means it will abort the de-
+ployment and mark it as a failure. Notice that none of the steps after npm run lint are executed.
+
+=== PAGE 504 ===
+Chapter 17
+475
+Another cool thing is that if you now go to your GitHub repository and check your commits, you 
+will see all the commits that had a successful build and all the commits that had a failed build:
+Figure 17.42: GitHub successful build
+This is amazing: now you have your project configured to do deployments automatically, and it 
+is connected to your GitHub repository.
+Summary
+Congratulations! We’ve reached the end of our journey through the deployment process, and you 
+now have the knowledge and skills needed to deploy your React application to the world (pro-
+duction). You’ve also learned how to implement CircleCI for continuous integration, streamlining 
+your development process and ensuring that your application remains performant and reliable.
+By leveraging the strategies and best practices outlined in this chapter, you can confidently launch 
+your application to a global audience, secure in the knowledge that it has been optimized for 
+speed, scalability, and resilience. Thank you for joining me on this journey. I hope you’ve enjoyed 
+reading my book.
+
+=== PAGE 505 ===
+
+=== PAGE 506 ===
+packt.com
+Subscribe to our online digital library for full access to over 7,000 books and videos, as well as 
+industry leading tools to help you plan your personal development and advance your career. For 
+more information, please visit our website.
+Why subscribe?
+•	
+Spend less time learning and more time coding with practical eBooks and Videos from 
+over 4,000 industry professionals
+•	
+Improve your learning with Skill Plans built especially for you
+•	
+Get a free eBook or video every month
+•	
+Fully searchable for easy access to vital information
+•	
+Copy and paste, print, and bookmark content
+At www.packt.com, you can also read a collection of free technical articles, sign up for a range of 
+free newsletters, and receive exclusive discounts and offers on Packt books and eBooks.
+
+=== PAGE 507 ===
+
+=== PAGE 508 ===
+Other Books 
+You May Enjoy
+If you enjoyed this book, you may be interested in these other books by Packt:
+Learning Angular, Fourth Edition
+Aristeidis Bampakos
+ISBN: 9781803240602
+•	
+Use the Angular CLI to scaffold, build, and deploy a new Angular application
+•	
+Build components, the basic building blocks of an Angular application
+•	
+Discover new Angular Material components such as Google Maps, YouTube, and multi-se-
+lect dropdowns
+•	
+Understand the different types of templates supported by Angular
+•	
+Create HTTP data services to access APIs and provide data to components
+•	
+Learn how to build Angular apps without modules in Angular 15.x with standalone APIs
+•	
+Improve your debugging and error handling skills during runtime and development
+
+=== PAGE 509 ===
+Other Books You May Enjoy
+480
+Angular Projects, Third Edition
+Aristeidis Bampakos
+ISBN: 9781803239118
+•	
+Set up Angular applications using Angular CLI and Nx Console
+•	
+Create a personal blog with Jamstack, Scully plugins, and SPA techniques
+•	
+Build an issue management system using typed reactive forms
+•	
+Use PWA techniques to enhance user experience
+•	
+Make SEO-friendly web pages with server-side rendering
+•	
+Create a monorepo application using Nx tools and NgRx for state management
+•	
+Focus on mobile application development using Ionic
+Develop custom schematics by extending Angular CLI
+
+=== PAGE 510 ===
+Other Books You May Enjoy
+481
+Web Development with Blazor, Second Edition
+Jimmy Engström
+ISBN: 9781803241494
+•	
+Understand the different technologies that can be used with Blazor, such as Blazor Server, 
+Blazor WebAssembly, and Blazor Hybrid
+•	
+Find out how to build simple and advanced Blazor components
+•	
+Explore the differences between Blazor Server and Blazor WebAssembly projects
+•	
+Discover how Minimal APIs work and build your own API
+•	
+Explore existing JavaScript libraries in Blazor and JavaScript interoperability
+•	
+Learn techniques to debug your Blazor Server and Blazor WebAssembly applications
+•	
+Test Blazor components using bUnit
+
+=== PAGE 511 ===
+Other Books You May Enjoy
+482
+Blazor WebAssembly by Example, Second Edition
+Toi B. Wright
+ISBN: 9781803241852
+•	
+Discover the power of the C# language for both server-side and client-side web devel-
+opment
+•	
+Build your first Blazor WebAssembly application with the Blazor WebAssembly App proj-
+ect template
+•	
+Learn how to debug a Blazor WebAssembly app, and use ahead-of-time compilation 
+before deploying it on Microsoft’s cloud platform
+•	
+Use templated components and the Razor class library to build and share a modal dialog 
+box
+•	
+Learn how to use JavaScript with Blazor WebAssembly
+•	
+Build a progressive web app (PWA) to enable native app-like performance and speed
+•	
+Secure a Blazor WebAssembly app using Azure Active Directory
+•	
+Gain experience with ASP.NET Web APIs by building a task manager app
+
+=== PAGE 512 ===
+Other Books You May Enjoy
+483
+Packt is searching for authors like you
+If you’re interested in becoming an author for Packt, please visit authors.packtpub.com and 
+apply today. We have worked with thousands of developers and tech professionals, just like you, 
+to help them share their insight with the global tech community. You can make a general appli-
+cation, apply for a specific hot topic that we are recruiting an author for, or submit your own idea.
+Share your thoughts
+Now you’ve finished React 18 Design Patterns and Best Practices, Fourth Edition, we’d love to hear 
+your thoughts! If you purchased the book from Amazon, please click here to go straight 
+to the Amazon review page for this book and share your feedback or leave a review on the site 
+that you purchased it from.
+Your review is important to us and the tech community and will help us make sure we’re deliv-
+ering excellent quality content.
+
+=== PAGE 513 ===
+
+=== PAGE 514 ===
+Index
+Symbols
+$db  262
+$security  262
+$server  262
+#CSSinJS  9
+.env.example  261
+.env file
+configuring  261
+.gitignore  261
+A
+animations
+implementing  87, 88
+API package
+Apollo Server  378, 380
+creating  361, 363
+CRM service, testing  381-383
+custom GraphQL types and resolvers, 
+creating  375-378
+custom models, creating  372, 373
+custom services, creating  368-370
+model seeds, creating  374
+models, synchronizing  378, 380
+service configuration, building  370
+user-shared GraphQL type and resolver, 
+creating  365-367
+user-shared model, creating  363
+Apollo Client
+configuring  318
+Apollo Server  350
+configuring  263-266
+used, for building backend login system  258
+working  378, 380
+app routes
+creating  319
+Atomic CSS modules  114, 115
+authentication functions  276
+creating  278, 279
+JWT functions, creating  276, 278
+types and interfaces, defining  279, 281
+automatic batching  197, 198
+B
+Babel  31
+installing  31
+babel-core package  31
+babel-node package  31
+Babel plugins  417
+backend login system
+building, with Apollo Server  258
+building, with GraphQL  258
+building, with JSON Web Tokens  258
+
+=== PAGE 515 ===
+Index
+486
+building, with PostgreSQL  258
+building, with Sequelize  258
+backend project
+.env file, configuring  261
+basic config file, creating  261-263
+creating  260
+beforeCreate  275
+Block, Element, Modifier (BEM)  94
+C
+children  33, 34
+children prop
+using  61, 62
+CircleCI
+configuring  468-471
+ENV variables, creating  471-476
+implementing, for continuous  
+integration  464
+SSH key, adding to  466-468
+CircleCI, convenience images
+reference link  470
+class component
+migrating, to React Hooks  134-139
+code, styling  46
+colorful log
+creating  342
+component  8
+memoizing, with memo  146-148
+composition  56, 112
+concurrent mode  196
+constant elements transformer  417
+container components
+characteristics  67
+exploring  62-66
+Content Delivery Network (CDN)  112
+continuous integration
+CircleCI, implementing  464
+controlled components  79-81
+coupling  8
+create-react-app  10
+createRoot
+using, to render multiple components  202
+CRM service
+testing  381-383
+CSS, in JavaScript  94, 95
+CSS modules
+Atomic CSS modules  114, 115
+locally scoped  108-114
+using  100
+Webpack 5  100
+currying  55, 56
+custom GraphQL types and resolvers
+creating  375-378
+custom models
+creating  372, 373
+custom services
+creating  368-370
+D
+Dashboard components
+creating  324
+data fetching
+implementing  247-250
+data types, in GraphQL
+Boolean  267
+Float  267
+Int  267
+String  267
+declarative programming  3
+versus imperative programming  4, 5
+
+=== PAGE 516 ===
+Index
+487
+DELETE action  268
+devtools package, to compile packages with 
+Webpack  341, 342
+colorful log, creating  342
+common configuration  343-349
+development configuration  350
+production configuration  350, 352
+DigitalOcean  445
+signing up  446, 447
+DigitalOcean Droplet
+creating  445-452
+domain, adding to  461-464
+Git, configuring  453-457
+GitHub, configuring  453-457
+Node.js, installing  453
+turning off  458
+DigitalOcean, signing up
+URL  446
+div element
+creating  32
+Document Object Model  
+(DOM)  1, 54, 140, 411
+domain
+adding, to Droplet  461-464
+Domain-Specific Language (DSL)  7
+DOM elements  33
+properties, spreading on  127, 128
+E
+edge cases  423
+EditorConfig  46
+URL  46
+elements  5, 6
+enums
+using  24
+ENV variables
+creating, in CircleCI  471-476
+ESLint  46, 48
+configuring  49, 50
+installing  49
+event bubbling  84
+event delegation  84
+events
+handling  81-84
+Express  237
+Express server
+configuring  309, 311
+F
+first-class functions  53
+forms
+implementing  74
+forwardRef  85, 87
+Fragment  36
+frontend configuration
+creating  311, 312
+frontend login system, with Apollo Client
+Apollo Client, configuring  318
+app routes, creating  319
+building  299
+Dashboard components, creating  324
+Express server, configuring  309, 311
+frontend configuration, creating  311, 312
+GraphQL queries and mutations, creating  
+315, 316
+JWT functions, creating  314, 315
+Login components, creating  321, 323
+login system, testing  324-328
+pages, creating  319, 321
+
+=== PAGE 517 ===
+Index
+488
+TypeScript, configuring  308, 309
+user context, creating to handle login and 
+connected user  316-318
+user middleware, creating  312-314
+Webpack 5, configuring  300-308
+frontend package
+creating  384-387
+demo time  406-409
+Login system, creating  394-400
+Page Switcher, creating  389-394
+sites configuration, creating  401, 402
+Sites system, creating  388
+functional component  138
+Functional CSS  114
+functional programming (FP)  53
+composition  56
+currying  55, 56
+first-class functions  53
+immutability  54, 55
+pure functions  54
+FunctionAsChild  70, 71
+function definition
+memoizing, with useCallback  153-158
+function, passed as argument
+memoizing, in effect  158-161
+G
+getInitialProps  252
+getUser query
+creating  271
+getUsers query
+creating  270, 271
+Git
+configuring  453-457
+Git Hooks  52
+GitHub
+configuring  453-457
+globals
+enabling  437, 438
+GraphQL  257
+merging type definitions  269
+mutations  268
+queries  267
+queries and mutations, creating  315, 316
+queries and mutations, testing  284-290
+scalar types  266, 267
+used, for building backend login system  258
+H
+Higher-Order Functions (HoFs)  53, 67
+High-Order Component (HOC)  67-69, 146
+hooks  205
+useDeferredValue  207
+useId  205
+useInsertionEffect  208
+useTransition  206
+hydrateRoot  203
+I
+immutability  55, 416, 417
+imperative programming  3
+versus declarative programming  4, 5
+indexes
+using, as key  124-127
+inline styles
+implementing  96-99
+input types  268
+interfaces  20
+extending  20, 21
+
+=== PAGE 518 ===
+Index
+489
+implementing  21, 23
+merging  23, 24
+isomorphic application  237
+J
+JavaScript ecosystem
+advantages  10
+JavaScript fatigue  9, 251
+JavaScript XML (JSX) 1, 29
+Babel  31
+children  33, 34
+common patterns  39
+div element, creating  32
+DOM elements  33
+props  33
+React components  32
+spread attributes  38
+template literals  39
+using  30, 31
+JavaScript XML(JSX), versus HTML  34
+attributes  34
+Boolean attributes  37
+root  35-37
+spaces  37
+style  35
+Jest  421
+events, testing with  428, 430
+used, for painless JavaScript  
+testing  423-428
+JSON Web Tokens (JWT)  258, 350
+used, for building backend login system  258
+JWT functions
+creating  314, 315
+defining  276, 278
+K
+keys
+using  413
+L
+libraries  416
+Linux (Ubuntu)
+download link  260
+loaders  189, 192, 193
+Login components
+creating  321, 323
+login system
+creating  394-400
+testing  324-328
+M
+memo  141
+component, memoizing with  146-148
+models
+synchronizing  378, 380
+model seeds
+creating  374
+model validations
+testing  290-293
+module bundlers  100
+MonoRepo
+creating, with NPM Workspaces  334-337
+TypeScript, implementing  337-341
+MonoRepos  27
+monorepository
+advantages  332-334
+used, for solving issues  332-334
+
+=== PAGE 519 ===
+Index
+490
+mutations  270
+creating  272
+N
+namespaces  25, 26
+Next.js  251, 385
+using, to create React application  251-254
+nginx
+configuring  459, 460
+installing  459, 460
+Node.js
+features  210
+installing  453
+Node.js features
+experimental Fetch API  210
+experimental Node Watch  211
+experimental Test Runner Module  210
+Long-Term Support (LTS)  212
+Node Production Process Manager 
+ (PM2)  459
+NPM Workspaces
+used, for creating MonoRepo  334-337
+O
+Object Relational Mapper (ORM)  264
+optimization techniques  414, 416
+P
+Page Switcher
+creating  389-394
+PATCH action  268
+patterns, JavaScript XML(JSX)
+conditionals  41-44
+loops  44
+multiline  39, 40
+multi-properties  40
+sub-rendering  45
+pgAdmin 4
+download link  260
+Pokedex
+building  219-226
+React Suspense, testing  226-231
+reference link  219
+POST action  268
+PostgreSQL
+download link  260
+installing  258, 259
+used, for building backend login system  258
+PostgreSQL database
+management tools  260
+Sequelize, connecting to  275, 276
+presentational components
+characteristics  67
+presentational patterns
+exploring  62-67
+Prettier  47
+project
+executing  281-284
+GraphQL queries and mutations,  
+testing  284-290
+login, performing  294-299
+model validations, testing  290-293
+users, querying  290-293
+properties
+spreading, on DOM elements  127, 128
+state, initializing with  122, 123
+props  33
+pure functions  54
+PUT action  268
+
+=== PAGE 520 ===
+Index
+491
+Q
+Query  270
+R
+React  1, 350
+misconceptions  9
+URL  30
+React 18 APIs
+createRoot  201, 202
+hydrateRoot  203
+renderToPipeableStream  204
+React application
+creating  243-247
+creating, with Next.js  251-254
+React components  32
+React concurrent mode, features
+concurrent rendering  197
+suspense  196
+time slicing  196
+React Context API  214
+components, wrapping with  
+provider  216, 217
+context, creating  214, 215
+React DevTools
+using  442, 443
+React DOM  6
+react-dom package  10
+React effects  140
+firing, conditionally  140, 141
+useEffect  140
+React elements
+working  5, 6
+React Hooks  131, 132
+class component, migrating to  134-139
+rules  134
+React Native  6
+react package  10
+React Router  171
+configuring  172
+installing  172
+parameters, adding to routes  177-186
+sections, creating  173-177
+react-router-dom package  172
+react-router-dom v6 package
+improvements  172
+react-router-native package  172
+React Router v6.4  186-188
+loaders  189-193
+React Router v6.x  172
+React Suspense
+implementing, with SWR  218, 219
+React Testing Library methods  439
+reconciliation  6, 412
+working  412
+Redux Toolkit  231
+components, combining to store  232
+key features  231
+reducers, combining  232
+slice, creating  232
+store, creating  231
+store, integrating with React application  233
+refs
+exploring  84, 85
+forwardRef  85
+renderToPipeableStream  204
+resolvers
+creating  269, 270
+getUser query, creating  271
+getUsers query, creating  270, 271
+
+=== PAGE 521 ===
+Index
+492
+merging  272, 273
+mutations, creating  272
+reusable components  60
+communicating  60
+reverse proxy server
+setting up  460, 461
+S
+SASS @extend  113
+Scalable Vector Graphics (SVG)
+exploring  89, 90
+scalar types
+Datetime  267
+UUID  267
+Search Engine Optimization (SEO)  235
+implementing  238
+self-closing tags  33
+Sequelize
+used, for building backend login system  258
+Sequelize ORM
+connecting, to PostgreSQL database  275
+features  273
+user model, creating in  273, 275
+using  273
+server-side rendering (SSR)  200, 235, 237
+example, creating  240
+implementing, reasons  237
+project, configuring with webpack  241-243
+React application, creating  243-246
+server-side rendering (SSR) implementation, 
+reasons
+better performance  239
+common code base  238
+complexity  239, 240
+SEO  238
+service configuration
+building  370
+single global handler  83
+sites configuration
+creating  401, 402
+Sites system
+creating  388
+spread attributes  38
+SSH key
+adding, to CircleCI  466-468
+Stale-While-Revalidate (SWR)  219
+Pokedex, building  219-225
+React Suspense, implementing  
+with  218, 219
+state
+initializing, with properties  122-124
+State Hook
+using  132-134
+store, Redux Toolkit
+components, connecting to  232
+creating  231
+integrating, with React application  233
+strict mode  209
+string literal types  26
+styled-components
+implementing  115-118
+Suspense  200
+working, on server  200, 201
+T
+tagged template literals  116
+template literals  26, 39
+templating systems  7
+Test Anything Protocol (TAP)  210
+test-driven development (TDD)  423
+
+=== PAGE 522 ===
+Index
+493
+testing
+benefits  422, 423
+theming  118
+to-do list example  141-145
+tools  416
+transitions  198, 200
+Type Definitions (TypeDefs)  376
+types  18-20
+extending  20, 21
+implementing  21, 23
+TypeScript
+configuration file  26-28
+configuring  308, 309
+features  16
+implementing, in MonoRepo  337-341
+JavaScript code, converting into  17, 18
+reference link  26
+U
+uncontrolled components  74-78
+undici   210
+undici-fetch  210
+unions  26
+universal applications  235-237
+useCallback  141
+function definition, memoizing  
+with  153-157
+useContext
+context, consuming with  217, 218
+useDeferredValue  207
+useEffect  140
+useId  205
+useInsertionEffect  208
+useMemo  141
+value, memoizing with  149-153
+user context
+creating, to handle login and connected  
+user  316, 318
+useReducer Hook  161-168
+user middleware
+creating  312-314
+user model
+creating, in Sequelize  273, 275
+users
+querying  290-293
+user-shared GraphQL type and resolver
+creating  365-367
+user-shared model
+creating  363
+useTransition  206, 207
+utils package
+creating  354-361
+V
+value
+memoizing, with useMemo  149-153
+Vercel  251
+Virtual DOM  6
+Vite  11, 431
+using  11, 12
+Vitest  431, 432
+configuring  433-437
+globals, enabling  437, 438
+in-source testing  438-441
+installing  433-437
+W
+Webpack
+common configuration  343-349
+development configuration  350
+
+=== PAGE 523 ===
+Index
+494
+devtools package, creating to complie 
+packages  341, 342
+production configuration  350, 352
+used, for configuring SSR project  241-243
+Webpack 5
+configuring  300-308
+Webpack application
+setting up  101-107
+
+=== PAGE 524 ===
+Download a free PDF copy of this book
+Thanks for purchasing this book!
+Do you like to read on the go but are unable to carry your print books everywhere? 
+Is your eBook purchase not compatible with the device of your choice?
+Don’t worry, now with every Packt book you get a DRM-free PDF version of that book at no cost.
+Read anywhere, any place, on any device. Search, copy, and paste code from your favorite technical 
+books directly into your application. 
+The perks don’t stop there, you can get exclusive access to discounts, newsletters, and great free 
+content in your inbox daily
+Follow these simple steps to get the benefits:
+1.	
+Scan the QR code or visit the link below
+https://packt.link/free-ebook/978-1-80323-310-9
+2.	
+Submit your proof of purchase
+3.	
+That’s it! We’ll send your free PDF and other benefits to your email directly
+
+=== PAGE 525 ===
+

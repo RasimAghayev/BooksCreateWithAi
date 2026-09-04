@@ -1,0 +1,1169 @@
+=== PAGE 151 ===
+Anti-Patterns to Be Avoided
+122
+You can find the code for this chapter in the book’s GitHub repository: https://github.com/
+PacktPublishing/React-18-Design-Patterns-and-Best-Practices-Fourth-Edition/tree/
+main/Chapter07. 
+Initializing the state using properties
+In this section, we will see how initializing the state using properties received from the parent is 
+usually an anti-pattern. I have used the word usually because, as we will see, once we have it clear 
+in our mind what the problems with this approach are, we might still decide to use it.
+One of the best ways to learn something is by looking at the code, so we will start by creating a 
+simple component with a + button to increment a counter.
+Let’s create a functional component named Counter, as shown in the following code snippet:
+import { FC, useState } from 'react'
+type Props = {
+  count: number
+}
+const Counter: FC<Props> = (props) => {}
+export default Counter
+Now, let’s set our count state:
+const [state, setState] = useState<number>(props.count)
+The implementation of the click handler is straightforward – we just add 1 to the current count 
+value and store the resulting value back in the state:
+const handleClick = () => {
+  setState({ count: state.count + 1 })
+}
+Finally, we render and describe the output, which is composed of the current value of the count 
+state and the button to increment it:
+return (
+ <div>
+   {state.count}
+   <button onClick={handleClick}>+</button>
+ </div>
+)
+
+=== PAGE 152 ===
+Chapter 7
+123
+Now, let’s render this component, passing 1 as the count property:
+<Counter count={1} />
+It works as expected – each click on the + button increments the current value. So, what’s the 
+problem?
+There are two main errors, which are outlined as follows:
+•	
+We have a duplicated source of truth.
+•	
+If the count property passed to the component changes, the state does not get updated.
+If we inspect the Counter element using the React DevTools, we notice that Props and State 
+hold a similar value:
+<Counter>
+Props
+ count: 1
+State
+ count: 1
+This makes it unclear which is the current and trustworthy value to use inside the component 
+and to display to the user.
+Even worse, clicking + once makes the values diverge. An example of this divergence is shown in 
+the following code:
+<Counter>
+Props
+ count: 1
+State
+ count: 2
+At this point, we can assume that the second value represents the current count, but this is not 
+explicit and can lead to unexpected behaviors or wrong values down in the tree.
+The second problem centers on how the class is created and instantiated by React. The useState 
+function of the component gets called only once when the component is created.
+In our Counter component, we read the value of the count property and we store it in the state. 
+If the value of that property changes during the life cycle of the application (let’s say it becomes 
+10), the Counter component will never use the new value because it has already been initialized. 
+This puts the component in an inconsistent state, which is not optimal and hard to debug.
+
+=== PAGE 153 ===
+Anti-Patterns to Be Avoided
+124
+What if we really want to use the prop’s value to initialize the component, and we know for sure 
+that the value does not change in the future?
+In that case, it’s best practice to make it explicit and give the property a name that makes your 
+intentions clear, such as initialCount. For example, let’s say we change the prop declaration of 
+the Counter component in the following way:
+type Props = {
+   initialCount: number
+}
+const Counter: FC<Props> = (props) => {
+   const [count, setState] = useState<Count>({ count: props.initialCount 
+   })
+ ...
+}
+This usage makes it clear that the parent can only initialize the counter, and any subsequent 
+values of the initialCount property will be disregarded: 
+<Counter initialCount={1} />
+In the next section, we are going to delve into the concept of keys.
+Using indexes as a key
+In Chapter 15, Improving the Performance of Your Applications, which talks about performance and 
+the reconciler, we saw how we can help React figure out the shortest path to update the DOM 
+by using the key prop.
+The key property uniquely identifies an element in the DOM and React uses it to check whether 
+the element is new or whether it must be updated when the component properties or state change.
+Using keys is always a good idea and if you don’t do it, React gives a warning in the console (in 
+development mode). However, it is not simply a matter of using a key; sometimes, the value that 
+we decide to use as a key can make a difference. In fact, using the wrong key can give us unexpected 
+behaviors in some instances. In this section, we will see one of those instances.
+Let’s again create a List component, as shown here:
+import { FC, useState } from 'react'
+const List: FC = () => {
+}
+export default List
+
+=== PAGE 154 ===
+Chapter 7
+125
+Then we define our state:
+const [items, setItems] = useState(['foo', 'bar'])
+The implementation of the click handler is slightly different from the previous one because, in 
+this case, we need to insert a new item at the top of the list:
+const handleClick = () => {
+ const newItems = items.slice()
+   newItems.unshift('baz')
+   setItems(newItems)
+}
+Finally, in the render, we show the list and the + button to add the baz item at the top of the list:
+return (
+ <div>
+   <ul>
+    {items.map((item, index) => (
+      <li key={index}>{item}</li>
+    ))}
+   </ul>
+  <button onClick={handleClick}>+</button>
+ </div>
+)
+If you run the component inside the browser, you will not see any problems; clicking the + button 
+inserts a new item at the top of the list. But let’s do an experiment.
+Let’s change the render in the following way, adding an input field near each item. We then use 
+an input field because we can edit its content, making it easier to figure out the problem:
+return (
+ <div>
+   <ul>
+     {items.map((item, index) => (
+      <li key={index}>
+     {item}
+   <input type="text" />
+  </li>
+))}
+
+=== PAGE 155 ===
+Anti-Patterns to Be Avoided
+126
+ </ul>
+   <button onClick={handleClick}>+</button>
+ </div>
+)
+If we run this component again in the browser, copy the values of the items in the input fields, 
+and then click +, we will get unexpected behavior.
+As shown in the following screenshot, the items shift down while the input elements remain in 
+the same position in such a way that their value does not match the value of the items anymore:
+Figure 7.1: Using indexes as a key
+Running the component, clicking +, and checking the console should give us all the answers we 
+need.
+What we can see is that instead of inserting the new element at the top, React swaps the text of 
+the two existing elements, and inserts the last item at the bottom as if it was new. The reason it 
+does that is that we are using the index of the map function as the key.
+In fact, the index always starts from 0, even if we push a new item to the top of the list, so React 
+thinks that we changed the values of the existing two and added a new element at index 2. The 
+behavior is the same as it would have been without using the key property at all.
+This is a very common pattern because we may think that providing any key is always the best 
+solution, but it is not like that at all. The key must be unique and stable, identifying one, and 
+only one, item.
+
+=== PAGE 156 ===
+Chapter 7
+127
+To solve this problem, we can, for example, use the value of the item if we expect it not to be 
+repeated within the list, or create a unique identifier, for example:
+ {items.map((item, index) => (
+   <li key={`${item}-${index}`}>
+  {item}
+   <input type="text" />
+ </li>
+ ))}
+Now that we have understood the importance of unique and stable keys in React and explored 
+practical solutions to address this common issue, let’s shift our attention to another prevalent 
+practice in React development. The upcoming section will focus on the spreading of properties 
+on DOM elements, a technique that has recently been labeled as an anti-pattern by Dan Abramov.
+Spreading properties on DOM elements
+There is a common practice that has recently been described as an anti-pattern by Dan Abramov; 
+it also triggers a warning in the console when you do it in your React application.
+It is a technique that is widely used in the community, and I have personally seen it multiple 
+times in real-world projects. We usually spread the properties to the elements to avoid writing 
+every single one manually, which is shown as follows:
+<Component {...props} />
+This works very well, and it gets transpiled into the following code by Babel:
+_jsx(Component, props)
+However, when we spread properties into a DOM element, we run the risk of adding unknown 
+HTML attributes, which is bad practice.
+The problem is not related only to the Spread operator; passing non-standard properties one by 
+one leads to the same issues and warnings. Since the Spread operator hides the single properties 
+we are spreading, it is even harder to figure out what we are passing to the element.
+To see the warning in the console, a basic operation we can do is render the following component:
+const Spread = () => <div foo="bar" />
+
+=== PAGE 157 ===
+Anti-Patterns to Be Avoided
+128
+The message we get looks like the following because the foo property is not valid for a div element:
+ Unknown prop `foo` on <div> tag. Remove this prop from the element
+In this case, as we said, it is easy to figure out which attribute we are passing and remove it, but 
+if we use the Spread operator, as in the following example, we cannot control which properties 
+are passed from the parent:
+ const Spread = props => <div {...props} />;
+If we use the component in the following way, there are no issues:
+ <Spread className="foo" />
+This, however, is not the case if we do something such as the following. React complains because 
+we are applying a non-standard attribute to the DOM element:
+ <Spread foo="bar" className="baz" />
+One solution we can use to solve this problem is to create a property called domProps that we 
+can spread safely to the component because we are explicitly saying that it contains valid DOM 
+properties.
+For example, we can change the Spread component in the following way:
+ const Spread = props => <div {...props.domProps} />
+We can then use it as follows:
+ <Spread foo="bar" domProps={{ className: 'baz' }} />
+As we have seen many times with React, it’s always good practice to be explicit.
+Summary
+Knowing all the best practices is always a good thing, but sometimes, being aware of anti-pat-
+terns helps us avoid taking the wrong path. Most importantly, learning the reasons why some 
+techniques are considered bad practice helps us understand how React works, and how we can 
+use it effectively.
+In this chapter, we covered four different ways of using components that can harm the perfor-
+mance and behavior of our web applications.
+For each one of those, we used an example to reproduce the problem and supplied the changes 
+to apply in order to fix the issue.
+
+=== PAGE 158 ===
+Chapter 7
+129
+We learned why using properties to initialize the state can result in inconsistencies between the 
+state and the properties. We also saw how using the wrong key attribute can produce bad effects 
+on the reconciliation algorithm. Finally, we learned why spreading non-standard properties to 
+DOM elements is considered an anti-pattern.
+In the next chapter, we will look into the new React Hooks.
+
+=== PAGE 159 ===
+
+=== PAGE 160 ===
+8
+React Hooks 
+React Hooks have revolutionized the way we write React applications, allowing us to use functional 
+components instead of class components, and making coding faster and more efficient. Since 
+their introduction in React 16.8, Hooks have become an essential part of React development and 
+have greatly improved the performance of our applications. With Hooks, we can manage the state, 
+handle side effects, and reuse code in a more concise and readable way. In the next chapter, we 
+will explore the different types of Hooks and how to use them to enhance our React applications.
+In this chapter, we will cover the following topics:
+•	
+The new React Hooks and how to use them
+•	
+The rules of the Hooks
+•	
+How to migrate a class component to React Hooks
+•	
+Understanding the component life cycle with Hooks and effects
+•	
+How to fetch data with Hooks
+•	
+How to memoize components, values, and functions with memo, useMemo, and useCallback
+•	
+How to implement useReducer
+Technical requirements
+To complete this chapter, you will require the following:
+•	
+Node.js 19+
+•	
+Visual Studio Code
+
+=== PAGE 161 ===
+React Hooks
+132
+You can find the code for this chapter in the book’s GitHub repository at https://github.com/
+PacktPublishing/React-18-Design-Patterns-and-Best-Practices-Fourth-Edition/tree/
+main/Chapter08. 
+Introducing React Hooks
+React Hooks are a new addition to React 16.8. They let you use state and other React features 
+without writing a React class component. React Hooks are also backward-compatible, which 
+means they do not contain any breaking changes or not replace your knowledge of React concepts. 
+Over the course of this chapter, we will see an overview of Hooks for experienced React users, 
+and we are also going to learn about some of the most common React Hooks such as useState, 
+useEffect, useMemo, useCallback, and memo.
+No breaking changes
+In the context of React development, it’s a common misconception that the introduction of React 
+Hooks has made class components obsolete. However, this is not true, as there are no plans to 
+remove classes from React. The Hooks API does not replace your understanding of React concepts, 
+but rather offers a more streamlined approach to working with those concepts, such as props, 
+states, context, refs, and life cycles, which you are already familiar with.
+Using the State Hook
+In old React code, we used this.setState to use the component state. Now we will use the 
+useState hook to do this.
+First, you need to extract the useState Hook from React:
+import { useState } from 'react'
+Since React 17, the React object is no longer required to render JSX code.
+Then, you need to declare the state you want to use by defining the state and the setter for this 
+specific state:
+const Counter = () => { 
+  const [counter, setCounter] = useState<number>(0) 
+}
+As you can see, we are declaring the counter state with the setCounter setter and we are specifying 
+that we will only accept numbers, and finally, we are setting the initial value to zero.
+
+=== PAGE 162 ===
+Chapter 8
+133
+In order to test our state, we need to create a method that will be triggered by the onClick event:
+type Operation = 'add' | 'substract'
+const Counter = () => {
+  const [counter, setCounter] = useState<number>(0)
+  const handleCounter = (operation: Operation) => {
+    if (operation === 'add') {
+      return setCounter(counter + 1)
+    }
+  
+    setCounter(counter - 1)
+  }
+}
+Finally, we can render the counter state and some buttons to increase or decrease the counter state:
+return (
+  <p>
+    Counter: {counter} <br />
+    <button onClick={() => handleCounter('add')}>+ Add</button>
+    <button onClick={() => handleCounter('subtract')}>- Subtract</button>
+  </p>
+)
+If you click on the + Add button once, you should see 1 for Counter: 
+Figure 8.1: Counter 1
+And if you click the - Subtract button twice, then you should see -1 for Counter:
+Figure 8.2: Counter -1
+As you can see, the useState Hook is a game changer in React and makes it very easy to handle 
+the state in a functional component.
+
+=== PAGE 163 ===
+React Hooks
+134
+After appreciating how the useState Hook has revolutionized state management in functional 
+components within React, we are now ready to delve deeper into the nuances of Hooks. The fol-
+lowing section will discuss the essential rules of Hooks that govern their usage in React applications.
+Rules of Hooks
+React Hooks are basically JavaScript functions, but there are two rules that you need to follow 
+in order to use them. React provides a linter plugin to enforce those rules for you, which you can 
+install by running the following command:
+npm install --save-dev eslint-plugin-react-hooks
+Let’s look at these two rules.
+Rule 1: Only call Hooks at the top level
+To ensure the proper functioning of React Hooks, it is important to avoid calling them inside 
+loops, conditions, or nested functions. Instead, it is recommended to always use Hooks at the top 
+level of your React function. This practice ensures that Hooks are called in the same order every 
+time a component is rendered, allowing React to correctly preserve the state of Hooks between 
+multiple useState and useEffect calls. Following this rule will help you write more efficient and 
+maintainable code with React Hooks.
+Rule 2: Only call Hooks from React functions
+To ensure that all stateful logic in a component is clearly visible from its source code, avoid calling 
+Hooks from regular JavaScript functions. Instead, use Hooks in React function components or 
+custom Hooks (which we’ll learn about in the next section). By following this practice, you can 
+ensure that all stateful logic is centralized and easily understandable.
+In the next section, we will learn how to migrate a class component to use the new React Hooks.
+Migrating a class component to React Hooks
+Let’s transform code that is currently using class components and is also using some life cycle 
+methods. In this example, we are fetching the issues from a GitHub repository and listing them.
+For this example, you will need to install axios to perform the fetch:
+npm install axios
+
+=== PAGE 164 ===
+Chapter 8
+135
+This is the class component version:
+import axios from 'axios'
+import { Component } from 'react'
+type Issue = {
+  number: number
+  title: string
+  state: string
+}
+type Props = {}
+type State = { issues: Issue[] }
+class Issues extends Component<Props, State> {
+  constructor(props: Props) {
+    super(props)
+    this.state = {
+      issues: []
+    }
+  }
+  componentDidMount() {
+    axios.get('https://api.github.com/repos/ContentPI/ContentPI/issues')
+      .then((response: any) => {
+        this.setState({
+          issues: response.data
+        })
+      })
+  }
+  render() {
+    const { issues = [] } = this.state
+    return (
+      <>
+        <h1>ContentPI Issues</h1>
+        {issues.map((issue: Issue) => (
+          <p key={issue.title}>
+            <strong>#{issue.number}</strong>{' '}
+            <a
+              href={`https://github.com/ContentPI/ContentPI/
+issues/${issue.number}`}
+
+=== PAGE 165 ===
+React Hooks
+136
+              target="_blank"
+            >
+              {issue.title}
+            </a>{' '}
+            {issue.state}
+          </p>
+        ))}
+      </>
+    )
+  }
+}
+export default Issues
+
+=== PAGE 166 ===
+Chapter 8
+137
+If you render this component, you should see something like this:
+Figure 8.3: ContentPI Issues
+
+=== PAGE 167 ===
+React Hooks
+138
+Now, let’s transform our code into a functional component using React Hooks. The first thing we 
+need to do is to import some React functions and types:
+import { FC, useState, useEffect } from 'react'
+import axios from 'axios'
+Now we can remove the Props and State types we created previously and just leave the Issue type:
+type Issue = {
+  number: number
+  title: string
+  state: string
+}
+After this, you can change the class definition to use a functional component:
+const Issues: FC = () => {...}
+The FC type is used to define a functional component in React. If you need to pass some props 
+to the component, you can pass them like this:
+type Props = {
+  propX: string
+  propY: number
+  propZ: boolean 
+}
+const Issues: FC<Props> = () => {...}
+The next thing we need to do is to replace our constructor and our state definition by using the 
+useState Hook:
+// The useState hook replace the this.setState method
+const [issues, setIssues] = useState<Issue[]>([])
+We have used the life cycle method called componentDidMount before, which is executed when 
+the component is mounted and is going to run just once. The new React Hook, called useEffect, 
+will now handle all the life cycle methods using different syntax for each one, but for now, let’s 
+see how we can get the same effect of componentDidMount in our new functional component:
+// When we use the useEffect hook with an empty array [] on the
+// dependencies (second parameter)
+// this represents the componentDidMount method (will be executed when the
+
+=== PAGE 168 ===
+Chapter 8
+139
+// component is mounted).
+useEffect(() => {
+  axios
+    .get('https://api.github.com/repos/ContentPI/ContentPI/issues')
+    .then((response: any) => {
+       // Here we update directly our issue state
+        setIssues(response.data)
+    })
+}, [])
+And finally, we just render our JSX code:
+return (
+  <>
+    <h1>ContentPI Issues</h1>
+    {issues.map((issue: Issue) => (
+        <p key={issue.title}>
+        <strong>#{issue.number}</strong> {' '}
+            <a 
+          href={`https://github.com/ContentPI/ContentPI/issues/${issue.
+number}`}      
+          target="_blank">{issue.title}
+        </a> {' '}
+            {issue.state}
+        </p>
+    ))}
+  </>
+)
+As you can see, the new Hooks help us to simplify our code a lot and makes more sense. Also, we 
+reduced our code by 10 lines (the class component code has 53 lines, and the functional compo-
+nent has 43 lines).
+Now that we have seen the transformative power of new Hooks in streamlining our code and 
+reducing verbosity, let’s shift our focus to another foundational concept in React. In the next 
+section, we will delve into the differences between component life cycle methods used in class 
+components and the innovative React effects.
+
+=== PAGE 169 ===
+React Hooks
+140
+Understanding React effects
+In this section, we will learn the difference between the component life cycle methods that we 
+used in class components and the new React effects. Even if you have read in other places that 
+they are the same, just with a different syntax, this is not correct.
+Understanding useEffect
+When you work with useEffect, you need to think in terms of effects. If you want to perform the 
+equivalent method of componentDidMount using useEffect, you can do the following:
+useEffect(() => {
+  // Here you perform your side effect
+}, [])
+The first parameter is the callback of the effect that you want to execute, and the second param-
+eter is the dependencies array. If you pass an empty array ([]) to the dependencies, the state and 
+props will have their original initial values.
+However, it is important to mention that even though this is the closest equivalent to 
+componentDidMount, it does not have the same behavior. Unlike componentDidMount and 
+componentDidUpdate, the function that we pass to useEffect fires after layout and paint, during 
+a deferred event. This normally works for many common side effects, such as setting up sub-
+scriptions and event handlers, because most types of work shouldn’t block the browser from 
+updating the screen.
+However, not all effects can be deferred. For example, you will get a blink if you need to mutate 
+the Document Object Model (DOM). This is the reason why you must fire the event synchro-
+nously before the next paint. React provides one Hook called useLayoutEffect, which works in 
+the exact same way as useEffect.
+Firing an effect conditionally
+If you need to fire an effect conditionally, then you should add a dependency to the array of de-
+pendencies; otherwise, you will execute the effect multiple times and this may cause an infinite 
+loop. If you pass an array of dependencies, the useEffect Hook will only run if one of those 
+dependencies changes:
+useEffect(() => {
+// When you pass an array of dependencies the useEffect hook will only
+
+=== PAGE 170 ===
+Chapter 8
+141
+// run if one of the dependencies changes.
+}, [dependencyA, dependencyB])
+The effects are very important, but let’s also explore some other important new Hooks, including 
+useCallback, useMemo, and memo.
+Understanding useCallback, useMemo, and memo
+In order to understand the difference between useCallback, useMemo, and memo, we will do a to-do 
+list example. You can create a basic application by using create-vite and Typescript as a template:
+npx create-vite todo --template react-ts
+Right after that, you can remove all the extra files (App.css, App.test.ts, index.css, logo.svg, 
+reportWebVitals.ts, and setupTests.ts). You just need to keep the App.tsx file, which will 
+contain the following code:
+import { FC, useState, useEffect, useMemo, useCallback, ChangeEvent } from 
+'react'
+import List, { Todo } from './List'
+const initialTodos: Todo[] = [
+  { id: 1, task: 'Go shopping' },
+  { id: 2, task: 'Pay the electricity bill'}
+]
+const App: FC = () => {
+  const [todoList, setTodoList] = useState<Todo[]>(initialTodos)
+  const [task, setTask] = useState<string>('')
+  useEffect(() => {
+    console.log('Rendering <App />')
+  })
+  const handleCreate = () => {
+    const newTodo = {
+        id: Date.now(),
+If you understand how the React class life cycle methods work, basically, useEffect 
+behaves in the same way as componentDidMount, componentDidUpdate, and 
+componentWillUnmount combined.
+
+=== PAGE 171 ===
+React Hooks
+142
+        task
+    }
+   
+    // Pushing the new todo to the list
+    setTodoList([...todoList, newTodo])
+   
+    // Resetting input value
+    setTask('')
+  }
+  return (
+    <>
+        <input
+            type="text"
+            value={task}
+            onChange={(e: ChangeEvent<HTMLInputElement>) => setTask(e.
+target.value)}
+        />
+        <button onClick={handleCreate}>Create</button>
+        <List todoList={todoList} />
+    </>
+  )
+}
+export default App
+Basically, we are defining some initial tasks and creating the todoList state, which we will pass 
+to the List component. Then, you need to create the List.tsx file with the following code:
+import { FC, useEffect } from 'react'
+import Task from './Task'
+export type Todo = {
+  id: number
+  task: string
+}
+interface Props {
+  todoList: Todo[]
+}
+
+=== PAGE 172 ===
+Chapter 8
+143
+const List: FC<Props> = ({ todoList }) => {
+  useEffect(() => {
+    // This effect is executed every new render
+    console.log('Rendering <List />')
+  })
+  return (
+    <ul>
+        {todoList.map((todo: Todo) => (
+            <Task key={todo.id} id={todo.id} task={todo.task} />
+        ))}
+    </ul>
+  )
+}
+export default List
+As you can see, we are rendering each task of the todoList array by using the Task component 
+and we pass the task as a prop. I also added a useEffect Hook to see how many renders we are 
+performing.
+Finally, we create our Task.tsx file with the following code:
+import { FC, useEffect } from 'react'
+interface Props {
+  id: number
+  task: string
+}
+const Task: FC<Props> = ({ task }) => {
+  useEffect(() => {
+    console.log('Rendering <Task />', task)
+  })
+  return (
+    <li>{task}</li>
+  )
+}
+export default Task
+
+=== PAGE 173 ===
+React Hooks
+144
+This is how we should see the to-do list:
+Figure 8.4: To-do list
+As you can see, when we render our to-do list, by default, we are performing two renders of the 
+Task component, one render for List, and the other for the App component. 
+
+=== PAGE 174 ===
+Chapter 8
+145
+Now, if we try to write a new task in the input, we can see that for each letter we write, we will 
+again see all of those renders:
+Figure 8.5: Searching in the to-do list
+As you can see, by just writing Go, we have two new batches of renders, so we can determine that 
+this component does not have good performance, and this is where memo can help us to improve 
+performance. In the next sections, we are going to learn how to implement memo, useMemo, and 
+useCallback to memoize a component, a value, and a function.
+
+=== PAGE 175 ===
+React Hooks
+146
+Memoizing a component with memo
+The memo High-Order Component (HOC) is similar to PureComponent for a React class because it 
+performs a shallow comparison of the props (meaning a superficial check), so if we try to render 
+a component with the same props all the time, the component will render just once and will 
+memoize. The only way to re-render the component is when a prop changes its value.
+In order to fix our components to avoid multiple renders when we write in the input, we need to 
+wrap our components in the memo HOC. 
+The first component we will fix is our List component, and you just need to affect import memo 
+and wrap the component in export default:
+import { FC, useEffect, memo } from 'react'
+...
+export default memo(List)
+Then, you need to do the same with the Task component:
+import { FC, useEffect, memo } from 'react'
+...
+export default memo(Task)
+
+=== PAGE 176 ===
+Chapter 8
+147
+Now, when we try to write Go again in the input, let’s see how many renders we get this time:
+Figure 8.6: Evaluating how many renders our to-do list is performing
+Now, we just get the first batch of renders the first time, and then, when we write Go, we just get 
+two more renders of the App component, which is totally fine because the task state (input value) 
+that we are changing is actually part of the App component.
+
+=== PAGE 177 ===
+React Hooks
+148
+Also, we can see how many renders we are performing when we create a new task by clicking on 
+the Create button:
+Figure 8.7: Improving performance
+If you see, the first 16 renders are the word counting of the Go to the doctor string, and then, 
+when you click on the Create button, you should see one render of the Task component, one render 
+of List, and one render of the App component. As you can see, we have improved performance a 
+lot, and we are just performing the exact need that it renders.
+
+=== PAGE 178 ===
+Chapter 8
+149
+Memoizing a value with useMemo 
+Let’s suppose that we now want to implement a search feature in our to-do list. The first thing 
+we need to do is to add a new state called term to the App component:
+const [term, setTerm] = useState('')
+Then, we need to create a function called handleSearch:
+const handleSearch = () => {
+  setTerm(task)
+}
+Right before the return, we will create filterTodoList, which will filter the to-dos based on the 
+task, and we will add a console there to see how many times it is being rendered:
+const filteredTodoList = todoList.filter((todo: Todo) => {
+  console.log('Filtering...')
+  return todo.task.toLowerCase().includes(term.toLowerCase())
+})
+At this point, you’re probably thinking that the correct thing is to always add memo 
+to our components, or maybe you’re thinking, why React doesn’t do this by default 
+for us? 
+The reason is performance, which means it is not a good idea to add memo to all our 
+components unless it is totally necessary; otherwise, the process of shallow comparisons 
+and memorization will have inferior performance than if we don’t use it.
+I have a rule when it comes to establishing whether it is a good idea to use memo, and 
+this rule is straightforward: just don’t use it. Normally, when we have small compo-
+nents or basic logic, we don’t need this unless you’re working with large data from some 
+API, your component needs to perform a lot of renders (normally huge lists), or when you 
+notice that your app is going slow. Only in that case would I recommend using memo.
+
+=== PAGE 179 ===
+React Hooks
+150
+Finally, we need to add a new button next to the Create button that already exists:
+<button onClick={handleSearch}>Search</button>
+At this point, I recommend that you remove or comment console.log in the List and Task com-
+ponents so that we can focus on the performance of filtering:
+Figure 8.8: Reviewing filtering performance
+When you run the application again, you will see that filtering is being executed twice, and then 
+the App component as well, and everything looks good here, but what’s the problem with this? 
+
+=== PAGE 180 ===
+Chapter 8
+151
+Try to write Go to the doctor again in the input and let’s see how many counts of Rendering… 
+and Filtering… you get:
+Figure 8.9: Bad performance on filtering
+
+=== PAGE 181 ===
+React Hooks
+152
+As you can see, for each letter you write, you will get two filtering calls and one App render. You 
+don’t need to be a genius to see that this is bad performance; not to mention that if you are work-
+ing with a large data array, this will be worse, so how can we fix this issue?
+The useMemo Hook is our hero in this situation, and basically, we need to move our filter inside 
+useMemo, but first, let’s see the syntax:
+const filteredTodoList = useMemo(() => SomeProcessHere, [])
+The useMemo Hook will memoize the result (value) of a function and will have some dependencies 
+to listen to. Let’s see how we can implement it:
+const filteredTodoList = useMemo(() => todoList.filter((todo: Todo) => {
+  console.log('Filtering...')
+  return todo.task.toLowerCase().includes(term.toLowerCase())
+}), [])
+Now, if you write something again in the input, you will see that filtering won’t be executed all 
+the time, as was the case previously:
+Figure 8.10: Improving the performance of filtering
+This is great, but there is still one small problem. If you try to click on the Search button, it won’t 
+filter, and this is because we missed the dependencies. 
+
+=== PAGE 182 ===
+Chapter 8
+153
+Actually, if you see the console warnings, you will see this warning:
+Figure 8.11: react-hooks/exhaustive-deps
+You need to add the term and todoList dependencies to the array:
+const filteredTodoList = useMemo(() => todoList.filter((todo: Todo) => {
+  console.log('Filtering...')
+  return todo.task.toLowerCase().includes(term.toLowerCase())
+}), [term, todoList])
+It should now work if you write Go and click on the Search button:
+Figure 8.12: After fixing the warning
+Here, we have to use the same rule that we used for memo; just don’t use it until absolutely necessary.
+Memoizing a function definition with useCallback
+Now we will add a delete task feature to learn how useCallback works. The first thing we need 
+to do is to create a new function called handleDelete in our App component:
+const handleDelete = (taskId: number) => {
+  const newTodoList = todoList.filter((todo: Todo) => todo.id !== taskId)
+  setTodoList(newTodoList)
+}
+
+=== PAGE 183 ===
+React Hooks
+154
+And then you need to pass this function to the List component as a prop:
+<List todoList={filteredTodoList} handleDelete={handleDelete} />
+Then, in our List component, you need to add the prop to the Props interface:
+interface Props {
+  todoList: Todo[]
+  handleDelete: any
+}
+Next, you need to pull it from the props and pass it down to the Task component:
+const List: FC<Props> = ({ todoList, handleDelete }) => {
+  useEffect(() => {
+    // This effect is executed every new render
+    console.log('Rendering <List />')
+  })
+  return (
+    <ul>
+        {todoList.map((todo: Todo) => (
+        <Task
+          key={todo.id}
+          id={todo.id}
+          task={todo.task}
+          handleDelete={handleDelete}
+            />
+        ))}
+    </ul>
+  )
+}
+
+=== PAGE 184 ===
+Chapter 8
+155
+In the Task component, you need to create a button that will execute handleDelete onClick:
+interface Props {
+  id: number
+  task: string
+  handleDelete: any
+}
+const Task: FC<Props> = ({ id, task, handleDelete }) => {
+  useEffect(() => {
+    console.log('Rendering <Task />', task)
+  })
+  return (
+    <li>{task} <button onClick={() => handleDelete(id)}>X</button></li>
+  )
+}
+At this point, I recommend that you remove or comment console.log in the List and Task com-
+ponents so that we can focus on the performance of filtering. Now you should see the X button 
+next to the task:
+Figure 8.13: Let’s delete a task
+
+=== PAGE 185 ===
+React Hooks
+156
+If you click on the X for Go shopping, you should be able to remove it:
+Figure 8.14: Deleting a task
+So far, so good, right? But again, we have a little issue with this implementation. If you now try 
+to write something in the input, such as Go to the doctor, let’s see what happens:
+Figure 8.15: Bad performance
+
+=== PAGE 186 ===
+Chapter 8
+157
+As you can see, we are performing 71 renders of all the components again. At this point, you are 
+probably thinking about, what is going on if we have already implemented the memo HOC to memoize 
+the components? But the problem now is that our handleDelete function is being passed to two 
+components, from App to List and Task, and the issue is that this function is regenerated every 
+time we have a new re-render, in this case, every time we write something. So how do we fix this 
+problem?
+The useCallback Hook is the hero in this case and is very similar to useMemo in the syntax, but 
+the main difference is that instead of memorizing the result value of a function, as useMemo does, 
+it is memorizing the function definition instead:
+const handleDelete = useCallback(() => SomeFunctionDefinition, [])
+Our handleDelete function should be like this:
+const handleDelete = useCallback((taskId: number) => {
+  const newTodoList = todoList.filter((todo: Todo) => todo.id !== taskId)
+  setTodoList(newTodoList)
+}, [todoList])
+Now, it should work just fine if we write Go to the doctor again:
+Figure 8.16: Improving performance
+
+=== PAGE 187 ===
+React Hooks
+158
+Now, instead of 71 renders, we just have 23, which is normal, and we are also able to delete tasks:
+Figure 8.17: Deleting tasks
+As you can see, the useCallback Hook helps us to improve performance significantly. In the next 
+section, you will learn how to memoize a function passed as an argument in the useEffect Hook.
+Memoizing a function passed as an argument in effect
+There is a special case where we will need to use the useCallback Hook, and this is when we 
+pass a function as an argument in a useEffect Hook, for example, in our App component. Let’s 
+create a new useEffect block:
+const printTodoList = () => {
+  console.log('Changing todoList')
+}
+useEffect(() => {
+  printTodoList()
+}, [todoList])
+In this case, we are listening for changes to the todoList state. If you run this code and you create 
+or remove a task, it will work just fine (remember to remove all the other consoles first):
+
+=== PAGE 188 ===
+Chapter 8
+159
+Figure 8.18: Changing the to-do list
+Everything works fine, but let’s add todoList to the console:
+const printTodoList = () => {
+  console.log('Changing todoList', todoList)
+}
+If you’re using Visual Studio Code, you will get the following warning:
+Figure 8.19: react-hooks/exhaustive-deps
+Basically, it is asking us to add the printTodoList function to the dependencies:
+useEffect(() => {
+  printTodoList()
+}, [todoList, printTodoList])
+
+=== PAGE 189 ===
+React Hooks
+160
+But now, after we do that, we get another warning:
+Figure 8.20: useCallback warning
+The reason why we get this warning is that we are now manipulating the state (consoling the 
+state), which is why we need to add a useCallback Hook to this function to fix this issue:
+const printTodoList = useCallback(() => {
+  console.log('Changing todoList', todoList)
+}, [todoList])
+Now, when we delete a task, we can see that todoList updated correctly:
+Figure 8.21: Changing to-do list data
+At this point, this may be information overload for you, so let’s have a quick recap:
+•	
+memo:
+•	
+Memoizes a component
+•	
+Re-memoizes when props change
+•	
+Avoids re-renders
+•	
+useMemo:
+•	
+Memoizes a calculated value
+•	
+For computed properties
+
+=== PAGE 190 ===
+Chapter 8
+161
+•	
+For heavy processes
+•	
+useCallback:
+•	
+Memoizes a function definition to avoid redefining it on each render
+•	
+Use it whenever a function is passed as an effect argument
+•	
+Use it whenever a function is passed by props to a memoized component
+And finally, do not forget the golden rule: Do not use them until absolutely necessary.
+In the next section, we are going to learn how to use the new useReducer Hook.
+Understanding the useReducer Hook
+You probably have some experience using Redux (react-redux) with class components, and if 
+that is the case, then you will understand how useReducer works. The concepts are basically the 
+same: actions, reducers, dispatch, store, and state. Even if, in general, it seems very similar to 
+react-redux, they have some differences. The main difference is that react-redux provides mid-
+dleware and wrappers such as thunk, sagas, and many more besides, while useReducer just gives 
+you a dispatch method that you can use to dispatch plain objects as actions. Also, useReducer 
+does not have a store by default; instead, you can create one using useContext, but this is just 
+reinventing the wheel.
+Let’s create a basic application to understand how useReducer works. You can start by creating 
+a new React app:
+npx create-vite reducer --template react-ts
+Then, as always, you can delete all files in your src folder except App.tsx and index.tsx to start 
+a brand-new application.
+We will create a basic Notes application where we can list, delete, create, or update our notes 
+using useReducer. The first thing you need to do is import the Notes component, which we will 
+create later, into your App component:
+import Notes from './Notes'
+function App() {
+  return (
+    <Notes />
+  )
+
+=== PAGE 191 ===
+React Hooks
+162
+}
+export default App
+Now, in our Notes component, you first need to import useReducer and useState:
+Import { useReducer, useState, ChangeEvent } from 'react'
+Then we need to define some TypeScript types that we need to use for our Note object, the Redux 
+action, and the action types:
+type Note = {
+  id: number
+  note: string
+}
+type Action = {
+  type: string
+  payload?: any
+}
+type ActionTypes = {
+  ADD: 'ADD'
+  UPDATE: 'UPDATE'
+  DELETE: 'DELETE'
+}
+const actionType: ActionTypes = {
+  ADD: 'ADD',
+  DELETE: 'DELETE',
+  UPDATE: 'UPDATE'
+}
+After this, we need to create initialNotes (also known as initialState) with some dummy notes:
+const initialNotes: Note[] = [
+  {
+    id: 1,
+    note: 'Note 1'
+  },
+  {
+    id: 2,
+
+=== PAGE 192 ===
+Chapter 8
+163
+    note: 'Note 2'
+  }
+]
+If you remember how the reducers work, then this will seem very similar to how we handle the re-
+ducer using a switch statement, so as to perform basic operations such as ADD, DELETE, and UPDATE:
+const reducer = (state: Note[], action: Action) => {
+  switch (action.type) {
+    case actionType.ADD:
+        return [...state, action.payload]
+    case actionType.DELETE:
+        return state.filter(note => note.id !== action.payload)
+   
+    case actionType.UPDATE:
+        const updatedNote = action.payload
+        return state.map((n: Note) => n.id === updatedNote.id ? 
+updatedNote : n)
+   
+    default:
+          return state
+  }
+}
+Finally, the component is very straightforward. Basically, you get the notes and the dispatch 
+method from the useReducer Hook (similar to useState), and you need to pass the reducer 
+function and initialNotes (initialState):
+const Notes = () => {
+  const [notes, dispatch] = useReducer(reducer, initialNotes)
+  const [note, setNote] = useState<string>('')
+  ...
+}
+Then, we have a handleSubmit function to create a new note when we write something in the 
+input. Then, we press Enter:
+const handleSubmit = (e: ChangeEvent<HTMLInputElement>) => {
+  e.preventDefault()
+  const newNote = {
+
+=== PAGE 193 ===
+React Hooks
+164
+    id: Date.now(),
+    note
+  }
+  dispatch({ type: actionType.ADD, payload: newNote })
+}
+Finally, we render our Notes list with map, and we also create two buttons, one for delete and 
+one for update, and then the input should be wrapped into a <form> tag:
+return (
+  <div>
+    <h2>Notes</h2>
+    <ul>
+        {notes.map((n: Note) => (
+            <li key={n.id}>
+               {n.note} {' '}
+          
+            <button onClick={() => dispatch({ type: actionType.DELETE, 
+payload: n.id })}>
+           X
+         </button>
+         <button 
+                 onClick={() => dispatch({ type: actionType.UPDATE, 
+payload: {...n, note} })}
+         >
+            Update
+         </button>
+           </li>
+        ))}
+    </ul>
+     
+    <form onSubmit={handleSubmit}>
+        <input 
+            placeholder="New note"
+            value={note}
+            onChange={e => setNote(e.target.value)}
+        />
+    </form>
+
+=== PAGE 194 ===
+Chapter 8
+165
+  </div>
+)
+export default Notes
+If you run the application, you should see the following output:
+Figure 8.22: React DevTools
+As you can see in the React DevTools, the Reducer object contains the two notes that we have 
+defined as our initial state. 
+
+=== PAGE 195 ===
+React Hooks
+166
+Now, if you write something in the input and you press Enter, you should be able to create a new 
+note:
+Figure 8.23: Creating a new note
+
+=== PAGE 196 ===
+Chapter 8
+167
+Then, if you want to delete a note, you just need to click on the X button. Let’s remove Note 2:
+Figure 8.24: Deleting a note
+
+=== PAGE 197 ===
+React Hooks
+168
+Finally, you can write anything you want in the input, and if you click on the Update button, you 
+will change the note value:
+Figure 8.25: Updating a note
+Nice, huh? As you can see, the useReducer Hook is pretty much the same as redux in terms of the 
+dispatch method, actions, and reducers, but the main difference is that this is limited just to the 
+context of your component and its child, so if you need a global store to be accessible from your 
+entire application, then you should use react-redux instead.
+
+=== PAGE 198 ===
+Chapter 8
+169
+Summary
+I hope you enjoyed reading this chapter, which is full of very good information pertaining to the 
+new React Hooks. So far, you have learned how the new React Hooks work; how to fetch data with 
+Hooks; how to migrate a class component to React Hooks; how the effects work, the difference 
+between memo, useMemo, and useCallback; and finally, you learned how the useReducer Hook 
+works and the main difference compared with react-redux. This will help you to improve the 
+performance of your React components.
+In the next chapter, we will learn about React Router v6 and how to implement it in our projects.
+
+=== PAGE 199 ===
+
+=== PAGE 200 ===
+9
+React Router 
+React is a library that provides a lot of useful building blocks for creating web applications, but 
+it doesn’t include everything you might need out of the box. One key feature that React doesn’t 
+provide is routing, which is the ability to handle URLs and navigate between different pages or 
+views in a single-page application. For that, we turn to third-party libraries, and the most popular 
+one for React is React Router.
+In this chapter, we’ll explore React Router and learn how to use it to create dynamic routes and 
+handle navigation in our React applications. By the end of this chapter, you’ll have a good under-
+standing of how React Router works and how to use it effectively in your own projects.
+In this chapter, we will cover the following topics:
+•	
+Understanding the differences between the react-router, react-router-dom, and react-
+router-native packages
+•	
+How to install and configure React Router
+•	
+Adding the <Routes> component
+•	
+Adding parameters to routes
+•	
+React Router v6.4 and React Router loaders
+Technical requirements
+To complete this chapter, you will need the following:
+•	
+Node.js 19+
+•	
+Visual Studio Code
+

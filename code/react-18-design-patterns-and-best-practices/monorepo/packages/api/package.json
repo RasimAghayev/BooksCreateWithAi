@@ -1,0 +1,13 @@
+{
+  "name": "@web-creator/api",
+  "version": "1.0.0",
+  "main": "src/index.ts",
+  "scripts": {
+    "build": "cross-env NODE_ENV=production npm-run-all clean compile webpack:production",
+    "clean": "rm -rf ./dist",
+    "compile": "tsc",
+    "webpack:production": "webpack --config=../../webpack.config.ts --env mode=production --env type=package --env packageName=api"
+  },
+  "author": "",
+  "license": "ISC"
+}

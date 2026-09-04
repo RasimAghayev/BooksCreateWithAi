@@ -1,0 +1,1605 @@
+=== PAGE 401 ===
+MonoRepo Architecture
+372
+Creating our custom models
+Once we’ve created the configuration correctly, we need to create our custom models for our 
+CRM service, which are created specifically for that service, and they will not be shared with 
+other services. In this case, we will add just one and call it Guest. This model needs to be saved 
+in packages/api/src/services/crm/models/Guest.ts:
+import { DataType } from '../../../types'
+export default (sequelize: any, dataType: DataType) => {
+const Guest = sequelize.define('Guest', {
+id: {
+   primaryKey: true,
+   allowNull: false,
+   type: dataType.UUID,
+   defaultValue: dataType.UUIDV4()
+},
+fullName: {
+   type: dataType.STRING,
+   allowNull: false
+},
+email: {
+   type: dataType.STRING,
+   allowNull: false,
+   unique: true
+},
+photo: {
+   type: dataType.STRING,
+   allowNull: true
+},
+phone: {
+   type: dataType.STRING,
+   allowNull: true
+},
+socialMedia: {
+   type: dataType.STRING,
+   allowNull: true
+},
+
+=== PAGE 402 ===
+Chapter 14
+373
+location: {
+   type: dataType.STRING,
+   allowNull: true
+},
+gender: {
+   type: dataType.STRING,
+   allowNull: true
+},
+birthday: {
+   type: dataType.STRING,
+   allowNull: true
+}
+})
+return Guest
+}
+After we create the Guest model, we need to connect to our database and join our global models 
+(User) and our local models (Guest) in order to create our service tables. This file needs to be 
+created in packages/api/src/services/crm/models/index.ts:
+import { keys, ts } from '@web-creator/utils'
+import pg from 'pg'
+import { Sequelize } from 'sequelize'
+import Config from '../../../config'
+// Db Connection
+const { engine, port, host, database, username, password } = Config.
+database ?? {}
+const uri = 
+`${engine}://${username}:${password}@${host}:${port}/${database}`
+const sequelize = new Sequelize(uri, {
+dialectModule: pg
+})
+// Models
+const addModel = (path: string) => require(path).default(sequelize, 
+Sequelize)
+const models: any = {
+User: addModel('../../../models/User'), // Global model
+Guest: addModel('./Guest'), // Local model
+
+=== PAGE 403 ===
+MonoRepo Architecture
+374
+sequelize // We must pass the sequelize object here
+}
+// Relationships
+keys(models).forEach((modelName: string) => {
+if (ts.hasKey(models, modelName)) {
+if (models[modelName].associate) {
+models[modelName].associate(models)
+}
+}
+})
+export default models
+Creating model seeds
+Seeds are the initial data for our models (tables). Most of the time we want to clear all the model 
+values but keep some of them as default values, but in this case we will add some default data 
+for our User model and our Guest model:
+import models from '../models'
+async function createFirstUser(): Promise<any> {
+const existingUsers = await models.User.findAll()
+if (existingUsers.length === 0) {
+const newUser: any = await models.User.create({
+   username: 'admin',
+   password: '12345678',
+   email: 'admin@ranchosanpancho.com',
+   role: 'god',
+   active: true
+})
+return newUser
+}
+return null
+}
+async function createGuests(): Promise<any> {
+const existingGuests = await models.Guest.findAll()
+if (existingGuests.length === 0) {
+const newGuests: any = await models.Guest.bulkCreate([
+
+=== PAGE 404 ===
+Chapter 14
+375
+{
+   fullName: 'Carlos Santana',
+   email: 'carlos@ranchosanpancho.com',
+   photo: 'carlos.jpg',
+   phone: '+1 555 555 5555',
+   socialMedia: 'https://www.facebook.com/carlos.santana',
+   location: 'Colima, Mexico',
+   gender: 'Male',
+   birthday: '11/21/1987'
+},
+{
+   fullName: 'Cristina Santana',
+   email: 'cristina@ranchosanpancho.com',
+   photo: 'cristina.jpg',
+   phone: '+1 444 444 4444',
+   socialMedia: 'https://www.facebook.com/cristina.santana',
+   location: 'Colima, Mexico',
+   gender: 'Female',
+   birthday: '1/20/1989'
+}
+])
+return newGuests
+}
+return null
+}
+function setInitialSeeds(): void {
+createFirstUser()
+createGuests()
+}
+export default setInitialSeeds
+Creating our custom GraphQL types and resolvers
+For our CRM, we will create a Guest type and resolver just to illustrate how we can use GraphQL 
+in different services that we create; the first file you need to create is the Guest type, which must 
+be saved in packages/api/src/services/crm/graphql/types/Guest.ts:
+import gql from 'graphql-tag'
+export default gql`
+
+=== PAGE 405 ===
+MonoRepo Architecture
+376
+  type Guest {
+  id: UUID!
+  fullName: String!
+  email: String!
+  photo: String!
+  socialMedia: String!
+  location: String!
+  phone: String!
+  gender: String!
+  birthday: String
+  createdAt: Datetime!
+  updatedAt: Datetime!
+}
+  type GuestResponse {
+  guests: [Guest!]!
+}
+  union GuestResult = GuestResponse | Error
+  type Query {
+  getGuests: GuestResult
+}
+`
+As you can see, we define our Guest type with some personal fields such as fullName, email, photo, 
+etc. Then we create a GuestResponse type that represents an array of guests ([Guest!]!). The 
+square brackets indicate that it’s an array, and the exclamation mark (!) denotes that it cannot 
+contain null values. After that, we create a union type, which enables the schema field to return 
+one of multiple object types. In this case, it can return GuestResponse when we have guests or 
+the Error type if we don’t have guests or encounter any other issues. If something else occurs, 
+we define the response of these types in our resolver.
+After you create this type file (or more), it is time to merge all your Type Definitions (TypeDefs). 
+For this, we will create an index.ts file inside our types directory and import our global types 
+(Error, Scalar, and User). We will also include our local type (Guest) and merge it with a func-
+tion provided by @graphql-tools/merge. This file is placed in packages/api/src/services/
+crm/types/index.ts:
+import { mergeTypeDefs } from '@graphql-tools/merge'
+// Global Types
+
+=== PAGE 406 ===
+Chapter 14
+377
+import Error from '../../../../graphql/types/Error'
+import Scalar from '../../../../graphql/types/Scalar'
+import User from '../../../../graphql/types/User'
+// Local Types
+import Guest from './Guest'
+export default mergeTypeDefs([Error, Scalar, User, Guest])
+Now once you have merged your types, you need to create the Guest resolver. This file should be 
+placed in packages/api/src/services/crm/graphql/resolvers/guest.ts:
+export default {
+Query: {
+getGuests: async (_: any, _args: any, { models }: { models: any }): 
+Promise<any> => {
+const guests = await models.Guest.findAll({ 
+order: [['fullName', 'ASC']]
+})
+// If there are guests, return them with a GuestResponse type
+if (guests.length > 0) {
+return {
+  __typename: 'GuestResponse',
+  guests
+ }
+}
+// If there are no guests, return an Error type with a 404 code and 
+message 
+return {
+   __typename: 'Error',
+   error: {
+   code: 404,
+   message: 'No guests found'
+   }
+  }
+ }
+ }
+}
+
+=== PAGE 407 ===
+MonoRepo Architecture
+378
+As you can see, when we find guests (or data), we return them and add the __typename property 
+(which is a GraphQL property) with a value of GuestResponse. This property is necessary to re-
+solve the query with the correct type, since we are using a union. Here is where we define what 
+we will return, whether it’s the GuestResponse type or the Error type. On the other hand, if we 
+don’t find any guests, we return an error object with a code and message, and the __typename 
+is set to 'Error'. 
+Now, we need to do the same with the resolvers. We need to merge our resolvers, both the global 
+ones and the local ones. To do this, create an index.ts file in the same resolvers directory and 
+add the following code:
+import { mergeResolvers } from '@graphql-tools/merge'
+import user from '../../../../graphql/resolvers/user'
+import guest from './guest'
+const resolvers = mergeResolvers([user, guest])
+export default resolvers
+We have done a similar thing with our resolvers as we did with the TypeDef. Now, we need to 
+import the global user resolver and merge it with our guest resolver.
+Synchronizing our models and starting Apollo Server
+Now that we have created our custom configs, models, seeds, types, and resolvers, it’s time 
+to put everything together, synchronize our models, and start our Apollo Server. This file should 
+be placed in packages/api/src/index.ts:
+import { makeExecutableSchema } from '@graphql-tools/schema'
+import { ts } from '@web-creator/utils'
+import { ApolloServer } from '@apollo/server'
+import { expressMiddleware } from '@apollo/server/express4'
+import { ApolloServerPluginDrainHttpServer } from '@apollo/server/plugin/
+drainHttpServer'
+import bodyParser from 'body-parser'
+import http from 'http'
+import cookieParser from 'cookie-parser'
+import cors from 'cors'
+import express, { NextFunction, Request, Response } from 'express'
+import { applyMiddleware } from 'graphql-middleware'
+import { json } from 'body-parser'
+import { Service } from './types/config'
+
+=== PAGE 408 ===
+Chapter 14
+379
+After importing all the packages we need, first we need to check if we received the SERVICE vari-
+able from the terminal; otherwise, we will choose our default service. We will also check if our 
+service is valid (exists in our Service type):
+// Service
+const service: any = process.env.SERVICE ?? 'default'
+// Validating service
+if (!ts.includes(Service, service)) {
+throw 'Invalid service'
+}
+Once we are sure that our service is valid, then we will dynamically import the resolvers, types, 
+models, and seeds:
+// We are importing the service files dynamically
+const resolvers = require(`./services/${service}/graphql/resolvers`).
+default
+const typeDefs = require(`./services/${service}/graphql/types`).default
+const models = require(`./services/${service}/models`).default
+const seeds = require(`./services/${service}/seeds`).default
+Then we create our Express app and configure cors, cookieParser, and bodyParser:
+const app = express()
+const httpServer = http.createServer(app)
+const corsOptions = {
+  origin: '*',
+  credentials: true
+}
+app.use(cors(corsOptions))
+app.use(cookieParser())
+app.use(bodyParser.json())
+// CORS
+app.use((req: Request, res: Response, next: NextFunction) => {
+res.header('Access-Control-Allow-Origin', '*')
+res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, 
+Content-Type, Accept')
+next()
+})
+
+=== PAGE 409 ===
+MonoRepo Architecture
+380
+We need to create our GraphQL schema with makeExecutableSchema and use the applyMiddleware:
+// Schema
+const schema = applyMiddleware(
+  makeExecutableSchema({
+   typeDefs,
+   resolvers
+  })
+)
+Finally, we create our ApolloServer instance passing the schema and the plugins. 
+// Apollo Server
+const apolloServer = new ApolloServer({
+schema,
+plugins:[ApolloServerPluginDrainHttpServer({ httpServer })]
+})
+Now we need to sync our models. The alter option enables us to listen to changes in our models 
+and modify them:
+// Database Sync
+  const main = async () => {
+    const alter = true
+    const force = false
+    
+    await apolloServer.start()
+    await models.sequelize.sync({ alter, force })
+    // Setting up initial seeds
+    console.log('Initializing Seeds...')
+    seeds()
+If you change something, BE VERY CAREFUL with the force option. If it is true, it 
+will truncate all your tables (meaning all your data will be deleted). Hence, only use 
+it when totally necessary.
+
+=== PAGE 410 ===
+Chapter 14
+381
+    app.use(
+      '/graphql',
+      cors<cors.CorsRequest>(),
+      json(),
+      expressMiddleware(apolloServer, {
+        context: async () => ({ models })
+      })
+    )
+    await new Promise<void>((resolve) => httpServer.listen({ port: 4000 }, 
+resolve))
+    console.log(' Server ready at http://localhost:4000/graphql')
+  }
+  main()
+Testing our CRM service
+If you did everything correctly, you can run the command SERVICE=crm npm run dev inside your 
+api package. and you should see something like this:
+Figure 14.10: SERVICE=crm npm run dev
+
+=== PAGE 411 ===
+MonoRepo Architecture
+382
+If you check your database, you will see the two tables created from your models (Guests and 
+Users), and you should be able to see the seeds you added as well:
+Figure 14.11: Database query
+As you can see, the createdAt and updatedAt fields are automatically created by Sequelize. After 
+this, you can try to hit http://localhost:4000/graphql to see if your Apollo Server works fine.
+Figure 14.12: GraphQL Explorer
+
+=== PAGE 412 ===
+Chapter 14
+383
+We can start testing our service queries like getGuests; let’s see what it returns:
+Figure 14.13: getGuests query
+Also, you can test the getUsers query:
+Figure 14.14: getUsers query
+
+=== PAGE 413 ===
+MonoRepo Architecture
+384
+Finally, you can also test the login mutation to make sure your global authentication system 
+works fine:
+Figure 14.15: The login mutation
+Creating the frontend package
+In this package, we will implement a multi-site system that will help us have more than one site 
+with the same code base.
+Let’s see how our package.json file should look for this package:
+{
+  "name": "@web-creator/frontend",
+  "version": "1.0.0", 
+  "scripts": {
+    "dev": "cross-env NODE_ENV=development npm run next:dev",
+    "build": "next build",
+    "next": "ts-node src/server.ts",
+    "next:dev": "ts-node src/server.ts",
+    "lint": "npm run --prefix ../../ lint",
+    "lint:fix": "npm run --prefix ../../ lint:fix",
+
+=== PAGE 414 ===
+Chapter 14
+385
+    "typecheck": "tsc --noEmit"
+  },
+  "author": "Carlos Santana",
+  "license": "ISC",
+  "peerDependencies": {
+    "react": ">=17.0.2",
+    "react-dom": ">=17.0.2"
+  },
+  "devDependencies": {
+    "@babel/core": "^7.20.12",
+    "@babel/node": "^7.20.7",
+    "@types/cookie-parser": "^1.4.3",
+    "@types/isomorphic-fetch": "^0.0.36",
+    "@types/styled-components": "^5.1.26",
+    "babel-plugin-jsx-remove-data-test-id": "^3.0.0",
+    "babel-plugin-styled-components": "^2.0.7"
+  },
+  "dependencies": {
+    "@apollo/client": "^3.7.7",
+    "@web-creator/authentication": "1.0.0",
+    "@web-creator/devtools": "1.0.0",
+    "@web-creator/utils": "^1.0.0",
+    "babel-preset-next": "^1.4.0",
+    "cookie-parser": "^1.4.6",
+    "dotenv": "^16.0.3",
+    "express": "^4.18.2",
+    "isomorphic-fetch": "^3.0.0",
+    "next": "^13.1.6",
+    "react-cookie": "^4.1.1",
+    "styled-components": "^5.3.6",
+    "webpack": "^5.75.0"
+  }
+}
+Our frontend package works a little bit differently from our other packages because we use Next.
+js, which takes care of its own Webpack configuration. We do not compile it using our devtools 
+like the other packages, and the TypeScript configuration differs slightly. 
+
+=== PAGE 415 ===
+MonoRepo Architecture
+386
+This is the tsconfig.json file for our frontend package:
+{
+  "extends": "../../tsconfig.common.json",
+  "compilerOptions": {
+    "outDir": "./dist",
+    "baseUrl": ".",
+    "isolatedModules": true,
+    "noEmit": false,
+    "allowJs": true,
+    "forceConsistentCasingInFileNames": true,
+    "incremental": true,
+    "jsx": "preserve",
+    "paths": {
+      "~/*": ["./src/*"]
+    }
+  },
+  "include": ["src/**/*"]
+}
+As you can see, we define the ~ path. This is handled by devtools in other packages but in our 
+case, we need to modify the next Webpack configuration directly. For this, you need to create the 
+file next.config.js (yes, .js, not .ts), and the code should look like:
+const path = require('path')
+module.exports = {
+reactStrictMode: true,
+webpack: (config, { isServer }) => {
+// Fixes npm packages that depend on 'fs' module
+if (!isServer) {
+config.resolve.fallback.fs = false
+}
+// Aliases
+config.resolve.alias['~'] = path.resolve(__dirname, './src')
+return config
+}
+}
+
+=== PAGE 416 ===
+Chapter 14
+387
+Another configuration we need to set up is to add styled-components plugins to our .babelrc 
+file. We will also use the next/babel preset. This file exists in packages/frontend/.babelrc:
+{
+  "presets": ["next/babel"],
+  "plugins": [["styled-components", { "ssr": true, "preprocess": false 
+}]],
+  "env": {
+    "production": {
+      "plugins": ["babel-plugin-jsx-remove-data-test-id"]
+    }
+  }
+}
+Now that we have completed this portion of the chapter, we will proceed to create a universal 
+User model. This model will serve as a template that can be utilized across all our websites for 
+anyone who signs up.
+Next, our focus will shift toward developing a Sites system, which can be visualized as a master 
+control room responsible for managing our websites. Just like changing TV channels, we will 
+also build a Page Switcher that enables users to seamlessly switch between different pages on 
+our websites.
+Subsequently, we will construct a common Login system that ensures a consistent login experi-
+ence across all our websites. To enhance customization and functionality, we will set up a Sites 
+configuration, which acts as a rulebook or settings panel for each individual site, dictating its 
+behavior and features.
+To consolidate all these components, we will bundle them together in a single file named server.
+ts, which will function as the command center for our system.
+Once the setup is complete, we will proceed to test our work by running the program and ex-
+amining the outcomes using various examples. If any issues arise, our system will provide error 
+messages to indicate and assist in troubleshooting.
+In the upcoming sections, you will witness all these steps in action, enabling you to comprehend 
+how they integrate within our larger system. Rest assured, although it may sound intricate at the 
+moment, we will break it down and guide you through each step, ensuring a clear understanding 
+of the process.
+
+=== PAGE 417 ===
+MonoRepo Architecture
+388
+Creating our Sites system
+The Sites system is pretty much the same as the services system we created in our API packages, 
+but in this case instead of managing databases, we manage websites. So, like we did before, the 
+first thing we need to do is create the configuration of each site. In this scenario, we will also have 
+a default site, which is called 'blank-page', just to avoid the system breaking when no site has 
+been provided. 
+Let’s create the config file for this site in packages/frontend/src/sites/blank-page/config.
+ts, and this is the content of that file:
+import { SiteConfiguration } from '../../types/config'
+export const config: SiteConfiguration = {
+  siteTitle: 'Blank Page',
+  domainName: 'localhost',
+  api: {
+   uri: 'http://localhost:4000/graphql'
+  },
+  pages: ['index']
+}
+For this example, I’ll use two personal sites, san-pancho and codejobs, but feel free to add any 
+site you want to the project.
+As part of the site, we need to create the graphql files, to consume our API queries and mutations, 
+and the specific pages for this site. The only query we will add for now is the getGuests query 
+that we previously created in the API package. This file should be in packages/frontend/src/
+sites/san-pancho/graphql/guest/getGuests.query.ts. If, at some point, you want to create 
+a mutation, you may want to use the myMutation.mutation.ts format for the filename:
+import { gql } from '@apollo/client'
+export const getGuestsQuery = '
+getGuests {
+    on GuestResponse {
+guests {
+    id
+    fullName
+    email
+    photo
+    socialMedia
+
+=== PAGE 418 ===
+Chapter 14
+389
+    location
+    gender
+    birthday
+    note
+  }
+}
+    on Error {
+    error {
+    code
+    message
+   }
+  }
+ }
+'
+export default gql'
+query getGuests {
+${getGuestsQuery}
+}
+'
+Creating our Page Switcher
+If you have used Next.js in the past, you’ll know how the Next page system works. Essentially, you 
+have your pages directory, and the files or directories you add to that will represent the route of a 
+page. For our example, we will need to create some Next pages that will “switch” or render a custom 
+page from each site. I know it sounds a little bit complicated, but let’s break this down into parts.
+The first thing to do is to create our index.ts page in packages/frontend/src/pages/index.ts 
+(this is a Next page):
+import React, { FC } from 'react'
+import Config from '~/config'
+const SwitcherPage = require('~/sites/${Config.site}/switcher').default
+const getRouterParams = require('~/sites/${Config.site}/server/
+routerParams').default
+type Props = {
+  siteTitle: string
+}
+const Page: FC<Props> = ({ siteTitle }) => {
+
+=== PAGE 419 ===
+MonoRepo Architecture
+390
+const routerParams = getRouterParams({})
+return <SwitcherPage routerParams={routerParams} siteTitle={siteTitle} />
+}
+export default Page
+Another Next.js page that we must create is one that has a special name and needs to be created in 
+packages/frontend/src/pages/[page]/[…params].tsx. The [page] will be a dynamic path. The 
+[...params].tsx file will receive any additional parameters passed in the URL. If we have more 
+than two nested routes, these additional routes will be added as an array to the params variable:
+import { useRouter } from 'next/router'
+import React, { FC } from 'react'
+import Config from '~/config'
+const SwitcherPage = require('~/sites/${Config.site}/switcher').default
+const getRouterParams = require('~/sites/${Config.site}/server/
+routerParams').default
+type Props = {
+  siteTitle: string
+  serverData: any
+}
+const Page: FC<Props> = ({ siteTitle, serverData }) => {
+const router = useRouter()
+const routerParams = getRouterParams(router.query)
+return (
+<SwitcherPage 
+  routerParams={routerParams} 
+  siteTitle={siteTitle} 
+  props={{ serverData }} 
+/>
+)
+}
+export default Page
+On each Next.js page, we will import a SwitcherPage component that exists on each site. We 
+also import the routerParams, which will control the routing for each site as well, and we will 
+receive the siteTitle via props. In other words, we just render the SwitcherPage component 
+and pass the props.
+
+=== PAGE 420 ===
+Chapter 14
+391
+Let’s see how the Switcher component from our san-pancho site looks (packages/frontend/
+src/sites/san-pancho/switcher.tsx):
+import dynamic from 'next/dynamic'
+import React from 'react'
+import Switcher, { Props } from '~/components/Switcher'
+const dynamicPages: Record<string, Record<string, any>> = {
+  index: {
+  index: dynamic(() => import('./pages/index'))
+ },
+  login: {
+  index: dynamic(() => import('./pages/login'))
+ },
+  dashboard: {
+  index: dynamic(() => import('./pages/dashboard/index'))
+ }
+}
+export default ({ routerParams, siteTitle, props }: Props) => (
+<Switcher
+  routerParams={routerParams}
+  siteTitle={siteTitle}
+  props={props}
+  dynamicPages={dynamicPages}
+/>
+)
+The next/dynamic is a composite extension of React.lazy and Suspense. These components 
+can delay hydration until the Suspense boundary is resolved. In our case, we are dynamically 
+loading pages from this site, specifically the index.index, login.index, and dashboard.index. 
+You’re probably wondering why we have a nested index page for each of them. This is because we 
+can have nested pages; for example, index.index will refer to http://localhost:3000/, login.
+index to http://localhost:3000/login, and dashboard.index to http://localhost:3000/
+dashboard. However, suppose you want to add a page inside the dashboard like guests. You will 
+then add dashboard.guests, which will point to http://localhost:3000/dashboard/guests. 
+Each switcher.ts file from the sites directories uses the Switcher component. Hence, let’s 
+create it. This file is located in packages/frontend/src/components/Switcher.tsx:
+import React, { FC } from 'react'
+
+=== PAGE 421 ===
+MonoRepo Architecture
+392
+import ErrorPage from '~/components/ErrorPage'
+type Route = {
+  page: string
+  section?: string
+  subSection?: string
+  urlParams?: string[]
+  queryParams?: Record<string, string>
+}
+export type Props = {
+  routerParams: Route
+  siteTitle: string
+  props?: Record<string, any>
+  dynamicPages: any
+}
+const Switcher: FC<Props> = ({ routerParams, props = {}, dynamicPages: 
+sitePages }) => {
+const { 
+  page, 
+  section = 'index', 
+  subSection = '', 
+  urlParams, 
+  queryParams = {} 
+} = routerParams
+const extraProps = {
+  queryParams,
+  router: {
+  section,
+  subsection
+},
+   urlParams
+}
+const pageName = page
+let PageToRender // This will be a dynamic React Component 
+let sectionPages: any = {}
+// We validate if our main page exists (index, login or dashboard)
+if (sitePages[pageName]) {
+
+=== PAGE 422 ===
+Chapter 14
+393
+// If exists we get our sectionsPages (index.index, login.index and 
+dashboard.index)
+sectionPages = sitePages[pageName]
+// By default we will try to render the index of each page
+PageToRender = sectionPages.index
+// If we have subsection, we render it (dashboard.guests)
+if (sectionPages[section][subSection]) {
+PageToRender = sectionPages[section][subSection]
+} else if (section !== 'index') {
+// This is to render nested routes that only have index
+PageToRender = sectionPages[section].index
+}
+} else {
+// If we can't find any of the pages, then we render an ErrorPage
+PageToRender = ErrorPage
+}
+return <PageToRender {...props} {...extraProps} />
+}
+export default Switcher
+Let’s now create the index page for our San Pancho site. This page serves a simple purpose: to 
+display the site’s title, providing confirmation that we are currently on the San Pancho site. This 
+file should exist in packages/frontend/src/sites/san-pancho/pages/index.tsx:
+import React from 'react'
+export default () => <h1>San Pancho Index Page</h1>
+After this, we can create our index page for our dashboard (packages/frontend/src/sites/
+san-pancho/pages/dashboard/index.tsx):
+import React from 'react'
+export default () => (
+<>
+  <h1>Dashboard for San Pancho</h1>
+  <a href="/logout">Logout</a>
+</>
+)
+
+=== PAGE 423 ===
+MonoRepo Architecture
+394
+Finally, we need to create our login page for san-pancho, which will share the Login component 
+for all the sites (packages/frontend/src/sites/san-pancho/pages/login.tsx):
+import React from 'react'
+import Login from '~/components/Login'
+export default () => <Login />
+Creating our Login system
+All our sites will use the same login page because we share the authentication system. Let’s create 
+our Login component and see how we can perform the login:
+import { Button, Input, RenderIf } from '@web-creator/design-system'
+import { getRedirectToUrl, redirectTo } from '@web-creator/utils'
+import React, { FC, useContext, useState } from 'react'
+import { FormContext } from '~/contexts/form'
+import { UserContext } from '~/contexts/user'
+import { CSS } from './Login.styled'
+type Props = {
+  background?: string
+}
+const Login: FC<Props> = () => {
+  const redirectToUrl = getRedirectToUrl()
+  // States
+  const [values, setValues] = useState({
+    emailOrUsername: '',
+    password: ''
+  })
+  const [notification, setNotification] = useState({
+    id: Math.random(),
+    message: ''
+  })
+  const [invalidLogin, setInvalidLogin] = useState(false)
+  // Contexts
+  const { change } = useContext(FormContext)
+  const { login } = useContext(UserContext)
+  // Methods
+  const onChange = (e: any): any => change(e, setValues)
+
+=== PAGE 424 ===
+Chapter 14
+395
+  const handleSubmit = async (user: any): Promise<void> => {
+    const response = await login(user)
+    if (response.error) {
+      setInvalidLogin(true)
+      setNotification({
+        id: Math.random(),
+        message: response.message
+      })
+    } else {
+      redirectTo(redirectToUrl || '/', true)
+    }
+  }
+  return (
+    <>
+      <RenderIf isTrue={invalidLogin && notification.message !== ''}>
+        {notification.message}
+      </RenderIf>
+      <CSS.Login>
+        <CSS.LoginBox>
+          <header>
+            <img className="logo" src="/images/isotype.png" alt="Logo" /> 
+<br />
+            <h2>Sign In</h2>
+          </header>
+          <section>
+            <Input
+              autoComplete="off"
+              name="emailOrUsername"
+              placeholder="Email Or Username"
+              onChange={onChange}
+              value={values.emailOrUsername}
+            />
+            <Input 
+              name="password"
+              type="password"
+              placeholder="Password"
+              onChange={onChange}
+
+=== PAGE 425 ===
+MonoRepo Architecture
+396
+              value={values.password}
+            />
+            <div className="actions">
+              <Button onClick={(): Promise<void> => handleSubmit(values)}>
+                Login
+              </Button>
+              <Button color="success">
+                Register
+              </Button>
+            </div>
+          </section>
+        </CSS.LoginBox>
+      </CSS.Login>
+    </>
+  )
+}
+export default Login
+As you can see, the login function that is executed in the handleSubmit comes from our 
+UserContext. This will execute the login mutation when the user needs to perform a login, and 
+the getUser query to validate if a logged user is valid. Let’s create that User Context (Context 
+API), which should be located in packages/frontend/src/contexts/user.ts:
+import { useMutation, useQuery } from '@apollo/client'
+import { getGraphQlError, parseDebugData, redirectTo } from '@web-builder/
+utils'
+import React, { createContext, FC, ReactElement, 
+useEffect,useMemo,useState} from 'react'
+import { useCookies } from 'react-cookie'
+import Config from '~/config'
+import GET_USER_QUERY from '~/graphql/user/getUser.query'
+import LOGIN_MUTATION from '~/graphql/user/login.mutation'
+// Interfaces
+
+=== PAGE 426 ===
+Chapter 14
+397
+interface IUserContext {
+  login(input: any): any
+  user: any
+}
+type Props = {
+  children: ReactElement
+}
+// Creating context
+export const UserContext = createContext<IUserContext>({
+  login: () => null,
+  user: null
+})
+const UserProvider: FC<Props> = ({ children }) => {
+// States
+const [cookies, setCookie] = useCookies()
+const [user, setUser] = useState(null)
+// Mutations
+const [loginMutation] = useMutation(LOGIN_MUTATION)
+// Queries
+const { data: dataUser } = useQuery(GET_USER_QUERY, {
+  variables: {
+  at: cookies['at-${Config.site}'] || ''
+ }
+})
+// Effects
+useEffect(() => {
+if (dataUser) {
+setUser(dataUser.getUser)
+}
+}, [dataUser])
+async function login(input:{emailOrUsername: string;password: string }): 
+Promise<any> {
+try {
+const { data: dataLogin } = await loginMutation({
+  variables: {
+  emailOrUsername: input.emailOrUsername,
+  password: input.password
+
+=== PAGE 427 ===
+MonoRepo Architecture
+398
+}
+})
+if (dataLogin) {
+setCookie('at-${Config.site}', dataLogin.login.token, { 
+  path: '/', 
+  maxAge: 45 * 60 * 1000 
+})
+return dataLogin.login.token
+}
+} catch (err) {
+return getGraphQlError(err)
+}
+return null
+}
+const context = useMemo(() => ({
+login,
+user
+}), [user])
+return <UserContext.Provider value={context}>{children}</UserContext.
+Provider>
+}
+export default UserProvider
+Now let’s create our login mutation, which will receive two parameters ($emailOrUsername 
+and $password). This file should be located in packages/frontend/src/graphql/user/login.
+mutation.ts:
+import { gql } from '@apollo/client'
+export default gql`
+mutation login($emailOrUsername: String!, $password: String!) {
+login(input: { emailOrUsername: $emailOrUsername, password: $password }) {
+token
+}
+}
+`
+After that, we need to create the getUser query, which will take the accessToken (at) as a pa-
+rameter and validate if the connected user is valid. This file exists in packages/frontend/src/
+graphql/user/getUser.query.ts:
+
+=== PAGE 428 ===
+Chapter 14
+399
+import { gql } from '@apollo/client'
+export default gql`
+query getUser($at: String!) {
+  getUser(at: $at) {
+  id
+  email
+  username
+  role
+  active
+ }
+}
+`
+There are two more things to do. The first thing is to add our UserProvider as a wrapper of our 
+application; we need to do this on a special page called "_app.tsx" inside the pages directory:
+import { ApolloProvider } from '@apollo/client'
+import React, { FC } from 'react'
+import Config from '~/config'
+import GlobalStyle from '~/components/GlobalStyles/GlobalStyles'
+import { useApollo } from '~/contexts/apolloClient'
+import FormProvider from '~/contexts/form'
+import UserProvider from '~/contexts/user'
+const App: FC<any> = ({ Component, pageProps }) => {
+const apolloClient = useApollo((pageProps && pageProps.initialApolloState) 
+|| {})
+return (
+<>
+  <GlobalStyle />
+  <ApolloProvider client={apolloClient}>
+  <UserProvider>
+  <FormProvider>
+  <Component {...pageProps} />
+  </FormProvider>
+  </UserProvider>
+  </ApolloProvider>
+</>
+)
+
+=== PAGE 429 ===
+MonoRepo Architecture
+400
+}
+// @ts-ignore
+App.getInitialProps = async () => ({
+...Config
+})
+export default App
+Finally, we need to create another special file called "_document.tsx" inside the pages directo-
+ry. In this file, we will render the ServerStyleSheet from styled-components to be able to use 
+styled-components in the server (Next.js):
+import { cx } from '@web-creator/utils'
+import Document, { Head, Html, Main, NextScript } from 'next/document'
+import React from 'react'
+import { ServerStyleSheet } from 'styled-components'
+import Config from '~/config'
+export default class MyDocument extends Document {
+static async getInitialProps(ctx: any) {
+const sheet = new ServerStyleSheet()
+const originalRenderPage = ctx.renderPage
+try {
+ctx.renderPage = () =>
+originalRenderPage({
+enhanceApp: (App: any) => (props: any) => {
+const themeClassname = 'theme--light'
+return sheet.collectStyles(
+  <body className={cx.join(themeClassname)}>
+  <App {...props} title={Config.siteTitle} />
+  </body>
+ )
+}
+})
+const initialProps = await Document.getInitialProps(ctx)
+return {
+   initialProps,
+   styles: (
+<>
+{initialProps.styles}
+
+=== PAGE 430 ===
+Chapter 14
+401
+  {sheet.getStyleElement()}
+</>
+)
+}
+} finally {
+  sheet.seal()
+}
+}
+render() {
+return (
+<Html>
+<Head>
+  <link rel="icon" type="image/x-icon" href="/images/favicon.png" />
+</Head>
+<Main />
+  <NextScript />
+</Html>
+ )
+ }
+}
+Creating our sites configuration
+As we did in our API project, we need to create a configuration for our sites. Let’s start by creat-
+ing our SiteConfiguration type, the file for which will be located in packages/frontend/src/
+types/config.ts:
+import { ValueOf } from '@web-creator/utils'
+// Here you add your sites
+export const Site = {
+SanPancho: 'san-pancho',
+Codejobs: 'codejobs',
+BlankPage: 'blank-page'
+} as const
+export type Site = ValueOf<typeof Site>
+export type Mode = 'production' | 'development'
+export enum DeploymentType {
+  PRODUCTION = 'production',
+  STAGING = 'staging',
+
+=== PAGE 431 ===
+MonoRepo Architecture
+402
+  DEVELOPMENT = 'development'
+}
+export interface SiteConfiguration {
+  siteTitle: string
+  domainName: string
+  hostname?: string
+  mode?: string
+  api?: {
+  uri: string
+}
+  pages: string[]
+  custom?: any
+}
+export interface SiteBuilderConfiguration extends SiteConfiguration {
+  site: Site
+  homeUrl: string
+}
+The configuration we will do is for the san-pancho site, and you should add this file to packages/
+frontend/src/sites/san-pancho/config.ts:
+import path from 'path'
+import { SiteConfiguration } from '../../types/config'
+export const config: SiteConfiguration = {
+  siteTitle: 'Cabañas San Pancho',
+  domainName: 'ranchosanpancho.com',
+  pages: ['index', 'login']
+}
+After this, we must create our main config.ts file, which should be in packages/frontend/src/
+config.ts:
+import { is } from '@web-creator/utils'
+// Importing sites configurations
+import { config as blankPageConfig } from './sites/blank-page/config'
+import { config as sanPanchoConfig } from './sites/san-pancho/config'
+import { config as codejobsConfig } from './sites/codejobs/config'
+import { Site, SiteBuilderConfiguration, SiteConfiguration } from './
+types/config'
+
+=== PAGE 432 ===
+Chapter 14
+403
+const isProduction = process.env.NODE_ENV === 'production'
+const isLocal = process.env.LOCAL === 'true'
+const isLocalProduction = isProduction && isLocal
+// Getting site configuration
+const getSiteConfig = (site: Site): SiteConfiguration => {
+switch (site) {
+  case Site.SanPancho:
+   return sanPanchoConfig
+  case Site.Codejobs:
+   return codejobsConfig
+  default:
+   return blankPageConfig
+ }
+}
+// Building configuration
+  const buildConfig = (): SiteBuilderConfiguration => {
+// Server site
+let site = process.env.SITE as Site
+// On client side we grab the site from Next props
+if (is.Browser()) {
+  const { props } = window.__NEXT_DATA__
+if (props && props.site) {
+  site = props.site
+ }
+} else if (!site) {
+throw 'You must specify a site (E.g. SITE=san-pancho npm run dev)'
+}
+  const siteConfig = getSiteConfig(site)
+// Building configuration based on the environment and site configuration
+const config: SiteBuilderConfiguration = {
+...siteConfig,
+  api: {
+  uri: isProduction && !isLocalProduction
+? `https://${siteConfig.domainName}/graphql`
+: `http://localhost:4000/graphql`
+},
+
+=== PAGE 433 ===
+MonoRepo Architecture
+404
+site,
+  homeUrl: `https://${siteConfig.domainName}`,
+  hostname: isProduction && !isLocalProduction ? siteConfig.domainName : 
+'localhost',
+  mode: isProduction ? 'production' : 'development'
+}
+return config
+}
+const Config = buildConfig()
+export default Config
+Putting everything together
+The last piece of the puzzle is our server.ts file, which will handle Next.js, our static directories, 
+and routes. Let’s break down the file into parts and see each one in detail. This file should be in 
+packages/frontend/src/server.ts.
+The first thing we need to do is to import some dependencies and the site configuration:
+import cookieParser from 'cookie-parser'
+import express, { Application, NextFunction, Request, Response } from 
+'express'
+import nextJS from 'next'
+import path from 'path'
+import { ts } from '@web-creator/utils'
+import Config from './config'
+import { isConnected } from './lib/middlewares/user'
+import { Site } from './types/config'
+Then we need to check that the SITE being passed in the terminal is actually valid:
+// Site
+const site: string = process.env.SITE ?? 'blank-page'
+// Validating service
+if (!ts.includes(Site, site)) {
+throw 'Invalid site'
+}
+If the site is valid, then we prepare our Next and Express applications:
+// Setting up Next App
+
+=== PAGE 434 ===
+Chapter 14
+405
+const { hostname } = Config
+const port = 3000
+const dev = process.env.NODE_ENV !== 'production'
+const nextApp = nextJS({ dev, hostname, port })
+const handle = nextApp.getRequestHandler()
+// Running Next App
+nextApp.prepare().then(() => {
+// Express application
+const app: Application = express()
+We also need to configure our cookieParser to be able to use cookies and set up our site’s static 
+directories, so we can have a shared public folder and then specific static directories inside 
+each site:
+// Cookies
+app.use(cookieParser())
+// Sites static directories
+app.use(express.static(path.join(__dirname, '../public')))
+app.use(express.static(path.join(__dirname, './sites/${Config.site}/
+static')))
+Next, we’ll handle our custom routes next and add additional protection to specific routes, such 
+as /dashboard. We want to ensure that only connected users can access this route. For this, we 
+will use the isConnected middleware to validate whether a user is connected. If the user is not 
+connected, we will redirect them to the login page:
+// Custom Routes
+app.get('/logout', (req: Request, res: Response) => {
+const redirect: any = req.query.redirectTo || '/'
+// The "at (accessToken)" cookie will be per site, like: "at-san-pancho" 
+or "at-codejobs".
+res.clearCookie('at-${Config.site}')
+res.redirect(redirect)
+})
+app.get(
+'/dashboard',
+isConnected(true, ['god', 'admin', 'editor'], '/login?redirectTo=/
+dashboard'),
+
+=== PAGE 435 ===
+MonoRepo Architecture
+406
+(req: Request, res: Response, next: NextFunction) => next()
+)
+Finally, all other traffic is going to be handled by Next.js; then we listen to port 3000:
+// Traffic handling
+app.all('*', (req: Request, res: Response) => handle(req, res))
+// Listening...
+app.listen(3000)
+Demo time!
+After all of those configurations, we are ready to run our project and see if it works. We will need 
+to run it in a similar way to how we did on the API, but instead of the SERVICE variable, we will use 
+the SITE variable. We also need to specify which site we want to run (san-pancho or codejobs). 
+If you try to run some other site that does not exist, you will get an error. Let’s try that to test the 
+validation of the sites:
+Figure 14.16: getGuests query
+The validation works fine. Now, let’s run our san-pancho site with the SITE=san-pancho npm 
+run dev command:
+Figure 14.17: San Pancho Index Page
+
+=== PAGE 436 ===
+Chapter 14
+407
+If everything works fine, you should see the preceding. Next, let’s run our codejobs site with 
+SITE=codejobs npm run dev:
+Figure 14.18: Codejobs Index Page
+Nice, so both our sites work as expected!
+Now it’s time to test our login page for each site. Let’s start with San Pancho:
+Figure 14.19: San Pancho Sign In page
+
+=== PAGE 437 ===
+MonoRepo Architecture
+408
+Then let’s test the Codejobs login page:
+Figure 14.20: Codejobs Sign In page
+Everything seems good so far. Now let’s test the login with our default credentials, which are 
+username: admin and password: 12345678:
+Figure 14.21: Dashboard for San Pancho
+Nice! So now we are connected to San Pancho’s dashboard. 
+
+=== PAGE 438 ===
+Chapter 14
+409
+One thing I want to highlight here is the cookie name we used for the user session, which is at-
+san-pancho. However, even if you already performed a login in San Pancho, if you try to access 
+the Codejobs dashboard, you will be required to log in again because each site session is inde-
+pendent of the other:
+Figure 14.22: Site cookies
+Finally, let’s test hitting a URL that does not exist on our sites:
+Figure 14.23: 404 error page
+You should see a 404 page that will be shared across both sites.
+
+=== PAGE 439 ===
+MonoRepo Architecture
+410
+Summary
+Congratulations on making it this far! Without a doubt, this chapter has been complex, yet incred-
+ibly interesting. Now, you have the bare bones ready to begin working on your personal websites.
+Throughout the course of this chapter, you acquired a comprehensive set of skills. You learned how 
+to create User models and GraphQL types, understand error handling, and set up custom services 
+like a CRM. You successfully navigated through the process of building a Sites system, enhanced 
+user experience with a Page Switcher, and established a shared login system. Furthermore, you 
+gained knowledge in managing configurations, working with “seeds” or default data for models, 
+and consolidating components into a command file such as server.ts. As a result, you are now 
+proficient in synchronizing models, starting up the Apollo Server, running tests, and effectively 
+troubleshooting any issues that may arise. In essence, you have established a robust foundation 
+in managing multi-site web systems, enhancing user experience, understanding GraphQL, and 
+troubleshooting.
+In the next chapter, you will have the opportunity to expand your skills further as you learn how 
+to improve the performance of your React applications.
+
+=== PAGE 440 ===
+15
+Improving the Performance of 
+Your Applications 
+The effective performance of a web application is critical to providing a good user experience 
+and improving conversions. The React library implements different techniques to render our 
+components fast and to touch the Document Object Model (DOM) as little as possible. Apply-
+ing changes to the DOM is usually expensive, so minimizing the number of operations is crucial.
+However, there are some scenarios where React cannot optimize the process, and it’s up to the 
+developer to implement specific solutions to make the application run smoothly.
+In this chapter, we will go through the basic concepts of React and we will learn how to use 
+some APIs to help the library find the optimal path to update the DOM without degrading the 
+user experience. We will also see some common mistakes that can harm our applications and 
+make them slower.
+We should avoid optimizing our components for the sake of it, and it is important to apply the 
+techniques that we will see in the following sections only when they are needed.
+In this chapter, we will cover the following topics:
+•	
+How reconciliation works and how we can help React do a better job using keys
+•	
+Common optimization techniques and common performance-related mistakes
+•	
+Useful tools and libraries to make our applications run faster
+•	
+What it means to use immutable data and how to do it
+
+=== PAGE 441 ===
+Improving the Performance of Your Applications
+412
+Technical requirements
+To complete this chapter, you will require the following:
+•	
+Node.js 19+
+•	
+Visual Studio Code
+You can find the code for this chapter in the book’s GitHub repository at https://github.com/
+PacktPublishing/React-18-Design-Patterns-and-Best-Practices-Fourth-Edition/tree/
+main/Chapter15. 
+How reconciliation works
+Most of the time, React is fast enough by default, and you do not need to do anything more to 
+improve the performance of your application. React utilizes different techniques to optimize the 
+rendering of the components on the screen.
+When React must display a component, it calls its render method and the render methods of its 
+children recursively. The render method of a component returns a tree of React elements, which 
+React uses to decide which DOM operations must be done to update the UI.
+Whenever the component state changes, React calls the render method on the nodes again, and 
+it compares the result with the previous tree of React elements. The library is smart enough to 
+figure out the minimum set of operations required to apply the expected changes on the screen. 
+This process is called reconciliation, and it is managed transparently by React. Thanks to that, 
+we can easily describe how our components must look at a given point in time in a declarative 
+way and let the library do the rest.
+React tries to apply the smallest possible number of operations on the DOM because touching 
+the DOM is an expensive operation.
+However, comparing two trees of elements is not free either, and React makes two assumptions 
+to reduce its complexity:
+•	
+If two elements have a different type, they render a different tree.
+•	
+Developers can use keys to mark children as stable across different render calls.
+The second point is interesting from a developer’s perspective because it gives us a tool to help 
+React render our views faster.
+By default, when coming back to the children of a DOM node, both lists of children are iterated 
+by React at the same time, and whenever there is a difference, it creates a mutation.
+
+=== PAGE 442 ===
+Chapter 15
+413
+Let’s look at some examples. Converting between the following two trees will work well when 
+adding an element at the end of the children:
+<ul>
+  <li>Carlos</li>
+  <li>Javier</li>
+</ul>
+<ul>
+  <li>Carlos</li>
+  <li>Javier</li>
+  <li>Emmanuel</li>
+</ul>
+The two <li>Carlos</li> trees match the two <li>Javier</li> trees by React and then it will 
+insert the <li>Emmanuel</li> tree.
+Inserting an element at the beginning produces inferior performance if implemented naively. If 
+we look at the example, it works very poorly when converting between these two trees:
+<ul>
+  <li>Carlos</li>
+  <li>Javier</li>
+</ul>
+<ul>
+  <li>Emmanuel</li>
+  <li>Carlos</li>
+  <li>Javier</li>
+</ul>
+Every child will be mutated by React instead of it realizing that it can keep the subtrees line, 
+<li>Carlos</li> and <li>Javier</li>, intact. This could possibly be an issue. This problem 
+can, of course, be solved and the way to do this is with the key attribute that is supported by 
+React. Let’s look at that next.
+Using keys
+Children possess keys and these keys are used by React to match children between the subse-
+quent tree and the original tree. The tree conversion can be made efficient by adding a key to our 
+previous example:
+<ul>
+
+=== PAGE 443 ===
+Improving the Performance of Your Applications
+414
+  <li key="2018">Carlos</li>
+  <li key="2019">Javier</li>
+</ul>
+<ul>
+  <li key="2017">Emmanuel</li>
+  <li key="2018">Carlos</li>
+  <li key="2019">Javier</li>
+</ul>
+React now knows that the 2017 key is the new one and that the 2018 and 2019 keys have just moved.
+Finding a key is not hard. The element that you will be displaying might already have a unique 
+ID. So, the key can just come from your data:
+<li key={element.id}>{element.title}</li>
+A new ID can be added to your model by you, or the key can be generated by some parts of the 
+content. The key must only be unique among its siblings; it does not have to be unique globally. 
+An item index in the array can be passed as a key, but it is now considered a bad practice. However, 
+if the items are never recorded, this can work well. The reorders will seriously affect performance.
+If you are rendering multiple items using a map function and you don’t specify the key property, 
+you will get this message: Warning: Each child in an array or iterator should have a unique key prop. 
+Let’s learn some optimization techniques in our next section.
+Optimization techniques
+It is important to notice that, in all the examples in this book, we are using apps that have either 
+been created with create-react-app or have been created from scratch, but always with the de-
+velopment version of React.
+Using the development version of React is very useful for coding and debugging as it gives you 
+all the necessary information to fix various issues. However, all the checks and warnings come 
+with a cost, which we want to avoid in production.
+So, the very first optimization that we should do to our applications is to build the bundle, set-
+ting the NODE_ENV environment variable to production. This is easy with webpack, and it is just 
+a matter of using DefinePlugin in the following way:
+new webpack.DefinePlugin({
+  'process.env': {
+
+=== PAGE 444 ===
+Chapter 15
+415
+   NODE_ENV: JSON.stringify('production')
+  }
+})
+To achieve the best performance, we not only want to create the bundle with the production flag 
+activated, but we also want to split our bundles, one for our application and one for node_modules.
+To do so, you need to use the new optimization node in webpack:
+optimization: {
+  splitChunks: {
+   cacheGroups: {
+    default: false,
+    commons: {
+     test: /node_modules/,
+     name: 'vendor',
+     chunks: 'all'
+    }
+   }
+  }
+}
+Webpack has two modes, development and production. By default, production mode is enabled, 
+meaning the code will be minified and compressed when you compile your bundles using pro-
+duction mode; you can specify it with the following code block:
+{
+  mode: process.env.NODE_ENV === 'production' ? 'production' : 
+'development',
+}
+Your webpack.config.ts file should look like this: 
+module.exports = {
+  entry: './index.ts',
+  optimization: {
+   splitChunks: {
+    cacheGroups: {
+     default: false,
+     commons: {
+      test: /node_modules/,
+
+=== PAGE 445 ===
+Improving the Performance of Your Applications
+416
+      name: 'vendor',
+      chunks: 'all'
+     }
+    }
+   }
+  },
+  plugins: [
+   new webpack.DefinePlugin({
+    'process.env': {
+     NODE_ENV: JSON.stringify('production')
+    }
+   })
+  ],
+  mode: process.env.NODE_ENV === 'production' ? 'production' : 
+'development'
+}
+With this webpack configuration, we are going to get very optimized bundles; one for our vendors 
+and one for the actual application.
+Tools and libraries
+In the next section, we will go through several techniques, tools, and libraries that we can apply 
+to our code base to monitor and improve performance.
+Immutability
+The new React Hooks, such as React.memo, use a shallow comparison method against the props, 
+which means that if we pass an object as a prop and we mutate one of its values, we do not get 
+the expected behavior.
+In fact, a shallow comparison cannot find mutation on the properties and the components never 
+get re-rendered, except when the object itself changes. One way to solve this issue is by using 
+immutable data, data that, once it gets created, cannot be mutated.
+For example, we can set the state in the following mode:
+const [state, setState] = useState({})
+const obj = state.obj
+obj.foo = 'bar'
+setState({ obj })
+
+=== PAGE 446 ===
+Chapter 15
+417
+Even if the value of the foo attribute of the object is changed, the reference to the object is still 
+the same and the shallow comparison does not recognize it.
+What we can do instead is create a new instance every time we mutate the object, as follows:
+const obj = Object.assign({}, state.obj, { foo: 'bar' })
+setState({ obj })
+In this case, we get a new object with the foo property set to bar, and the shallow comparison 
+will be able to find the difference. With ES6 and Babel, there is another way to express the same 
+concept in a more elegant way, and it is by using the object spread operator:
+const obj = {
+  ...state.obj,
+  foo: 'bar'
+} 
+setState({ obj })
+This structure is more concise than the previous one, and it produces the same result, but, at the 
+time of writing, it requires the code to be transpiled to be executed inside the browser.
+React provides some immutability helpers to make it easy to work with immutable objects, and 
+there is also a popular library called immutable.js, which has more powerful features, but it 
+requires you to learn new APIs.
+Babel plugins
+There are also a couple of interesting Babel plugins that we can install and use to improve the 
+performance of our React applications. They make the applications faster, optimizing parts of 
+the code at build time.
+The first one is the React constant elements transformer, which finds all the static elements 
+that do not change depending on the props and extracts them from render (or the functional 
+components) to avoid calling _jsx unnecessarily.
+Using a Babel plugin is straightforward. We first install it with npm:
+npm install --save-dev @babel/plugin-transform-react-constant-elements
+You need to create the .babelrc file and add a plugins key with an array that has a value of the 
+list of plugins that we want to activate:
+{
+
+=== PAGE 447 ===
+Improving the Performance of Your Applications
+418
+   "plugins": ["@babel/plugin-transform-react-constant-elements"]
+}
+The second Babel plugin that we can choose to use to improve performance is the React inline 
+elements transform, which replaces all the JSX declarations (or the _jsx calls) with a more opti-
+mized version of them to make execution faster.
+Install the plugin using the following command:
+npm install --save-dev @babel/plugin-transform-react-inline-elements
+Next, you can easily add the plugin to the array of plugins in the .babelrc file, as follows:
+{
+  "plugins": ["@babel/plugin-transform-react-inline-elements"]
+}
+Both plugins should be used only in production because they make debugging harder in devel-
+opment mode. So far, we have learned a lot of optimization techniques and how to configure 
+some plugins using webpack.
+Summary
+Our journey through performance is finished, and we can now optimize our applications to give 
+users a better UX.
+In this chapter, we learned how the reconciliation algorithm works and how React always tries 
+to take the shortest path to apply changes to the DOM. We can also help the library to optimize 
+its job by using keys. Once you’ve found your bottlenecks, you can apply one of the techniques 
+we have seen in this chapter to fix the issue.
+We have learned how refactoring and designing the structure of your components in the proper 
+way could provide a performance boost. Our goal is to have small components that do one single 
+thing in the best possible way. At the end of the chapter, we talked about immutability, and we’ve 
+seen why it’s important not to mutate data to make React.memo and shallowCompare do their 
+job. Finally, we ran through different tools and libraries that can make your applications faster.
+In the next chapter, we’ll look at testing and debugging using Jest, the React Testing Library, and 
+React DevTools.
+
+=== PAGE 448 ===
+Chapter 15
+419
+Join our community on Discord
+Join our community’s Discord space for discussion with the author and other readers:
+https://packt.link/React18DesignPatterns4e
+
+=== PAGE 449 ===
+
+=== PAGE 450 ===
+16
+Testing and Debugging
+Thanks to its components, React makes it easy to test our applications. There are many different 
+tools available that we can use to create tests with React. In this chapter, we will cover the most 
+popular ones to understand the benefits they provide.
+Jest is an all-in-one testing framework solution maintained by Christoph Nakazawa from Meta 
+and contributors within the community and aims to give you the best developer experience.
+By the end of this chapter, you’ll be able to create a test environment from scratch and write tests 
+for your application’s components.
+In this chapter, we will look at the following topics:
+•	
+Why it is important to test our applications and how they help developers move faster
+•	
+How to set up a Jest environment to test components using Enzyme
+•	
+What the React Testing Library is and why it is a must-have for testing React applications
+•	
+How to test events
+•	
+How to implement Vitest
+•	
+React DevTools and some error-handling techniques
+Technical requirements
+To complete this chapter, you will need the following:
+•	
+Node.js 19+
+•	
+Visual Studio Code
+

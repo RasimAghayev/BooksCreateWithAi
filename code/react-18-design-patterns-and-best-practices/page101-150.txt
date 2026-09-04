@@ -1,0 +1,1609 @@
+=== PAGE 101 ===
+Exploring Popular Composition Patterns
+72
+Summary
+In this chapter, we learned how to effectively compose and communicate between our reusable 
+components using props. By using props, we can create well-defined interfaces and decouple our 
+components from each other.
+We also explored two popular composition patterns: the container and presentational pattern, 
+which help us separate our logic and presentation for more specialized and focused components. 
+Additionally, we discovered Higher-Order Components (HOCs) as a way to handle context with-
+out tightly coupling our components to it, and the Function as Child pattern for composing 
+components dynamically.
+In the next chapter, we will dive into controlled vs. uncontrolled components, refs, handling 
+events, and animations in React.
+
+=== PAGE 102 ===
+5
+Writing Code for the Browser 
+There are some specific operations we can conduct when we work with React and the browser. For 
+example, we can ask our users to enter some information using forms. In this chapter, we will look 
+at how we can apply different techniques to deal with forms. We can implement uncontrolled 
+components and let the fields keep their internal states, or we can use controlled ones where we 
+have full control over the state of the fields.
+In this chapter, we will also look at how events in React work and how the library implements 
+some advanced techniques to give us a consistent interface across different browsers. We will 
+look at some interesting solutions that the React team has implemented to make the event system 
+very performant.
+After events, we will jump into refs to look at how we can access the underlying DOM nodes in 
+our React components. This represents a powerful feature, but it should be used carefully because 
+it breaks some of the conventions that make React easy to work with.
+After refs, we will look at how we can implement animations easily with the React add-ons. Finally, 
+we will learn how easy it is to work with Scalable Vector Graphics (SVG) in React, and how we 
+can create dynamically configurable icons for our applications.
+In this chapter, we will go through the following topics:
+•	
+Using different techniques to create forms with React
+•	
+Listening to DOM events and implementing custom handlers
+•	
+A way of performing imperative operations on DOM nodes using refs
+
+=== PAGE 103 ===
+Writing Code for the Browser
+74
+•	
+Creating simple animations that work across different browsers
+•	
+The React way of generating SVG
+Technical requirements
+To complete this chapter, you will need the following:
+•	
+Node.js 19+
+•	
+Visual Studio Code
+You can find the code for this chapter in the book’s GitHub repository: https://github.com/
+PacktPublishing/React-18-Design-Patterns-and-Best-Practices-Fourth-Edition/tree/
+main/Chapter05. 
+Understanding and implementing forms
+In this section, we are going to learn how to implement forms with React. As soon as we start 
+building a real application with React, we need to interact with the users. If we want to ask for 
+information from our users within the browser, forms are the most common solution. Due to 
+the way the library works and its declarative nature, dealing with input fields and other form 
+elements is non-trivial with React, but as soon as we understand its logic, it will become clear. 
+In the next sections, we are going to learn how to use uncontrolled and controlled components.
+Uncontrolled components
+Uncontrolled components are like regular HTML form inputs for which you will not be able to 
+manage the value yourself but instead, the DOM will take care of handling the value and you can 
+get this value by using a React ref. Let’s start with a basic example—displaying a form with an 
+input field and a Submit button.
+The code is pretty straightforward:
+import { FC, useState, ChangeEvent, MouseEvent } from 'react'
+const Uncontrolled: FC = () => {
+  const [value, setValue] = useState<string>('')
+  return (
+    <form>
+        <input type="text" />
+        <button>Submit</button>
+    </form>
+  )
+
+=== PAGE 104 ===
+Chapter 5
+75
+}
+export default Uncontrolled
+If we run the preceding snippet in the browser, we will see exactly what we expect—an input field 
+in which we can write something and a clickable button. This is an example of an uncontrolled 
+component, where we do not set the value of the input field, but we let the component manage 
+its own internal state.
+Most likely, we want to do something with the value of the element when the Submit button is 
+clicked. For example, we may want to send the data to an API endpoint.
+We can do this easily by adding an onChange listener (we will talk more about event listeners later 
+in this chapter). Let’s look at what it means to add a listener.
+We need to create the handleChange function:
+const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
+  console.log(e.target.value)
+}
+The event listener is receiving an event object, where the target represents the field that generated 
+the event, and we are interested in its value. We start by just logging it because it is important to 
+proceed with small steps, but we will store the value into the state soon.
+Finally, we render the form:
+return (
+  <form>
+    <input type="text" onChange={handleChange} />
+    <button>Submit</button>
+  </form>
+)
+If we render the component inside the browser and type the word React into the form field, we 
+will see something like the following inside the console:
+R
+Re
+Rea
+Reac
+React
+
+=== PAGE 105 ===
+Writing Code for the Browser
+76
+The handleChange listener is fired every time the value of the input changes. Therefore, our func-
+tion is called once for each typed character. The next step is to store the value that’s entered by 
+the user and make it available when the user clicks the Submit button.
+We just have to change the implementation of the handler to store it in the state instead of log-
+ging it, as follows:
+const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
+  setValue(e.target.value)
+}
+Getting notified of when the form is submitted is very similar to listening to the change event 
+of the input field; they are both events that are called by the browser when something happens.
+Let’s define the handleSubmit function, where we just log the value. In a real-world scenario, you 
+could send the data to an API endpoint or pass it to another component:
+const handleSubmit = (e: MouseEvent<HTMLButtonElement>) => {
+  e.preventDefault()
+  
+  console.log(value) // Here we are logging the value state
+}
+This handler is pretty straightforward; we just log the value currently stored in the state. We also 
+want to overcome the default behavior of the browser when the form is submitted, to perform a 
+custom action. This seems reasonable, and it works very well for a single field. The question now 
+is, what if we have multiple fields? Suppose we have tens of different fields?
+Let’s start with a basic example, where we create each field and handler manually and look at 
+how we can improve it by applying different levels of optimization.
+Let’s create a new form with first and last name fields. We can reuse the Uncontrolled component 
+and add some new states:
+const [firstName, setFirstName] = useState('')
+const [lastName, setLastName] = useState('')
+We initialize the two fields inside the state, and we define an event handler for each one of the 
+fields as well. As you may have noticed, this does not scale very well when there are lots of fields, 
+but it is important to understand the problem clearly before moving to a more flexible solution.
+
+=== PAGE 106 ===
+Chapter 5
+77
+Now, we implement the new handlers:
+const handleChangeFirstName = ({ target: { value } }) => {
+  setFirstName(value)
+}
+  
+const handleChangeLastName = ({ target: { value } }) => {
+  setLastName(value)
+}
+We also have to change the submit handler a little bit so that it displays the first and the last 
+name when it gets clicked:
+const handleSubmit = (e: MouseEvent<HTMLButtonElement>) => {
+  e.preventDefault()
+  
+  console.log(`${firstName} ${lastName}`) // Logging the firstName and 
+lastName states
+}
+Finally, we render the form:
+return (
+  <form onSubmit={handleSubmit}>
+    <input type="text" onChange={handleChangeFirstName} />
+    <input type="text" onChange={handleChangeLastName} />
+    <button>Submit</button>
+  </form>
+)
+We are ready to go: if we run the preceding component in the browser, we will see two fields, and 
+if we type Carlos into the first one and Santana into the second one, we will see the full name 
+displayed in the browser console when the form is submitted.
+Again, this works fine, and we can do some interesting things this way, but it does not handle 
+complex scenarios without requiring us to write a lot of boilerplate code.
+Let’s look at how we can optimize it a little bit. Our goal is to use a single change handler so that 
+we can add an arbitrary number of fields without creating new listeners.
+
+=== PAGE 107 ===
+Writing Code for the Browser
+78
+Let’s go back to the component and let’s change our states:
+const [values, setValues] = useState({ firstName: '', lastName: '' })
+We may still want to initialize the values, and later in this section, we will look at how to provide 
+prefilled values for the form.
+Now, the interesting bit is the way in which we can modify the onChange handler implementation 
+to make it work in different fields:
+const handleChange = ({ target: { name, value } }) => {   
+  setValues({
+    ...values,
+    [name]: value
+  })
+}
+As we have seen previously, the target property of the event we receive represents the input field 
+that has fired the event, so we can use the name of the field and its value as variables.
+We then have to set the name for each field:
+return (
+  <form onSubmit={handleSubmit}>
+    <input
+      type="text"
+      name="firstName"
+      onChange={handleChange}
+    />
+    <input
+      type="text"
+      name="lastName"
+      onChange={handleChange}
+    />
+    <button>Submit</button>
+  </form>
+)
+That’s it! We can now add as many fields as we want without creating additional handlers.
+
+=== PAGE 108 ===
+Chapter 5
+79
+Controlled components
+A controlled component is a React component that controls the values of input elements in a 
+form by using the component state.
+Here we are going to look at how we can prefill the form fields with some values, which we may 
+receive from the server or as props from the parent. To understand this concept fully, we will 
+start again from a very simple stateless function component, and we will improve it step by step.
+The first example shows a predefined value inside the input field:
+const Controlled = () => (
+  <form>
+    <input type="text" value="Hello React" />
+    <button>Submit</button>
+  </form>
+)
+If we run this component inside the browser, we realize that it shows the default value as expected, 
+but it does not let us change the value or type anything else inside it.
+The reason it does this is that in React, we declare what we want to see on the screen, and setting 
+a fixed-value attribute always results in rendering that value, no matter what other actions are 
+taken. This is unlikely to be a behavior we want in a real-world application.
+If we open the console, we get the following error message. React itself is telling us that we are 
+doing something wrong:
+You provided a `value` prop to a form field without an `onChange` handler. 
+This will render a read-only field.
+Now, if we just want the input field to have a default value and we want to be able to change it 
+by typing, we can use the defaultValue property:
+import { useState } from 'react'
+const Controlled = () => {
+  return (
+    <form>
+      <input type="text" defaultValue="Hello React" />
+      <button>Submit</button>
+    </form>
+  )
+
+=== PAGE 109 ===
+Writing Code for the Browser
+80
+}
+export default Controlled
+In this way, the field is going to show Hello React when it is rendered, but then the user can 
+type anything inside it and change its value. Now let’s add some states:
+const [values, setValues] = useState({ firstName: 'Carlos', lastName: 
+'Santana' })
+The handlers are the same as the previous ones:
+const handleChange = ({ target: { name, value } }) => {
+  setValues({
+    [name]: value
+  })
+}
+  
+const handleSubmit = (e) => {
+  e.preventDefault()
+  
+  console.log(`${values.firstName} ${values.lastName}`)
+}
+In fact, we will use the value attributes of the input fields to set their initial values, as well as the 
+updated one:
+return (
+  <form onSubmit={handleSubmit}>
+    <input
+        type="text"
+        name="firstName"
+        value={values.firstName}
+        onChange={handleChange}
+    />
+    <input
+        type="text"
+        name="lastName"
+        value={values.lastName}
+        onChange={handleChange}
+    />
+
+=== PAGE 110 ===
+Chapter 5
+81
+    <button>Submit</button>
+  </form>
+)
+The first time the form is rendered, React uses the initial values from the state as the value of the 
+input fields. When the user types something into the field, the handleChange function is called 
+and the new value for the field is stored in the state.
+When the state changes, React re-renders the component and uses it again to reflect the current 
+values of the input fields. We now have full control over the values of the fields, and we call this 
+pattern controlled components.
+In the next section, we are going to work with events, which are a fundamental part of React to 
+handle data coming from forms.
+Handling events
+Events work in a slightly different way across various browsers. React tries to abstract the way 
+events work and give developers a consistent interface to deal with. This is a great feature of 
+React because we can forget about the browsers we are targeting and write event handlers and 
+functions that are vendor-agnostic.
+To offer this feature, React introduced the concept of the synthetic event. A synthetic event is an 
+object that wraps the original event object provided by the browser, and it has the same properties, 
+no matter where it is created.
+To attach an event listener to a node and get the event object when the event is fired, we can use 
+a simple convention that recalls the way events are attached to the DOM nodes. In fact, we can 
+use the word on plus the camelCased event name (for example, onKeyDown) to define the callback 
+to be fired when the events happen. A popular convention is to name the event handler functions 
+after the event name and prefix them using handle (for example, handleKeyDown).
+We have seen this pattern in action in the previous examples, where we were listening to the 
+onChange event of the form fields. Let’s reiterate a basic event listener example to see how we can 
+organize multiple events inside the same component in a nicer way. We are going to implement 
+a simple button, and we start, as usual, by creating a component:
+const Button = () => {
+}
+export default Button
+
+=== PAGE 111 ===
+Writing Code for the Browser
+82
+Then we define the event handler:
+const handleClick = (syntheticEvent) => {
+      console.log(syntheticEvent instanceof MouseEvent)
+      console.log(syntheticEvent.nativeEvent instanceof MouseEvent)
+    }
+As you can see here, we are doing a very simple thing: we just check the type of the event object 
+we receive from React and the type of native event attached to it. We expect the first to return 
+false and the second to return true.
+You should never need to access the original native event, but it is good to know you can do it 
+if you need to. Finally, we define the button with the onClick attribute to which we attach our 
+event listener:
+return (
+  <button onClick={handleClick}>Click me!</button>
+)
+Now, suppose we want to attach a second handler to the button that listens to the double-click 
+event. One solution would be to create a new separate handler and attach it to the button using 
+the onDoubleClick attribute, as follows:
+<button
+  onClick={handleClick}
+  onDoubleClick={handleDoubleClick}
+>
+  Click me!
+</button>
+Remember that we always aim to write less boilerplate and avoid duplicating code. For that 
+reason, a common practice is to write a single event handler for each component, which can 
+trigger different actions according to the event type.
+This technique is described in a collection of patterns by Michael Chan:
+http://reactpatterns.com/#event-switch
+Let’s implement the generic event handler:
+const handleEvent = (event) => {
+  switch (event.type) {
+
+=== PAGE 112 ===
+Chapter 5
+83
+    case 'click':
+        console.log('clicked')
+      break
+  
+    case 'dblclick':
+        console.log('double clicked')
+      break
+  
+    default:
+        console.log('unhandled', event.type)
+  }
+}
+The generic event handler receives the event object and switches on the event type to fire the 
+right action. This is particularly useful if we want to call a function on each event (for example, 
+analytics) or if some events share the same logic.
+Finally, we attach the new event listener to the onClick and onDoubleClick attributes:
+return (
+  <button
+    onClick={handleEvent}
+    onDoubleClick={handleEvent}
+  >
+    Click me!
+  </button>
+)
+From this point on, whenever we need to create a new event handler for the same component, 
+instead of creating a new method and binding it, we can just add a new case to the switch.
+A couple more interesting things to know about events in React are that synthetic events are 
+reused and that there is a single global handler. The first concept means that we cannot store a 
+synthetic event and reuse it later because it becomes null right after the action. This technique 
+is very good in terms of performance, but it can be problematic if we want to store the event in-
+side the state of the component for some reason. To solve this problem, React gives us a persist 
+method on the synthetic events, which we can call to make the event persistent so that we can 
+store it and retrieve it later.
+
+=== PAGE 113 ===
+Writing Code for the Browser
+84
+The second very interesting implementation detail is again about performance, and it is to do 
+with the way React attaches the event handlers to the DOM.
+Whenever we use the on attribute, we are describing to React the behavior we want to achieve, 
+but the library does not attach the actual event handler to the underlying DOM nodes.
+What it does instead attaches a single event handler to the root element, which listens to all the 
+events, thanks to event bubbling. When an event we are interested in is fired by the browser, 
+React calls the handler on the specific components on its behalf. This technique is called event 
+delegation and is used for memory and speed optimization.
+In our next section, we are going to explore React refs and see how we can take advantage of them.
+Exploring refs
+One of the reasons people love React is that it is declarative. Being declarative means that you 
+just describe what you want to be displayed on the screen at any point in time and React takes 
+care of the communications with the browser. This feature makes React very easy to reason about 
+and very powerful at the same time.
+However, there might be some cases where you need to access the underlying DOM nodes to 
+perform some imperative operations. This should be avoided because, in most cases, there is a 
+more React-compliant solution to achieve the same result, but it is important to know that we 
+have the option to do it and to know how it works so that we can make the right decision.
+Suppose we want to create a simple form with an input element and a button, and we want it to 
+behave in such a way that when the button is clicked, the input field gets focused. What we want 
+to do is call the focus method on the input node, the actual DOM instance of the input, inside 
+the browser’s window.
+Let’s create a component called Focus; you need to import useRef and create an inputRef constant:
+import { useRef } from 'react'
+const Focus = () => {
+  const inputRef = useRef(null)
+}
+export default Focus
+Then, we implement the handleClick method:
+const handleClick = () => {
+  inputRef.current.focus()
+
+=== PAGE 114 ===
+Chapter 5
+85
+}
+As you can see, we are referencing the current attribute of inputRef and calling the focus method 
+on it.
+To understand where it comes from, you just have to check the implementation of the render:
+return (
+  <>
+    <input
+      type="text"
+      ref={inputRef}
+    />
+    <button onClick={handleClick}>Set Focus</button>
+  </>
+)
+Here comes the core of the logic. We create a form with an input element inside it and we define 
+a function on its ref attribute.
+The callback we defined is called when the component gets mounted, and the element parameter 
+represents the DOM instance of the input. It is important to know that, when the component gets 
+unmounted, the same callback is called with a null parameter to free the memory.
+What we are doing in the callback is storing the reference of the element to be able to use it in 
+the future (for example, when the handleClick method is fired). Then, we have the button with 
+its event handler. Running the preceding code in a browser will show the form with the field and 
+the button, and clicking on the button will focus the input field, as expected.
+As we mentioned previously, in general, we should try to avoid using refs because they force the code to 
+be more imperative, and they become harder to read and maintain.
+Understanding forwardRef
+React.forwardRef is a useful feature that allows you to pass a ref (short for “reference”) from a 
+parent component down to a child component. This article will provide a basic introduction to 
+React.forwardRef and offer a straightforward example to help you understand its practical usage.
+Refs in React are a mechanism to access and interact with the DOM elements rendered by a com-
+ponent. They provide a way to modify the DOM or access DOM properties directly.
+
+=== PAGE 115 ===
+Writing Code for the Browser
+86
+React.forwardRef is a higher-order component that allows you to pass a ref down to a child 
+component. This is useful when you need to access the child component’s DOM element or in-
+stance from the parent component.
+To create a component that can accept a forwarded ref, you will use the React.forwardRef func-
+tion, which takes a render function as an argument. This render function receives two parameters: 
+the component’s props and the forwarded ref.
+import React from 'react'
+const TextInputWithRef = React.forwardRef((props, ref) => {
+  return <input ref={ref} type="text" {...props} />
+})
+export default TextInputWithRef
+To use the forwardRef component, you will create a ref using the useRef() hook and assign it 
+to the forwardRef component.
+import React, { useRef } from 'react'
+import TextInputWithRef from './TextInputWithRef'
+function App() {
+  const inputRef = useRef()
+  const handleClick = () => {
+    inputRef.current.focus()
+  }
+  return (
+    <div>
+      <TextInputWithRef ref={inputRef} />
+      <button onClick={handleClick}>Focus on input</button>
+    </div>
+  )
+}
+export default App
+In this example, we created a TextInputWithRef component that accepts a forwarded ref. In the App 
+component, we use the useRef() hook to create a ref, which we then pass to the TextInputWithRef 
+component. When the "Focus on input" button is clicked, the handleClick function is called, 
+which focuses on the input element.
+React.forwardRef is a powerful feature that allows you to pass refs from parent components to 
+child components, providing greater control over the child components’ behavior. 
+
+=== PAGE 116 ===
+Chapter 5
+87
+By understanding the basics of refs and forwardRef, and examining a simple example, you can 
+effectively utilize this feature in your React applications.
+With the nuances of utilizing React.forwardRef for superior control over components explored, 
+we can now shift our focus toward another pivotal aspect of enhancing user experiences in React 
+applications: implementing animations.
+Implementing animations
+When we think about UIs and the browser, we must surely think about animations as well. An-
+imated UIs are more pleasant for users, and they are a very important tool to show users that 
+something has happened or is about to occur.
+This section does not aim to be an exhaustive guide to creating animations and beautiful UIs; the 
+goal here is to provide you with some basic information about the common solutions we can put 
+in place to animate our React components.
+For a UI library such as React, it is crucial to provide an easy way for developers to create and 
+manage animations. React comes with an add-on, called react-transition-group, which is 
+a component that helps us build animations in a declarative way. Again, being able to perform 
+operations declaratively is incredibly powerful, and it makes the code much easier to reason 
+about and share with the team.
+The first thing we need to do to start building an animated component is to install the add-on:
+npm install --save react-transition-group @types/react-transition-group
+Once we have done that, we can import the component:
+import { TransitionGroup} from 'react-transition-group'
+Then, we just wrap the component to which we want to apply the animation:
+const Transition = () => (
+  <TransitionGroup
+    transitionName="fade"
+    transitionAppear
+    transitionAppearTimeout={500}
+  >
+    <h1>Hello React</h1>
+  </TransitionGroup>
+)
+
+=== PAGE 117 ===
+Writing Code for the Browser
+88
+As you can see, there are some props that need explaining. First, we are declaring the transitionName 
+prop. ReactTransitionGroup applies a class with the name of that property to the child element 
+so that we can then use CSS transitions to create our animations.
+With a single class, we cannot easily create a proper animation, and that is why the transition 
+group applies multiple classes according to the state of the animation. In this case, with the 
+transitionAppear prop, we are telling the component that we want to animate the children 
+when they appear on the screen.
+So, what the library does is apply the fade-appear class (where fade is the value of the 
+transitionName prop) to the component as soon as it gets rendered. On the next tick, the fade-
+appear-active class is applied so that we can fire our animation from the initial state to the new 
+one, using CSS.
+We also have to set the transitionAppearTimeout property to tell React the length of the anima-
+tion so that it doesn’t remove elements from the DOM before animations are completed.
+The CSS to make an element fade-in is as follows.
+First, we define the opacity of the element in the initial state:
+.fade-appear {
+  opacity: 0.01;
+}
+Then, we define our transition using the second class, which starts as soon as it gets applied to 
+the element:
+.fade-appear.fade-appear-active {
+  opacity: 1;
+  transition: opacity .5s ease-in;
+}
+We are transitioning the opacity from 0.01 to 1 in 500ms using the ease-in function. This is pretty 
+easy, but we can create more complex animations, and we can also animate different states of 
+the component. For example, the *-enter and *-enter-active classes are applied when a new 
+element is added as a child of the transition group. A similar thing applies to remove elements.
+After delving into the dynamic world of animations and understanding how they can dramatically 
+enhance our React components, let’s now turn our attention to another fascinating facet of web 
+design: the exploration of Scalable Vector Graphics (SVG).
+
+=== PAGE 118 ===
+Chapter 5
+89
+Exploring SVG
+Finally, one of the most interesting techniques we can apply in the browser to draw icons and 
+graphs is SVG.
+SVG is great because it is a declarative way of describing vectors and it fits perfectly with the 
+purposes of React. We used to use icon fonts to create icons, but they have well-known problems, 
+with the first being that they are not accessible. It is also pretty hard to position icon fonts with 
+CSS, and they do not always look beautiful in all browsers. These are the reasons we should prefer 
+SVG for our web applications.
+From a React point of view, it does not make any difference if we output a div or an SVG element 
+from the render method, and this is what makes it so powerful. We also tend to choose SVG 
+because we can easily modify them at runtime using CSS and JavaScript, which makes them an 
+excellent candidate for the functional approach of React.
+So, if we think about our components as a function of their props, we can easily imagine how we 
+can create self-contained SVG icons that we can manipulate by passing different props to them. A 
+common way to create SVG in a web app with React is to wrap our vectors into a React component 
+and use the props to define their dynamic values.
+Let’s look at a simple example where we draw a blue circle, thus creating a React component that 
+wraps an SVG element:
+const Circle = ({ x, y, radius, fill }) => (
+  <svg>
+    <circle cx={x} cy={y} r={radius} fill={fill} />
+  </svg>
+)
+As you can see, we can easily use a stateless functional component that wraps the SVG markup, 
+and it accepts the same props as SVG does.
+An example usage is as follows:
+<Circle x={20} y={20} radius={20} fill="blue" />
+We can obviously use the full power of React and set some default parameters so that, if the circle 
+icon is rendered without props, we still show something.
+
+=== PAGE 119 ===
+Writing Code for the Browser
+90
+For example, we can define the default color:
+const Circle = ({ x, y, radius, fill = 'red' }) => (...)
+This is pretty powerful when we build UIs, especially in a team where we share our icon set and 
+we want to have some default values in it, but we also want to let other teams decide their settings 
+without having to recreate the same SVG shapes.
+However, in some cases, we prefer to be stricter and fix some values to keep consistency. With 
+React, this is a super simple task.
+For example, we can wrap the base circle component into RedCircle, as follows:
+const RedCircle = ({ x, y, radius }) => (
+  <Circle x={x} y={y} radius={radius} fill="red" />
+)
+Here, the color is set by default, and it cannot be changed, while the other props are transparently 
+passed to the original circle.
+The following screenshot shows two circles, blue and red, that are generated by React using SVG:
+Figure 5.1: Two circles, blue and red SVGs
+We can apply this technique and create different variations of the circle, such as SmallCircle 
+and RightCircle, and everything else we need to build our UIs.
+
+=== PAGE 120 ===
+Chapter 5
+91
+Summary
+In this chapter, we explored the different capabilities of React when targeting the browser, from 
+creating forms and handling events to animating SVGs. We also learned about the new useRef 
+Hook, which provides a simple way to access DOM nodes. React’s declarative approach simplifies 
+the management of complex web applications. Additionally, React provides a way to access the 
+DOM nodes, allowing for imperative operations if needed, making it easier to integrate React 
+with existing libraries. 
+In the next chapter, we will delve into CSS and inline styles, and explore the concept of writing 
+CSS in JavaScript.
+
+=== PAGE 121 ===
+
+=== PAGE 122 ===
+6
+Making Your Components Look 
+Beautiful
+Our journey into React best practices and design patterns has now reached the point where we 
+want to make our components look beautiful. To do that, we will go through all the reasons why 
+regular CSS may not be the best approach for styling components, and we will check out various 
+alternative solutions.
+Starting with inline styles, then CSS modules, and styled-components, this chapter will guide 
+you through the magical world of CSS in JavaScript.
+In this chapter, we will cover the following topics:
+•	
+Common problems with regular CSS at scale
+•	
+What it means to use inline styles in React and their downsides
+•	
+How to set up a project from scratch using Webpack and CSS modules
+•	
+Features of CSS modules and why they represent a great solution to avoid global CSS
+•	
+styled-components, a new library that offers a modern approach to styling React com-
+ponents
+Technical requirements
+To complete this chapter, you will need the following:
+•	
+Node.js 19+
+•	
+Visual Studio Code
+
+=== PAGE 123 ===
+Making Your Components Look Beautiful
+94
+You can find the code for this chapter in the book’s GitHub repository: https://github.com/
+PacktPublishing/React-18-Design-Patterns-and-Best-Practices-Fourth-Edition/tree/
+main/Chapter06. 
+CSS in JavaScript
+In November 2014, Christopher Chedeau, also known as vjeux, gave a talk at the NationJS con-
+ference (https://blog.vjeux.com/2014/javascript/react-css-in-js-nationjs.html) that 
+sparked a revolution in the way React components are styled. As a contributor to React and an 
+employee of Meta, Christopher outlined the many issues Facebook faced with CSS at scale. Un-
+derstanding these issues is important because they are common in web development and will 
+help us introduce concepts such as inline styles and locally scoped class names.
+The following is a list of the issues with CSS, which are basically problems with CSS at scale:
+•	
+Global namespace
+•	
+Dependencies
+•	
+Dead code elimination
+•	
+Minification
+•	
+Sharing constants
+•	
+Non-deterministic resolution
+•	
+Isolation
+The first well-known problem of CSS is that all the selectors are global. No matter how organized 
+our styles are by using namespaces or a procedure such as the Block, Element, Modifier (BEM) 
+methodology, we are always polluting the global namespace, which we all know is wrong. It is 
+not only wrong in principle, but it also leads to many errors in big code bases, and it makes main-
+tainability very hard in the long term. Working with big teams, it is non-trivial to know whether 
+a particular class or element has already been styled, and most of the time, we tend to add more 
+classes instead of reusing existing ones.
+The second problem with CSS regards the definition of the dependencies. It is very hard, in fact, 
+to state clearly that a particular component depends on a specific CSS and that the CSS has to be 
+loaded for the style to be applied. Since styles are global, any style from any file can be applied to 
+any element, and losing control is very easy.
+The third is that frontend developers tend to use pre-processors to be able to split their CSS into 
+submodules, but in the end, a big, global CSS bundle is generated for the browser. 
+
+=== PAGE 124 ===
+Chapter 6
+95
+Since CSS code bases tend to become huge quickly, we lose control over them, and the third prob-
+lem is to do with dead code elimination. It is not easy to quickly identify which styles belong to 
+which component, and this makes deleting code incredibly hard. In fact, due to the cascading 
+nature of CSS, removing a selector or a rule can result in an unintended result within the browser.
+Another pain point of working with CSS concerns the minification of the selectors and the class 
+names, both in the CSS and in the JavaScript application. It might seem an easy task, but it is 
+not, especially when classes are applied on the fly or concatenated in the client; this is the fourth 
+problem.
+Not being able to minify and optimize class names is bad for performance, and it can make a huge 
+difference to the size of the CSS. Another pretty common operation that is non-trivial with regular 
+CSS is sharing constants between the styles and the client application. We often need to know the 
+height of a header, for example, to recalculate the position of other elements that depend on it.
+Usually, we read the value in the client using the JavaScript APIs, but the optimal solution would 
+be to share constants and avoid doing expensive calculations at runtime. This represents the fifth 
+problem that vjeux and the other developers at Facebook tried to solve.
+The sixth issue concerns the non-deterministic resolution of CSS. In fact, in CSS, the order matters, 
+and if the CSS is loaded on demand, the order is not guaranteed, which leads to the wrong styles 
+being applied to the elements.
+Suppose, for example, that we want to optimize the way we request CSS, loading the CSS related 
+to a particular page only when the users navigate to it. If the CSS related to this last page has 
+some rules that also apply to the elements of different pages, the fact that it has been loaded last 
+could affect the styling of the rest of the app. For example, if the user goes back to the previous 
+page, they might see a page with a UI that is slightly different than the first time they visited it.
+It is incredibly hard to control all the various combinations of styles, rules, and navigation paths, 
+but again, being able to load the CSS when needed could have a critical impact on the perfor-
+mance of a web application.
+Last but not least, the seventh problem of CSS, according to Christopher Chedeau, is related to 
+isolation. In CSS, it is almost impossible to achieve proper isolation between files or components. 
+Selectors are global, and they can easily be overwritten. It is tricky to predict the final style of an 
+element just by knowing the class names applied to it because styles are not isolated, and other 
+rules in other parts of the application can affect unrelated elements. This can be solved by using 
+inline styles.
+
+=== PAGE 125 ===
+Making Your Components Look Beautiful
+96
+In the following section, we will look at what it means to use inline styles with React and the 
+benefits and downsides of it.
+Understanding and implementing inline styles
+The official React documentation suggests developers use inline styles to style their React com-
+ponents. This seems odd because we all learned in past years that separating the concerns is 
+important and we should not mix markup and CSS.
+React tries to change the concept of separation of concerns by moving it from the separation of 
+technologies to the separation of components. Separating markup, styling, and logic into differ-
+ent files when they are tightly coupled and where one cannot work without the other is just an 
+illusion. Even if it helps keep the project structure cleaner, it does not give any real benefit.
+In React, we compose components to create applications where components are a fundamental 
+unit of our structure. We should be able to move components across the application, and they 
+should provide the same result regarding both logic and UI, no matter where they get rendered.
+This is one of the reasons why collocating the styles within our components and applying them 
+using inline styles on the elements could make sense in React.
+First, let’s look at an example of what it means to use the style attribute of the nodes to apply 
+the styling to our components in React. We are going to create a button with the text Click me! 
+and we are going to apply a color and background color to it:
+const style = {
+  color: 'palevioletred',
+  backgroundColor: 'papayawhip'
+}
+  
+const Button = () => <button style={style}>Click me!</button>
+As you can see, it is pretty easy to style elements with inline styles in React. We just have to create 
+an object where the attributes are the CSS rules, and the values are the values we would use in 
+a regular CSS file.
+The only differences are that the hyphenated CSS rules must be camelCased to be JavaScript-com-
+pliant, and the values are strings, so they have to be wrapped in quote marks.
+
+=== PAGE 126 ===
+Chapter 6
+97
+There are some exceptions regarding the vendor prefixes. For example, if we want to define a tran-
+sition on webkit, we should use the WebkitTransition attribute, where the webkit prefix begins 
+with a capital letter. This rule applies to all the vendor prefixes, except for ms, which is lowercase.
+Other use cases are numbers – they can be written without quotes or units of measurement, and 
+by default, they are treated as pixels.
+The following rule applies a height of 100 pixels:
+const style = {
+  height: 100
+}
+By using inline styles, we can also do things that are hard to implement with regular CSS. For 
+example, we can recalculate some CSS values on the client at runtime, which is a very powerful 
+concept, as you will see in the following example.
+Suppose you want to create a form field in which the font size changes according to its value. So, 
+if the value of the field is 24, the font size is going to be 24 pixels. With normal CSS, this behavior 
+is almost impossible to reproduce without putting in a huge effort and duplicated code.
+Let’s look at how easy it is to use inline styles instead, by creating a FontSize component first 
+and then declaring a value state:
+import { useState, ChangeEvent } from 'react'
+const FontSize = () => {
+  const [value, setValue] = useState<number>(16)
+}
+export default FontSize
+We implement a simple change handler, where we use the target attribute of the event to retrieve 
+the current value of the field:
+const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
+  setValue(Number(e.target.value))
+}
+Finally, we render the input file of the number type, which is a controlled component because we 
+keep its value updated by using the state. It also has an event handler, which is fired every time 
+the value of the field changes.
+
+=== PAGE 127 ===
+Making Your Components Look Beautiful
+98
+Last but not least, we use the style attribute of the field to set its font-size value. As you can see, 
+we are using the camelCased version of the CSS rule to follow the React convention:
+return (
+  <input
+    type="number"
+    value={value}
+    onChange={handleChange}
+    style={{ fontSize: value }}
+  />
+)
+Rendering the preceding component, we can see an input field that changes its font size according 
+to its value. The way it works is that when the value changes, we store the new value of the field 
+inside the state. Modifying the state forces the component to re-render, and we use the new state 
+value to set the display value of the field and its font size; it’s easy and powerful.
+Every solution in computer science has its downsides, and it always represents a trade-off. In the 
+case of inline styles, unfortunately, the problems are many.
+For example, with inline styles, it is not possible to use pseudo-selectors (for example, :hover) 
+and pseudo-elements, which is a pretty significant limitation if you are creating a UI with inter-
+actions and animations.
+There are some workarounds, and, for example, you can always create real elements instead of 
+pseudo-elements, but for the pseudo-classes, it is necessary to use JavaScript to simulate the CSS 
+behavior, which is not optimal.
+The same applies to media queries, which cannot be defined using inline styles, and it makes it 
+harder to create responsive web applications. Since styles are declared using JavaScript objects, 
+it is also not possible to use style fallbacks:
+display: -webkit-flex;
+display: flex;
+JavaScript objects cannot have two attributes with the same name. Style fallbacks should be 
+avoided, but it is always good to have the ability to use them if needed.
+
+=== PAGE 128 ===
+Chapter 6
+99
+Another feature of CSS that it is not possible to emulate using inline styles is animations. The 
+workaround here is to define animations globally and use them inside the style attribute of the 
+elements. With inline styles, whenever we need to override a style with regular CSS, we are always 
+forced to use the !important keyword, which is bad practice because it prevents any other style 
+from being applied to the element.
+The most difficult thing that happens to work with inline styles is debugging. We tend to use 
+class names to find elements in the browser DevTools to debug and check which styles have been 
+applied. With inline styles, all the styles of the items are listed in their style attribute, which 
+makes it very hard to check and debug the result.
+For example, the button that we created earlier in this section is rendered in the following way:
+<button style="color:palevioletred;background-color:papayawhip;">Click 
+me!</button>
+By itself, it does not seem very hard to read, but if you imagine you have hundreds of elements 
+and hundreds of styles, you realize that the problem becomes very complicated.
+Also, if you are debugging a list where every single item has the same style attribute, and if you 
+modify one on the fly to check the result in the browser, you will see that you are applying the 
+styles only to it and not to all the other siblings, even if they share the same style.
+Last but not least, if we render our application on the server side (we will cover this topic in Chapter 
+12, Server-Side Rendering), the size of the page is bigger when using inline styles.
+With inline styles, we are putting all the content of the CSS into the markup, which adds an extra 
+number of bytes to the file that we send to the clients and makes the web application appear 
+slower. Compression algorithms can help with that because they can easily compress similar 
+patterns, and, in some cases, loading the critical path CSS is a good solution; but in general, we 
+should try to avoid it.
+It turns out that inline styles cause more problems than the problems they try to solve. For this 
+reason, the community created different tools to solve the problems of inline styles but keeping 
+the styles inside the components, or local to the components, to get the best of both worlds.
+After Christopher Chedeau’s talk, a lot of developers started talking about inline styles, and many 
+solutions and experiments have been made to find new ways of writing CSS in JavaScript. In the 
+beginning, there were two or three solutions, while today there are more than 40.
+
+=== PAGE 129 ===
+Making Your Components Look Beautiful
+100
+In the next section, we are going to learn how to use the CSS modules.
+Using CSS modules
+If you feel that inline styles are not a suitable solution for your project and your team, but you 
+still want to keep the styles as close as possible to your components, there is a solution for you, 
+called CSS modules. The CSS modules are CSS files in which all class names and animation names 
+are scoped locally by default. Let’s see how we can use them in our projects; but first, we need 
+to configure webpack.
+Webpack 5
+Before diving into CSS modules and learning how they work, it is important to understand how 
+they were created and the tools that support them.
+In Chapter 3, Cleaning Up Your Code, we looked at how we can write ES6 code and transpile it by 
+using Babel and its presets. As soon as the application grows, you may want to split your code 
+base into modules as well.
+You can use Webpack or Browserify to divide the application into small modules that you can 
+import whenever you need them, while still creating a big bundle for the browser. These tools 
+are called module bundlers, and what they do is load all the dependencies of your application 
+into a single bundle that can be executed in the browser, which does not have any concept of 
+modules (yet).
+In the React world, Webpack is especially popular because it offers many interesting and useful 
+features, with the first one being the concept of loaders. With Webpack, you can potentially load 
+any dependencies other than JavaScript, if there is a loader for them. For example, you can load 
+JSON files, as well as images and other assets, inside the bundle.
+In May 2015, Mark Dalgleish, one of the creators of CSS modules, figured out that you could im-
+port CSS inside a Webpack bundle as well, and he pushed the concept forward. He thought that, 
+since the CSS could be imported locally into a component, all the imported class names could be 
+locally scoped as well, this is great because this will isolate the styles.
+After tracing the conceptual evolution of locally scoped CSS by one of its pioneers, Mark Dalgleish, 
+and understanding how it revolutionized style isolation in Webpack bundles, let us transition 
+into a more practical arena. The next section will guide us in setting up a project that utilizes 
+these principles.
+
+=== PAGE 130 ===
+Chapter 6
+101
+Setting up a project
+In this section, we will look at how to set up a very simple Webpack application, using Babel to 
+transpile the JavaScript and CSS modules to load our locally scoped CSS into the bundle. We will 
+also go through all the features of CSS modules and look at the problems they can solve. The first 
+thing to do is move to an empty folder and run the following command:
+npm init
+This will create a package.json file with some defaults.
+Now, it is time to install the dependencies, with the first one being Webpack and the second 
+being webpack-dev-server, which we will use to run the application locally and to create the 
+bundle on the fly:
+npm install --save-dev webpack webpack-dev-server webpack-cli
+Once Webpack is installed, it is time to install Babel and its loader. Since we are using Webpack 
+to create the bundle, we will use the Babel loader to transpile our ES6 code within Webpack itself:
+npm install --save-dev @babel/core @babel/preset-env @babel/preset-react 
+ts-loader
+Finally, we install style-loader and the CSS loader, which are the two loaders we need to enable 
+the CSS modules:
+npm install --save-dev style-loader css-loader
+There is one more thing to do to make things easier, and that is to install html-webpack-plugin, 
+which is a plugin that can create an HTML page to host our JavaScript application on the fly, just 
+by looking into the Webpack configuration and without us needing to create a regular file. Also, 
+we need to install the fork-ts-checker-webpack-plugin package to make TypeScript work 
+with Webpack:
+npm install --save-dev html-webpack-plugin fork-ts-checker-webpack-plugin 
+typescript
+Last but not least, we install react and react-dom to use them in our simple example:
+npm install react react-dom
+Now that all the dependencies are installed, it is time to configure everything to make it work.
+
+=== PAGE 131 ===
+Making Your Components Look Beautiful
+102
+First, you need to create a .babelrc file in your root path:
+{
+  "presets": ["@babel/preset-env", "@babel/preset-react"]
+}
+The first thing to do is add an npm script in package.json to run the webpack-dev-server, which 
+will serve the application in development:
+"scripts": {
+  "dev": "webpack serve --mode development --port 3000"
+}
+Webpack needs a configuration file to know how to handle the different types of dependencies 
+we are using in our application, and to do so, we must create a file called webpack.config.ts, 
+which exports an object:
+module.exports = {}
+The object we export represents the configuration object used by Webpack to create the bundle, 
+and it can have different properties depending on the size and the features of the project.
+We want to keep our example very simple, so we are going to add three attributes. The first one 
+is entry, which tells Webpack where the main file of our application is:
+entry: './src/index.tsx'
+The second one is module, which is where we tell Webpack how to load the external dependen-
+cies. It has an attribute called rules, where we set a specific loader for each one of the file types:
+module: {
+  rules: [
+    {
+        test: /\.(tsx|ts)$/,
+        exclude: /node_modules/,
+        use: {
+            loader: 'ts-loader',
+In Webpack 5, you need to use this way to call webpack instead of webpack-dev-
+server but you still need to have this package installed.
+
+=== PAGE 132 ===
+Chapter 6
+103
+            options: {
+          transpileOnly: true
+            }
+        }
+    },
+    {
+        test: /\.css/,
+        use: [
+            'style-loader',
+            'css-loader?modules=true'
+        ]
+    }
+  ]
+}
+We are saying that the files that match the .ts or .tsx regular expression are loaded using ts-
+loader so that they get transpiled and loaded into the bundle.
+You may also have noticed that we added our presets in the .babelrc file. As we saw in Chapter 
+3, Cleaning Up Your Code, the presets are sets of configuration options that instruct Babel on how 
+to deal with the different types of syntax (for example, TSX).
+The second entry in the rules array tells Webpack what to do when a CSS file is imported, and it 
+uses css-loader with the modules flag enabled to activate CSS modules. The result of the trans-
+formation is then passed to style-loader, which injects the styles into the header of the page.
+Finally, we enable the HTML plugin to generate the page for us, adding the script tag automati-
+cally using the entry path we specified earlier:
+const HtmlWebpackPlugin = require('html-webpack-plugin')
+const ForkTsCheckerWebpackPlugin = require('fork-ts-checker-webpack-
+plugin')
+plugins: [
+  new ForkTsCheckerWebpackPlugin(),
+  new HtmlWebpackPlugin({
+    title: 'Your project name',
+    template: './src/index.html',
+
+=== PAGE 133 ===
+Making Your Components Look Beautiful
+104
+    filename: './index.html'
+  })
+]
+The complete webpack.config.ts should be as shown in the following code block:
+const HtmlWebpackPlugin = require('html-webpack-plugin')
+const path = require('path')
+const ForkTsCheckerWebpackPlugin = require('fork-ts-checker-webpack-
+plugin')
+const isProduction = process.env.NODE_ENV === 'production'
+module.exports = {
+  devtool: !isProduction ? 'source-map' : false, // We generate source 
+maps
+  // only for development
+  entry: './src/index.tsx',
+  output: { // The path where we want to output our bundles
+    path: path.resolve(__dirname, 'dist'),
+    filename: '[name].[hash:8].js',
+    sourceMapFilename: '[name].[hash:8].map',
+    chunkFilename: '[id].[hash:8].js',
+    publicPath: '/'
+  },
+  resolve: {
+    extensions: ['.ts', '.tsx', '.js', '.json', '.css'] // Here we add the
+    // extensions we want to support
+  },
+  target: 'web',
+  mode: isProduction ? 'production' : 'development', // production mode
+  // minifies the code
+  module: {
+    rules: [
+        {
+            test: /\.(tsx|ts)$/,
+            exclude: /node_modules/,
+            use: {
+            loader: 'ts-loader',
+
+=== PAGE 134 ===
+Chapter 6
+105
+          options: {
+              transpileOnly: true
+          }
+         }
+        },
+        {
+            test: /\.css/,
+            use: [
+          'style-loader',
+          'css-loader?modules=true'
+            ]
+        }
+    ]
+  },
+  plugins: [
+    new ForkTsCheckerWebpackPlugin(),
+    new HtmlWebpackPlugin({
+      title: 'Your project name',
+      template: './src/index.html',
+      filename: './index.html'
+    })
+  ],
+  optimization: { // This is to split our bundles into vendor and main
+    splitChunks: {
+      cacheGroups: {
+          default: false,
+          commons: {
+        test: /node_modules/,
+        name: 'vendor',
+        chunks: 'all'   
+          }
+      }
+  }
+}
+}
+
+=== PAGE 135 ===
+Making Your Components Look Beautiful
+106
+Then, to configure TypeScript, you need this tsconfig.json file:
+{
+  "compilerOptions": {
+    "allowJs": true,
+    "allowSyntheticDefaultImports": true,
+    "baseUrl": "src",
+    "esModuleInterop": true,
+    "forceConsistentCasingInFileNames": true,
+    "isolatedModules": true,
+    "jsx": "react-jsx",
+    "lib": ["dom", "dom.iterable", "esnext"],
+    "module": "esnext",
+    "moduleResolution": "node",
+    "noEmit": true,
+    "noFallthroughCasesInSwitch": true,
+    "noImplicitAny": false,
+    "resolveJsonModule": true,
+    "skipLibCheck": true,
+    "sourceMap": true,
+    "strict": true,
+    "target": "esnext"
+  },
+  "include": ["src/**/*.ts", "src/**/*.tsx"],
+  "exclude": ["node_modules"]
+}
+In order to import CSS files using TypeScript, you need to create a declarations file at src/
+declarations.d.ts:
+declare module '*.css' {
+  const content: Record<string, string>
+  export default content
+}
+Then, you need to create the main file at src/index.tsx:
+import { createRoot } from 'react-dom/client'
+const App = () => {
+  return <div>Hello World</div>
+
+=== PAGE 136 ===
+Chapter 6
+107
+}
+ createRoot(document.getElementById('root') as HTMLElement).render(
+  <React.StrictMode>
+    <App />
+  </React.StrictMode>
+) 
+Finally, you need to create the initial HTML file at src/index.html:
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"
+      />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+    <title><%= htmlWebpackPlugin.options.title %></title>
+  </head>
+  <body>
+    <div id="root"></div>
+  </body>
+</html>
+We are done, and if we run the npm run dev command in the terminal and point the browser to 
+http://localhost:8080, we should be able to see the following markup being served:
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8">
+    <title>Your project name</title>
+    <script defer src="/vendor.12472959.js"></script>
+    <script defer src="/main.12472959.js"></script>
+  </head>
+  <body>
+    <div id="root"></div>
+  </body>
+</html>
+
+=== PAGE 137 ===
+Making Your Components Look Beautiful
+108
+Perfect – our React application is working! Let’s see now how we can add some CSS to our project.
+Locally scoped CSS
+Now it is time to create our app, which will consist of a simple button of the same sort we used 
+in previous examples. We will use it to show all the features of the CSS modules.
+Let’s update the src/index.tsx file, which is the entry we specified in the Webpack configuration:
+import { createRoot } from 'react-dom/client'
+We can then create a simple button. As usual, we are going to start with a non-styled button, and 
+we will add the styles step by step:
+const Button = () => <button>Click me!</button>
+Finally, we can render the button into the DOM:
+createRoot(document.getElementById('root') as HTMLElement).render(<Button 
+/>)
+Now, suppose we want to apply some styles to the button – a background color, size, and so on. 
+We create a regular CSS file, called index.css, and we put the following class into it:
+.button {
+  background-color: #ff0000;
+  width: 320px;
+  padding: 20px;
+  border-radius: 5px;
+  border: none;
+  outline: none;
+}
+Now, we said that with CSS modules we could import the CSS files into JavaScript; let’s look at 
+how it works.
+Inside our index.ts file where we defined the button component, we can add the following line:
+import styles from './index.css'
+The result of this import statement is a styles object, where all the attributes are the classes 
+defined in index.css.
+
+=== PAGE 138 ===
+Chapter 6
+109
+If we run console.log(styles), we can see the following object in the DevTools:
+{
+  button: "_2wpxM3yizfwbWee6k0UlD4"
+}
+So, we have an object where the attributes are the class names and the values are (apparently) 
+random strings. We will see later that they are non-random, but let’s check what we can do with 
+that object first.
+We can use the object to set the class name attribute of our button, as follows:
+const Button = () => (
+  <button className={styles.button}>Click me!</button>
+);
+If we go back to the browser, we can now see that the styles we defined in index.css have been 
+applied to the button. This is not magic, because if we check in DevTools, the class that has been 
+applied to the element is the same string that’s attached to the style object we imported inside 
+our code:
+<button class="_2wpxM3yizfwbWee6k0UlD4">Click me!</button>
+If we look at the header section of the page, we can now see that the same class name has also 
+been injected into the page:
+<style type="text/css">
+  ._2wpxM3yizfwbWee6k0UlD4 {
+    background-color: #ff0000;
+    width: 320px;
+    padding: 20px;
+    border-radius: 5px;
+    border: none;
+    outline: none;
+  }
+</style>
+This is how the CSS and the style loaders work. The CSS loader lets you import the CSS files into 
+your JavaScript modules and, when the module flag is activated, all the class names are locally 
+scoped to the module they are imported into. 
+
+=== PAGE 139 ===
+Making Your Components Look Beautiful
+110
+As we mentioned previously, the string we imported was non-random, but it is generated using 
+the hash of the file and some other parameters in a way that is unique within the code base.
+Finally, style-loader takes the result of the CSS module’s transformation and injects the styles 
+inside the header section of the page. This is very powerful because we have the full power and 
+expressiveness of the CSS, combined with the advantages of having locally scoped class names 
+and explicit dependencies.
+As mentioned at the beginning of this chapter, CSS is global, and that makes it very hard to main-
+tain in large applications. With CSS modules, class names are locally scoped, and they cannot 
+clash with other class names in different parts of the application, enforcing a deterministic result.
+Moreover, explicitly importing the CSS dependencies inside our components helps us see clearly 
+which components need which CSS. It is also very useful for eliminating dead code because when 
+we delete a component for any reason, we can tell exactly which CSS it was using.
+CSS modules are regular CSS, so we can use pseudo-classes, media queries, and animations.
+For example, we can add CSS rules such as the following:
+.button:hover {
+  color: #fff;
+}
+  
+.button:active {
+  position: relative;
+  top: 2px;
+}
+  
+@media (max-width: 480px) {
+  .button {
+    width: 160px;
+  }
+}
+This will be transformed into the following code and injected into the document:
+._2wpxM3yizfwbWee6k0UlD4:hover {
+  color: #fff;
+}
+
+=== PAGE 140 ===
+Chapter 6
+111
+  
+._2wpxM3yizfwbWee6k0UlD4:active {
+  position: relative;
+  top: 2px;
+}
+  
+@media (max-width: 480px) {
+  ._2wpxM3yizfwbWee6k0UlD4 {
+    width: 160px;
+  }
+}
+The class names get created and they get replaced everywhere the button is used, making it re-
+liable and local, as expected.
+As you may have noticed, those class names are great, but they make debugging pretty hard be-
+cause we cannot easily tell which classes generated the hash. What we can do in development 
+mode is add a special configuration parameter, with which we can choose the pattern that’s used 
+to produce the scoped class names.
+For example, we can change the value of the loader as follows:
+{
+  test: /\.css/,
+  use: [
+    {
+        loader: 'style-loader'
+    },
+    {
+        loader: 'css-loader',
+        options: {
+            modules: {
+          localIdentName: '[local]--[hash:base64:5]'
+        }
+     }
+    }
+  ]
+}
+
+=== PAGE 141 ===
+Making Your Components Look Beautiful
+112
+Here, localIdentName is the parameter, and [local] and [hash:base64:5] are placeholders for 
+the original class name value and a five-character hash. Other available placeholders are [path], 
+which represents the path of the CSS file, and [name], which is the name of the source CSS file.
+Activating the previous configuration option, the result we have in the browser is as follows:
+<button class="button--2wpxM">Click me!</button>
+This is way more readable and easier to debug.
+In production, we do not need class names like this, and we are more interested in performance, 
+so we may want shorter class names and hashes.
+With Webpack, it is pretty straightforward because we can have multiple configuration files that 
+can be used in the different stages of our application life cycle. Also, in production, we may want 
+to extract the CSS file instead of injecting it into the browser from the bundle so that we can have 
+a lighter bundle and cache the CSS on a Content Delivery Network (CDN) for better performance.
+To do that, you need to install another Webpack plugin, called mini-css-extract-plugin, which 
+can write an actual CSS file, putting in all the scoped classes that were generated from CSS modules.
+There are a couple of features of CSS modules that are worth mentioning.
+The first one is the global keyword. Prefixing any class with :global, in fact, means asking CSS 
+modules not to scope the current selector locally.
+For example, let’s say we change our CSS as follows:
+:global .button {
+  ...
+}
+The output will be as follows:
+.button {
+  ...
+}
+This is good if you want to apply styles that cannot be scoped locally, such as third-party widgets.
+My favorite feature of CSS modules is composition. With composition, we can extract classes 
+from the same file or external dependencies and get all the styles applied to the element.
+
+=== PAGE 142 ===
+Chapter 6
+113
+For example, extract the rule to set the background to red from the rules for the button into a 
+separate block, as follows:
+.background-red {
+  background-color: #ff0000;
+}
+We can then compose it inside our button in the following way:
+.button {
+  composes: background-red;
+  width: 320px;
+  padding: 20px;
+  border-radius: 5px;
+  border: none;
+  outline: none;
+}
+The result is that all the rules of the button and all the rules of the composes declaration are 
+applied to the element.
+This is a very powerful feature, and it works in a fascinating way. You might expect that all the 
+composed classes are duplicated inside the classes where they are referenced as SASS @extend 
+does, but that is not the case. Simply put, all the composed class names are applied one after the 
+other on the component in the DOM.
+In our specific case, we would have the following:
+<button class="_2wpxM3yizfwbWee6k0UlD4 Sf8w9cFdQXdRV_i9dgcOq">Click me!</
+button>
+Here, the CSS that is injected into the page is as follows:
+.Sf8w9cFdQXdRV_i9dgcOq {
+  background-color: #ff0000;
+}
+  
+._2wpxM3yizfwbWee6k0UlD4 {
+  width: 320px;
+  padding: 20px;
+  border-radius: 5px;
+
+=== PAGE 143 ===
+Making Your Components Look Beautiful
+114
+  border: none;
+  outline: none;
+}
+As you can see, our CSS class names have unique names, which is good to isolate our styles. Now, 
+let’s take a look at the Atomic CSS modules.
+Atomic CSS modules
+It should be clear how composition works and why it is a very powerful feature of CSS modules. 
+At Disney, the company where I worked when I started writing this book, we tried to push it a 
+step further, combining the power of composes with the flexibility of Atomic CSS (also known 
+as Functional CSS).
+Atomic CSS is a way to use CSS where every class has a single rule.
+For example, we can create a class to set margin-bottom to 0:
+.mb0 {
+  margin-bottom: 0;
+}
+We can use another one to set font-weight to 600:
+.fw6 {
+  font-weight: 600;
+}
+Then, we can apply all those Atomic classes to the elements:
+<h2 class="mb0 fw6">Hello React</h2>
+This technique is controversial and particularly efficient at the same time. It is hard to start using 
+it because you end up having too many classes in your markup, which makes it hard to predict 
+the final result. If you think about it, it is pretty similar to inline styles, because you apply one 
+class per rule, apart from the fact that you are using a shorter class name as a proxy.
+The biggest argument against Atomic CSS is usually that you are moving the styling logic from the 
+CSS to the markup, which is wrong. Classes are defined in CSS files, but they are composed in the 
+views, and every time you have to modify the style of an element, you end up editing the markup.
+On the other hand, we tried using Atomic CSS for a bit and we found that it makes prototyping 
+incredibly fast.
+
+=== PAGE 144 ===
+Chapter 6
+115
+In fact, when all the base rules have been generated, applying those classes to the elements and 
+creating new styles is a very quick process, which is good. Second, using Atomic CSS, we can con-
+trol the size of the CSS file, because as soon as we create new components with their styles, we 
+are using existing classes and we do not need to create new ones, which is great for performance.
+So, we tried to solve the problems of Atomic CSS using CSS modules and we called the technique 
+Atomic CSS modules.
+In essence, you start creating your base CSS classes (for example, mb0), and then, instead of ap-
+plying the class names one by one in the markup, you compose them into placeholder classes 
+using CSS modules.
+Let’s look at an example:
+.title {
+  composes: mb0 fw6;
+}
+Here’s another example:
+<h2 className={styles.title}>Hello React</h2>
+This is great because you still keep the styling logic inside the CSS, and the CSS module’s composes 
+does the job for you by applying all the single classes in the markup.
+The result of the preceding code is as follows:
+<h2 class="title--3JCJR mb0--21SyP fw6--1JRhZ">Hello React</h2>
+Here, title, mb0, and fw6 are all applied automatically to the element. They are scoped locally as 
+well, so we have all the advantages of CSS modules.
+Implementing styled-components
+There is a library that is very promising because it takes into account all the problems other li-
+braries have encountered in styling components. Different paths have been followed for writing 
+CSS in JavaScript, and many solutions have been tried, so now the time is ripe for a library that 
+takes all the learning and then builds something on top of it.
+The library is conceived and maintained by two popular developers in the JavaScript community: 
+Glenn Maddern and Max Stoiber. It represents a very modern approach to the problem, and it uses 
+the edge features of ES2015 and some advanced techniques that have been applied to React to 
+provide a complete solution for styling.
+
+=== PAGE 145 ===
+Making Your Components Look Beautiful
+116
+Let’s look at how it is possible to create the same button we saw in the previous sections and 
+check whether all the CSS features we are interested in (for example, pseudo-classes and media 
+queries) work with styled-components.
+First, we have to install the library by running the following command:
+npm install styled-components
+Once the library is installed, we have to import it inside our component’s file:
+import styled from 'styled-components'
+At that point, we can use the styled function to create any element by using styled.elementName, 
+where elementName can be a div, a button, or any other valid DOM element.
+The second thing to do is to define the style of the element we are creating and, to do so, we use 
+an ES6 feature called tagged template literals, which is a way of passing template strings to a 
+function without them being interpolated beforehand.
+This means that the function receives the actual template with all the JavaScript expressions, and 
+this makes the library able to use the full power of JavaScript to apply the styles to the elements.
+Let’s start by creating a simple button with a basic styling:
+const Button = styled.button`
+  backgroundColor: #ff0000;
+  width: 320px;
+  padding: 20px;
+  borderRadius: 5px;
+  border: none;
+  outline: none;
+`;
+This kind-of-weird syntax returns a proper React component called Button, which renders a button 
+element and applies to it all the styles defined in the template. The way the styles are applied is 
+by creating a unique class name, adding it to the element, and then injecting the corresponding 
+style in the head of the document.
+The following is the component that gets rendered:
+<button class="kYvFOg">Click me!</button>
+
+=== PAGE 146 ===
+Chapter 6
+117
+The style that gets added to the page is as follows:
+.kYvFOg {
+  background-color: #ff0000;
+  width: 320px;
+  padding: 20px;
+  border-radius: 5px;
+  border: none;
+  outline: none;
+}
+The good thing about styled-components is that it supports almost all the features of CSS, which 
+makes it a good candidate to be used in a real-world application.
+For example, it supports pseudo-classes using a SASS-like syntax:
+const Button = styled.button`
+  background-color: #ff0000;
+  width: 320px;
+  padding: 20px;
+  border-radius: 5px;
+  border: none;
+  outline: none;
+  &:hover {
+    color: #fff;
+  }
+  &:active {
+    position: relative;
+    top: 2px;
+  }
+`
+It also supports media queries:
+const Button = styled.button`
+  background-color: #ff0000;
+  width: 320px;
+  padding: 20px;
+  border-radius: 5px;
+
+=== PAGE 147 ===
+Making Your Components Look Beautiful
+118
+  border: none;
+  outline: none;
+  &:hover {
+    color: #fff;
+  }
+  &:active {
+    position: relative;
+    top: 2px;
+  }
+  @media (max-width: 480px) {
+    width: 160px;
+  }
+`;
+There are many other features that this library can bring to your project.
+For example, once you have created the button, you can easily override its styles and use it mul-
+tiple times with different properties. Inside the templates, it is also possible to use the props that 
+the component received and change the style accordingly.
+Another great feature is theming. By wrapping your components in a ThemeProvider compo-
+nent, you can inject a theme property down to the three component’s children, which makes it 
+extremely easy to create UIs where part of the style is shared between components and some 
+other properties depend on the currently selected theme.
+Without a doubt, the styled-components library is a game-changer when you are taking your 
+styles to the next level. In the beginning, it could seem weird because it involves implementing 
+styles with components, but once you get used to it, I guarantee it will be your favorite styles 
+package.
+Summary
+In this chapter, we explored important topics that aim to help readers navigate the complexities 
+of styling in React. We discussed the challenges of scaling CSS, using Meta’s experiences as ex-
+amples to highlight the real-world difficulties faced by large organizations. This emphasizes the 
+relevance and applicability of the knowledge we’re sharing.
+To make styling in React more intuitive and efficient, we examined how inline styles work and 
+the benefits of co-locating styles within components. This approach promotes organized and 
+readable code, which is crucial for developers aiming to master React.
+
+=== PAGE 148 ===
+Chapter 6
+119
+Recognizing the limitations of inline styles, we introduced CSS modules as an alternative. We 
+provided a step-by-step guide to setting up a project, allowing readers to learn through hands-
+on experimentation.
+Importing CSS files into components was also emphasized as an important practice. This helps 
+clarify dependencies and prevents issues by keeping class names scoped locally, ensuring scalable 
+and conflict-free code.
+Finally, we introduced readers to styled-components, a library that aligns with our book’s goal 
+of offering innovative ways to style components and optimize development practices in React.
+So far, we have explored various approaches to managing CSS styles in React, each illustrating 
+different aspects of our central proposition. In the next chapter, we will further enhance your 
+understanding of React by delving into the practical implementation and benefits of server-side 
+rendering—a technique that improves application performance and user experience.
+Join our community on Discord
+Join our community’s Discord space for discussion with the author and other readers:
+https://packt.link/React18DesignPatterns4e
+
+=== PAGE 149 ===
+
+=== PAGE 150 ===
+7
+Anti-Patterns to Be Avoided 
+In this book, you’ve learned how to apply best practices when writing a React application. In the 
+first few chapters, we revisited the basic concepts to build a solid understanding, and then we 
+took a leap into more advanced techniques in the following chapters.
+You should now be able to build reusable components, make components communicate with 
+each other, and optimize an application tree to get the best performance. However, developers 
+make mistakes, and this chapter is all about the common anti-patterns we should avoid when 
+using React.
+Looking at common errors will help you to avoid them and will aid your understanding of how 
+React works and how to build applications in the React way. For each problem, we will see an 
+example that shows how to reproduce and solve it.
+In this chapter, we will cover the following topics:
+•	
+Initializing the state using properties
+•	
+Using indexes as a key
+•	
+Spreading properties on DOM elements
+Technical requirements
+To complete this chapter, you will need the following:
+•	
+Node.js 19+
+•	
+Visual Studio Code
+

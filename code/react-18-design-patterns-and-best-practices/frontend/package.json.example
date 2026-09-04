@@ -1,0 +1,16 @@
+{
+  "build:production:client": "webpack --env mode=production --env presets=client",
+  "build:production:server": "webpack --env mode=production --env presets=server",
+  "clean": "rm -rf dist",
+  "dev": "cross-env DEBUG=server:* npm-run-all clean serve:dev",
+  "analyze": "cross-env ANALYZE=true cross-env DEBUG=server:* npm-run-all clean serve:*",
+  "start": "pm2 start apps.json",
+  "stop": "pm2 stop apps.json",
+  "restart": "pm2 restart apps.json",
+  "serve:dev": "cross-env NODE_ENV=development ts-node ./src/server/devServer.ts",
+  "webpack": "cross-env NODE_ENV=production webpack",
+  "lint": "eslint . --ext .js,.tsx,.ts",
+  "lint:fix": "eslint . --fix --ext .js,.tsx,.ts",
+  "test": "jest src",
+  "test:coverage": "jest src --coverage"
+}

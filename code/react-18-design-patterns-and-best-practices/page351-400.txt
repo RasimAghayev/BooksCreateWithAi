@@ -1,0 +1,1593 @@
+=== PAGE 351 ===
+Understanding GraphQL with a Real Project
+322
+import { IUser } from '../../types'
+import { StyledLogin } from './Login.styled'
+interface IProps {
+   login(input: any): any
+   currentUrl: string
+}
+const Login: FC<IProps> = ({ login, currentUrl }) => {
+const [values, setValues] = useState({
+   email: '',
+   password: ''
+ })
+const [errorMessage, setErrorMessage] = useState('')
+const [invalidLogin, setInvalidLogin] = useState(false)
+const onChange = (e: ChangeEvent<HTMLInputElement>): void => {
+const { target: { name, value } } = e
+  if (name) {
+   setValues((prevValues: any) => ({
+   prevValues,
+   [name]: value
+  }))
+ }
+}
+const handleSubmit = async (user: IUser): Promise<void> => {
+// Here we execute the login mutation
+const response = await login(user)
+if (response.error) {
+  setInvalidLogin(true)
+  setErrorMessage(response.message)
+} else {
+  redirectTo(currentUrl || '/')
+ }
+}
+return (
+<>
+ <StyledLogin>
+  <div className="wrapper">
+
+=== PAGE 352 ===
+Chapter 13
+323
+  {invalidLogin && <div className="alert">{errorMessage}</div>}
+  <div className="form">
+<p>
+<input 
+   autoComplete="off"
+   type="email"
+   className="email"
+   name="email"
+   placeholder="Email"
+   onChange={onChange}
+   value={values.email}
+/>
+</p>
+<p>
+<input
+   autoComplete="off"
+   type="password"
+   className="password"
+   name="password"
+   placeholder="Password"
+   onChange={onChange}
+   value={values.password}
+/>
+</p>
+ <div className="actions">
+  <button name="login" onClick={() => handleSubmit(values)}>Login</button>
+ </div>
+</div>
+</div>
+</StyledLogin>
+</>
+)
+}
+export default Login
+We’ll create the dashboard components next.
+
+=== PAGE 353 ===
+Understanding GraphQL with a Real Project
+324
+Creating our dashboard components
+When creating our dashboard components, the first one should be the DashboardLayout.tsx file 
+at /frontend/src/client/components/dashboard/DashboardLayout.tsx:
+import { FC, useContext } from 'react'
+import { UserContext } from '../../contexts/user'
+import Dashboard from './Dashboard'
+const Layout: FC = () => {
+const { connectedUser } = useContext(UserContext)
+ // We only render the Dashboard if the user is connected
+ if (connectedUser) {
+  return <Dashboard connectedUser={connectedUser} />
+ }
+return <div />
+}
+export default Layout
+This is how we protect our dashboard page to allow only connected users. Now, let’s create our 
+dashboard component at /frontend/src/components/dashboard/Dashboard.tsx:
+interface IProps {
+  connectedUser: any
+}
+const Dashboard = ({ connectedUser }) => (
+<div className="dashboard">
+  <h1>Welcome, {connectedUser.username}!</h1>
+   <ul>
+    <li><a href="/logout">Logout</a></li>
+   </ul>
+</div>
+)
+export default Dashboard
+And with that, we’re done! We’ll test the login system in the next section.
+Testing our login system
+If you followed the previous sections correctly, then you should be able to run the login system 
+successfully. To do this, we need to open three terminals:
+
+=== PAGE 354 ===
+Chapter 13
+325
+•	
+In the first one, you need to run your backend project (npm run dev).
+•	
+In the other, you need to run the Node.js server in the frontend project (npm run dev).
+The third terminal is that when you open http://localhost:3000 for the first time, you should 
+be able to see the Home page:
+Figure 13.29: Home page
+Then, if you click on the Go to Dashboard (http://localhost:3000/dashboard) link, you will 
+be redirected to http://localhost:3000/login?redirectTo=/dashboard, as shown in the fol-
+lowing screenshot:
+Figure 13.30: Login page
+
+=== PAGE 355 ===
+Understanding GraphQL with a Real Project
+326
+This is our login form. If you try to log in with fake credentials, you should get an error:
+Figure 13.31: Invalid login
+If you want to see the GraphQL request, you can do so on the Headers tab:
+Figure 13.32: GraphQL request
+Here, you can see the query you execute and the variables you send (email and password). You 
+can see the response on the Preview tab:
+Figure 13.33: Invalid login
+
+=== PAGE 356 ===
+Chapter 13
+327
+As you can see, we get an "Invalid Login" error message, and that’s why we render it in our 
+login component. 
+Now, let’s try to connect with the correct account (admin@js.education and 123456). If your login 
+is correct, then you should be redirected to the dashboard, where you will see the following page:
+Figure 13.34: Welcome, admin! page
+Additionally, you can take a look at the query being executed to retrieve the user data (getUser):
+Figure 13.35: getUser data
+Here, you will see that the payload is returned:
+Figure 13.36: getUserData payload
+
+=== PAGE 357 ===
+Understanding GraphQL with a Real Project
+328
+We get the user information from the access token (at). If you refresh the page, you should remain 
+connected to the page. This is because we saved a cookie containing our token:
+Figure 13.37: Cookies 
+Now, let’s try to modify the cookie by changing any letter of the token. For example, let’s change 
+the first two letters (ey) to XX:
+Figure 13.38: Updating a cookie
+Here, you will receive empty data for the user. This will invalidate the session and redirect you 
+to the login page again:
+Figure 13.39: Empty data 
+Now, you have learned how to implement GraphQL in a backend and how to consume queries 
+and mutations in the frontend.
+This login system is part of a course I’m doing on YouTube, where I’m teaching viewers how to 
+develop a headless CMS from scratch, so if you’re eager to learn more, you can check out the 
+course at https://www.youtube.com/watch?v=4n1AfD6aV4M.
+
+=== PAGE 358 ===
+Chapter 13
+329
+Summary
+I hope you found this chapter on GraphQL, JWT creation, login functionality, and Sequelize model 
+creation informative and engaging. It provided a wealth of valuable insights and practical tips 
+that you can apply to your own projects, helping you to streamline your development process 
+and achieve your goals more efficiently. By mastering these concepts, you’ll be better equipped 
+to build robust, scalable applications that meet the needs of your users and drive your success. 
+Thank you for reading, and I look forward to sharing more with you in the next chapter, where 
+you will learn how to create a monorepository and a multi-site project.
+
+=== PAGE 359 ===
+
+=== PAGE 360 ===
+14
+MonoRepo Architecture
+When we think about building apps, we usually talk about an app, a git repository, and a build 
+output. However, this configuration of an application and a repository does not always reflect 
+the real-world experience of developers. Often organizations will use a single repository with all 
+the applications, components, and libraries that could be used in common development. These 
+are called a monorepository or single repository, and they are starting to become very popular.
+So, what makes a monorepository interesting for organizations? Why put all the code in one place? 
+Why not have a single git repository where you have many small and separate repositories? If 
+we keep all our code in one project.
+By keeping all the code in one repository, you keep all dependencies up to date across the orga-
+nization. This is probably the biggest benefit of a single repository. This way we will stop having 
+to waste time updating all the dependencies of several different projects. 
+In this chapter, we’ll be walking through how to create a monorepository with multiple packages 
+using TypeScript, webpack, and NPM Workspaces.
+We will look at the following topics:
+•	
+Advantages of a monorepository and the problems it solves
+•	
+How to create a monorepository
+•	
+Implementing TypeScript in the monorepository
+•	
+Creating a devtools package to compile other packages with Webpack
+•	
+Creating a utils package
+•	
+How to create a multi-site system
+
+=== PAGE 361 ===
+MonoRepo Architecture
+332
+Technical requirements
+To complete this chapter, you will need the following:
+•	
+Node.js 19+
+•	
+Visual Studio Code
+You can find the code for this chapter in the book’s GitHub repository: https://github.com/
+PacktPublishing/React-18-Design-Patterns-and-Best-Practices-Fourth-Edition/tree/
+main/Chapter14.
+Advantages of a monorepository and the problems it 
+solves
+Some of the advantages of a MonoRepo (monorepository) are:
+•	
+Sharing is made easy: With all the code in one place, it becomes easier to utilize the same 
+code or tools across multiple projects, saving valuable time and effort. 
+•	
+No mix-ups: In a MonoRepo, every project utilizes the same version of shared components, 
+eliminating concerns about compatibility issues between different versions.
+•	
+Change everything at once: In a MonoRepo, making changes across all projects simul-
+taneously becomes a straightforward task, as opposed to the complexity of managing 
+individual projects in separate repositories.
+•	
+Grouped changes: Modifying multiple projects simultaneously within a MonoRepo en-
+sures that all related components stay synchronized, allowing for efficient and cohesive 
+updates.
+•	
+Everyone can see everything: With all the code centralized in one repository, all develop-
+ers have access to it, fostering a better understanding of the entire system and facilitating 
+effective collaboration.
+Now let’s explore some of the real-life problems that a MonoRepo solves: 
+•	
+Faster updates: With a MonoRepo, you can update all projects at once. Without it, you’d 
+have to update each project separately, which can take a lot of time.
+•	
+No more confusion: Without a MonoRepo, different projects might use different versions 
+of the same thing, which can cause problems. With a MonoRepo, everything uses the same 
+version, so there’s no confusion.
+
+=== PAGE 362 ===
+Chapter 14
+333
+•	
+Better teamwork: With all the code in one place, developers can easily see and understand 
+what others have done. This can help them work together better.
+•	
+Easier start for newbies: For new team members, it’s easier to get started when all the 
+code is in one place. They can quickly understand the whole system, rather than having 
+to search through different places.
+It is important to remember that MonoRepos may not always be the optimal choice. They can 
+introduce their own challenges, such as potential performance issues and increased complexity 
+when they become excessively large. Whether adopting a MonoRepo is a suitable approach de-
+pends on the specific needs of the team and the scale of their projects.
+In the following image you can see how the structure of a MonoRepo is different from that of a 
+Multi Repo:
+Figure 14.1: MultiRepo vs MonoRepo
+
+=== PAGE 363 ===
+MonoRepo Architecture
+334
+Now that we’ve shed light on the concept of a monorepository and explored why it is becoming 
+increasingly popular for organizations, we will delve into the practical implementation of a mon-
+orepository using NPM Workspaces.
+Creating a MonoRepo with NPM Workspaces
+NPM Workspaces was introduced in NPM 7 and is a generic term that refers to the set of features 
+in the npm CLI that provides support for managing multiple packages from your local filesystem, 
+from within a singular top-level root package.
+The first thing you need to do in order to create a monorepository is to create a root package.json 
+file, which should contain the following code:
+{
+  "name": "web-creator",
+  "private": true,
+  "workspaces": [
+    "packages/*"
+  ]
+}
+We will name our MonoRepo web-creator. We need to specify that web-creator will be private 
+(only the root), and we need to specify the workspaces where our packages will live, which is 
+on "packages/*"; the * means that we will include any directory that exists under the packages 
+folder. After this, you need to create the packages directly.
+Let’s create two directories inside our new packages folder: "packages/api" and "packages/
+frontend". Now go to your api project and run npm init -y:
+cd packages/api
+npm init -y
+Once you run that command it will create a package.json like this:
+{
+  "name": "api",
+  "version": "1.0.0",
+  "main": "index.js",
+  "author": "",
+  "license": "ISC"
+}
+
+=== PAGE 364 ===
+Chapter 14
+335
+As you can see, the name of that package by default will be "api", but in order to connect that 
+package to our main monorepository, we need to call it with a special format; in this case, you need 
+to rename it "@<name_of_root_package>/api", which in our example will be "@web-creator/
+api". Your package.json should be like this:
+{
+  "name": "@web-creator/api",
+  "version": "1.0.0",
+  "main": "index.js",
+  "author": "",
+  "license": "ISC"
+}
+Now you need to create a file (packages/api/index.js) inside your api directory (later we will 
+change this to TypeScript) with the following code:
+module.exports = () => console.log("I'm the API package")
+After this, you need to go to your frontend package (packages/frontend) and run the same npm 
+init -y command:
+cd packages/frontend
+npm init -y
+Also, you will need to rename that package @web-creator/frontend:
+{
+  "name": "@web-creator/frontend",
+  "version": "1.0.0",
+  "main": "index.js",
+  "author": "Carlos Santana",
+  "license": "ISC"
+}
+The monorepository now is ready to share packages. Let’s suppose you now want to consume 
+your api package in your frontend package. To do this, you need to specify the api package as a 
+dependency and put the same version we have in that api package; in this case, the version will 
+be 1.0.0. You need to be very careful and not change this version unless you really need to, and if 
+you change it then you will need to update it on the dependencies node as well. 
+
+=== PAGE 365 ===
+MonoRepo Architecture
+336
+This will be your package.json from packages/frontend:
+{
+  "name": "@web-creator/frontend",
+  "version": "1.0.0",
+  "main": "index.js",
+  "author": "Carlos Santana",
+  "license": "ISC",
+  "dependencies": {
+    "@web-creator/api": "1.0.0" // this version needs to match with the 
+API package.json
+  }
+}
+After you’ve specified the api package as a dependency, you need to run npm install inside the 
+frontend project. One very interesting thing you will notice is that even if you run the npm install 
+command inside the frontend package (packages/frontend), your node_modules folder will be 
+created at the root level, and it will look like this:
+Figure 14.2: Monorepo structure
+
+=== PAGE 366 ===
+Chapter 14
+337
+If everything worked as expected, you can consume your api package in your frontend pack-
+age. For this, you need to create an index.js file inside packages/frontend/index.js with the 
+following code:
+const api = require('@web-creator/api')
+api()
+Now you can execute your index file with node and see the console message that comes from the 
+api package:
+Figure 14.3: Running frontend
+One of the biggest advantages of a monorepository is that if you update your API index.js, the 
+change will be reflected right away without you having to compile anything or publish any package 
+to the NPM registry. This is very helpful and saves a lot of time for developers when coding large 
+projects. Let’s change our message now to I'm the API package UPDATED in the packages/api/
+index.js and run the index.js again with node:
+Figure 14.4: Updating the API
+Congratulations, you have created your first MonoRepo successfully! In the next section, we will 
+transform our MonoRepo to use TypeScript.
+Implementing TypeScript in our MonoRepo
+The first thing you need to do in order to add TypeScript to your project is to install the typescript 
+package at the root level:
+npm install -D typescript
+In the following sections, I will outline the steps to create a multi-site project. Due 
+to the substantial amount of code involved, I’m unable to include it all in this 
+book. However, I invite you to review the complete code in the repository avail-
+able at https://github.com/PacktPublishing/React-18-Design-Patterns- 
+and-Best-Practices-Fourth-Edition/tree/main/Chapter14/web-creator.
+
+=== PAGE 367 ===
+MonoRepo Architecture
+338
+After this, you need to create the tsconfig.json file at the root level as well with the following 
+code:
+{
+  "extends": "./tsconfig.common.json",
+  "compilerOptions": {
+    "baseUrl": "./packages",
+    "paths": {
+      "@web-creator/*": ["*/src"]
+    }
+  }
+}
+As you can see, we extend the tsconfig.json file to tsconfig.common.json, and this is because 
+we don’t want to to repeat each package that we want to transform to TypeScript. The only 
+compilerOptions we want to specify is the baseUrl on our packages directory, and in the paths we 
+will specify the name of our MonoRepo to be able to do imports in the code. This is the tsconfig.
+common.json file that you need to create:
+{
+  "compilerOptions": {
+    "allowSyntheticDefaultImports": true,
+    "alwaysStrict": true,
+    "declaration": true,
+    "declarationMap": true,
+
+=== PAGE 368 ===
+Chapter 14
+339
+    "downlevelIteration": true,
+    "esModuleInterop": true,
+    "experimentalDecorators": true,
+    "jsx": "react-jsx",
+    "lib": ["DOM", "DOM.Iterable", "ESNext"],
+    "module": "commonjs",
+    "moduleResolution": "node",
+    "noEmit": false,
+    "noFallthroughCasesInSwitch": false,
+    "noImplicitAny": true,
+    "noImplicitReturns": true,
+    "outDir": "dist",
+    "resolveJsonModule": true,
+    "skipLibCheck": true,
+    "sourceMap": true,
+    "strict": true,
+    "strictFunctionTypes": true,
+    "strictNullChecks": true,
+    "suppressImplicitAnyIndexErrors": false,
+    "target": "ESNext"
+  },
+  "exclude": ["node_modules", "dist", "coverage", ".vscode", "**/__
+tests__/*"]
+}
+
+=== PAGE 369 ===
+MonoRepo Architecture
+340
+The architecture of our project will look like this:
+Figure 14.5: Web creator architecture
+
+=== PAGE 370 ===
+Chapter 14
+341
+Now that we have explored the project’s architecture, let’s dive into the first package that will 
+manage our Webpack configurations. This package will be referred to as devtools.
+Creating a devtools package to compile packages 
+with Webpack
+The first package we need to create to be able to compile other packages is called devtools and 
+should be created in packages/devtools. Let’s see how it should look in its package.json file:
+{
+  "name": "@web-creator/devtools",
+  "version": "1.0.0",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "npm-run-all clean compile",
+    "clean": "rm -rf ./dist",
+    "compile": "tsc",
+    "lint": "npm run --prefix ../../ lint",
+    "lint:fix": "npm run --prefix ../../ lint:fix"
+  },
+  "author": "Carlos Santana",
+  "license": "MIT",
+  "devDependencies": {
+    "@types/cli-color": "^2.0.2",
+    "@types/ip": "^1.1.0",
+    "@types/webpack-bundle-analyzer": "^4.6.0",
+    "@types/webpack-node-externals": "^2.5.3"
+  },
+  "dependencies": {
+    "@svgr/webpack": "^6.5.1",
+    "@types/file-loader": "^5.0.1",
+    "cli-color": "^2.0.3",
+    "css-loader": "^6.7.3",
+    "dotenv": "^16.0.3",
+
+=== PAGE 371 ===
+MonoRepo Architecture
+342
+    "file-loader": "^6.2.0",
+    "html-webpack-plugin": "^5.5.0",
+    "path-browserify": "^1.0.1",
+    "run-script-webpack-plugin": "^0.1.1",
+    "style-loader": "^3.3.1",
+    "ts-loader": "^9.4.2",
+    "typescript-plugin-styled-components": "^2.0.0",
+    "webpack": "^5.75.0",
+    "webpack-bundle-analyzer": "^4.7.0",
+    "webpack-dev-server": "^4.11.1",
+    "webpack-node-externals": "^3.0.0",
+    "webpackbar": "^5.0.2"
+  }
+}
+After you create the package.json, you need to create the tsconfig.json file for devtools. Each 
+package will have its own tsconfig.json file. Basically we will extend our tsconfig.common.
+json from root and just specify the outDir and include the files inside the src folder:
+{
+  "extends": "../../tsconfig.common.json",
+  "compilerOptions": {
+    "outDir": "./dist"
+  },
+  "include": ["src/**/*"]
+}
+Creating a colorful log
+We need to create a log function that will help us highlight the Webpack configuration that we 
+will implement, and for this we will use the cli-color package, which adds colors to the logs. 
+You need to create the file under packages/devtools/src/cli/log.ts:
+import cliColor from 'cli-color'
+type Args = {
+   text?: string
+   tag?: string
+   json?: any
+
+=== PAGE 372 ===
+Chapter 14
+343
+   type?: 'info' | 'error' | 'warning'
+}
+export const log = (args: Args | any) => {
+ const blockColor: any = {
+   info: cliColor.bgCyan.whiteBright.bold,
+   error: cliColor.bgRed.whiteBright.bold,
+   warning: cliColor.bgYellow.blackBright.bold
+}
+ const textColor: any = {
+   info: cliColor.blue,
+   error: cliColor.red,
+   warning: cliColor.yellow
+}
+ if (typeof args === 'string') {
+   console.info(textColor.info(args))
+}
+ const { tag, json, type } = args
+  if (tag && json) {
+   console.info(blockColor[type](`<<< BEGIN ${tag.toUpperCase()}`))
+   console.info(textColor[type](JSON.stringify(json, null, 2)))
+   console.info(blockColor[type](`END ${tag.toUpperCase()} >>>`))
+ }
+}
+Webpack common configuration
+Now that we have our log function ready, we will continue creating the Webpack configura-
+tion. We will break our Webpack configuration into three files: webpack.common.ts, webpack.
+development.ts, and webpack.production.ts. The common configuration will be merged with 
+the development and production separately. However, before creating our common configuration, 
+we need to create our Webpack types, and you need to add this file to packages/devtools/src/
+webpack/webpack.types.ts:
+export type WebpackMode = 'production' | 'development'
+export type ConfigType = 'web' | 'package'
+export type Package = 'api' | 'design-system' | 'frontend' | 'utils'
+export type ConfigArgs = {
+  mode: WebpackMode
+
+=== PAGE 373 ===
+MonoRepo Architecture
+344
+  type: ConfigType
+  sandbox?: 'true' | 'false'
+  packageName: Package
+}
+export type ModeArgs = {
+  configType: ConfigType
+  packageName: Package
+  mode?: WebpackMode
+  sandbox?: boolean
+  devServer?: boolean
+  isAnalyze?: boolean
+  port?: number
+  analyzerPort?: number
+  color?: string
+  htmlOptions?: {
+  title: string
+  template: string
+}
+}
+Now let’s create our webpack.common.ts file, starting with the packages we need to import:
+import HtmlWebPackPlugin from 'html-webpack-plugin'
+import path from 'path'
+import createStyledComponentsTransformer from 'typescript-plugin-styled-
+components'
+import { Configuration } from 'webpack'
+import { BundleAnalyzerPlugin } from 'webpack-bundle-analyzer'
+import nodeExternals from 'webpack-node-externals'
+import { ModeArgs } from './webpack.types'
+Next we need to create the getWebpackCommonConfig function, which will receive arguments 
+from the terminal to compile each package via the NPM script:
+const getWebpackCommonConfig = (args: ModeArgs): Configuration => {
+const {
+  configType, // it can be "web" or "package"
+  isAnalyze,
+  port = 3000,
+
+=== PAGE 374 ===
+Chapter 14
+345
+  mode,
+  analyzerPort = 9001,
+  packageName,
+  htmlOptions,
+  sandbox,
+  devServer
+ } = args
+ // Here goes the next block of codes
+}
+export default getWebpackCommonConfig
+The blocks of code that you will see next from this chapter’s GitHub repository need to be added 
+where the comment is located in the previous code: // Here goes the next block of codes.
+First let’s check if we are running a sandbox (this will be for our design-system package). If yes, 
+we will use port 8080, and if not, we will use the port + 1 (3001 by default):
+const devServerPort = sandbox && devServer ? 8080 : port + 1
+The first configuration option we need to create is entry, which will define the index file that we 
+will use to compile our project, based on the packageName we specify in our script. We can create 
+entry by running the following code:
+// Client Entry
+const entry = configType !== 'web'
+? path.resolve(__dirname, `../../../${packageName}/src/index.ts`)
+: path.resolve(__dirname, `../../../${packageName}/src/index.tsx`)
+When our configType is "package" (or different than 'web'), we will specify the index.ts as 
+entry, and for the web packages, we will use index.tsx.
+The second configuration option we need to create is going to be the resolve node, which will 
+include the extensions we want to support and the alias for each package (~). In Webpack 5, we 
+must turn off some fallback packages that are not enabled by default anymore:
+// Resolve
+const resolve = {
+extensions: ['*', '.ts', '.tsx', '.js', '.jsx'],
+alias: {
+'~': path.resolve(__dirname, `../../../${packageName}/src`)
+},
+
+=== PAGE 375 ===
+MonoRepo Architecture
+346
+  fallback: {
+  buffer: false,
+  crypto: false,
+  stream: false,
+  querystring: false,
+  os: false,
+  zlib: false,
+  http: false,
+  https: false,
+  url: false,
+  path: require.resolve('path-browserify')
+ }
+}
+The third configuration option is the output, which will specify where we will place the compiled 
+project (the dist directory), which will be the dynamic filename ([name].js). If we want to com-
+pile a package, we will add the necessary options to be able to export that package (libraryTarget, 
+library, umdNamedDefine, and globalObject):
+// Output
+const output = {
+  path: path.resolve(__dirname, `../../../${packageName}/dist`),
+  filename: '[name].js',
+    (sandbox && {
+  publicPath: '/',
+  chunkFilename: '[name].js'
+ }),
+    (configType === 'package' && !sandbox && {
+  filename: 'index.js',
+  libraryTarget: 'umd',
+  library: 'lib',
+  umdNamedDefine: true,
+  globalObject: 'this'
+ })
+}
+
+=== PAGE 376 ===
+Chapter 14
+347
+The fourth configuration option is the plugins, which will be applied based on some conditions, 
+depending on if we want to analyze our bundle sizes (BundleAnalyzerPlugin) and add a template 
+with HtmlWebPackPlugin:
+// Plugins
+const plugins = []
+if (isAnalyze) {
+   plugins.push(
+    new BundleAnalyzerPlugin({
+     analyzerPort
+   })
+  )
+ }
+if (mode === 'development' && htmlOptions?.title && htmlOptions.template) 
+{
+  plugins.push(
+   new HtmlWebPackPlugin({
+    title: htmlOptions.title,
+    template: path.resolve(__dirname, 
+    `../../../${packageName}/${htmlOptions.template}`),
+    filename: './index.html'
+  })
+ )
+}
+The fifth configuration option is the rules, which we will define depending on the extension file 
+we want to process. We will also use Webpack loaders like ts-loader to load TypeScript files or 
+svg-url-loader and @svgr/webpack to load SVG files:
+// Rules
+const rules = []
+rules.push({
+   test: /\.(tsx|ts)$/,
+   exclude: /node_modules/,
+   loader: 'ts-loader',
+   options: {
+
+=== PAGE 377 ===
+MonoRepo Architecture
+348
+    getCustomTransformers: () => ({
+    before: [
+createStyledComponentsTransformer({
+   displayName: true,
+   ssr: true,
+   minify: true
+  })
+ ]
+ })
+}
+})
+if (packageName === 'design-system') {
+    const svgUrlLoaderInclude: Record<string, string[]> = {
+'design-system': [
+   path.resolve(__dirname, '../../../design-system/src/components/Spinner/
+loaders'),
+   path.resolve(__dirname, '../../../design-system/src/components/Dialog/
+icons'),
+   path.resolve(__dirname, '../../../design-system/src/icons')
+]
+}
+const svgrWebpackInclude: Record<string, string[]> = {
+'design-system': [
+   path.resolve(__dirname, '../../../design-system/src/components/Icon/
+icons')
+ ]
+}
+rules.push({
+   test: /\.svg$/,
+   oneOf: [
+  {
+   use: 'svg-url-loader',
+   include: configType === 'package' ? svgUrlLoaderInclude[packageName] ?? 
+ [] : []
+ },
+{
+use: '@svgr/webpack',
+
+=== PAGE 378 ===
+Chapter 14
+349
+   include: configType === 'package' ? svgrWebpackInclude[packageName] ?? [] 
+   : []
+  }
+ ]
+})
+}
+if (configType === 'package' && sandbox) {
+   rules.push({
+    test: /\.(jpe?g|png|gif|svg)$/i,
+    use: [{ loader: 'file-loader', options: {} }]
+  })
+}
+Finally, we put all the options together in the webpackConfig object:
+const webpackConfig = {
+entry,
+...(configType === 'package' && sandbox && {
+  entry: path.resolve(__dirname, `../../../${packageName}/sandbox/index. 
+  tsx`)
+}),
+   (devServer && {
+ devServer: {
+   historyApiFallback: true,
+   static: output.path,
+   port: devServerPort
+ }
+}),
+   (!sandbox && {
+externals: [nodeExternals()]
+}),
+ output,
+ resolve,
+ plugins,
+ module: {
+   rules
+},
+   (configType !== 'web' && !sandbox && {
+
+=== PAGE 379 ===
+MonoRepo Architecture
+350
+   target: 'node'
+ })
+}
+return webpackConfig as Configuration
+Webpack development configuration
+After creating our Webpack common configuration file, we now need to create our webpack.
+development.ts file, which is way smaller than the common one and will extend that configura-
+tion (on webpack.config.ts), specifying the development mode for Webpack, adding the source 
+map, and passing the HMR plugin:
+import {
+Configuration as WebpackConfiguration,
+HotModuleReplacementPlugin,
+NoEmitOnErrorsPlugin
+} from 'webpack'
+import { Configuration as WebpackDevServerConfiguration } from 'webpack-
+dev-server'
+interface Configuration extends WebpackConfiguration {
+devServer?: WebpackDevServerConfiguration
+}
+const getWebpackDevelopmentConfig = (): Configuration => {
+const webpackConfig: Configuration = {
+   mode: 'development',
+   devtool: 'source-map',
+   plugins: [new HotModuleReplacementPlugin(), new NoEmitOnErrorsPlugin()]
+ }
+return webpackConfig
+}
+export default getWebpackDevelopmentConfig
+Webpack production configuration
+The last file we need to create is the webpack.production.ts, which will will use external libraries 
+when we try to compile a package that uses shared libraries like React, Apollo Server, or JSON 
+Web Tokens, put the mode as production, and disable the source map:
+import { Configuration } from 'webpack'
+import { ModeArgs } from './webpack.types'
+
+=== PAGE 380 ===
+Chapter 14
+351
+const getWebpackProductionConfig = (args: ModeArgs): Configuration => {
+const { configType } = args
+// Externals
+const externals = configType === 'package'
+? {
+ react: {
+  commonjs: 'react',
+  commonjs2: 'react',
+  amd: 'React',
+  root: 'React'
+},
+'react-dom': {
+  commonjs: 'react-dom',
+  commonjs2: 'react-dom',
+  amd: 'ReactDOM',
+  root: 'ReactDOM'
+},
+  jsonwebtoken: 'jsonwebtoken'
+}
+: {}
+const webpackConfig = {
+  mode: 'production',
+  devtool: false,
+  externals
+ }
+return webpackConfig as Configuration
+}
+export default getWebpackProductionConfig
+That’s all for our devtools package. Now we only need to create the index.ts file in packages/
+devtools/src/index.ts to export all the Webpack configuration and be able to compile our 
+devtools package:
+// CLI
+export * from './cli/log'
+// Webpack
+
+=== PAGE 381 ===
+MonoRepo Architecture
+352
+export { default as getWebpackCommonConfig } from './webpack/webpack.
+common'
+export { default as getWebpackDevelopmentConfig } from './webpack/webpack.
+development'
+export { default as getWebpackProductionConfig } from './webpack/webpack.
+production'
+export * from './webpack/webpack.types'
+Since this will be the base package that will compile other packages, first we need to build it, and 
+for this, we will just use the tsc command to transform TypeScript into JavaScript files. For this, 
+you just need to run the build command inside packages/devtools:
+npm run build
+If everything is correct, you should see something like this:
+Figure 14.6: npm run build
+Finally, we need to create the webpack.config.ts file at the root level where we will consume 
+our brand-new devtools package and merge the configurations (development + common or 
+production + common) using webpack-merge:
+import {
+ConfigArgs,
+getWebpackCommonConfig,
+getWebpackDevelopmentConfig,
+getWebpackProductionConfig,
+log
+} from '@web-creator/devtools'
+import { Configuration } from 'webpack'
+
+=== PAGE 382 ===
+Chapter 14
+353
+import { merge } from 'webpack-merge'
+// Mode Config
+const getModeConfig = {
+   development: getWebpackDevelopmentConfig,
+   production: getWebpackProductionConfig
+}
+// Mode Configuration (development/production)
+const modeConfig: (args: ConfigArgs) => Configuration = ({mode, type, 
+packageName}) => {
+const getWebpackConfiguration = getModeConfig[mode]
+return getWebpackConfiguration({ 
+   configType: type, 
+   packageName, 
+   sandbox: true, 
+   devServer: true 
+ })
+}
+// Merging all configurations
+const webpackConfig: (args: ConfigArgs) => Promise<Configuration> = async 
+({ 
+mode, type, sandbox, packageName 
+} = {
+   mode: 'production',
+   type: 'web',
+   sandbox: 'false',
+   packageName: 'design-system'
+}) => {
+const isSandbox = type === 'package' && sandbox === 'true'
+const commonConfiguration = getWebpackCommonConfig({
+   configType: type,
+   packageName,
+   mode,
+   (isSandbox && {
+   htmlOptions: { title: 'Sandbox', template: 'sandbox/index.html' },
+   sandbox: isSandbox,
+   devServer: isSandbox
+ })
+})
+
+=== PAGE 383 ===
+MonoRepo Architecture
+354
+// Mode Configuration
+const modeConfiguration = mode && type ? modeConfig({ mode, type, 
+packageName }) : {}
+// Merging all configurations
+const webpackConfiguration = merge(commonConfiguration, modeConfiguration)
+// Logging Webpack Configuration
+log({ tag: 'Webpack Configuration', json: webpackConfiguration, type: 
+'warning' })
+return webpackConfiguration
+}
+export default webpackConfig
+Creating the utils package
+After we’ve created the devtools package, it is time to add a basic utils package to test the Web-
+pack compilation with devtools. For this, you will need to create a directory at packages/utils. 
+For the example in the book, we will just add one util file to test our devtools, but in the actual 
+repository you will find way more util files that have been added to the project.
+As always let’s start creating our package.json in the utils package:
+{
+  "name": "@web-creator/utils",
+  "version": "1.0.0",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "cross-env NODE_ENV=production npm-run-all clean compile 
+webpack:production",
+    "build:dev": "cross-env NODE_ENV=development npm-run-all clean compile 
+webpack:development",
+    "clean": "rm -rf ./dist",
+    "compile": "tsc",
+    "lint": "npm run --prefix ../../ lint",
+    "lint:fix": "npm run --prefix ../../ lint:fix",
+    "prepublishOnly": "npm run lint && npm run build",
+
+=== PAGE 384 ===
+Chapter 14
+355
+    "webpack:development": "webpack --config=../../webpack.config.ts --env 
+mode=development --env type=package --env packageName=utils",
+    "webpack:production": "webpack --config=../../webpack.config.ts --env 
+mode=production --env type=package --env packageName=utils"
+  },
+  "author": "Carlos Santana",
+  "license": "MIT",
+  "dependencies": {
+    "currency-formatter": "^1.5.9",
+    "slug": "^8.2.2",
+    "uuid": "^9.0.0"
+  },
+  "devDependencies": {
+    "@types/currency-formatter": "^1.5.1",
+    "@types/slug": "^5.0.3",
+    "@types/uuid": "^9.0.0"
+  }
+}
+There are some important elements in this package.json that I want to mention:
+•	
+The first one is the name of the package, which is @web-creator/utils. As I mentioned 
+before, this is the correct format to name packages inside our MonoRepo. 
+•	
+The second node is version, which always will be 1.0.0 (unless you want to publish this 
+package to the NPM registry; for now you don’t need to worry about that). 
+•	
+main is to specify where our utils code will exist, which will always be in dist/index.js. 
+•	
+The types node is to be able to load our TypeScript types; if you don’t specify this, it won’t 
+be possible to see the types you add to your utils package when you consume this package. 
+•	
+Finally the files node is an array that will contain the dist directory that will contain 
+the compiled package.
+Additionally, the scripts have some interesting things that you should know. Our build com-
+mand will run multiple scripts using npm-run-all, which is a library that helps us run multiple 
+scripts one after the other. In this case, we always execute the script clean first to remove our 
+dist folder and start fresh. Then we compile the code with TypeScript (tsc), then we execute 
+webpack:production. This will execute webpack, specifying the configuration file that exists at 
+the root (two levels behind). We also use the --env flag to pass values as variables. 
+
+=== PAGE 385 ===
+MonoRepo Architecture
+356
+These variables are defined in our webpack.config.ts file. In this case, we’re passing 
+mode=production, type=package, and packageName=utils.
+If you notice, some scripts contain npm run --prefix ../../, and I’m pretty sure you are won-
+dering what exactly the --prefix flag is in this command. It is essentially a way to tell NPM that 
+we want to run a script from a different package.json. In this specific example, we are going back 
+two levels to run the script lint that exists in our root package.json.
+Now let’s create our first util file, which is going to be called is.ts, and you must save it in 
+packages/utils/src/utils/is.ts with the following code:
+const is = {
+  Array(v: unknown) {
+  return v instanceof Array
+},
+Defined(v: unknown) {
+  return typeof v !== 'undefined' && v !== null
+},
+Email(email: string) {
+  const regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+  return regex.test(email)
+},
+False(v: unknown) {
+  return (this.Defined(v) && v === false) || v === 'false'
+},
+Number(v: unknown) {
+  return typeof v === 'number'
+},
+Function(v: unknown) {
+  return typeof v === 'function'
+},
+Object(v: unknown) {
+  return this.Defined(v) && typeof v === 'object' && !this.Array(v)
+},
+String(v: unknown) {
+  return this.Defined(v) && typeof v === 'string'
+},
+Undefined(v: unknown) {
+
+=== PAGE 386 ===
+Chapter 14
+357
+  return typeof v === 'undefined' || v === null
+},
+JSON(str: string) {
+  if (!str || str === null) {
+   return false
+}
+  try {
+JSON.parse(str)
+} catch (e) {
+  return false
+}
+  return true
+},
+Password(password: string, min = 8) {
+  return Boolean(password && password.length >= min)
+},
+PasswordMatch(p1: string, p2: string) {
+  return this.Password(p1) && this.Password(p2) && p1 === p2
+},
+Browser() {
+  return typeof window !== 'undefined'
+},
+Device() {
+  if (!this.Browser()) {
+  return false
+}
+  const ua = navigator.userAgent
+  if (/(tablet|ipad|playbook|silk)|(android(?!.*mobi))/i.test(ua)) {
+  return true
+}
+  if (/Mobile|Android|iP(hone|od)|IEMobile|BlackBerry|Kindle|Silk-
+Accelerated|(hpw|web)OS|Opera M(obi|ini)/.test(ua)) {
+  return true
+}
+  return false
+},
+EmptyObject(v: any) {
+
+=== PAGE 387 ===
+MonoRepo Architecture
+358
+  return v ? Object.keys(v).length === 0 : true
+ }
+}
+export default is
+After you create this util, you need to create the index.ts file in packages/utils/src/index.
+ts, where you will export all your utils:
+export { default as is } from './utils/is'
+Finally, you must add a script to your root package.json to be able to compile your brand-new 
+utils package. Here is how your root package.json file should look:
+{
+  "name": "web-creator",
+  "private": true,
+  "workspaces": [
+    "packages/*"
+  ],
+  "scripts": {
+    "lint": "eslint --ext .tsx,.ts ./packages/**/src",
+    "lint:fix": "eslint --ext .tsx,.ts ./packages/**/src",
+    "build": "npm-run-all build:*",
+    "build:devtools": "cd ./packages/devtools && npm run build",
+    "build:utils": "cd ./packages/utils && npm run build",
+    "build:authentication": "cd ./packages/authentication && npm run 
+build",
+    "build:design-system": "cd ./packages/design-system && npm run build",
+    "build:api": "cd ./packages/api && npm run build",
+  },
+  "devDependencies": {
+    "@typescript-eslint/eslint-plugin": "^5.49.0",
+    "@typescript-eslint/parser": "^5.49.0",
+    "cross-env": "^7.0.3",
+    "eslint": "^8.33.0",
+    "eslint-config-airbnb": "^19.0.4",
+    "eslint-config-airbnb-typescript": "^17.0.0",
+    "eslint-config-prettier": "^8.6.0",
+    "eslint-import-resolver-typescript": "^3.5.3",
+
+=== PAGE 388 ===
+Chapter 14
+359
+    "eslint-plugin-import": "^2.27.5",
+    "eslint-plugin-jsx-a11y": "^6.7.1",
+    "eslint-plugin-prettier": "^4.2.1",
+    "eslint-plugin-react": "^7.32.2",
+    "eslint-plugin-react-hooks": "^4.6.0",
+    "npm-run-all": "^4.1.5",
+    "prettier": "^2.8.3",
+    "ts-node": "^10.9.1",
+    "typescript": "^4.9.5",
+    "webpack-cli": "^5.0.1"
+  },
+  "dependencies": {
+    "webpack": "^5.75.0",
+    "webpack-merge": "^5.8.0"
+  }
+}
+As you can see, we need to add a build:package_name (in this case, build:utils) script for each 
+package that we want to build, and then our build script will execute all of them using npm-run-
+all build:*.
+Now you can build your utils package by running the npm run build script inside the utils 
+directory; you should see something like this:
+Figure 14.7: Building utils
+
+=== PAGE 389 ===
+MonoRepo Architecture
+360
+Following this, you should see the Webpack configuration log that we use to compile this package:
+Figure 14.8: Webpack configuration
+
+=== PAGE 390 ===
+Chapter 14
+361
+Then at the end, you will see the compiled files by Webpack:
+Figure 14.9: Compiled files by Webpack
+Now that we have created our first package, which is compiled with devtools, and understand 
+the structure of a package, it’s time to start working on our API.
+Creating the API package
+In this package, we will implement a multi-service system that will help us have more than one 
+service to connect to multiple databases. Let’s see how our package.json file should look for 
+the api package:
+{
+  "name": "@web-creator/api",
+  "version": "1.0.0",
+  "main": "index.js",
+  "scripts": {
+    "build": "cross-env NODE_ENV=production npm-run-all clean compile 
+webpack:production",
+
+=== PAGE 391 ===
+MonoRepo Architecture
+362
+    "build:dev": "cross-env NODE_ENV=development npm-run-all clean compile 
+webpack:development",
+    "clean": "rm -rf ./dist",
+    "compile": "tsc",
+    "dev": "ts-node-dev src/index.ts",
+    "lint": "npm run --prefix ../../ lint",
+    "lint:fix": "npm run --prefix ../../ lint:fix",
+    "webpack:development": "webpack --config=../../webpack.config.ts --env 
+mode=production --env type=api --env packageName=api",
+    "webpack:production": "webpack --config=../../webpack.config.ts --env 
+mode=development --env type=api --env packageName=api"
+  },
+  "author": "Carlos Santana",
+  "license": "MIT",
+  "dependencies": {
+    "@graphql-tools/merge": "8.3.18",
+    "@graphql-tools/schema": "9.0.16",
+    "@web-creator/authentication": "1.0.0",
+    "@web-creator/utils": "^1.0.0",
+    "@apollo/server": "^4.7.3",
+    "cookie-parser": "^1.4.6",
+    "cors": "^2.8.5",
+    "dotenv": "^16.0.3",
+    "express": "^4.18.2",
+    "graphql": "16.6.0",
+    "graphql-middleware": "6.1.33",
+    "graphql-tag": "2.12.6",
+    "isomorphic-fetch": "^3.0.0",
+    "jsonwebtoken": "^9.0.0",
+    "pg": "^8.9.0",
+    "pg-hstore": "^2.3.4",
+    "pg-native": "^3.0.1",
+    "sequelize": "^6.28.0",
+    "sequelize-typescript": "^2.1.5"
+  },
+  "devDependencies": {
+    "@types/body-parser": "^1.19.2",
+
+=== PAGE 392 ===
+Chapter 14
+363
+    "@types/express-jwt": "^6.0.4",
+    "@types/jsonwebtoken": "^9.0.1",
+    "@types/cors": "^2.8.13",
+    "@types/node": "^18.11.18",
+    "@types/pg": "^8.6.6",
+    "ts-node-dev": "2.0.0"
+  }
+}
+In this case, we will use Sequelize (an ORM) and PostgreSQL for the database, but feel free to use 
+MySQL or any other type of database supported by Sequelize.
+In the following sections, we’ll guide you through each of these steps in detail. We’ll demonstrate 
+how to integrate all the components and successfully operate your CRM service. If it appears 
+complex, there’s no need to worry. We’ll proceed at a steady pace and provide explanations 
+along the way.
+Creating a user-shared model
+The first thing we need to create is our shared model, which for now will be only the User model, 
+to be able to create a shared authentication system for all our sites.
+You must create the User model file in packages/models/User.ts, which will create a table with 
+the following fields: id (UUID), username (STRING), password (STRING), Email (STRING), Role 
+(STRING), and active (BOOLEAN):
+import { security } from '@web-creator/utils'
+import { DataType, Sequelize, User } from '../types'
+export default (sequelize: Sequelize, dataType: DataType): User => {
+const user = sequelize.define('User', {
+id: {
+   primaryKey: true,
+   allowNull: false,
+   type: dataType.UUID,
+   defaultValue: dataType.UUIDV4()
+},
+username: {
+   type: dataType.STRING,
+   allowNull: false,
+   unique: true,
+
+=== PAGE 393 ===
+MonoRepo Architecture
+364
+   validate: {
+   isAlphanumeric: {
+   args: true,
+   msg: 'The user just accepts alphanumeric characters'
+},
+len: {
+   args: [4, 20],
+   msg: 'The username must be from 4 to 20 characters'
+}
+}
+},
+password: {
+   type: dataType.STRING,
+   allowNull: false
+},
+email: {
+   type: dataType.STRING,
+   allowNull: false,
+   unique: true,
+   validate: {
+   isEmail: {
+   args: true,
+   msg: 'Invalid email'
+  }
+ }
+},
+role: {
+   type: dataType.STRING,
+   allowNull: false
+},
+active: {
+   type: dataType.BOOLEAN,
+   allowNull: false,
+   defaultValue: false
+ }
+},
+
+=== PAGE 394 ===
+Chapter 14
+365
+{
+hooks: {
+   beforeCreate: (u: User): void => {
+   u.password = security.encrypt(u.password)
+  }
+  }
+ }
+)
+return user
+}
+Creating a user-shared GraphQL type and resolver
+Besides the User-shared model, we need to create a shared GraphQL type and resolver, in order 
+to handle the authentication using GraphQL on all our sites.
+First we need to create another shared GraphQL type called error, which will help us handle 
+errors on any of the queries or mutations we will create later. This file exists in packages/api/
+src/graphql/types/Error.ts:
+import gql from 'graphql-tag'
+export default gql`
+type ErrorResponse {
+   code: Int
+   message: String!
+}
+ 
+type Error {
+   error: ErrorResponse
+}
+`
+Another shared type that we need to create is the scalar one, which will define scalar types like 
+UUID, Datetime, and JSON. This file exists in packages/api/src/graphql/types/Scalar.ts:
+import gql from 'graphql-tag'
+export default gql`
+scalar UUID
+scalar Datetime
+
+=== PAGE 395 ===
+MonoRepo Architecture
+366
+scalar JSON
+`
+Finally, we need to create our User type, which will include some queries to get a specific user via 
+an access token (at), get all users, and get some mutations to create a new user and also to log in. 
+This file should be placed in packages/api/src/graphql/types/User.ts:
+import gql from 'graphql-tag'
+export default gql`
+"User type"
+type User {
+   id: UUID!
+   username: String!
+   email: String!
+   role: String!
+   active: Boolean!
+   createdAt: Datetime!
+   updatedAt: Datetime!
+}
+"Token type"
+  type Token {
+   token: String!
+}
+"User Query"
+  type Query {
+   getUser(at: String!): User!
+   getUsers: [User!]
+}
+"User Mutation"
+  type Mutation {
+   createUser(input: ICreateUser): User!
+   login(input: ILogin): Token!
+}
+"CreateUser Input"
+  input ICreateUser {
+   username: String!
+   password: String!
+   email: String!
+
+=== PAGE 396 ===
+Chapter 14
+367
+   active: Boolean!
+   role: String!
+}
+"Login Input"
+  input ILogin {
+   emailOrUsername: String!
+   password: String!
+}
+`
+After you create the preceding types, you need to create the user resolver. For this we will use the 
+authentication package (please check the code at https://github.com/PacktPublishing/
+React-18-Design-Patterns-and-Best-Practices-Fourth-Edition/tree/main/Chapter14/
+web-creator/packages/authentication). Do you remember the authentication system we 
+created in Chapter 13? It is the same code, but now it will have its own package. This resolver 
+should be created in packages/api/src/graphql/resolvers/user.ts:
+import { authenticate, getUserBy, getUserData } from '@web-builder/
+authentication'
+import { ICreateUser, ILogin, Model } from '../../types'
+const getUsers = (_: any, _args: any, { models }: { models: Model }) => 
+models.User.findAll()
+const getUser = async (_: any, { at }: { at: string }, { models }: 
+{models: Model}) => {
+const connectedUser = await getUserData(at)
+if (connectedUser) {
+  // Validating if the user is still valid
+  const user = await getUserBy(
+  {
+   id: connectedUser.id,
+   email: connectedUser.email,
+   active: connectedUser.active
+  },
+  [connectedUser.role],
+  models
+)
+if (user) {
+  return {
+
+=== PAGE 397 ===
+MonoRepo Architecture
+368
+   connectedUser
+   }
+  }
+}
+return {
+   id: '',
+   username: '',
+   email: '',
+   role: '',
+   active: false
+  }
+}
+const createUser = (_:any, {input}: {input: ICreateUser}, {models}: 
+{models: Model}) =>
+models.User.create({ ...input })
+const login = (_: any, { input }: { input: ILogin }, { models }: { models: 
+Model }) =>
+authenticate(input.emailOrUsername, input.password, models)
+export default {
+Query: {
+  getUser,
+  getUsers
+},
+Mutation: {
+  createUser,
+  login
+ }
+}
+Creating custom services
+Now it is time to create our custom services; for this we will create one default service (just to 
+have an empty service) and one for a CRM project (it will be called crm).
+The first thing we need to do is to create our service configuration, and for this we will create 
+some types that will help us to be very strict in the options that our configuration will receive. 
+This file needs to be created in packages/api/src/types/config.ts:
+import { ValueOf } from '@web-creator/utils'
+
+=== PAGE 398 ===
+Chapter 14
+369
+// Here you need to add all the services you want to create
+export const Service = {
+CRM: 'crm'
+} as const
+export type Service = ValueOf<typeof Service>
+export type Mode = 'production' | 'development'
+export enum DeploymentType {
+  PRODUCTION = 'production',
+  STAGING = 'staging',
+  DEVELOPMENT = 'development'
+}
+export interface ServiceConfiguration {
+  domainName: string
+  port: number
+  database?: {
+  engine?: string
+  port?: number
+  host?: string
+  database?: string
+  username?: string
+  password?: string
+ }
+}
+export interface ServiceBuilderConfiguration extends ServiceConfiguration 
+{
+  service: Service
+}
+Our default configuration should be like this (packages/api/src/services/default/config.ts):
+import { ServiceConfiguration } from '../../types/config'
+export const config: ServiceConfiguration = {
+  domainName: 'localhost',
+  port: 4000,
+  database: {
+  engine: 'postgresql',
+  port: 5432,
+  host: 'localhost',
+
+=== PAGE 399 ===
+MonoRepo Architecture
+370
+  database: '',
+  username: '',
+  password: ''
+}
+}
+After that let’s create our CRM configuration (custom service). This should be placed in packages/
+api/src/services/crm/config.ts:
+import { ServiceConfiguration } from '../../types/config'
+export const config: ServiceConfiguration = {
+  domainName: 'ranchosanpancho.com',
+  port: 4000,
+  database: {
+  database: 'crm'
+}
+}
+I’m pretty sure you’re wondering where the other options of the database node (engine, port, 
+host, username, and password) are. Those will be overwritten in the main config file that we 
+will create later, but those values will be grabbed from our .env file (you must rename the .env.
+example file). Hence, let’s create that file in packages/api/.env:
+DB_ENGINE=postgresql
+DB_PORT=5432
+DB_HOST=localhost
+DB_USERNAME=<YourDBUserName>
+DB_PASSWORD=<YourDBPassword>
+Building our service configuration
+Now that we have our custom service (CRM) ready, let’s build our configuration. For this you 
+need to create the config file in packages/api/src/config.ts:
+// This package will load the environment variables from our .env file
+import dotenv from 'dotenv'
+// Here you can add your custom services configuration
+import { config as crmConfig } from './services/crm/config'
+import { config as blankServiceConfig } from './services/default/config'
+
+=== PAGE 400 ===
+Chapter 14
+371
+import { Service, ServiceBuilderConfiguration, ServiceConfiguration } from 
+'./types/config'
+// Loading Env vars
+dotenv.config()
+const getServiceConfig = (service: Service): ServiceConfiguration => {
+switch (service) {
+// Add your custom services here
+case Service.CRM:
+return crmConfig
+  default:
+   return blankServiceConfig
+}
+}
+const buildConfig = (): ServiceBuilderConfiguration => {
+const service = process.env.SERVICE as Service
+if (!service) {
+  throw 'You must specify a service (E.g., SERVICE=crm npm run dev)'
+}
+const serviceConfig = getServiceConfig(service)
+const config: ServiceBuilderConfiguration = {
+   serviceConfig,
+database: {
+   serviceConfig.database,
+   engine: process.env.DB_ENGINE,
+   host: process.env.DB_HOST,
+   port: Number(process.env.DB_PORT),
+   username: process.env.DB_USERNAME,
+   password: process.env.DB_PASSWORD
+},
+service
+}
+return config
+}
+// Building the config
+const Config = buildConfig()
+export default Config
+
