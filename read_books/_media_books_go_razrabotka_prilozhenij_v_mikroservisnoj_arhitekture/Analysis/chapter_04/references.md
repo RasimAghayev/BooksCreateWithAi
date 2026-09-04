@@ -2,41 +2,44 @@
 
 ## Book: Разработка приложений в микросервисной архитектуре с нуля
 
-## Sources cited in Chapter 4 (Database Design Theory section)
+## Sources cited in Chapter 4 (Database Theory & Transaction Service section)
 
-1. **Лекции по дисциплине «Сети» БГТУ им. В. Г. Шухова**
-   - Title: Lectures on Computer Networks, BSTU named after V.G. Shukhov
+1. **Лекции по дисциплине «Базы данных» БГТУ им. В. Г. Шухова**
+   - Title: Lectures on Database Systems, BSTU named after V.G. Shukhov
+   - Context: Database normal forms and transaction theory
 
-2. **https://habr.com/ru/companies/piter/articles/596621/**
-   - Title: Habr article (Piter publishing house)
-   - Context: gRPC / service communication patterns
+2. **Документация к PostgreSQL 15.3**
+   - URL: http://repo.postgrespro.ru/doc/pgsql/15.3/ru/postgres-A4.pdt
+   - Context: PostgreSQL reference for transactions, isolation levels, and features
 
-3. **https://ru.wikipedia.org/wiki/GRPC**
-   - Title: gRPC (Russian Wikipedia)
-   - Context: gRPC protocol documentation
+3. **https://ru.wikipedia.org/wiki/Транзакция_(информатика)**
+   - Title: Транзакция (Russian Wikipedia)
+   - Context: Transaction concept definition
 
-4. **https://habr.com/ru/articles/488654/**
-   - Title: Habr article on RabbitMQ
-   - Context: Message broker patterns
+4. **https://habr.com/ru/articles/317884/**
+   - Title: Habr article on database indexes
+   - Context: Index creation and performance
 
-5. **https://habr.com/ru/companies/southbridge/articles/550934/**
-   - Title: Habr article (Southbridge)
-   - Context: Kafka vs RabbitMQ comparison
+5. **https://habr.com/ru/articles/446662/**
+   - Title: Habr article
+   - Context: Database isolation levels
 
-6. **https://ru.wikipedia.org/wiki/Apache_Kafka**
-   - Title: Apache Kafka (Russian Wikipedia)
-   - Context: Kafka architecture
+6. **Крис Ричардсон. "Микросервисы. Паттерны разработки и рефакторинга"**
+   - URL: https://goo.suffhpJlB
+   - Context: Saga pattern reference — "Microservices: Patterns and Practices"
 
-7. **https://habr.com/ru/companies/wunderfund/articles/685894/**
-   - Title: Habr article (WunderFund)
-   - Context: Redis use cases
+7. **https://microservices.io/patterns/data/saga.html**
+   - Title: Saga Pattern (Chris Richardson's microservices patterns)
+   - Context: Saga pattern implementation guidance
 
-## Additional References from Chapter 4
+## Cross-Chapter References
 
-8. **https://microservices.io/patterns/apigateway.html**
-   - Title: API Gateway Pattern (Chris Richardson)
-   - Context: Gateway pattern justification
+8. **Джейсон Андресс. "Защита данных. От авторизации до аудита". 2021.**
+   - URL: https://goo.su/7cBj7
+   - Context: Security/auth (referenced from Chapter 2)
 
-9. **https://marketplace.visualstudio.com/items?itemName=cweijan.vscode-database-client**
-   - Title: Database Client VS Code extension
-   - Context: PostgreSQL GUI tool for local development
+9. **https://golang-jwt.github.io/jwt/**
+   - Context: JWT library (referenced from Chapter 2)
+
+10. **https://microservices.io/patterns/apigateway.html**
+    - Context: API Gateway pattern (referenced from Chapter 3)

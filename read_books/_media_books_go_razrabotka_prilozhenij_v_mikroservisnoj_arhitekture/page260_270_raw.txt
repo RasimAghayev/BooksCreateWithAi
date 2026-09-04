@@ -1,0 +1,362 @@
+Разработка модуля Transaction 
+err := s.repo.TransferBalance(ctx, fromUserID, toUserID, float32(amount)) 
+if err != nil { 
+s.logger.Err(err). 
+Uint64("fromUserID", fromUserID). 
+Uint64("toUserID", toUserID). 
+Int64("amount", amount). 
+Msg("failed to transfer balance") 
+return model.GetBalanceResponse{), model.GetBalanceResponse{ ), err 
+s.logger.Info(). 
+Uint64 ( "fromUserID", fromUserID) . 
+Uint64("toUserID", toUserID). 
+Int64 ("amount", amount). 
+Msg ( "balance transferred successfully") 
+// Получаем балансы обоих пользователей для ответа 
+fromUserBalance, err := s.GetBalance(ctx, fromUserID) 
+if err != nil { 
+s. logger. Err (err) . Uint64 ( "userID", fromUserID) .Msg ( "failed to get sender balance") 
+return model.GetBalanceResponse( ), model.GetBalanceResponse{), err 
+toUserBalance, err := s.GetBalance(ctx, toUserID) 
+if err 
+1= nil { 
+s.logger.Err(err) .Uint64 ("userID", toUserID) .Msg("failed to get recipient balance") 
+return model.GetBalanceResponse(), model.GetBalanceRespoпse(), err 
+s.logger.Info(). 
+Uint64("fromUserID", fromUserID). 
+Uint64("toUserID", toUserID). 
+Int64("amount", amount). 
+Msg("transfer successful") 
+return fromUserBalance, toUserBalance, nil 
+// HandleTransaction обрабатывает сообщения из Kafka от transaction service 
+func (s *AccountService) HandleTransaction(ctx context.Context, topic string, key string, 
+data []byte) error { 
+s.logger.Info() .Msg("handling transaction request") 
+var res TransactionRequest 
+var err error 
+if err = json.Unmarshal(data, &res); err != nil { 
+return fmt.Errorf("failed to unmarshal account response: %w", err) 
+259 
+260 
+result := map[string)interface{){ 
+"request_type": res.RequestType, 
+"user id": 
+res. UserID, 
+"operation_id": res.OperationID, 
+"result": 
+false, 
+switch res.RequestType { 
+case "withdraw": 
+, err = s.Withdraw{ctx, res.UserID, res.Amount) 
+case "deposit": 
+, err = s.Depos1t(ctx, res.UserID, res.Amount) 
+case "transfer": 
+_, _, err = s.Transfer(ctx, res.UserID, res.RecipientID, res.Amount) 
+default: 
+err = fmt. Errorf ( "unknown request type: %s", res. RequestType) 
+if err != nil { 
+s.logger.Err(err). 
+Uint64("userID", res.UserID). 
+Uint64("operationID", res.OperationID). 
+Msg("failed to handle transaction request") 
+s.kafkaPuЬlisher.PuЬlish(ctx, "transaction_response", "key", result) 
+return fmt.Errorf("failed to handle transaction request: %w", err) 
+result [ "result"] = true 
+Глава 4 
+s.kafkaPuЬlisher.PuЬlish(ctx, "transaction_response", strconv.FormatUint(res.UserID, 10), 
+result) 
+return nil 
+Здесь мы выполняем необходимые для транзакции проверки, определяем по 
+request_type тип запроса (пополнение, списание или перевод), вызываем соответст­
+вующий метод логики и отправляем результат, если успешно: result = true, иначе 
+result = false. 
+И остается только добавить подписку на событие (листинг 4.37). 
+package арр 
+import ( 
+"context" 
+"dataЬase/sql" 
+"frnt 11 
+"net" 
+Разработка модуля Transaction 
+"account/internal/config" 
+"account/internal/kafka" 
+"account/internal/migrations" 
+"account/internal/repository" 
+"account/internal/server" 
+"account/internal/service" 
+"githuЬ.com/pressly/goose/vЗ" 
+accountpb "githuЬ.com/yuliaapopova/contracts/account/go" 
+"google.golang.org/genproto/googleapis/api/annotations" 
+"google.golang.org/grpc" 
+"githuЬ.com/liЬ/pq" 
+"githuЬ.com/rs/zerolog" 
+"gorm.io/driver/postgres" 
+"gorm. io/gorm" 
+type Арр struct { 
+cfg 
+*config.Config 
+logger *zerolog.Logger 
+accountRepository *repository.Repository 
+accountService 
+accountServer 
+grpcServer 
+*service.AccountService 
+*server.Server 
+*grpc.Server 
+kafkaClient *kafka.Kafka 
+func New(logger *zerolog.Logger, cfg *config.Config) 
+*Арр { 
+return &Арр{ 
+cfg: 
+cfg, 
+logger: logger, 
+func 
+(а *Арр) Run(ctx context.Context) error { 
+// Инициализируем gRPC-cepвep 
+accountServer, err := a.getAccountServer(ctx) 
+if err 1= nil ( 
+return fmt.Errorf("failed to get account server: %w", err) 
+// Создаем gRPC-cepвep 
+a.grpcServer = getGRPCServer(accountServer) 
+261 
+262 
+listenAddr := fmt.Sprintf("%s:%d", a.cfg.Host, a.cfg.Port) 
+lis, err := net.Listen("tcp", listenAddr) 
+if err 1= nil { 
+a.logger.Fatal() .Err(err) .Msg("failed to listen") 
+return err 
+a.logger.Info() .Msg("gRPC server listening") 
+serveErrCh := make(chan error, 1) 
+go func () { 
+serveErrCh <- a.grpcServer.Serve(lis) 
+} () 
+select 
+case <-ctx.Done(): 
+a.grpcServer.GracefulStop() 
+return ctx. Err () 
+case err := <-serveErrCh: 
+if err 1= nil ( 
+a.logger.Error() .Err(err) .Msg("failed to serve") 
+return err 
+func 
+(а *Арр) getRepository(ctx context.Context) (*repository.Repository, error) { 
+if a.accountRepository == nil { 
+if err := a.runМigrations(ctx); err != nil 
+return nil, fmt.Errorf("failed to get repository: %w", err) 
+dЬ, err := gorm.Open(postgres.Open(a.cfg.DbDsn), &gorm.Config{}I 
+if err != nil { 
+return nil, fmt. Errorf ( "gorm ini t failed: %w", err) 
+a.accountRepository = repository.NewRepository(dЬ, a.logger) 
+return a.accountRepository, nil 
+func 
+(а *Арр) runМigrations(ctx context.Context) error { 
+if err := goose.SetDialect("postgres"); err != nil { 
+return fmt.Errorf("failed to select migrations dialect: %w", err) 
+dЬGoose, err := sql.Open("postgres", a.cfg.DbDsn) 
+if err != nil { 
+Глава 4 
+Разработка модуля Transaction 
+return frnt.Errorf("failed to create sql connection: %w", err) 
+if err := goose.UpContext(ctx, dЬGoose, "internal/rnigrations"); err != nil { 
+return frnt.Errorf("failed to run up rnigrations: %w", err) 
+return nil 
+func 
+(а *Арр) getAccountService(ctx context.Context) (*service.AccountService, error) { 
+if a.accountService == nil { 
+repo, err := a.getRepository(ctx) 
+if err != nil { 
+return nil, frnt.Errorf("failed to get repository: %w", err) 
+kafkaClient, err := a.getKafkaClient(ctx) 
+if err 1= nil { 
+return nil, frnt.Errorf("failed to get kafka client: %w", err) 
+a.accountService 
+service.New(repo, kafkaClient, a.logger) 
+263 
+//Подписываемся на ответы от account service после создания сервиса 
+a.kafkaClient.SuЬscribe(ctx, a.cfg.KafkaTransactionTopic, 
+a.accountService.HandleTransaction) 
+a.logger.Info() .Msg("kafka client attached to transaction service") 
+return a.accountService, nil 
+func 
+(а *Арр) getKafkaClient(ctx context.Context) (*kafka.Kafka, error) { 
+if a.kafkaClient == nil { 
+// Создаем producer 
+producerCfg := kafka.DefaultProducerConfig(a.cfg.KafkaBrokers) 
+producer := kafka.NewProducer(producerCfg, a.logger) 
+// Создаем Каfkа-клиент 
+kafkaClient := kafka.New(producer, a.cfg.KafkaBrokers, a.cfg.KafkaGroupID, a.logger) 
+a.kafkaClient = kafkaClient 
+а. logger. Info () . Msg ( "kafka client created") 
+return a.kafkaClient, nil 
+264 
+func 
+(а *Арр) getAccountServer(ctx context.Context) (*server.Server, error) { 
+if a.accountServer == nil { 
+service, err := a.getAccountService(ctx) 
+if err != nil { 
+return nil, fmt.Errorf("failed to get service: %w", err) 
+a.accountServer = server.New(service, a.logger) 
+return a.accountServer, nil 
+func getGRPCServer(srv *server.Server) *grpc.Server 
+grpcSrv := grpc.NewServer() 
+accountpb.RegisterAccountServer(grpcSrv, srv) 
+return grpcSrv 
+// Close корректно завершает работу приложения 
+func 
+(а *Арр) Close() error { 
+var errs []error 
+if a.grpcServer != nil 
+a.grpcServer.GracefulStop() 
+if a.kafkaClient != nil { 
+if err := a.kafkaClient.Close(); err != nil { 
+errs = append(errs, fmt.Errorf("failed to close kafka client: %w", err)) 
+if len(errs) > О { 
+return fmt. Errorf ( "errors closing арр: %v", errs) 
+return nil 
+Глава 4 
+В результате мы реализовали взаимодействие между сервисами Account и Trans-
+action через брокер сообщений Kafka по паттерну Saga. 
+Для полноценной картины миркросервисного взаимодействия нашей системы не 
+хватает только добавить методы работы с транзакциями в Gateway, но приводить 
+код этого тут мы не будем -
+там все подобно тому, как мы уже делали для 
+Gateway с другими сервисами, подробности вы можете рассмотреть сами в архиве 
+с кодом. 
+Разработка модуля Transaction 
+Список литературы и источников 
+1. Лекции по дисциплине «Базы данных» БГТУ им. В. Г. Шухова. 
+2. Документация к PostgreSQL 15.3 
+(http://repo.postgrespro.ru/doc/pgsql/15.3/ru/postgres-A4.pdt). 
+3. https://ru.wikipedia.org/wikiff paнзaкция _ %28информатика %29. 
+4. https://habr.com/ru/articles/317884/. 
+5. https://habr.com/ru/articles/446662/. 
+6. Крис Ричардсон. Микросервисы. Паттерны разработки и рефакторинга 
+(https://goo.suffhpJlB). 
+7. https://microservices.io/patterns/data/saga.html. 
+265 
+ГЛАВА 5 
+Развертывание микросервисов 
+Считается, что самыми основными и популярными способами развертывания мик­
+росервисов являются следующие пять [1]. Выбор наиболее приемлемого в каждом 
+конкретном случае зависит от потребностей системы. Итак: 
+1. Один сервер, несколько процессов. 
+2. Несколько серверов, несколько процессов. 
+Когда мощностей одного сервера уже не хватает, можно просто добавить допол­
+нительные серверы и распределить нагрузку между ними. 
+3. Контейнеры. 
+У 
+паковка микросервисов в контейнер упрощает их развертывание и запуск 
+вместе с другими сервисами . 
+Это является первым шагом к оркестровке на 
+основе Kubernetes. 
+4. Оркестратор. 
+Такие оркестраторы, как Kubernetes или Nomad, представляют собой полноцен­
+ные платформы, предназначенные для одновременного запуска большого коли­
+чества контейнеров. 
+5. Бессерверный. 
+Этот способ позволяет не заморачиваться процессами, контейнерами и сервера­
+ми, а выполнять код непосредственно в облаке. 
+Таким образом, у нас есть два варианта пути развития: первый -
+от процессов 
+к контейнерам и в итоге к Kubernetes. И второй -
+бессерверный. 
+К первому способу (один сервер, несколько процессов) для наглядности можно от­
+нести ситуацию, когда вы на своей локальной машине разворачиваете сервер для 
+разработки. При этом вы можете запустить микросервисное приложение в виде не­
+скольких процессов на разных портах. Собственно, так мы и делали до сих пор 
+ранее. Однако разница с производственной средой и локальной разработкой заклю­
+чается в том, что в первом случае практически всегда используются несколько ин­
+стансов (можно сказать, что это уже стандарт), которые следуют за балансировщи­
+ком нагрузки. Балансировщик нагрузки контролирует, чтобы ресурсы запущенных 
+268 
+Глава 5 
+приложений нагружались равномерно и не было перекоса, когда один инстанс за­
+гружен на 80%, а другой, к примеру, только на 20%. 
+Если вы хотите запустить свое приложение на домашнем сервере, вам понадобится 
+получить публичный IР-адрес и открыть соответствующие порты, на которых и 
+будет запущен ваш проект. 
+В качестве положительного момента такого способа можно отметить, что запустить 
+на виртуальной машине (ВМ) один инстанс проекта, моделирующий процессы, вы­
+полняющиеся на сервере, не составляет особой проблемы. Для этого также не по­
+требуется специально ничего изучать -
+достаточно подключиться к ВМ по SSH, 
+перенести в нее проект, установить необходимые зависимости и запустить на вы­
+полнение. Подробно рассматривать способ реализации этого подхода на практике 
+мы не станем, поскольку он буквально 1 : 1 повторяет то, как мы устанавливали и 
+настраивали всё это локально, с той лишь разницей, что тут можно работать только 
+через терминал, а если понадобится отредактировать какой-либо текстовый файл, 
+то делать это придется через встроенные в терминал редакторы vim или nano. 
+Однако когда появляется необходимость масштабировать подобное решение, то 
+начинаются сложности, поскольку добавить в него ресурсы сервера бывает затруд­
+нительно, если это решение не облачное. Об отказоустойчивости системы в таком 
+случае можно и не говорить -
+если ВМ отключить от сети, то приложение пере­
+станет быть доступно. Так что развертывание при каких-либо сбоях может понадо­
+биться делать каждый раз заново собственноручно. 
+При втором способе (несколько серверов, несколько процессов) происходит всё то 
+же самое, что и при первом, с той лишь разницей, что для балансировки и создания 
+общего контекста для инстансов необходимо использовать веб-серверы nginx 
+(НТТР-сервер, который чаще всего выступает в роли прокси-сервера и/или балан­
+сировщика нагрузки) или Apache. 
+Чтобы установить nginx на ВМ с предустановленной системой Ubuntu 24.04, необ­
+ходимо выполнить команду: 
+sudo apt install nginx 
+Проверить, что nginx установился и запустился, можно командой: 
+sudo systemctl status nginx 
+Если он запущен, то будет выведен следующий результат: 
+• nginx.service -
+А high perforrnance web server and а reverse proxy server 
+Loaded: loaded (/usr/liЬ/systemd/system/nginx.service; enaЬled; preset: enaЬled) 
+Active: active (running) since Wed 2025-09-10 12:23:59 UTC; 15s ago 
+Docs: rnan:nginx(B) 
+Process: 1459 ExecStartPre=/usr/sbin/nginx -t -q -g daemon on; rnaster_process on; 
+(code=exited, status=O/SUCCESS) 
+Process: 1462 ExecStart=/usr/sbin/nginx -g daernon on; rnaster_process on; (code=exited, 
+status=O/SUCCESS) 
+Main PID: 1493 (nginx) 
+Tasks: 3 (lirnit: 2316) 
+Развертывание микросервисов 
+Memory: 
+2.2М (peak: 
+4.9М) 
+CPU: 22ms 
+CGroup: /system.slice/nginx.service 
+269 
+f-1493 "nginx: master process /usr/sbin/nginx -g daernon оп; master_process оп;" 
+f-1495 "nginx: worker process" 
+L1496 "nginx: worker process" 
+Sep 10 12:23:59 cornpute-vrn-2-2-10-ssd-1757506897549 systernd[l]: Starting nginx.service 
+-
+А high performance web server and а reverse proxy server . .. 
+Sep 10 12:23:59 cornpute-vrn-2-2-10-ssd-1757506897549 systemd(l]: Started nginx.service 
+-
+А high performance web server and а reverse proxy server. 
+Теперь, если перейти по публичному IР-адресу вашей ВМ, вы увидите, что nginx 
+запущен (рис . 5.1). 
+~ ® 
+С Ei3 130 193 51 205 
+Welcome to nginx! 
+Welcome to nginx! 
+lf you see this page, the nginx wеЬ server is successfully installed and 
+woridng. Further configuration is required. 
+For online documentation and support please refer to .D9iм,.Qrg . 
+Commerdal suppo,t is availaЫe at ng~. 
+Тhank уоо for using nginx. 
+Рис. 5.1. Nginx запущен 
+При штатной установке nginx будет запущен со своими стандартными настройка­
+ми. А чтобы запустить его в режиме прокси-сервера, необходимо отредактировать 
+конфигурацию: открыть настройки nginx через консольный редактор (рис. 5.2): 
+sudo nano /etc/nginx/sites-availaЫe/default 
+и подправить их следующим образом: 
+location / ( 
+proxy_pass http://localhost:50053; 
+Здесь указывается, куда перенаправлять запрос, который поступает на 80-й порт 
+(по умолчанию открытым под nginx чаще всего оказывается порт 8080 или 80). 
+Однако такой метод настройки развертывания очень неудобный. Чтобы проект за­
+пустился, мы должны клонировать весь его код с GitHub, установить и развернуть 
+Docker-Compose для баз данных, установить и запустить каждый сервер по отдель­
+ности, а затем еще настроить nginx. К тому же если вы отключитесь от удаленной 
+машины или закроете соединение, где поднимаются сервисы, то сервисы завершат 
+свою работу. Чтобы этого избежать, можно настроить запуск через службы. 
+В общем, что в первом способе, что во втором оказывается слишком много ручной 
+работы. Причем для второго способа, когда задействованы несколько ВМ, настрой-

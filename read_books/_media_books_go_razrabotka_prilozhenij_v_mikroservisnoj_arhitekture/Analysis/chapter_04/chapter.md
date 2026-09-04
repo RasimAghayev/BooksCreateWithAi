@@ -8,145 +8,148 @@
 
 ### Chapter Pages
 - Start: 158
-- End: 204
-- Total: 47 pages
+- End: 264
+- Total: ~107 pages (Chapter 4 + start of Chapter 5 references)
 
 ### Chapter Goal
-Build the **Transaction service** for handling money transfers (deposit, withdraw, transfer) using double-entry bookkeeping with database-level atomicity. Also extends the Account service with balance management and soft-delete functionality.
+Implement the **Transaction service** for handling monetary operations (deposit, withdraw, transfer) using **double-entry bookkeeping** with database-level atomicity (ACID), and integrate it with the **Account service** using the **Saga pattern** with Kafka for distributed transaction coordination. The chapter also covers advanced database theory (BCNF, 4NF, 5NF) and PostgreSQL indexing strategies.
 
 ---
 
-## Key Concepts
+## Key Architecture Decisions
 
-### Database Design Theory (Pages 158–165)
-1. **Normal Forms** (beyond 3NF covered in Chapter 1):
-   - **НФБК (Boyce-Codd)**: Eliminates redundancy when tables have multiple composite candidate keys
-   - **4NF**: Eliminates multivalued dependencies
-   - **5NF**: Eliminates join dependencies
-   - **ДКНФ**: All constraints are consequences of domain + key constraints
-   - **6NF**: All join dependencies preserved (rarely used in practice)
+### 1. Distributed Transaction Problem
+- Transaction service and Account service use **separate databases** → can't use single ACID transaction across both
+- Solution: **Saga pattern** with Kafka event broker — eventual consistency
 
-2. **ACID Properties**:
-   - **Atomicity**: All-or-nothing (rollback on error)
-   - **Consistency**: Valid state before and after
-   - **Isolation**: Concurrent transactions don't interfere
-   - **Durability**: Committed changes persist
+### 2. Saga Pattern Implementation
+- **Phase 1**: Transaction service creates transaction (pending) → publishes request to Kafka → Account service consumes and processes balance change → publishes response → Transaction service updates status (completed/failed)
+- **Compensation**: If Kafka publish fails, transaction is marked as `failed` immediately
+- **Idempotency**: `operation_id` (transaction ID) prevents duplicate processing
+- **Topics**: `transaction_data` (requests), `transaction_response` (responses)
 
-3. **Transaction Isolation Levels**:
-   - Read Uncommitted → Read Committed → Repeatable Read → Serializable
-   - Concurrency anomalies: lost update, dirty read, non-repeatable read, phantom read, serialization anomaly
+### 3. Double-Entry Bookkeeping
+- Every Transaction has 1+ TransactionEntry records with DEBIT/CREDIT directions
+- Deposit: 1 DEBIT entry (increase balance)
+- Withdraw: 1 CREDIT entry (decrease balance)
+- Transfer: 1 CREDIT (sender) + 1 DEBIT (recipient) — within a single DB transaction
+- Amounts stored in **kopeyki** (int64) — `int64(amount * 100)` to avoid float precision errors
 
-### Transaction Service (Pages 167–186)
-- **Service purpose**: Financial operations (deposit, withdraw, transfer)
-- **Data model**: Transaction (header) + TransactionEntry (line items, DEBIT/CREDIT)
-- **Double-entry bookkeeping**: Every credit has matching debit
-- **Amount storage**: `int64` in kopeyki/cents (`amount * 100`) to avoid float precision
-- **Transaction lifecycle**: CREATE (pending) → ADD entries → UPDATE (completed)
-- **GORM Transaction()**: Wraps all operations for atomicity
-- **No delete**: Financial transactions are immutable (audit requirement)
-- **Repository interface**: Defined in service layer (Go DI)
+### 4. Transaction Lifecycle
+```
+1. CREATE Transaction (status=pending)
+2. CREATE Entry/Entries (DEBIT and/or CREDIT)
+3. [Saga] Publish to Kafka → Account updates balance
+4. [Saga] Receive response → UPDATE Transaction status
+   - completed (success) or failed (failure)
+```
 
-### Account Service Integration (Pages 187–204)
-- **New Account fields**: `balance` (float), `is_deleted` (bool, soft delete)
-- **Soft delete pattern**: `is_deleted` flag instead of hard DELETE to preserve referential integrity
-- **Balance methods**: `GetBalance`, `UpdateBalance` (deposit/credit with validation), `TransferBalance` (atomic)
-- **Balance validation**: Check `newBalance >= 0` before crediting (prevents negative balance)
-- **Transfer atomicity**: Both debit + credit in single DB transaction
-- **Service layer**: Thin wrapper with input validation + structured logging
-- **Proto contract**: New RPCs for Deposit, Withdraw, Transfer, GetBalance with operation_id for idempotency
+### 5. Account Service Extensions
+- **New fields**: `balance` (float, default 0.00), `is_deleted` (bool, default false)
+- **Soft delete**: `DeleteUser` sets `is_deleted=true` instead of hard delete — preserves transaction history
+- **Balance operations**: `GetBalance`, `UpdateBalance` (with sufficient funds check), `TransferBalance` (atomic, within DB transaction)
+- **Validation**: Negative amounts rejected; transfers to self rejected; insufficient funds checked before debiting
 
-### Infrastructure (Pages 167)
-- **Docker Compose**: Three PostgreSQL containers (Account:5432, Auth:5433, Transaction:5434)
-- **Indexes**: Added on user_id, status, created_at for query performance
-- **Migration pattern**: Named migrations with up/down functions, `goose.AddNamedMigrationContext()`
+### 6. Database Design
+- **Normal Forms**: BCNF (Boyce-Codd), 4NF, 5NF, Domain-Key NF, 6NF
+- **Indexing**: B-tree indexes on `user_id`, `status`, `created_at` (transactions); `login` (account)
+- **Docker Compose**: Three PostgreSQL containers (Account:5432, Auth:5433, Transaction:5434) + Kafka
 
 ---
 
-## Architecture Summary
+## Service Architecture (Final State)
 
 ```
                     ┌─────────────┐
                     │ API Gateway │ (Port 50053)
-                    │  (Facade)   │
+                    │  (Facade)   │ JWT Interceptor
                     └──────┬──────┘
-         Auth (gRPC) ┌─────┴─────┐
-                     │ Auth Svc  │ (Port 50052)
-                     └──────────┘
-        Balance gRPC ┌──────────────┐
-                     │ Account Svc  │ (Port 50051)
-                     └──────┬───────┘
-                            │ DB Trans
-                            │
-                    ┌───────┴─────┐
-                    │ Transaction │ (Balance updates)
-                    │   Svc       │ Port: N/A (calls Account gRPC)
-                    └─────────────┘
-```
-
-### Microservice Communication Flow
-
-1. **Client → Gateway**: Single entry point, JWT validated by interceptor
-2. **Gateway → Auth**: Token issuance (gRPC)
-3. **Gateway → Account**: User management (gRPC)
-4. **Transaction → Account**: Balance operations via gRPC calls
-
----
-
-## Data Models
-
-### Transaction Service
-```
-transactions:        transaction_entries:
-  id (PK)              id (PK)
-  user_id               transaction_id (FK → transactions)
-  amount (int64, cents) account_id
-  type (deposit/withdraw/transfer) direction (DEBIT/CREDIT)
-  status (pending/completed/failed/cancelled) amount (decimal)
-  created_at, updated_at
-```
-
-### Account Service (extended)
-```
-users:
-  id (PK)
-  login, email, phone, first_name, last_name, middle_name, age
-  balance (decimal 15,2)     -- NEW
-  is_deleted (boolean, default false)  -- NEW (soft delete)
-  created_at, updated_at
+          ┌───────────────┼────────────────┐
+          │ gRPC (50051)  │                │
+          ▼               │                ▼
+   ┌─────────────┐      │ gRPC (50052)   ┌──────────────┐
+   │ Account Svc │      │                │    Auth Svc  │
+   │             │      │                │              │
+   │ + balance   │      │                │ + JWT tokens │
+   │ + is_deleted│      │                │ + bcrypt     │
+   │ + Kafka     │      │                │              │
+   └──────┬──────┘      │                └──────────────┘
+          │             │                         ▲
+          │ Kafka ◄─────┼──────── Kafka ──────── │
+          │             │                         │
+          ▼             │                         │
+   ┌─────────────┐      │                        │
+   │ Transaction │      │                        │
+   │   Service   │ ──────┼───────────────────────┘
+   │   (50054)   │ gRPC
+   │             │
+   │ + Transaction│
+   │ + Entries    │
+   │ + Saga       │
+   │ + Kafka      │
+   └─────────────┘
 ```
 
 ---
 
-## Transaction Flow (Transfer Example)
+## Microservices Inventory
 
-```
-1. Gateway.Receive Transfer request
-2. Gateway calls TransactionService.Transfer(user_id, recipient_id, amount)
-3. Repository.Transfer():
-   a. START DB TRANSACTION
-   b. Create Transaction record (status=pending)
-   c. Create DEBIT entry (sender loses funds)
-   d. Create DEBIT entry (recipient gains funds)
-   e. Update Account balances (via gRPC or same DB)
-   f. UPDATE Transaction (status=completed)
-   g. COMMIT/ROLLBACK
-4. Return TransactionDetails with entries
-```
+| Service | Port | gRPC Port | DB | DB Port | Purpose |
+|---------|------|-----------|----|---------|---------|
+| Account | 50051 | 50051 | PostgreSQL | 5432 | User profiles + balance management |
+| Auth | 50052 | 50052 | PostgreSQL | 5433 | Authentication (bcrypt, JWT, refresh tokens) |
+| Gateway | 50053 | 50053 | N/A | N/A | API facade (JWT interception, routing, aggregation) |
+| Transaction | 50054 | 50054 | PostgreSQL | 5434 | Financial transactions (deposit/withdraw/transfer) |
+
+### Docker Services
+| Service | Port | Purpose |
+|---------|------|---------|
+| Kafka | 29092/9092 | Message broker (Saga pattern) |
+| Kafka UI | 29093:8080 | Kafka monitoring UI |
 
 ---
 
-## Technologies
+## Transaction States
+
+| State | Description |
+|-------|-------------|
+| `pending` | Transaction created, awaiting balance operation result |
+| `completed` | Balance operation succeeded |
+| `failed` | Balance operation failed or Kafka error |
+| `cancelled` | Manual cancellation (not yet implemented) |
+
+## Transaction Types
+
+| Type | DEBIT Entry | CREDIT Entry |
+|------|-------------|--------------|
+| Deposit | ✓ (increase) | ✗ |
+| Withdraw | ✗ | ✓ (decrease) |
+| Transfer | ✓ (recipient) | ✓ (sender) |
+
+## Balance Operation Types
+
+| Type | Effect |
+|------|--------|
+| DEPOSIT | `balance += amount` |
+| CREDIT | `balance -= amount` (with sufficient funds check) |
+
+---
+
+## Key Technologies
 
 | Technology | Purpose |
 |-----------|---------|
-| Go | Language |
-| PostgreSQL | Persistent storage (3 instances) |
-| gRPC + Protobuf | Service-to-service sync comm |
-| GORM | ORM |
-| goose/v3 | Database migrations |
-| zerolog | Structured logging |
-| Docker Compose | Local development environment |
+| Go | Service implementation language |
+| gRPC + Protobuf | Service-to-service communication |
+| Kafka (confluentinc/cp-kafka) | Async event broker (Saga pattern) |
+| segmentio/kafka-go | Go Kafka client library |
+| PostgreSQL 15 | Persistent storage (4 instances) |
+| GORM | ORM with transaction support |
+| goose/v3 | Database migration tool |
+| bcrypt | Password hashing (Auth service) |
+| JWT (HMAC-SHA256) | Access token format |
+| Docker Compose | Local infrastructure orchestration |
 
 ## What's Next
 
-Chapter 5 covers the final service implementation, integration, and potentially deployment/CI/CD setup.
+Chapter 5 covers **microservice deployment** — strategies (single VM, multi-VM, containers, Kubernetes, serverless) and practical nginx configuration examples. The complete system is built but deployment to production is not yet covered.

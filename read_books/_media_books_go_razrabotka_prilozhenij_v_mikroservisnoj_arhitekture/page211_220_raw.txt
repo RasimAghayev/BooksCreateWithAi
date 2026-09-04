@@ -1,0 +1,402 @@
+210 
+if err != nil ( 
+return &accountpb.TransferResponse( 
+Status: 
+"failed", 
+UserBalance: 
+О, 
+RecipientBalance: 
+О, 
+}, err 
+return &accountpb.TransferResponse{ 
+Status: 
+"completed", 
+UserBalance: 
+int64(fromUserBalance.Balance), 
+Recipientвalance: int64(toUserвalance.Balance), 
+}, nil 
+// GetBalance nолучает баланс пользователя 
+func (s *Server) GetBalance(ctx context.Context, req *accountpb.GetBalanceRequest} 
+(*accountpb.GetBalanceResponse, error) ( 
+response, err := s.accountService.GetБalance(ctx, req.GetUserid()) 
+if err != nil { 
+return &accountpb.GetBalanceResponse( 
+Balance: 
+О, 
+), err 
+return &accountpb.GetBalanceResponse{ 
+Balance: int64(response.Balance), 
+1, nil 
+Глава 4 
+Теперь сервис Account у нас полностью готов для интеграции с сервисом Transac-
+tion, и мы можем добавить в transaction вызов account для изменения баланса. Созда­
+дим для этого в каталоге internal каталог account (листинг 4.20). 
+package account 
+import ( 
+"context" 
+"fmt" 
+"strconv" 
+accountpb "githuЬ.com/yuliaapopova/contracts/account/go" 
+type Service struct 
+client accountpb.AccountClient 
+Разработка модуля Transaction 
+func New(client accountpb.AccountClient) *Service { 
+return &Service{ 
+client: client, 
+func (s *Service) GetBalance(ctx context.Context, userID uint64) (int64, error) { 
+res, err := s.client.GetBalance(ctx, &accountpb.GetBalanceRequest{ 
+Userid: userID, 
+}) 
+if err != nil { 
+return О, fmt.Errorf("failed to get account balance: %w", err) 
+return res.Balance, nil 
+func (s *Service) Deposit(ctx context.Context, userID uint64, amount int64, operationID 
+uint64) (int64, error) { 
+res, err := s.client.Deposit(ctx, &accountpb.DepositRequest{ 
+Userid: 
+userID, 
+Amount: 
+amount, 
+Operationid: operationID, 
+}) 
+if err != nil { 
+return О, fmt.Errorf("failed to deposit account: %w", err) 
+return res.Balance, nil 
+func (s *Service) Withdraw(ctx context.Context, userID uint64, amount int64, operationID 
+uint64) (int64, error) { 
+res, err := s.client.Withdraw(ctx, &accountpb.WithdrawRequest{ 
+Userid: 
+userID, 
+Amount: 
+amount, 
+Operationid: strconv.FormatUint(operationID, 10), 
+}) 
+if err 1= nil { 
+return О, fmt.Errorf("failed to withdraw account: %w", err) 
+return res.Balance, nil 
+func (s *Service) Transfer(ctx context.Context, userID, recipient uint64, amount int64, 
+operationID uint64) (string, error) { 
+res, err := s.client.Transfer(ctx, &accountpb.TransferRequest{ 
+Userid: 
+userID, 
+Recipientid: recipient, 
+211 
+212 
+Amount: 
+amount, 
+Operationld: strconv.FoпnatUint(operationID, 10), 
+)) 
+return res.Status, err 
+Глава 4 
+Здесь сервис максимально простой -
+только вызов методов изменения и получе­
+ния баланса. 
+Добавим теперь ACCOUNT _ GRPC _ ноsт в конфигурацию сервиса (листинг 4 .21 ). 
+package config 
+import ( 
+"log" 
+"githuЬ.com/caarlos0/env/vl0" 
+"githuЬ.com/joho/godotenv" 
+// Config содержит конфигурацию приложения 
+type Config struct { 
+ServiceName 
+AppEnv 
+Host 
+Port 
+string 'env:"SERVICE NАМЕ" json:"service_name" required:"true" 
+default:"transaction-service"' 
+string 'env:"APP_ENV" json:"app_environment" required:"true" 
+default:"development"' 
+string 'env:"GRPC HOST" json:"host" required:"true" default:"localhost"' 
+int 
+'env:"GRPC PORT" json:"port" required:"true" default:"9000"' 
+LogLevel 
+string 'env:"LOG LEVEL" json:"log_level" required:"true" default:"info"' 
+DbDsn 
+string 'env:"DB_DSN" json:"dЬ_dsn" required:"true"' 
+AccountGrpcHost string 'env:"ACCOUNT GRPC HOST" json:"account_grpc_host" required:"true"' 
+// Load загружает конфигурацию из переменных окружения 
+func Load() (*Config, error) { 
+// Загружаем .env файл 
+if err := godotenv.Load(); err != nil { 
+log. Println ( "Warning: . env file not found, using system environment variaЫes") 
+cfg .- &Config{) 
+err := env.Parse(cfg) 
+if err != nil { 
+return nil, err 
+return cfg, nil 
+Разработка модуля Transaction 
+213 
+И не забываем добавить ACCOUNT_GRPC_нosт в переменные окружения (листинг 4.22). 
+SERVICE NAМE=transaction 
+АРР ENV=dev 
+GRPC PORT=50054 
+GRPC HOST=localhost 
+LOG_LEVEL=debug 
+llllllirll1 .. 
+DB_DSN=postgres://postgres:postgres@localhost:5434/transaction?sslmode=disaЫe 
+ACCOUNT GRPC HOST=localhost:50051 
+Последний штрих -
+инициализация пакета account с системой (листинг 4.23). 
+package арр 
+import ( 
+"context" 
+"dataЬase/sql" 
+"fmt" 
+"net 11 
+"transaction/internal/account" 
+"transaction/internal/config" 
+"transaction/internal/migrations" 
+"transaction/internal/repository" 
+"transaction/internal/server" 
+"transaction/internal/service" 
+"githuЬ.com/pressly/goose/vЗ" 
+accountpb "githuЬ.com/yuliaapopova/contracts/account/go" 
+transactionpb "githuЬ.com/yuliaapopova/contracts/transaction/go" 
+"google.golang.org/genproto/googleapis/api/annotations" 
+"google.golang.org/grpc" 
+"githuЬ.com/liЬ/pq" 
+"githuЬ.com/rs/zerolog" 
+"gorm.io/driver/postgres" 
+"gorm. io/gorm" 
+type Арр struct ( 
+cfg 
+*config.Config 
+logger *zerolog.Logger 
+iЦD 
+214 
+transactionRepository *repository.Repository 
+transactionService 
+transactionServer 
+grpcServer 
+*service.TransactionService 
+*server.Server 
+*grpc.Server 
+accountService *account.Service 
+func New(logger *zerolog.Logger, cfg *config.Config) 
+*Арр { 
+return &Арр{ 
+cfg: 
+cfg, 
+logger: logger, 
+func 
+(а *Арр) Run(ctx context.Context) error { 
+// Инициализируем gRPC-cepвep 
+transactionServer, err := a.getTransactionServer(ctx) 
+if err != nil { 
+return fmt.Errorf("failed to get transaction server: %w", err) 
+// Создаем gRPC-cepвep 
+a.grpcServer = getGRPCServer(transactionServer) 
+listenAddr := fmt.Sprintf("%s:%d", a.cfg.Host, a.cfg.Port) 
+lis, err := net.Listen("tcp", listenAddr) 
+if err != nil ( 
+a.logger.Fatal() .Err(err) .Msg("failed to listen") 
+return err 
+а. logger. Info () . Msg ( "gRPC server listening") 
+serveErrCh := make(chan error, 1) 
+go func() { 
+serveErrCh <- a.grpcServer.Serve(lis) 
+) () 
+select 
+case <-ctx.Done(): 
+a.grpcServer.GracefulStop() 
+return ctx.Err() 
+case err := <-serveErrCh: 
+if err != nil ( 
+a.logger.Error() .Err(err) .Msg("failed to serve") 
+Глава 4 
+Рвзрвботкв модуля Trвnsвction 
+return err 
+func 
+(а *Арр) getRepository(ctx context.Context) (*repository.Repository, error) { 
+if a.transactionRepository == nil { 
+if err := a.runМigrations(ctx); err != nil 
+return nil, fmt.Errorf("failed to get repository: %w", err) 
+dЬ, err := gorm.Open(postgres.Open(a.cfg.DbDsn), &gorm.Config{}) 
+if err != nil { 
+return nil, fmt.Errorf("gorm init failed: %w", err) 
+a.transactionRepository = repository.NewRepository(dЬ, a.logger) 
+return a.transactionRepository, nil 
+func 
+(а *Арр} runМigrations(ctx context.Context) error { 
+if err := goose.SetDialect("postgres"); err != nil { 
+return fmt.Errorf("failed to select migrations dialect: %w", err) 
+dЬGoose, err := sql.Open("postgres", a.cfg.DbDsn} 
+if err != nil { 
+return fmt.Errorf("failed to create sql connection: %w", err) 
+if err := goose.UpContext(ctx, dЬGoose, "internal/migrations"); err != nil { 
+return fmt.Errorf("failed to run up migrations: %w", err) 
+return nil 
+215 
+func 
+(а *Арр) getTransactionService(ctx context.Context) (*service.TransactionService, error) { 
+if a.transactionService == nil { 
+repo, err := a.getRepository(ctx) 
+if err != nil { 
+return nil, fmt.Errorf("failed to get repository: %w", err) 
+accountSvc, err := a.getAccountService(ctx) 
+if err != nil { 
+return nil, fmt.Errorf("failed to get account service: %w", err) 
+a.transactionService 
+service.New(repo, accountSvc, a.logger) 
+216 
+return a.transactionService, nil 
+func 
+(а *Арр) getTransactionServer(ctx context.Context) (*server.Server, error) { 
+if a.transactionServer == nil { 
+service, err := a.getTransactionService(ctx) 
+if err != nil { 
+return nil, fmt.Errorf("failed to get service: %w", err) 
+a.transactionServer = server.New(service, a.logger) 
+return a.transactionServer, nil 
+func 
+(а *Арр) getAccountService(ctx context.Context) (*account.Service, error) { 
+if a.accountService == nil { 
+// Создаем gRРС-соединение с account service 
+conn, err := grpc.Dial(a.cfg.AccountGrpcHost, grpc.Withlnsecure{)) 
+if err != nil { 
+return nil, fmt.Errorf("failed to connect to account service: %w", err) 
+client := accountpb.NewAccountClient(conn) 
+a.accountService = account.New(client) 
+return a.accountService, nil 
+func getGRPCServer(srv *server.Server) *grpc.Server { 
+grpcSrv := grpc.NewServer() 
+transactionpb.RegisterTransactionServiceServer(grpcSrv, srv) 
+return grpcSrv 
+// Close корректно завершает работу nриложения 
+func 
+(а *Арр) Close() error { 
+if a.grpcServer != nil { 
+a.grpcServer.GracefulStop() 
+return nil 
+Глава 4 
+Теперь мы можем перейти к доработке непосредственно логики создания транзак­
+ции. Тут нужно отредактировать слой репозитория, т. к. перед установкой транзак­
+ции статуса, что всё прошло успешно, должен отработать запрос изменения балан­
+са в account. Это касается как переводов, так и остальных операций (листинг 4.24 ). 
+Разработка модуля Transaction 
+package repository 
+import ( 
+"context" 
+11errors" 
+"fmt" 
+"traпsaction/internal/rnodel" 
+"transaction/internal/repository/mapper" 
+repornodel "transaction/internal/repository/model" 
+"githuЬ.com/rs/zerolog" 
+"gorrn. io/gorrn" 
+"gorrn.io/gorrn/clause:" 
+type Repository struct ( 
+dЬ 
+*gorrn.DB 
+logger *zerolog.Logger 
+func NewRepository(dЬ *gorrn.DB, logger *zerolog.Logger) *Repository ( 
+return &Repository( 
+dЬ: 
+dЬ, 
+logger: logger, 
+217 
+func (r *Repository) GetTransactions(ctx context.Context, params model.GetTransactionsParams) 
+([]model.Transaction, error) ( 
+var transactions []repornodel.Transaction 
+query := r.dЬ.WithContext(ctx) .Model(&repomodel.Transaction(I) 
+// Применяем фильтры 
+if params.UserID != nil 
+query = query.Where("user_id 
+?", *params.UserID) 
+if params.Type != nil ( 
+query = query.Where("type 
+?" 
+• 
+f *params.Type) 
+if params.Status != nil { 
+query = query.Where("status 
+?", *params.Status) 
+if params.DateFrom != nil { 
+query = query.Where("created_at >= ?" 
+• 
+f *params.DateFrom) 
+218 
+if params.DateTo != nil ( 
+query = query.Where( 11created_at <= 
+// Применяем пагинацию и сортировку 
+res := query. 
+Offset(params.Offset). 
+Limit(params.Limit). 
+Order("created_at DESC"). 
+Find(&transactions) 
+if res.Error != nil ( 
+?11 . , *params.DateTo) 
+r.logger.Err(res.Error) .Msg("failed to get transactions 11 ) 
+return nil, fmt.Errorf( 11failed to get transactions: %w 11 , res.Error) 
+return mapper.RepoTransactionsToTransactions(transactions), nil 
+func (r *Repository) GetTransactionDetails(ctx context.Context, transactionID uint64) 
+(model.TransactionDetails, error) ( 
+// Получаем транзакцию 
+var transaction repomodel.Transaction 
+res := r.dЬ.WithContext(ctx). 
+Model(&repomodel.Transaction()). 
+Where ( 11 id = ? 11 , transactionID) . 
+First(&transaction) 
+if errors.Is(res.Error, gorm.ErrRecordNotFound) ( 
+return model.TransactionDetails{), fmt.Errorf( 11transaction not found 11 ) 
+else if res.Error != nil ( 
+r. logger. Err {res. Error) .Msg ( 11failed to get transaction 11 ) 
+Глава 4 
+return model.TransactionDetails{), fmt.Errorf( 11failed to get transaction: %w 11 , 
+res.Error) 
+// Получаем записи транзакции 
+var entries []repomodel.TransactionEntry 
+res = r.dЬ.WithContext(ctx). 
+Model(&repomodel.TransactionEntry()). 
+Where( 11transaction_id = ? 11 , transactionID). 
+Order( 11created_at ASC 11 ). 
+Find ( &entries) 
+if res.Error != nil 
+r.logger.Err(res.Error) .Msg("failed to get transaction entries 11 ) 
+return model.TransactionDetails{), fmt.Errorf( 11failed to get transaction entries: %w 11 , 
+res.Error) 
+Разработка модуля Transaction 
+return model.TransactionDetails{ 
+Transaction: mapper.RepoTransactionToTransaction(transaction), 
+Entries: 
+}, nil 
+mapper.RepoTransactionEntriesToTransactionEntries(entries), 
+// Deposit выnолняет операцию депозита в рамках одной транзакции БД 
+func (r *Repository) Deposit(ctx context.Context, params model.DepositParams) 
+(model.TransactionDetails, error) { 
+var result model.TransactionDetails 
+err := r.dЬ.WithContext(ctx) .Transaction(func(tx *gorm.DB) error { 
+// Создаем транзакцию 
+transaction := model.Transaction{ 
+UserID: params.UserID, 
+Amount: int64(params.Amount * 100), // конвертируем в копейки 
+Status: model.TransactionStatusPending, 
+Туре: 
+model.TransactionTypeDeposit, 
+transactionRepo := mapper.TransactionToRepoTransaction(transaction} 
+res := tx.Clauses(clause.OnConflict{UpdateAll: true}) .Create(&transactionRepo) 
+if res.Error != nil { 
+r.logger.Err(res.Error} .Msg("failed to create transaction in deposit") 
+return fmt.Errorf("failed to create transaction: %w", res.Error) 
+// Создаем запись дебета (увеличение баланса} 
+entry := model.TransactionEntry{ 
+TransactionID: transactionRepo.ID, 
+AccountID: 
+params.UserID, 
+Direction: 
+Amount: 
+model.TransactionEntryDirectionDebit, 
+params .Amount, 
+entryRepo := mapper.TransactionEntryТoRepoTransactionEntry(entry) 
+res = tx.Clauses(clause.OnConflict(UpdateAll: true)) .Create(&entryRepo) 
+if res.Error != nil { 
+r.logger.Err(res.Error) .Msg("failed to create transaction entry in deposit") 
+return fmt.Errorf("failed to create transaction entry: %w", res.Error} 
+// Получаем детали созданной транзакции (оставляем в статусе pending) 
+transactionRepo.Status = string(model.TransactionStatusPending) 
+result = model.TransactionDetails{ 
+Transaction: mapper.RepoTransactionToTransaction(transactionRepo), 
+219 
+Entries: 
+[]model.TransactionEntry{mapper.RepoTransactionEntryToTransactionEntry(entryRepo)}, 

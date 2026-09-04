@@ -1,0 +1,232 @@
+246 
+if err := goose.UpContext(ctx, dЬGoose, "internal/migrations"); err != nil { 
+return fmt.Errorf("failed to run up rnigrations: %w", err) 
+return nil 
+Глава 4 
+func 
+(а *Арр) getTransactionService(ctx context.Context) (*service.TransactionService, error) { 
+if a.transactionService == nil { 
+repo, err := a.getRepository(ctx) 
+if err != nil { 
+return nil, fmt.Errorf("failed to get repository: %w", err) 
+// Получаем gRРС-сервис 
+grpcSvc, err := a.getAccountService(ctx) 
+if err != nil { 
+return nil, frnt.Errorf("failed to get account service: %w", err) 
+// Теперь получаем Kafka-I<JIИeнт и подписываемся 
+kafkaClient, err := a.getКafkaClient(ctx) 
+if err != nil { 
+return nil, fmt.Errorf("failed to get kafka client: %w", err) 
+// Обновляем сервис с Каfkа-I<JIИентом 
+a.transactionService = service.New(repo, grpcSvc, kafkaClient, a.logger) 
+a.kafkaClient.SuЬscribe(ctx, "transaction_response", 
+a.transactionService.HandleAccountResponse) 
+return a.transactionService, nil 
+func 
+(а *Арр) getКafkaClient(ctx context.Context) (*kafka.Kafka, error) ( 
+if a.kafkaClient = nil { 
+// Создаем producer 
+producerCfg := kafka.DefaultProducerConfig(a.cfg.KafkaBrokers) 
+producer := kafka.NewProducer(producerCfg, a.logger) 
+// Создаем Каfkа-клиент 
+kafkaClient := kafka.New(producer, a.cfg.KafkaBrokers, a.cfg.KafkaGroupID, a.logger) 
+a.kafkaClient = kafkaClient 
+a.logger.Info() .Msg("kafka client created") 
+Разработка модуля Transaction 
+return a.kafkaClient, nil 
+func 
+(а *Арр) getTransactionServer(ctx context.Context) (*server.Server, error) ( 
+if a.transactionServer == nil { 
+service, err := a.getTransactionService(ctx) 
+if err != nil { 
+return nil, frnt.Errorf("failed to get service: %w", err) 
+a.transactionServer = server.New(service, a.logger) 
+return a.transactionServer, nil 
+func 
+(а *Арр) getAccountService(ctx context.Context) (*account.Service, error) { 
+if a.accountService == nil { 
+// Создаем gRРС-соединение с account service 
+conn, err := grpc.Dial(a.cfg.AccountGrpcHost, grpc.Withinsecure()) 
+if err != nil { 
+return nil, frnt.Errorf("failed to connect to account service: %w", err) 
+client := accountpb.NewAccountClient(conn) 
+a.accountService = account.New(client) 
+return a.accountService, nil 
+func getGRPCServer(srv *server.Server) *grpc.Server ( 
+grpcSrv := grpc.NewServer() 
+transactionpb.RegisterTransactionServiceServer(grpcSrv, srv) 
+return grpcSrv 
+// Close корректно завершает работу приложения 
+func 
+(а *Арр) Close() error ( 
+var errs (]error 
+if a.grpcServer 1= nil { 
+a.grpcServer.GracefulStop() 
+if a.kafkaClient != nil { 
+if err := a.kafkaClient.Close(); err != nil { 
+errs = append (errs, frnt .Errorf ( "failed to close kafka client: %w", err)) 
+247 
+248 
+Глава 4 
+if len(errs) > О { 
+return fmt. Errorf ( "errors closing арр: %v", errs) 
+return nil 
+Тут в структуру Арр добавился KafkaClient и метод для инициализации getKafkaClient, 
+который будет использоваться внутри сервиса транзакций. При инициализации 
+TransactionService клиент Kafka передается в сервис и сразу же используется для 
+подписки на топик transaction _ response, чтобы в дальнейшем обрабатывать ответы от 
+микросервиса Account. 
+Остается последний момент для сервиса транзакций -
+заменить gRРС-вызовы 
+Account на отправку сообщений в Kafka, а также написать сам обработчик для 
+получения данных из брокера сообщений (листинг 4.34). 
+package service 
+import ( 
+"context" 
+"encoding/json" 
+"fmt" 
+"time" 
+"transaction/internal/model" 
+"githuЬ.com/rs/zerolog" 
+type TransactionService struct 
+repo 
+Repository 
+logger *zerolog.Logger 
+accountService AccountService 
+// Kafka support 
+kafkaPuЬlisher KafkaPuЬlisher 
+service/servic 
+func New(repo Repository, accountService AccountService, kafkaPuЬlisher KafkaPuЬlisher, 
+logger *zerolog.Logger) *TransactionService { 
+return &TransactionService{ 
+repo: 
+repo, 
+accountService: accountService, 
+kafkaPuЬlisher: kafkaPuЬlisher, 
+logger: 
+logger, 
+Разработка модуля Transaction 
+// AccountResponse представляет структуру ответа от account service 
+type AccountResponse struct { 
+RequestType string 'json:"request_type"' 
+UserID 
+uint64 'json: "user _id"' 
+OperationID uint64 'json:"operation_id"' 
+Result 
+bool 
+'json:"result"' 
+type Repository interface { 
+// Transaction methods 
+249 
+GetTransactions(context.Context, model.GetTransactionsParams) ([)model.Transaction, error) 
+// TransactionEntry methods 
+GetTransactionDetails(context.Context, uint64) (model.TransactionDetails, error) 
+// Business operations 
+Deposit(context.Context, model.DepositParams) (model.TransactionDetails, error) 
+Withdraw(context.Context, model.WithdrawParams) (model.TransactionDetails, error) 
+Transfer (context. Context, model. TransferParams) (model. TransactionDetails, error) 
+// Update transaction status 
+UpdateTransactionStatus(context.Context, uint64, model.TransactionStatus) error 
+type AccountService interface { 
+GetBalance(ctx context.Context, userID uint64) (int64, error) 
+Deposit(ctx context.Context, userID uint64, amount int64, operationID uint64) {int64, error) 
+Withdraw{ctx context.Context, userID uint64, amount int64, operationID uint64) (int64, error) 
+Transfer(ctx context.Context, fromAccountID, toAccountID uint64, amount int64, 
+operationID uint64) (string, error) 
+// KafkaPuЫisher интерфейс для публикации сообщений в Kafka 
+type KafkaPuЬlisher interface { 
+PuЬlish(ctx context.Context, topic string, key string, data interface{)I error 
+func (s *TransactionService) GetTransactionsWithDetails(ctx context.Context, params 
+model.GetTransactionsParams) ([]model.TransactionDetails, error) { 
+// Получаем список транзакций с фильтрацией 
+transactions, err := s.repo.GetTransactions(ctx, params) 
+if err != nil { 
+s. logger. Error {) . Err ( err) . Msg { "failed to get transactions") 
+return nil, err 
+// Для каждой транзакции получаем детали 
+var transactionDetails []model.TransactionDetails 
+250 
+Глава 4 
+for 
+, transaction :; range transactions { 
+details, err :; s.repo.GetTransactionDetails(ctx, transaction.ID) 
+if err !; nil { 
+s.logger.Error() .Err{err) .Uint64("transaction_id", transaction.ID) .Msg("failed to 
+get transaction details") 
+continue 
+transactionDetails 
+append(transactionDetails, details) 
+return transactionDetails, nil 
+// Deposit Business logic methods 
+func (s *TransactionService) Deposit{ctx context.Context, userID uint64, amount float64) 
+(model.TransactionDetails, error) { 
+params ;; model.DepositParams{ 
+UserID: userID, 
+Amount: amount, 
+// Создаем транзакцию в pending-cтaтyce 
+res, err ;; s.repo.Deposit(ctx, params) 
+if err !; nil { 
+s. logger. Error () . Err (err) . Uint64 ( "user _ id", userID) . Msg ( "failed to create deposi t 
+transaction") 
+return model.TransactionDetails{}, err 
+// Отправляем запрос через Kafka 
+request :; map[string)interface{}{ 
+"request_ type": "deposit", 
+"user id": 
+userID, 
+"amount": 
+int64(amount * 100), // конвертируем в копейки 
+"operation_id": res.Transaction.ID, 
+"timestamp": 
+time. Now () . UTC (), 
+err; s.kafkaPuЬlisher.PuЬlish(ctx, "transaction_data", fmt.Sprintf("%d", userID}, request) 
+if err 1; nil { 
+s. logger. Error () . Err (err) . Uint64 ( "user _id", userID) . Uint64 ( "transaction _ id", 
+res.Transaction.ID) .Msg("failed to send deposit request via kafka") 
+// Обновляем статус транзакции на failed 
+updateErr ;; s.repo.UpdateTransactionStatus(ctx, res.Transaction.ID, 
+model.TransactionStatusFailed) 
+if updateErr !; nil ( 
+s. logger. Error () . Err (updateErr) . Uint641 "transaction _ id", 
+res.Transaction.ID) .Msg("failed to update transaction status to failed") 
+Разработка модуля Transaction 
+251 
+return model.TransactionDetails{}, err 
+s.logger.Info() .Uint64("user_id", userID) .Uint64("transaction_id", 
+res.Transaction.ID) .Msg("deposit request sent via kafka") 
+// Транзакция остается в pending-cтaтyce до получения ответа 
+return res, nil 
+func (s *TransactionService) Withdraw(ctx context.Context, accountID uint64, amount float64) 
+(model.TransactionDetails, error) ( 
+params := model.WithdrawParams{ 
+AccountID: accountID, 
+Amount: 
+amount, 
+// Создаем транзаюu,оо в pending-cтaтyce 
+res, err := s.repo.Withdraw(ctx, params) 
+if err != nil { 
+s.logger.Error() .Err(err) .Uint64("account_id", accountID) .Msg("failed to create 
+withdraw transaction") 
+return model.TransactionDetails{), err 
+// Отправляем запрос через Kafka 
+request := map[string]iпterface{){ 
+"request_ type": "withdraw", 
+"user id": 
+"amount": 
+accountID, 
+int64(amount * 100), // конвертируем в копейки 
+"operation_id": res.Transaction.ID, 
+"timestamp": 
+time.Now() .UTC(), 
+err = s.kafkaPuЬlisher.PuЬlish(ctx, "transaction_data", fmt.Sprintf("%d", accountID), 
+request) 
+if err != nil { 
+s.logger.Error() .Err(err) .Uint64("account_id", accountID} .Uint64("transaction_id", 
+res.Transaction.ID) .Msg("failed to send withdraw request via kafka") 
+// Обновляем статус транзакции на failed 
+updateErr := s.repo.UpdateTransactionStatus(ctx, res.Transaction.ID, 
+model.TransactionStatusFailed) 
+if updateErr != nil { 
+s. logger .Error (). Err (updateErr). Uint64 ("transaction _id", 
+res.Transaction.ID) .Msg("failed to update transaction status to failed") 
+return model.TransactionDetails(), err 

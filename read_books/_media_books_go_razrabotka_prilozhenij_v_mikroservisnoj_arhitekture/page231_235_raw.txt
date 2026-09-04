@@ -1,0 +1,273 @@
+230 
+Глава 4 
+транзакция будет отображаться в списке операций, но не сможет его смутить. То, 
+что он увидит транзакцию, которая находится еще в процессе, и изменение баланса, 
+вызовет у него меньшее замешательство, чем простое сообщение о транзакции без 
+информации о ее состоянии и изменении баланса. 
+И по такому же принципу будет работать кейс с ошибочной транзакцией. Если 
+в сервисе Account по каким-то причинам не удалось пополнить или списать средст­
+ва, то об этом публикуется событие, и сервис Transaction выставляет для транзак­
+ции статус «failed». На любом из этапов нужно иметь в виду и обратное событие, 
+которое может откатить изменения для сохранения консистентной базы данных. 
+Пример схемы взаимодействия системы для нашего случая получится простым 
+(рис. 4.1), а для более сложных систем, конечно же, взаимодействий .может быть 
+значительно больше. 
+1 ,~~ 1 
+1 
+1 
+1 
+1 PUBLISH TransactionSaved 
+1 
+1 
+1 
+... 1 
+1 
+: 
+: 
+LISTEN TransaclionSaved ... : 
+1 
+1 
+1 
+1 
+1 ◄ PUBLISH BalanceChanged 
+1 
+1 
+1 
+1 
+1 
+1 ◄ LISТEN BalanceChanged 
+1 
+1 
+1 
+1 
+1 
+1 
+1~ 
+Рис. 4.1. Схема взаимодействия системы 
+Главное преимущество такого подхода заключается в том, что каждый микросервис 
+сосредоточен на выполнении только своей конкретной части атомарной транзак­
+ции, а распределенные транзакции как таковые не используются вовсе. И сами 
+микросервисы при этом слабо связаны между собой, потому что общение происхо­
+дит лишь на основе событий, и они ничего не знают друг о друге. В результате 
+работа микросервисов не блокируется, если выполнение операции в одном из сер­
+висов занимает слишком много времени. Благодаря тому, что паттерн Saga основан 
+на асинхронном взаимодействии на основе событий, система способна справляться 
+с большими нагрузками и позволяет обеспечить необходимую масштабируемость 
+в будущем. 
+Однако этот подход является довольно сложным, поскольку разработчику системы 
+необходимо создать не только успешный сценарий, но и компенсирующие транзак­
+ции, которые явно отменят изменения, сделанные ранее. Кроме того, когда разра­
+ботчик только погружается в систему, построенную подобным образом, у него 
+могут возникнуть сложности с прослеживанием полной цепочки взаимодействий 
+между сервисами и пониманием того, как работает цепочка событий. 
+Разработка модуля Transaction 
+231 
+Главным же недостатком такого подхода является нарушение изолированности. 
+А конкретно -
+в нем не обеспечивается изоляция при чтении. В нашем случае при 
+рассмотрении применения паттерна мы частично решили эту проблему установкой 
+статуса транзакции «in processed» -
+другие транзакции, видя этот статус, будут 
+знать, что операция еще не завершена. Есть также для предотвращения возникно­
+вения аномалий и другие контрмеры, которые хотя бы пытаются минимизировать 
+последствия для бизнеса [6]. 
+Реализация паперна Saga 
+В качестве брокера сообщений для транзакций выберем Kafka: во-первых, чтобы на 
+примере посмотреть, как с ним работать, а во-вторых, в случае с такими чувстви­
+тельными данными, как платежи, хотелось бы, чтобы информация о них сохраня­
+лась и после использования. 
+Начнем с подключения к Kafka. Разворачивать Kafka будем так же, как и остальные 
+инструменты, -
+через Docker-Compose. Удалить существующий Docker-Compose 
+полностью можно с помощью команды: 
+docker-compose down -v 
+Помимо самого брокера Kafka (рис. 4.2), добавим еще и интерфейс Kafka UI 
+(кafka-ui), чтобы через него можно было бы просматривать отправленные в брокер 
+сообщений события (листинг 4.26). 
+Рис. 4.2. Окно Kafka UI 
+! 
+Листинг 4.26. Файл docker/docker-compose.yaml 
+services: 
+account: 
+image: postgres:15-alpine 
+232 
+environrnent: 
+POSTGRES OSER: postgres 
+POSTGRES_PASSWORD: postgres 
+POSTGRES DB: account 
+ports: 
+- "5432:5432" 
+volurnes: 
+-
+postgres_account_data:/var/liЬ/postgresql/data 
+healthcheck: 
+test: ["CMD-SHELL", "pg_isready -о postgres"] 
+interval: 5s 
+timeout: 5s 
+retries: 5 
+networks: 
+- app-network 
+auth: 
+image: postgres:15-alpine 
+environrnent: 
+POSTGRES OSER: postgres 
+POSTGRES PASSWORD: postgres 
+POSTGRES DB: auth 
+ports: 
+- "5433:5432" 
+volurnes: 
+-
+postgres_auth_data:/var/liЬ/postgresql/data 
+healthcheck: 
+test: ["CMD-SHELL", "pg_ isready -О postgres"] 
+interval: 5s 
+timeout: 5s 
+retries: 5 
+networks: 
+- app-network 
+transaction: 
+image: postgres:15-alpine 
+environrnent: 
+POSTGRES_OSER: postgres 
+POSTGRES_PASSWORD: postgres 
+POSTGRES DB: transaction 
+ports: 
+- "5434:5432" 
+volurnes: 
+-
+postgres_transaction_data:/var/liЬ/postgresql/data 
+healthcheck: 
+test: ["CMD-SHELL", "pg_isready -О postgres"] 
+interval: 5s 
+Глава 4 
+Разработка модуля Transaction 
+timeout: 5s 
+retries: 5 
+networks: 
+- app-network 
+kafka: 
+image: confluentinc/cp-kafka:7.5.0 
+container name: book-kafka 
+platform: linux/x86_64 
+environment: 
+CLUSTER_ID: SDG6k02sQY6c81Ufs8nGSA 
+КАFКА NODE ID: 1 
+КAFКA_PROCESS_ROLES: broker,controller 
+КАFКА CONTROLLER LISTENER NAМES: CONTROLLER 
+-
+-
+-
+# объявляем все виды listeners, в том числе PLAINТEXT HOST 
+КAFКA_LISTENERS: PLAINТEXT://:9092,CONТROLLER://:9093,PLAINТEXT_HOST://:29092 
+# объявляем external/host endpoints 
+КAFКA_ADVERTISED_LISTENERS: PLAINTEXT://kafka:9092,PLAINТEXT_HOST://localhost:29092 
+КАFКА LISTENER SECURITY PROTOCOL МАР: 
+-
+-
+-
+-
+233 
+PLAINТEXT:PLAINТEXT,PLAINТEXT_HOST:PLAINТEXT,CONТROLLER:PLAINТEXT 
+КАFКА INТER BROКER LISTENER NАМЕ: PLAINТEXT 
+-
+-
+-
+-
+КAFКA_CONТROLLER_QUORUМ_VOTERS: l@kafka:9093 
+КАFКА OFFSETS TOPIC REPLICATION FACTOR: 1 
+-
+-
+-
+-
+КАFКА TRANSACTION STATE LOG REPLICATION FACTOR: 1 
+-
+-
+-
+-
+-
+КАFКА TRANSACTION STATE LOG MIN ISR: 1 
+-
+-
+-
+-
+-
+КАFКА GROUP INITIAL REBALANCE DELAY MS: 
+О 
+-
+-
+-
+-
+-
+КАFКА LOG DIRS: 
+/var/liЬ/kafka/data 
+ports: 
+- "29092:29092" 
+# внешний nорт 
+- "9092:9092" 
+# внутренняя сеть docker 
+restart: unless-stopped 
+kafka-ui: 
+image: provectuslabs/kafka-ui:latest 
+container name: book-kafka-ui 
+platform: linux/x86_64 
+environment: 
+-
+КАFКА CLUSTERS 
+О NAМE=local 
+-
+-
+-
+-
+КАFКА CLUSTERS 
+О BOOTSTRAPSERVERS=kafka:9092 
+depends_on: 
+- kafka 
+ports: 
+- "29093:8080" 
+restart: unless-stopped 
+234 
+volumes: 
+postgres_account data: 
+postgres_auth_data: 
+postgres_transaction_data: 
+networks: 
+app-network: 
+driver: bridge 
+Глава 4 
+Подключение к Kafka происходит через githuЬ.com/segmentio/kafka-go -
+это самая по­
+пулярная Gо-библиотека, которая к тому же написана полностью на Go. 
+Настройку начнем с микросервиса Transaction: вынесем взаимодействие с Kafka 
+в отдельный пакет и начнем с конфигурации, т. к. опций много, и для нашей задачи 
+они все не нужны (листинг 4.27). 
+г 4.27. Transa~t.i§~~;.Мllj<afka/co~fig.g 
+package kafka 
+import ( 
+"time" 
+"githuЬ.com/segmentio/kafka-go" 
+// Config содержит конфигурацию для Kafka 
+type Config struct { 
+Brokers []string 
+GroupID string 
+Topics 
+[]string 
+// ProducerConfig содержит конфигурацию для Kafka Producer 
+type ProducerConfig struct 
+Brokers 
+[]string 
+BatchSize 
+int 
+BatchTimeout time.Duration 
+RequiredAcks kafka.RequiredAcks 
+// ConsumerConfig содержит конфигурацию для Kafka Consumer 
+type ConsumerConfig struct { 
+Brokers 
+[]string 
+GroupID 
+string 
+Topics 
+[] string 
+MinBytes 
+int 
+MaxBytes 
+int 
