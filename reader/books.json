@@ -8,8 +8,9 @@
       "version": 1,
       "filename_safe": "Explore_Go_Cryptography - John Arundel - 2026 - v1",
       "page_count": 329,
-      "status": "reading",
-      "added_at": "2026-09-05"
+      "status": "telegram_ready",
+      "added_at": "2026-09-05",
+      "telegram_ready_at": "2026-09-05"
     }
   ]
 }
