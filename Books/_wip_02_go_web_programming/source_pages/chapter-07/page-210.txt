@@ -1,8 +1,0 @@
-189
-Summary
-– REST-based web services expose resources over HTTP and allow specific
-actions on them.
-■
-Creating and parsing XML and JSON are similar and involve creating a struct
-and either generating (unmarshaling) XML or JSON from it, or creating a struct
-and extracting (marshaling) XML or JSON into it.
