@@ -12,3 +12,5 @@ telegram/channels/*/.env
 *.sqlite
 *.sqlite3
 telegram/uploader/uploads.json
+
+uploads.json
