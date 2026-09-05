@@ -8,3 +8,4 @@ telegram/channels/*/.env
 *.db
 *.sqlite
 *.sqlite3
+telegram/uploader/uploads.json

@@ -36,7 +36,7 @@ func Load() (*Config, error) {
 
 	cfg := &Config{
 		AppPort:     getEnv("APP_PORT", "8080"),
-		DatabaseURL: getEnv("DATABASE_URL", "./uploads.db"),
+		DatabaseURL: getEnv("DATABASE_URL", "./uploads.json"),
 		UploadDir:   resolvePath(exeDir, getEnv("UPLOAD_DIR", "../../telegram_upload")),
 		ChannelsDir: resolvePath(exeDir, getEnv("CHANNELS_DIR", "../channels")),
 		APITimeout:  60,

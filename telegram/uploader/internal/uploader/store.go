@@ -106,14 +106,12 @@ func (s *Store) load() error {
 }
 
 func (s *Store) save() error {
-	s.mu.RLock()
 	var records []UploadRecord
 	for _, channels := range s.data {
 		for _, r := range channels {
 			records = append(records, r)
 		}
 	}
-	s.mu.RUnlock()
 
 	data, err := json.MarshalIndent(records, "", "  ")
 	if err != nil {
