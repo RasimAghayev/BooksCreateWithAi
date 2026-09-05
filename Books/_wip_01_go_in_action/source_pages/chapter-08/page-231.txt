@@ -1,0 +1,27 @@
+210
+CHAPTER 8
+Standard library
+8.4.4
+Conclusion
+There’s an incredible amount of functionality that can be found in the io package,
+and it can all be accessed through values from types that implement the io.Writer
+and io.Reader interfaces. Other packages such as the http package follow a similar
+pattern, declaring interfaces as part of the packages API and providing support for
+using the io package as well. It’s worth your time to explore what’s provided by the
+standard library and how it’s implemented—not only to save you from reinventing the
+wheel, but also to learn idiomatic Go from the language designers for your own pack-
+ages and APIs. 
+8.5
+Summary
+The standard library comes with special guarantees and is widely used by the
+community.
+Using packages from the standard library makes it easier to manage and trust
+your code. 
+Well over 100 packages are organized within 38 different categories.
+The log package from the standard library has everything you need for logging.
+The standard library has two packages called xml and json that make working
+with these data formats trivial.
+The io package supports working with streams of data very efficiently.
+Interfaces allow your code to compose with existing functionality.
+Reading code from the standard library is a great way to get a feel for idiom-
+atic Go.

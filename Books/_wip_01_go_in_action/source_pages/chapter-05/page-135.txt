@@ -1,0 +1,59 @@
+114
+CHAPTER 5
+Go’s type system
+37
+level: "super",
+38
+}
+39
+40
+// We can access the inner type's method directly.
+41
+ad.user.notify()
+42
+43
+// The inner type's method is promoted.
+44
+ad.notify()
+45 }
+The main function in listing 5.53 shows the mechanics behind type embedding. On
+line 32, a value of type admin is created. The initialization of the inner type is per-
+formed using a struct literal, and to access the inner type we just need to use the type’s
+name. Something special about an inner type is that it always exists in and of itself.
+This means the inner type never loses its identity and can always be accessed directly.
+40
+// We can access the inner type's method directly.
+41
+ad.user.notify()
+On line 41 in listing 5.54, you see a call to the notify method. This call is made by access-
+ing the user inner type directly through the admin outer type variable ad. This shows
+how the inner type exists in and of itself and is always accessible. But thanks to inner type
+promotion, the notify method can also be accessed directly from the ad variable.
+43
+// The inner type's method is promoted.
+44
+ad.notify()
+45 }
+Listing 5.55 on line 44 shows the method call to notify from the outer type variable.
+Since the identifiers of the inner type are promoted up to the outer type, we can
+access the inner type's identifiers through values of the outer type. Let’s change the
+sample by adding an interface.
+01 // Sample program to show how embedded types work with interfaces.
+02 package main
+03
+04 import (
+05
+"fmt"
+06 )
+07
+08 // notifier is an interface that defined notification
+09 // type behavior.
+10 type notifier interface {
+11
+notify()
+Listing 5.54
+listing50.go: lines 40–41
+Listing 5.55
+listing50.go: lines 43–45
+Listing 5.56
+listing56.go

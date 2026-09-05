@@ -1,0 +1,77 @@
+99
+The nature of types
+ 
+39 type Time struct {
+40
+// sec gives the number of seconds elapsed since
+41
+// January 1, year 1 00:00:00 UTC.
+42
+sec int64
+43
+44
+// nsec specifies a non-negative nanosecond
+45
+// offset within the second named by Seconds.
+46
+// It must be in the range [0, 999999999].
+47
+nsec int32
+48
+49
+// loc specifies the Location that should be used to
+50
+// determine the minute, hour, month, day, and year
+51
+// that correspond to this Time.
+52
+// Only the zero Time has a nil Location.
+53
+// In that case it is interpreted to mean UTC.
+54
+loc *Location
+55 }
+The Time struct in listing 5.28 comes from the time package. When you think about
+time, you realize that any given point in time is not something that can change. This is
+exactly how the standard library implements the Time type. Let’s look at the Now func-
+tion that creates values of type Time.
+781 func Now() Time {
+782
+sec, nsec := now()
+783
+return Time{sec + unixToInternal, nsec, Local}
+784 }
+The code in listing 5.29 shows the implementation of the Now function. This function
+creates a value of type Time and returns a copy of that Time value back to the caller. A
+pointer is not used to share the Time value created by the function. Next, let’s look at
+a method declared against the Time type. 
+610 func (t Time) Add(d Duration) Time {
+611
+t.sec += int64(d / 1e9)
+612
+nsec := int32(t.nsec) + int32(d%1e9)
+613
+if nsec >= 1e9 {
+614
+t.sec++
+615
+nsec -= 1e9
+616
+} else if nsec < 0 {
+617
+t.sec--
+618
+nsec += 1e9
+619
+}
+620
+t.nsec = nsec
+621
+return t
+622 }
+Listing 5.28
+golang.org/src/time/time.go: lines 39–55
+Listing 5.29
+golang.org/src/time/time.go: lines 781–784
+Listing 5.30
+golang.org/src/time/time.go: lines 610–622

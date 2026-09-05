@@ -1,0 +1,76 @@
+150
+CHAPTER 6
+Concurrency
+38 // player simulates a person playing the game of tennis.
+39 func player(name string, court chan int) {
+40
+// Schedule the call to Done to tell main we are done.
+41
+defer wg.Done()
+42
+43
+for {
+44
+// Wait for the ball to be hit back to us.
+45
+ball, ok := <-court
+46
+if !ok {
+47
+// If the channel was closed we won.
+48
+fmt.Printf("Player %s Won\n", name)
+49
+return
+50
+}
+51
+52
+// Pick a random number and see if we miss the ball.
+53
+n := rand.Intn(100)
+54
+if n%13 == 0 {
+55
+fmt.Printf("Player %s Missed\n", name)
+56
+57
+// Close the channel to signal we lost.
+58
+close(court)
+59
+return
+60
+}
+61
+62
+// Display and then increment the hit count by one.
+63
+fmt.Printf("Player %s Hit %d\n", name, ball)
+64
+ball++
+65
+66
+// Hit the ball back to the opposing player.
+67
+court <- ball
+68
+}
+69 }
+When you run the program, you get the following output.
+Player Nadal Hit 1
+Player Djokovic Hit 2
+Player Nadal Hit 3
+Player Djokovic Missed
+Player Nadal Won
+In the main function on line 22, an unbuffered channel of type int is created to syn-
+chronize the exchange of the ball being hit by both goroutines. Then the two gorou-
+tines that will be playing the game are created on lines 28 and 29. At this point both
+goroutines are locked waiting to receive the ball. On line 32 a ball is sent into the
+channel, and the game is played until one of the goroutines lose. 
+ Inside the player function, you find an endless for loop on line 43. Within the
+loop, the game is played. On line 45 the goroutine performs a receive on the channel,
+waiting to receive the ball. This locks the goroutine until a send is performed on the
+channel. Once the receive on the channel returns, the ok flag is checked on line 46
+Listing 6.21
+Output for listing20.go

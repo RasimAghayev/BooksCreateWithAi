@@ -1,0 +1,51 @@
+104
+CHAPTER 5
+Go’s type system
+ These two small examples hopefully show you some of the benefits of interfaces
+and how they’re used in the standard library. Next, let’s explore in greater detail how
+interfaces are implemented. 
+5.4.2
+Implementation
+Interfaces are types that just declare behavior. This behavior is never implemented by
+the interface type directly but instead by user-defined types via methods. When a user-
+defined type implements the set of methods declared by an interface type, values of
+the user-defined type can be assigned to values of the interface type. This assignment
+stores the value of the user-defined type into the interface value. 
+ If a method call is made against an interface value, the equivalent method for the
+stored user-defined value is executed. Since any user-defined type can implement any
+interface, method calls against an interface value are polymorphic in nature. The user-
+defined type in this relationship is often called a concrete type, since interface values have
+no concrete behavior without the implementation of the stored user-defined value. 
+ There are rules around whether values or pointers of a user-defined type satisfy the
+implementation of an interface. Not all values are created equal. These rules come
+from the specification under the section called method sets. Before you begin to
+investigate the details of method sets, it helps to understand what interface type values
+look like and how user-defined type values are stored inside them.
+ In figure 5.1 you see what the value of the interface variable looks like after the
+assignment of the user type value. Interface values are two-word data structures. The
+first word contains a pointer to an internal table called an iTable, which contains type
+information about the stored value. The iTable contains the type of value that has
+been stored and a list of methods associated with the value. The second word is a
+pointer to the stored value. The combination of type information and pointer binds
+the relationship between the two values.
+ Figure 5.2 shows what happens when a pointer is assigned to an interface value.
+In this case, the type information will reflect that a pointer of the assigned type has
+been stored, and the address being assigned is stored in the second word of the
+interface value.   
+Address
+iTable
+Address
+user
+Type(user)
+User
+Method set
+notifier
+Interface value
+iTable
+Stored value
+var n notifier
+n = user{"Bill"}
+Figure 5.1
+A simple view of an 
+interface value after concrete 
+type value assignment

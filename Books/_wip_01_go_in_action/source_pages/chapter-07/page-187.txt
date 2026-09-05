@@ -1,0 +1,73 @@
+166
+CHAPTER 7
+Concurrency patterns
+11
+12 // timeout is the number of second the program has to finish.
+13 const timeout = 3 * time.Second
+14
+15 // main is the entry point for the program.
+16 func main() {
+17
+log.Println("Starting work.")
+18
+19
+// Create a new timer value for this run.
+20
+r := runner.New(timeout)
+21
+22
+// Add the tasks to be run.
+23
+r.Add(createTask(), createTask(), createTask())
+24
+25
+// Run the tasks and handle the result.
+26
+if err := r.Start(); err != nil {
+27
+switch err {
+28
+case runner.ErrTimeout:
+29
+log.Println("Terminating due to timeout.")
+30
+os.Exit(1)
+31
+case runner.ErrInterrupt:
+32
+log.Println("Terminating due to interrupt.")
+33
+os.Exit(2)
+34
+}
+35
+}
+36
+37
+log.Println("Process ended.")
+38 }
+39
+40 // createTask returns an example task that sleeps for the specified
+41 // number of seconds based on the id.
+42 func createTask() func(int) {
+43
+return func(id int) {
+44
+log.Printf("Processor - Task #%d.", id)
+45
+time.Sleep(time.Duration(id) * time.Second)
+46
+}
+47 }
+The main function can be found on line 16 in listing 7.13. On line 20 the timeout
+value is passed to the New function, and a pointer of type Runner is returned. Then the
+createTask function is added to the Runner several times on line 23. The createTask
+function, declared on line 42, is a function that just pretends to perform some work
+for a specified amount of time. Once the functions have been added, the Start
+method is called on line 26 and the main function waits for Start to return. 
+ When Start returns the returned error interface value is checked. If an error did
+occur, the code uses the error interface variables to identify if the method terminated
+due to a timeout event or interrupt event. If there’s no error, then the tasks finished in
+time. On a timeout event, the program terminates with an error code of 1. On an
+interrupt event, the program terminates with an error code of 2. In all other cases, the
+program terminates normally with error code 0. 

@@ -1,0 +1,73 @@
+102
+CHAPTER 5
+Go’s type system
+5.4.1
+Standard library
+Let’s start by looking at a sample program that implements a version of a popular pro-
+gram named curl.
+01 // Sample program to show how to write a simple version of curl using
+02 // the io.Reader and io.Writer interface support.
+03 package main
+04
+05 import (
+06
+"fmt"
+07
+"io"
+08
+"net/http"
+09
+"os"
+10 )
+11
+12 // init is called before main.
+13 func init() {
+14
+if len(os.Args) != 2 {
+15
+fmt.Println("Usage: ./example2 <url>")
+16
+os.Exit(-1)
+17
+}
+18 }
+19
+20 // main is the entry point for the application.
+21 func main() {
+22
+// Get a response from the web server.
+23
+r, err := http.Get(os.Args[1])
+24
+if err != nil {
+25
+fmt.Println(err)
+26
+return
+27
+}
+28
+29
+// Copies from the Body to Stdout.
+30
+io.Copy(os.Stdout, r.Body)
+31
+if err := r.Body.Close(); err != nil {
+32
+fmt.Println(err)
+33
+}
+34 }
+Listing 5.34 shows the power of interfaces and their use in the standard library. In a
+few lines of code, we have a curl program by leveraging two functions that work with
+interface values. On line 23, we call the Get function from the http package. The
+http.Get function returns a pointer of type http.Request after it successfully com-
+municates with the server. The http.Request type contains a field named Body, which
+is an interface value of type io.ReadCloser. 
+ On line 30, the Body field is passed into the io.Copy function as the second param-
+eter. The io.Copy function accepts values of interface type io.Reader for its second
+parameter, and this value represents a source of data to stream from. Luckily, the Body
+field implements the io.Reader interface, so we can pass the Body field into io.Copy
+and use a web server as our source. 
+Listing 5.34
+listing34.go

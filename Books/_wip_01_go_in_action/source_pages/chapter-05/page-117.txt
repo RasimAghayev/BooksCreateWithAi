@@ -1,0 +1,44 @@
+96
+CHAPTER 5
+Go’s type system
+ You can also call methods that are declared with a pointer receiver using a value.
+31
+bill := user{"Bill", "bill@email.com"}
+39
+// Values of type user can be used to call methods
+40
+// declared with a pointer receiver.
+41
+bill.changeEmail("bill@newdomain.com")
+In listing 5.21, you see the declaration of the variable bill and then a call to the
+changeEmail method, which is declared with a pointer receiver. Once again, Go
+adjusts the value to comply with the method’s receiver to support the call.
+(&bill).notify()
+Listing 5.22 shows essentially what the Go compiler is doing to support the method
+call. In this case, the value is referenced so the method call is in compliance with the
+receiver type. This is a great convenience Go provides, allowing method calls with val-
+ues and pointers that don’t match a method’s receiver type natively. 
+ Determining whether to use a value or pointer receiver can sometimes be confus-
+ing. There are some basic guidelines you can follow that come directly from the stan-
+dard library. 
+5.3
+The nature of types
+After declaring a new type, try to answer this question before declaring methods for
+the type. Does adding or removing something from a value of this type need to create
+a new value or mutate the existing one? If the answer is create a new value, then use
+value receivers for your methods. If the answer is mutate the value, then use pointer
+receivers. This also applies to how values of this type should be passed to other parts of
+your program. It’s important to be consistent. The idea is to not focus on what the
+method is doing with the value, but to focus on what the nature of the value is. 
+5.3.1
+Built-in types
+Built-in types are the set of types that are provided by the language. We know them as
+the set of numeric, string, and Boolean types. These types have a primitive nature to
+them. Because of this, when adding or removing something from a value of one of
+these types, a new value should be created. Based on this, when passing values of these
+types to functions and methods, a copy of the value should be passed. Let’s look at a
+function from the standard library that works with built-in values.
+Listing 5.21
+listing11.go: line 31
+Listing 5.22
+What Go is doing underneath the code

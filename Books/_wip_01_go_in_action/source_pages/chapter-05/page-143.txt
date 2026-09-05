@@ -1,0 +1,55 @@
+122
+CHAPTER 5
+Go’s type system
+line 15 can’t refer to the unexported identifier counters.alertCounter. This identi-
+fier is undefined. 
+ Since the alertCounter type from the counters package was declared using a low-
+ercase letter, it was unexported and therefore unknown to the code in listing64.go. If
+we change the type to start with a capital letter, then the compiler error will go away.
+Let’s look at a new sample program that implements a factory function for the
+counters package.
+counters/counters.go
+-----------------------------------------------------------------------
+01 // Package counters provides alert counter support.
+02 package counters
+03
+04 // alertCounter is an unexported type that
+05 // contains an integer counter for alerts.
+06 type alertCounter int
+07
+08 // New creates and returns values of the unexported
+09 // type alertCounter
+10 func New(value int) alertCounter {
+11
+return alertCounter(value)
+12 }
+listing68.go
+-----------------------------------------------------------------------
+01 // Sample program to show how the program can access a value
+02 // of an unexported identifier from another package.
+03 package main
+04
+05 import (
+06
+"fmt"
+07
+08
+"github.com/goinaction/code/chapter5/listing68/counters"
+09 )
+10
+11 // main is the entry point for the application.
+12 func main() {
+13
+// Create a variable of the unexported type using the exported
+14
+// New function from the package counters.
+15
+counter := counters.New(10)
+16
+17
+fmt.Printf("Counter: %d\n", counter)
+18 }
+This example has been changed to use a factory function to create values of the unex-
+ported alertCounter type. Let’s look at the code in the counters package first.
+Listing 5.68
+listing68/

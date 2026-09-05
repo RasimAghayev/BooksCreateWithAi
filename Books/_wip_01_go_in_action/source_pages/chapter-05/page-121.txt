@@ -1,0 +1,53 @@
+100
+CHAPTER 5
+Go’s type system
+The method Add in listing 5.30 is a great example of how the standard library treats
+the Time type as having a primitive nature. The method is declared using a value
+receiver and returns a new Time value. The method is operating on its own copy of the
+caller’s Time value and returns a copy of its local Time value back to the caller. It’s up
+to the caller whether they want to replace their Time value with what’s returned or
+declare a new Time variable to hold the result. 
+ In most cases, struct types don’t exhibit a primitive nature, but a nonprimitive one.
+In these cases, adding or removing something from the value of the type should
+mutate the value. When this is the case, you want to use a pointer to share the value
+with the rest of the program that needs it. Let’s take a look at a struct type imple-
+mented by the standard library that has a nonprimitive nature.
+15 // File represents an open file descriptor.
+16 type File struct {
+17
+*file
+18 }
+19
+20 // file is the real representation of *File.
+21 // The extra level of indirection ensures that no clients of os
+22 // can overwrite this data, which could cause the finalizer
+23 // to close the wrong file descriptor.
+24 type file struct {
+25
+fd int
+26
+name string
+27
+dirinfo *dirInfo // nil unless directory being read
+28
+nepipe int32 // number of consecutive EPIPE in Write
+29 }
+In listing 5.31 you see the declaration of the File type from the standard library. The
+nature of this type is nonprimitive. Values of this type are actually unsafe to be copied.
+The comments for the unexported type make this clear. Since there’s no way to pre-
+vent programmers from making copies, the implementation of the File type uses an
+embedded pointer of an unexported type. We’ll talk about embedding types later in
+this chapter, but this extra level of indirection provides protection from copies. Not
+every struct type requires or should be implemented with this extra protection. Pro-
+grammers should respect the nature of each type and use it accordingly. 
+ Let’s look at the implementation of the Open function.
+238 func Open(name string) (file *File, err error) {
+239
+return OpenFile(name, O_RDONLY, 0)
+240 }
+The implementation of the Open function in listing 5.32 shows how a pointer is used
+to share File type values with the caller of the function. Open creates a value of type
+Listing 5.31
+golang.org/src/os/file_unix.go: lines 15–29
+Listing 5.32
+golang.org/src/os/file.go: lines 238–240

@@ -1,0 +1,36 @@
+234
+CHAPTER 9
+Testing and benchmarking
+ 
+go test -v -run="none" -bench="BenchmarkSprintf"
+In our call to go test, we specified the -run option passing the string "none" to make
+sure no unit tests are run prior to running the specified benchmark function. Both of
+these options take a regular expression to filter the tests to run. Since there’s no unit
+test function that has none in its name, none eliminates any unit tests from running.
+When we issue this command, we get the output shown in figure 9.14. 
+The output starts out specifying that there are no tests to run and then proceeds to
+run the BenchmarkSprintf benchmark. After the word PASS, you see the result of run-
+ning the benchmark function. The first number, 5000000, represents the number of
+times the code inside the loop was executed. In this case, that’s five million times. The
+next number represents the performance of the code based on the number of nano-
+seconds per operation, so using the Sprintf function in this context takes 258 nano-
+seconds on average per call. 
+ The final output from running the benchmark shows ok to represent the bench-
+mark finished properly. Then the name of the code file that was executed is displayed,
+and finally, the total time the benchmark ran. The default minimum run time for a
+benchmark is 1 second. You can see how the framework still ran the test for approxi-
+mately a second and a half. You can use another option called -benchtime if you want
+to have the test run longer. Let’s run the test again using a bench time of three sec-
+onds (see figure 9.15).
+ This time the Sprintf function was run twenty million times for a period of 5.275
+seconds. The performance of the function didn’t change much. This time the perfor-
+mance was 256 nanoseconds per operation. Sometimes by increasing the bench time,
+you can get a more accurate reading of performance. For most tests, increasing the
+bench time over three seconds tends to not provide any difference for an accurate
+reading. But each benchmark is different. 
+Listing 9.31
+Running the benchmark test
+Figure 9.14
+Running a single benchmark
+Figure 9.15
+Running a single benchmark with the -benchtime option

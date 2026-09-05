@@ -1,0 +1,47 @@
+127
+Summary
+ 
+11 // main is the entry point for the application.
+12 func main() {
+13
+// Create a value of type Admin from the entities package.
+14
+a := entities.Admin{
+15
+Rights: 10,
+16
+}
+17
+18
+// Set the exported fields from the unexported
+19
+// inner type.
+20
+a.Name = "Bill"
+21
+a.Email = "bill@email.com"
+22
+23
+fmt.Printf("User: %v\n", a)
+24 }
+The main function starts out on line 14 in listing 5.76 by creating a value of type Admin
+from the entities package. Since the user inner type is unexported, this code can’t
+access the inner type to initialize it inside the struct literal. Even though the inner type
+is unexported, the fields declared within the inner type are exported. Since the identi-
+fiers from the inner type are promoted to the outer type, those exported fields are
+known through a value of the outer type. 
+ Therefore, on line 20 and 21 the Name and Email fields from the unexported inner
+type can be accessed and initialized through the outer type variable a. There’s no
+access to the inner type directly, since the user type is unexported. 
+5.7
+Summary
+User-defined types can be declared using the keyword struct or by specifying
+an existing type.
+Methods provide a way to add behavior to user-defined types.
+Think of types as having one of two natures, primitive or non-primitive.
+Interfaces are types that declare behavior and provide polymorphism.
+Type embedding provides the ability to extend types without the need for
+inheritance.
+Identifiers are either exported or unexported from packages.
+Listing 5.76
+listing74.go: lines 11–24

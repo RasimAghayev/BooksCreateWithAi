@@ -1,0 +1,44 @@
+129
+Concurrency versus parallelism
+top of the operating system, binding operating system’s threads to logical processors
+which, in turn, execute goroutines. The scheduler controls everything related to
+which goroutines are running on which logical processors at any given time. 
+ Concurrency synchronization comes from a paradigm called communicating sequen-
+tial processes or CSP. CSP is a message-passing model that works by communicating data
+between goroutines instead of locking data to synchronize access. The key data type
+for synchronizing and passing messages between goroutines is called a channel. For
+many developers who have never experienced writing concurrent programs using
+channels, they invoke an air of awe and excitement, which you hopefully will experi-
+ence as well. Using channels makes it easier to write concurrent programs and makes
+them less prone to errors. 
+6.1
+Concurrency versus parallelism
+Let’s start by learning at a high level what operating system processes and threads are.
+This will help you understand later on how the Go runtime scheduler works with the
+operating system to run goroutines concurrently. When you run an application, such
+as an IDE or editor, the operating system starts a process for the application. You can
+think of a process like a container that holds all the resources an application uses and
+maintains as it runs. 
+ Figure 6.1 shows a process that contains common resources that may be allocated
+by any process. These resources include but are not limited to a memory address
+space, handles to files, devices, and threads. A thread is a path of execution that’s
+scheduled by the operating system to run the code that you write in your functions.
+Each process contains at least one thread, and the initial thread for each process is
+called the main thread. When the main thread terminates, the application terminates,
+because this path of the execution is the origin for the application. The operating sys-
+tem schedules threads to run against processors regardless of the process they belong
+to. The algorithms that different operating systems use to schedule threads are always
+changing and abstracted from the programmer. 
+ The operating system schedules threads to run against physical processors and the
+Go runtime schedules goroutines to run against logical processors. Each logical pro-
+cessor is individually bound to a single operating system thread. As of version 1.5, the
+default is to allocate a logical processor for every physical processor that’s available.
+Prior to version 1.5, the default was to allocate only a single logical processor. These
+logical processors are used to execute all the goroutines that are created. Even with a
+single logical processor, hundreds of thousands of goroutines can be scheduled to run
+concurrently with amazing efficiency and performance. 
+ In figure 6.2, you can see the relationship between an operating system thread, a
+logical processor, and the local run queue. As goroutines are created and ready to
+run, they’re placed in the scheduler’s global run queue. Soon after, they’re assigned
+to a logical processor and placed into a local run queue for that logical processor.
+From there, a goroutine waits its turn to be given the logical processor for execution. 

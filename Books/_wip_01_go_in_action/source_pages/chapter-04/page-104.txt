@@ -1,0 +1,54 @@
+83
+Map internals and fundamentals
+with the top eight high order bits (HOB) from the same hash key that was used to select
+the bucket. This array distinguishes each individual key/value pair stored in the
+respective bucket. Second, there’s an array of bytes that stores the key/value pairs.
+The byte array packs all the keys and then all the values together for the respective
+bucket. The packing of the key/value pairs is implemented to minimize the memory
+required for each bucket. 
+ There are a lot of other low-level implementation details about maps that are out-
+side the scope of this chapter. You don’t need to understand all the internals to learn
+how to create and use maps. Just remember one thing: a map is an unordered collec-
+tion of key/value pairs. 
+4.3.2
+Creating and initializing
+There are several ways you can create and initialize maps in Go. You can use the built-
+in function make, or you can use a map literal.
+// Create a map with a key of type string and a value of type int.
+dict := make(map[string]int)
+// Create a map with a key and value of type string.
+// Initialize the map with 2 key/value pairs.
+dict := map[string]string{"Red": "#da1337", "Orange": "#e95a22"}
+Using a map literal is the idiomatic way of creating a map. The initial length will be
+based on the number of key/value pairs you specify during initialization. 
+ The map key can be a value from any built-in or struct type as long as the value can
+be used in an expression with the == operator. Slices, functions, and struct types that
+contain slices can’t be used as map keys. This will produce a compiler error.
+Listing 4.45
+Declaring a map using make
+Brick red
+Navy blue
+Burnt orange
+Hash function
+Banana yellow
+Sweet pink
+00
+04
+08
+12
+01
+05
+09
+13
+02
+06
+10
+14
+03
+07
+11
+15
+Keys
+Hash key/bucket
+Figure 4.25
+Simple view of how hash functions work

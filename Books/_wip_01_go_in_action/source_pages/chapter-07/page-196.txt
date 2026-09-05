@@ -1,0 +1,52 @@
+175
+Pooling
+maxGoroutines and pooledResources, to set the number of goroutines and resources
+the program is going to use. The declaration of the resource and the implementation
+of the io.Closer interface follows.
+21 // dbConnection simulates a resource to share.
+22 type dbConnection struct {
+23
+ID int32
+24 }
+25
+26 // Close implements the io.Closer interface so dbConnection
+27 // can be managed by the pool. Close performs any resource
+28 // release management.
+29 func (dbConn *dbConnection) Close() error {
+30
+log.Println("Close: Connection", dbConn.ID)
+31
+return nil
+32 }
+Listing 7.22 shows the declaration of the dbConnection struct and its implementation
+of the io.Closer interface. The dbConnection type simulates a struct that’s managing
+a database connection and currently has one field, ID, that contains a unique ID for
+each connection. The Close method just reports that the connection is being closed
+and displays its ID. 
+ Next we have the factory function that creates values of dbConnection.
+34 // idCounter provides support for giving each connection a unique id.
+35 var idCounter int32
+36
+37 // createConnection is a factory method that will be called by
+38 // the pool when a new connection is needed.
+39 func createConnection() (io.Closer, error) {
+40
+id := atomic.AddInt32(&idCounter, 1)
+41
+log.Println("Create: New Connection", id)
+42
+43
+return &dbConnection{id}, nil
+44 }
+Listing 7.23 shows the implementation of the createConnection function. The func-
+tion generates a new and unique ID for the connection, displays that the connection is
+being created, and returns a pointer to a value of type dbConnection with this unique
+ID. The generation of the unique ID is performed with the atomic.AddInt32 func-
+tion. It’s used to safely increment the value of the package level variable idCounter.
+Now that we have our resource and the factory function, we can use it with the pool
+package. 
+ Next, let’s look at the code inside the main function.
+Listing 7.22
+pool/main/main.go: lines 21–32
+Listing 7.23
+pool/main/main.go: lines 34–44

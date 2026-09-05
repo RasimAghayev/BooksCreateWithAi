@@ -1,0 +1,48 @@
+3
+Solving modern programming challenges with Go
+1.1.1
+Development speed
+Compiling a large application in C or C++ takes more
+time than getting a cup of coffee. Figure 1.1 shows an
+XKCD classic excuse for messing around in the office.
+ Go offers lightning-quick compiles by using a
+smart compiler and simplified dependency resolu-
+tion algorithms. When you build a Go program, the
+compiler only needs to look at the libraries that you
+directly include, rather than traversing the depen-
+dencies of all the libraries that are included in the
+entire dependency chain like Java, C, and C++. Con-
+sequently, many Go applications compile in under a
+second. The entire Go source tree compiles in under
+20 seconds on modern hardware.
+ Writing applications in dynamic languages makes you productive quickly because
+there are no intermediate steps between writing code and executing it. The trade-off
+is that dynamic languages don’t offer the type safety that static languages do and often
+need a comprehensive test suite to avoid discovering incorrect type bugs at runtime. 
+ Imagine writing a large application in a dynamic language like JavaScript and com-
+ing across a function that expects to receive a field called ID. Is that an integer, a
+string, or a UUID? The way to find out is to look at the source. You could try to execute
+the function with a number or a string and see what happens. In Go, you wouldn’t
+spend time wondering, because the compiler will catch type differences for you. 
+1.1.2
+Concurrency
+One of the hardest things to do as a programmer is to write an application that effec-
+tively uses the available resources of the hardware running it. Modern computers have
+many cores, but most programming languages don’t have effective tools for utilizing
+those additional resources easily. They often require a lot of thread synchronization
+code, which is prone to errors. 
+ Go’s concurrency support is one of its strongest features. Goroutines are like
+threads, but use far less memory and require less code to use. Channels are data struc-
+tures that let you send typed messages between goroutines with synchronization built
+in. This facilitates a programming model where you send data between goroutines,
+rather than letting the goroutines fight to use the same data. Let’s look at these fea-
+tures in more detail now. 
+GOROUTINES
+Goroutines are functions that run concurrently with other goroutines, including the
+entry point of your program. In other languages, you’d use threads to accomplish the
+same thing, but in Go many goroutines execute on a single thread. For example, if you
+write a web server and you want to handle different web requests simultaneously, you’d
+have to write a lot of extra code to use threads in C or Java. In Go, the net/http library
+Figure 1.1
+Working hard? 
+(via XKCD)

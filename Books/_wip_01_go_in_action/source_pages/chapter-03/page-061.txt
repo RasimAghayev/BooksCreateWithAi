@@ -1,0 +1,47 @@
+40
+CHAPTER 3
+Packaging and tooling
+3.1
+Packages
+All Go programs are organized into groups of files called packages, so that code has the
+ability to be included into other projects as smaller reusable pieces. Let’s look at the
+packages that make up Go’s http functionality in the standard library:
+net/http/
+cgi/
+cookiejar/
+testdata/
+fcgi/
+httptest/
+httputil/
+pprof/
+testdata/
+These directories contain a series of related files with the .go extension, and provide
+clear separation of smaller units of code relating to the implementation of HTTP serv-
+ers, clients, and utilities to test and profile them. For example, the cookiejar package
+contains code related to storing and retrieving cookies from a web session. Each pack-
+age can be imported and used individually so that developers can import only the spe-
+cific functionality that they need. If you’re implementing an HTTP client, you only
+need to import the http package.
+ All .go files must declare the package that they belong to as the first line of the file
+excluding whitespace and comments. Packages are contained in a single directory.
+You may not have multiple packages in the same directory, nor may you split a pack-
+age across multiple directories. This means that all .go files in a single directory must
+declare the same package name. 
+3.1.1
+Package-naming conventions
+The convention for naming your package is to use the name of the directory contain-
+ing it. This has the benefit of making it clear what the package name is when you
+import it. If we continue with our example from the net/http package, all the files
+contained within the http directory are a part of the http package. When naming
+your packages and their directories, you should use short, concise, lowercase names,
+because they will be typed often while you’re developing. The packages under
+net/http are great examples of concise names such as cgi, httputil, and pprof.
+ Keep in mind that a unique name is not required, because you import the package
+using its full path. Your package name is used as the default name when your package
+is imported, but it can be overridden. This is beneficial when you need to import mul-
+tiple packages with the same name. We’ll discuss how this is done in section 3.2. 
+3.1.2
+Package main
+The package name main has special meaning in Go. It designates to the Go command
+that this package is intended to be compiled into a binary executable. All of the exe-
+cutable programs you build in Go must have a package called main. 

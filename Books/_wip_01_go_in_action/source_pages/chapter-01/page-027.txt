@@ -1,0 +1,49 @@
+6
+CHAPTER 1
+Introducing Go
+an interface in Go; the compiler does the work of determining whether values of your
+types satisfy the interfaces you’re using. Many interfaces in Go’s standard library are
+very small, exposing only a few functions. In practice this takes some time to get used
+to, especially if you’ve been writing in object-oriented languages like Java. 
+TYPES ARE SIMPLE
+Go has built-in types like int and string as well as user-defined types. A typical user-
+defined type in Go will have typed fields to store data. If you’ve seen structs in C, Go’s
+user-defined types will look familiar and operate similarly. But types may also declare
+methods that operate on that data. Rather than building a long inheritance struc-
+ture—Client extends User extends Entity—Go developers build small types—Cus-
+tomer and Admin—and embed them into larger ones. Figure 1.4 demonstrates the
+difference between inheritance and composition.   
+GO INTERFACES MODEL SMALL BEHAVIORS
+Interfaces allow you to express the behavior of a type. If a value of a type implements
+an interface, it means the value has a specific set of behaviors. You don’t even need to
+declare that you’re implementing an interface; you just need to write the implementa-
+tion. Other languages call this duck typing—if it quacks like a duck, then it can be a
+duck—and Go does it well. In Go, if your type implements the methods of an inter-
+face, a value of your type can be stored in a value of that interface type. No special dec-
+larations are required. 
+ In a strictly object-oriented language like Java, interfaces are all-encompassing.
+You’re often required to think through a large inheritance chain before you’re able to
+even start writing code. Here’s an example of a Java interface: 
+interface User {
+public void login();
+public void logout();
+}
+Implementing this interface in Java requires you to create a class that fulfills all of the
+promises made in the User interface and explicitly declare that you implement the
+interface. In contrast, a Go interface typically represents just a single action. One of
+the most common interfaces you’ll use in Go is io.Reader. The io.Reader interface
+Drive
+Passengers
+Cargo
+Inheritance
+Vehicle
+Passenger vehicle
+Truck
+Composition
+Truck
+Carry cargo
+Carry passengers
+Drive
+Figure 1.4
+Inheritance 
+versus composition

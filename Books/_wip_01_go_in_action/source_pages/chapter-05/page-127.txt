@@ -1,0 +1,67 @@
+106
+CHAPTER 5
+Go’s type system
+34
+// ./listing36.go:32: cannot use u (type user) as type
+35
+//
+notifier in argument to sendNotification:
+36
+//
+user does not implement notifier
+37
+//
+(notify method has pointer receiver)
+38 }
+39
+40 // sendNotification accepts values that implement the notifier
+41 // interface and sends notifications.
+42 func sendNotification(n notifier) {
+43
+n.notify()
+44 }
+In listing 5.36 you see code that you would expect to compile, but it doesn’t. On line
+10, we declare an interface named notifier with a single method named notify.
+Then on line 15, we have the declaration of our concrete type named user and the
+implementation of the notifier interface via the method declaration on line 21. The
+method is implemented with a pointer receiver of type user. 
+40 // sendNotification accepts values that implement the notifier
+41 // interface and sends notifications.
+42 func sendNotification(n notifier) {
+43
+n.notify()
+44 }
+On line 42 in listing 5.37, a function named sendNotification is declared and
+accepts a single value of the interface type notifier. Then the interface value is used
+to call the notify method against the stored value. Any value that implements the
+notifier interface can be passed into the sendNotification function. Now let’s look
+at the main function.
+28 func main() {
+29
+// Create a value of type User and send a notification.
+30
+u := user{"Bill", "bill@email.com"}
+31
+32
+sendNotification(u)
+33
+34
+// ./listing36.go:32: cannot use u (type user) as type
+35
+//
+notifier in argument to sendNotification:
+36
+//
+user does not implement notifier
+37
+//
+(notify method has pointer receiver)
+38 }
+In the main function, a value of the concrete type user is created and assigned to
+the variable u on line 30 in listing 5.38. Then the value of u is passed to the send-
+Notification function on line 32. But the call to sendNotification results in a com-
+piler error.
+Listing 5.37
+listing36.go: lines 40–44
+Listing 5.38
+listing36.go: lines 28–38

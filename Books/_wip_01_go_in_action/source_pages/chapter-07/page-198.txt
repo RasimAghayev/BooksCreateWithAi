@@ -1,0 +1,63 @@
+177
+Work
+ 
+76 // performQueries tests the resource pool of connections.
+77 func performQueries(query int, p *pool.Pool) {
+78
+// Acquire a connection from the pool.
+79
+conn, err := p.Acquire()
+80
+if err != nil {
+81
+log.Println(err)
+82
+return
+83
+}
+84
+85
+// Release the connection back to the pool.
+86
+defer p.Release(conn)
+87
+88
+// Wait to simulate a query response.
+89
+time.Sleep(time.Duration(rand.Intn(1000)) * time.Millisecond)
+90
+log.Printf("QID[%d] CID[%d]\n", query, conn.(*dbConnection).ID)
+91 }
+The implementation of the performQueries function in listing 7.27 shows the use of
+the pool’s Acquire and Release methods. The function starts out by calling the
+Acquire method to retrieve a dbConnection from the pool. The returned error inter-
+face value is checked, and then on line 86 a defer is used to release the dbConnection
+back into the pool once the function returns. On lines 89 and 90 a random amount of
+sleep occurs to simulate work time using the dbConnection. 
+7.3
+Work
+The purpose of the work package is to show how you can use an unbuffered channel
+to create a pool of goroutines that will perform and control the amount of work that
+gets done concurrently. This is a better approach than using a buffered channel of
+some arbitrary static size that acts as a queue of work and throwing a bunch of gorou-
+tines at it. Unbuffered channels provide a guarantee that data has been exchanged
+between two goroutines. This approach of using an unbuffered channel allows the
+user to know when the pool is performing the work, and the channel pushes back
+when it can’t accept any more work because it’s busy. No work is ever lost or stuck in a
+queue that has no guarantee it will ever be worked on. 
+ Let’s take a look at the work.go code file from the work package.
+01 // Example provided with help from Jason Waldrip.
+02 // Package work manages a pool of goroutines to perform work.
+03 package work
+04
+05 import "sync"
+06
+07 // Worker must be implemented by types that want to use
+08 // the work pool.
+09 type Worker interface {
+10
+Task()
+Listing 7.27
+pool/main/main.go: lines 76–91
+Listing 7.28
+work/work.go

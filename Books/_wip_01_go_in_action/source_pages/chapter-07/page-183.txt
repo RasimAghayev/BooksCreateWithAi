@@ -1,0 +1,52 @@
+162
+CHAPTER 7
+Concurrency patterns
+This channel is called complete because it’s used by the goroutine running the tasks
+to signal that the channel’s done. If an error occurs, it’s reported back via an error
+interface value sent through the channel. If no error occurs, the value of nil is sent as
+the error interface value. 
+ The third field is named timeout and receives time.Time values.
+22
+// timeout reports that time has run out.
+23
+timeout <-chan time.Time
+This channel is used to manage the amount of time the process has to complete all its
+tasks. If a time.Time value is ever received on this channel, the program will attempt
+to shut itself down cleanly. 
+ The final field is named tasks and is a slice of function values.
+25
+// tasks holds a set of functions that are executed
+26
+// synchronously in index order.
+27
+tasks []func(int)
+These function values represent functions that are run in series, one after the other. The
+execution of these functions happens on a single but separate goroutine from main. 
+ With the Runner type declared, next we have two error interface variables.
+30 // ErrTimeout is returned when a value is received on the timeout.
+31 var ErrTimeout = errors.New("received timeout")
+32
+33 // ErrInterrupt is returned when an event from the OS is received.
+34 var ErrInterrupt = errors.New("received interrupt")
+The first error interface variable is named ErrTimeout. This error value is returned
+by the Start method when a timeout event is received. The second error interface
+variable is named ErrInterrupt. This error value is returned by the Start method
+when an operating system event is received. 
+ Now we can look at how users can create values of type Runner.
+36 // New returns a new ready-to-use Runner.
+37 func New(d time.Duration) *Runner {
+38
+return &Runner{
+39
+interrupt: make(chan os.Signal, 1),
+40
+complete:
+make(chan error),
+Listing 7.5
+runner/runner.go: lines 22–23
+Listing 7.6
+runner/runner.go: lines 25–27
+Listing 7.7
+runner/runner.go: lines 30–34
+Listing 7.8
+runner/runner.go: lines 36–43

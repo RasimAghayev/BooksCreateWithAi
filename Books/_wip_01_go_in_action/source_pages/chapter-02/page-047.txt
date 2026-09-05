@@ -1,0 +1,67 @@
+26
+CHAPTER 2
+Go quick-start
+after the call to Decode. The function is complete and the calling function can check
+the error value and determine what to do next. 
+ Now it’s time to see how the search code supports different types of feed imple-
+mentations by reviewing the matcher code. 
+2.3.3
+match.go/default.go
+The match.go code file contains the support for creating different types of matchers
+that can be used by the search Run function. Let’s go back and look at the code from
+the Run function that executes the search using the different types of matchers.
+29
+// Launch a goroutine for each feed to find the results.
+30
+for _, feed := range feeds {
+31
+// Retrieve a matcher for the search.
+32
+matcher, exists := matchers[feed.Type]
+33
+if !exists {
+34
+matcher = matchers["default"]
+35
+}
+36
+37
+// Launch the goroutine to perform the search.
+38
+go func(matcher Matcher, feed *Feed) {
+39
+Match(matcher, feed, searchTerm, results)
+40
+waitGroup.Done()
+41
+}(matcher, feed)
+42
+}
+The code on line 32 looks up a matcher value based on the feed type; that value is
+then used to process a search against that specific feed. Then on line 38 through 41, a
+goroutine is launched for that matcher and feed value. The key to making this code
+work is the ability of this framework code to use an interface type to capture and call
+into the specific implementation for each matcher value. This allows the code to han-
+dle different types of matcher values in a consistent and generic way. Let’s look at the
+code in match.go and see how we’re able to implement this functionality. 
+ Here are the first 17 lines of code for match.go.
+01 package search
+02
+03 import (
+04
+"log"
+05 )
+06
+07 // Result contains the result of a search.
+08 type Result struct {
+09
+Field
+string
+10
+Content string
+11 }
+12
+Listing 2.33
+search/search.go : lines 29 - 42
+Listing 2.34
+search/match.go: lines 01–17

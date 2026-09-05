@@ -1,3 +1,14 @@
 {
-  "books": []
+  "books": [
+    {
+      "book_id": "go_in_action_2016_v1",
+      "title": "Go in Action",
+      "author": "William Kennedy with Brian Ketelsen and Erik St. Martin",
+      "year": 2016,
+      "version": 1,
+      "pages": 266,
+      "status": "reading",
+      "started_at": "2026-09-05"
+    }
+  ]
 }

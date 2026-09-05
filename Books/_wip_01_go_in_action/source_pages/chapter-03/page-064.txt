@@ -1,0 +1,49 @@
+43
+Imports
+ For example:
+import "github.com/spf13/viper"
+When you try to build a program with this import path, the go build command will
+search the GOPATH for this package location on disk. The fact that it represents a URL
+to a repository on GitHub is irrelevant as far as the go build command is concerned.
+When an import path contains a URL, the Go tooling can be used to fetch the package
+from the DVCS and place the code inside the GOPATH at the location that matches the
+URL. This fetching is done using the go get command. go get will fetch any specified
+URL or can be used to fetch the dependencies a package is importing that are go-
+gettable. Since go get is recursive, it can walk down the source tree for a package and
+fetch all the dependencies it finds. 
+3.2.2
+Named imports
+What happens when you need to import multiple packages with the same name? For
+example, you could need a network/convert package for converting data that’s read
+from a network and a file/convert package for converting data read from text files.
+When this is the case, both of these packages can be imported by using named imports.
+This is performed by giving one of the packages a new name to the left of the import
+statement. 
+ As an example, let’s say you were already using the fmt package that comes as part
+of the standard library. Now you need to import a package named fmt that you had
+created as part of your own project. You can import your own fmt package by renam-
+ing the import, as demonstrated in the next listing.
+01 package main
+02
+03 import (
+04
+"fmt"
+05
+myfmt "mylib/fmt"
+06 )
+07
+08 func main() {
+09
+fmt.Println("Standard Library")
+10
+myfmt.Println("mylib/fmt")
+11 }
+The Go compiler will fail the build and output an error whenever you import a pack-
+age that you don’t use. The Go team considers this a feature to eliminate code bloat
+from packages that are imported but not used. Although this feature is occasionally
+annoying, the Go team has put a great deal of effort into making decisions to prevent
+some of the problems that you encounter in other languages. You don’t want to have
+an unnecessarily large binary, filled with unused libraries, and they feel that if it’s
+worth the compiler telling you about, it’s worth failing the build. Anyone who has
+Listing 3.4
+Renaming imports

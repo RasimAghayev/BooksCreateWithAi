@@ -1,0 +1,56 @@
+233
+Benchmarking
+04 package listing28_test
+05
+06 import (
+07
+"fmt"
+08
+"strconv"
+09
+"testing"
+10 )
+Listing 9.28 shows the initial code for the listing28_test.go benchmarks. As with unit
+test files, the file name must end in _test.go. The testing package must also be
+imported. Next, let’s look at one of the benchmark functions.
+12 // BenchmarkSprintf provides performance numbers for the
+13 // fmt.Sprintf function.
+14 func BenchmarkSprintf(b *testing.B) {
+15
+number := 10
+16
+17
+b.ResetTimer()
+18
+19
+for i := 0; i < b.N; i++ {
+20
+fmt.Sprintf("%d", number)
+21
+}
+22 }
+On line 14 in listing 9.29, you see the first benchmark, named BenchmarkSprintf.
+Benchmark functions begin with the word Benchmark and take as their only parame-
+ter a pointer of type testing.B. In order for the benchmarking framework to calcu-
+late performance, it must run the code over and over again for a period of time. This
+is where the for loop comes in.
+19
+for i := 0; i < b.N; i++ {
+20
+fmt.Sprintf("%d", number)
+21
+}
+22 }
+The for loop on line 19 in listing 9.30 shows how to use the b.N value. On line 20 we
+have the call to the Sprintf function from the fmt package. This is the function we’re
+benchmarking to convert an integer value into a string. 
+ By default, the benchmarking framework will call the benchmark function over
+and over again for at least one second. Each time the framework calls the benchmark
+function, it will increase the value of b.N. On the first call, the value of b.N will be 1.
+It’s important to place all the code to benchmark inside the loop and to use the b.N
+value. If this isn’t done, the results can’t be trusted. 
+ If we just want to run benchmark functions, we need to use the -bench option.
+Listing 9.29
+listing28_test.go: lines 12–22
+Listing 9.30
+listing28_test.go: lines 19–22

@@ -1,0 +1,66 @@
+215
+Unit testing
+the given need of the test, the test should then state when the code being tested would
+execute, and how.
+19
+t.Logf("\tWhen checking \"%s\" for status code \"%d\"",
+20
+url, statusCode)
+21
+{
+You see the when clause on line 19 in listing 9.5. It states specifically the values for the
+test. Next, let’s look at the code being tested using these values.
+22
+resp, err := http.Get(url)
+23
+if err != nil {
+24
+t.Fatal("\t\tShould be able to make the Get call.",
+25
+ballotX, err)
+26
+}
+27
+t.Log("\t\tShould be able to make the Get call.",
+28
+checkMark)
+29
+30
+defer resp.Body.Close()
+The code in listing 9.6 uses the Get function from the http package to make a request
+to the goinggo.net web server to pull down the RSS feed file for the blog. After the Get
+call returns, the error value is checked to see if the call was successful or not. In either
+case, we state what the result of the test should be. If the call failed, we write an X as well
+to the test output along with the error. If the test succeeded, we write a check mark. 
+ If the call to Get does fail, the use of the t.Fatal method on line 24 lets the testing
+framework know this unit test has failed. The t.Fatal method not only reports the
+unit test has failed, but also writes a message to the test output and then stops the exe-
+cution of this particular test function. If there are other test functions that haven’t run
+yet, they’ll be executed. A formatted version of this method is named t.Fatalf. 
+ When we need to report the test has failed but don’t want to stop the execution of
+the particular test function, we can use the t.Error family of methods.
+32
+if resp.StatusCode == statusCode {
+33
+t.Logf("\t\tShould receive a \"%d\" status. %v",
+34
+statusCode, checkMark)
+35
+} else {
+36
+t.Errorf("\t\tShould receive a \"%d\" status. %v %v",
+37
+statusCode, ballotX, resp.StatusCode)
+38
+}
+39
+}
+40
+}
+41 }
+Listing 9.5
+listing01_test.go: lines 19–21
+Listing 9.6
+listing01_test.go: lines 22–30
+Listing 9.7
+listing01_test.go: lines 32–41

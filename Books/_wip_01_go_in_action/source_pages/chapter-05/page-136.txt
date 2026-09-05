@@ -1,0 +1,78 @@
+115
+Type embedding
+12 }
+13
+14 // user defines a user in the program.
+15 type user struct {
+16
+name
+string
+17
+email string
+18 }
+19
+20 // notify implements a method that can be called via
+21 // a value of type user.
+22 func (u *user) notify() {
+23
+fmt.Printf("Sending user email to %s<%s>\n",
+24
+u.name,
+25
+u.email)
+26 }
+27
+28 // admin represents an admin user with privileges.
+29 type admin struct {
+30
+user
+31
+level string
+32 }
+33
+34 // main is the entry point for the application.
+35 func main() {
+36
+// Create an admin user.
+37
+ad := admin{
+38
+user: user{
+39
+name:
+"john smith",
+40
+email: "john@yahoo.com",
+41
+},
+42
+level: "super",
+43
+}
+44
+45
+// Send the admin user a notification.
+46
+// The embedded inner type's implementation of the
+47
+// interface is "promoted" to the outer type.
+48
+sendNotification(&ad)
+49 }
+50
+51 // sendNotification accepts values that implement the notifier
+52 // interface and sends notifications.
+53 func sendNotification(n notifier) {
+54
+n.notify()
+55 }
+The sample code in listing 5.56 uses the same code from before but with a few
+changes.
+08 // notifier is an interface that defined notification
+09 // type behavior.
+10 type notifier interface {
+11
+notify()
+12 }
+Listing 5.57
+listing56.go: lines 08–12, 51–55

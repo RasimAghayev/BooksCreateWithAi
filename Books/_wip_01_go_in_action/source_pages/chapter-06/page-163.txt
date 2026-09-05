@@ -1,0 +1,46 @@
+142
+CHAPTER 6
+Concurrency
+main.incCounter()
+/example/main.go:49 +0x96
+Previous read by goroutine 6:
+main.incCounter()
+/example/main.go:40 +0x66
+Goroutine 5 (running) created at:
+main.main()
+/example/main.go:25 +0x5c
+Goroutine 6 (running) created at:
+main.main()
+/example/main.go:26 +0x73
+==================
+Final Counter: 2
+Found 1 data race(s)
+The race detector in listing 6.11 has pointed out the following four lines of code from
+our example.
+Line 49: counter = value
+Line 40: value := counter
+Line 25: go incCounter(1)
+Line 26: go incCounter(2)
+Listing 6.12 shows that the race detector has told us which goroutine is causing the
+data race and which two lines of code are in conflict. It’s not surprising that the code
+that’s pointed out is reading from and writing to the counter variable. 
+ One way we can fix our example and eliminate the race condition is by using the
+support Go has for synchronizing goroutines by locking down shared resources. 
+6.4
+Locking shared resources
+Go provides traditional support to synchronize goroutines by locking access to shared
+resources. If you need to serialize access to an integer variable or a block of code, then
+the functions in the atomic and sync packages may be a good solution. We’ll look at a
+few of the atomic package functions and the mutex type from the sync package. 
+6.4.1
+Atomic functions
+Atomic functions provide low-level locking mechanisms for synchronizing access to
+integers and pointers. We can use atomic functions to fix the race condition we cre-
+ated in listing 6.9.
+01 // This sample program demonstrates how to use the atomic
+02 // package to provide safe access to numeric types.
+03 package main
+Listing 6.12
+Lines of code called out by the race detector
+Listing 6.13
+listing13.go

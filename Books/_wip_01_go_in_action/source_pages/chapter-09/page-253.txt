@@ -1,0 +1,32 @@
+232
+CHAPTER 9
+Testing and benchmarking
+Figure 9.11 shows a complete set of documentation for the example, including the
+code and the expected output. Since this is also a test, you can run the example func-
+tion with the go test tool, as in figure 9.12. 
+ After running the test, you see the test passes. This time when the test is run, the
+specific function ExampleSendJSON is specified with the -run option. The -run option
+takes any regular expression to filter the test functions to run. It works with both unit
+tests and example functions. When an example fails, it looks like this figure 9.13.
+When an example fails, go test shows the output that was produced and what was
+expected. 
+9.3
+Benchmarking
+Benchmarking is a way to test the performance of code. It’s useful when you want to test
+the performance of different solutions to the same problem and see which solution per-
+forms better. It can also be useful to identify CPU or memory issues for a particular piece
+of code that might be critical to the performance of your application. Many developers
+use benchmarking to test different concurrency patterns or to help configure work
+pools to make sure they’re configured properly for the best throughput. 
+ Let’s look at a set of benchmark functions that reveal the fastest way to convert an
+integer value to a string. In the standard library, there are three different ways to con-
+vert an integer value to a string.
+01 // Sample benchmarks to test which function is better for converting
+02 // an integer into a string. First using the fmt.Sprintf function,
+03 // then the strconv.FormatInt function and then strconv.Itoa.
+Listing 9.28
+listing28_test.go: lines 01–10
+Figure 9.12
+Running the example
+Figure 9.13
+Running an example that fails

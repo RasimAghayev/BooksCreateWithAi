@@ -1,0 +1,49 @@
+68
+CHAPTER 4
+Arrays, slices, and maps
+You can also create an empty slice by declaring a slice with initialization.
+// Use make to create an empty slice of integers.
+slice := make([]int, 0)
+// Use a slice literal to create an empty slice of integers.
+slice := []int{}
+An empty slice contains a zero-element underlying array that allocates no storage.
+Empty slices are useful when you want to represent an empty collection, such as when
+a database query returns zero results (see figure 4.11). 
+Regardless of whether you’re using a nil slice or an empty slice, the built-in functions
+append, len, and cap work the same. 
+4.2.3
+Working with slices
+Now that you know what a slice is and how to create them, you can learn how to use
+them in your programs. 
+ASSIGNING AND SLICING
+Assigning a value to any specific index within a slice is identical to how you do this
+with arrays. To change the value of an individual element, use the [ ] operator. 
+// Create a slice of integers.
+// Contains a length and capacity of 5 elements.
+slice := []int{10, 20, 30, 40, 50}
+// Change the value of index 1.
+slice[1] = 25
+Slices are called such because you can slice a portion of the underlying array to create
+a new slice.
+// Create a slice of integers.
+// Contains a length and capacity of 5 elements.
+slice := []int{10, 20, 30, 40, 50}
+Listing 4.23
+Declaring an empty slice
+Listing 4.24
+Declaring an array using an array literal
+Listing 4.25
+Taking the slice of a slice
+addr
+Pointer
+0
+Length
+0
+Capacity
+Empty slice:
+Length of zero
+Capacity of zero
+slice := make([]int, 0)
+slice := []int{}
+Figure 4.11
+The representation of an empty slice

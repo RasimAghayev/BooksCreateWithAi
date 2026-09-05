@@ -1,0 +1,41 @@
+2
+CHAPTER 1
+Introducing Go
+ In this chapter you’ll see how Go is different from other programming languages.
+Go rethinks the traditional object-oriented development you might be used to, while
+still providing an efficient means for code reuse. Go makes it easier for you to effec-
+tively use all of the cores on your expensive server, and it takes away the penalty of
+compiling a very large project. 
+ As you read this chapter, you’ll get a feeling for the many decisions that shaped the
+creation of Go, from its concurrency model to its lightning-fast compiler. We
+mentioned it in the preface, but it bears repeating: this book has been written for an
+intermediate-level developer who has some experience with other programming lan-
+guages and wants to learn Go. Our goal in writing this book is to provide you an inten-
+sive, comprehensive, and idiomatic view of the language. We focus on both the
+specification and implementation of the language, including the wide-ranging topics
+of language syntax, Go’s type system, concurrency, channels, testing, and more. We
+believe this book is perfect for anyone who wants a jump-start in learning Go or who
+wants a more thorough understanding of the language and its internals.
+ The source code for the examples in the book is available at https://github.com/
+goinaction/code.
+ We hope you’ll appreciate the tools that ship with Go to make your life as a devel-
+oper easier. In the end, you’ll appreciate why so many developers are choosing Go
+when they start up that new project.
+1.1
+Solving modern programming challenges with Go
+The Go team went to great lengths to solve the problems facing software developers
+today. Developers have to make an uncomfortable choice between rapid development
+and performance when choosing a language for their projects. Languages like C and
+C++ offer fast execution, whereas languages like Ruby and Python offer rapid develop-
+ment. Go bridges these competing worlds and offers a high-performance language
+with features that make development fast. 
+ As we explore Go, you’ll find well-planned features and concise syntax. As a lan-
+guage, Go is defined not only by what it includes, but by what it doesn’t include. Go
+has a concise syntax with few keywords to memorize. Go has a compiler that’s so fast,
+sometimes you’ll forget it’s running. As a Go developer, you’ll spend significantly less
+time waiting for your project to build. Because of Go’s built-in concurrency features,
+your software will scale to use the resources available without forcing you to use spe-
+cial threading libraries. Go uses a simple and effective type system that takes much of
+the overhead out of object-oriented development and lets you focus on code reuse.
+Go also has a garbage collector, so you don’t have to manage your own memory. Let’s
+look quickly at these key features.    

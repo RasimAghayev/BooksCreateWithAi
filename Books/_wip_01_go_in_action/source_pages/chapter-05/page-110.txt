@@ -1,0 +1,51 @@
+89
+User-defined types
+and represents an integer value. A float32 requires 4 bytes of memory (32 bits) and
+represents an IEEE-754 binary floating-point number. A bool requires 1 byte of mem-
+ory (8 bits) and represents a Boolean value of true or false. 
+ Some types get their representation based on the architecture of the machine the
+code is built for. A value of type int, for example, can either have a size of 8 bytes (64
+bits) or 4 bytes (32 bits), depending on the architecture. There are other architecture-
+specific types as well, such as all the reference types in Go. Luckily, you don’t need to
+know this information to create or work with values. But if the compiler doesn’t know
+this information, it can’t protect you from doing things that could cause harm inside
+your programs and the machines they run on. 
+5.1
+User-defined types
+Go allows you the ability to declare your own types. When you declare a new type, the
+declaration is constructed to provide the compiler with size and representation infor-
+mation, similar to how the built-in types work. There are two ways to declare a user-
+defined type in Go. The most common way is to use the keyword struct, which allows
+you to create a composite type. 
+ Struct types are declared by composing a fixed set of unique fields. Each field in a
+struct is declared with a known type, which could be a built-in type or another user-
+defined type.
+01 // user defines a user in the program.
+02 type user struct {
+03
+name
+string
+04
+email
+string
+05
+ext
+int
+06
+privileged bool
+07 }
+In listing 5.1 you see the declaration of a struct type. The declaration starts with the
+keyword type, then a name for the new type, and finally the keyword struct. This
+struct type contains four fields, each based on a different built-in type. You can see
+how the fields come together to compose a structure of data. Once you have a type
+declared, you can create values from the type. 
+09 // Declare a variable of type user.
+10 var bill user
+On line 10 in listing 5.2, the keyword var creates a variable named bill of type user.
+When you declare variables, the value that the variable represents is always initialized.
+The value can be initialized with a specific value or it can be initialized to its zero
+value, which is the default value for that variable’s type. For numeric types, the zero
+Listing 5.1
+Declaration of a struct type
+Listing 5.2
+ Declaration of a variable of the struct type set to its zero value

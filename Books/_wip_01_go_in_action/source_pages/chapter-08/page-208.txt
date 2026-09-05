@@ -1,0 +1,44 @@
+187
+Logging
+8.2
+Logging
+Your programs have bugs, even if they haven’t shown themselves yet. That’s the nature
+of software development. Logging is a way to find those bugs and learn more about
+how your program is functioning. Logs can be your eyes and ears, providing code trac-
+ing, profiling, and analytics. With this in mind, the standard library provides a log
+package that can be used with some basic configuration. You can also create custom
+loggers to implement your own specific logging needs. 
+ Logging has a long history in UNIX, and this has carried over into the log package.
+Traditional CLI (command-line interface) programs write their output to the stdout
+device. This device exists on all operating systems and is the default destination for
+standard text output. Terminals are configured by default to display text written to
+this device. Using this single destination works great until you have a program that
+needs to write both output and details about how the program is functioning. When
+you want to write logging information, you want to write that to a different destination
+so your output and logging won’t be mixed together. 
+ To solve this problem, UNIX architects added a device called stderr. This device
+was created to be the default destination for logging. It allows developers to separate
+their programs’ output from their logging. For a user to see both the output and the
+logging when running a program, terminal consoles are configured to display what’s
+written to both stdout and stderr. But if your program only writes logs, then it’s com-
+mon practice to write general logging information to stdout and errors or warnings
+to stderr. 
+8.2.1
+Log package
+Let’s start with the base functionality provided by the log package before you learn
+how to create your own custom loggers. The purpose of logging is to get a trace of
+what the program is doing, where it’s happening, and when. This is some of the infor-
+mation that you can write on every log line with some configuration. 
+TRACE: 2009/11/10 23:00:00.000000 /tmpfs/gosandbox-/prog.go:14: message
+In listing 8.2 you see a log entry produced by the log package. This log entry contains
+a prefix, a datetime stamp, the full path to the source code writing to the log, the line
+of code performing the write, and finally the message. Let’s look at a program that
+allows you to configure the log package to write such a line.
+01 // This sample program demonstrates how to use the base log package.
+02 package main
+03
+04 import (
+Listing 8.2
+Sample trace line
+Listing 8.3
+listing03.go

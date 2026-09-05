@@ -1,0 +1,63 @@
+209
+Input and output
+16
+if err != nil {
+17
+log.Fatalln(err)
+18
+}
+19
+20
+// Create a file to persist the response.
+21
+file, err := os.Create(os.Args[2])
+22
+if err != nil {
+23
+log.Fatalln(err)
+24
+}
+25
+defer file.Close()
+26
+27
+// Use MultiWriter so we can write to stdout and
+28
+// a file on the same write operation.
+29
+dest := io.MultiWriter(os.Stdout, file)
+30
+31
+// Read the response and write to both destinations.
+32
+io.Copy(dest, r.Body)
+33
+if err := r.Body.Close(); err != nil {
+34
+log.Println(err)
+35
+}
+36 }
+Listing 8.46 shows a very bare-bones implementation of curl that can be used to
+download, display, and save the content of any HTTP Get request. The example will
+write the response to a file and to stdout at the same time. To keep the example
+small, the program doesn’t check for valid command-line arguments nor provide
+switches for advanced options. 
+ On line 15 the program takes the first argument from the command line and per-
+forms an HTTP Get. If the first argument is a URL and there are no errors, the variable
+r contains the response. On line 21 we open a file based on the second command-line
+parameter. If we’re successful in opening the file, then on line 25 we schedule the
+closing of the file with the defer statement. 
+ Since we want to write the content of the request to both stdout and to our file,
+on line 29 we combine the file and stdout values together into a single io.Writer
+value by using the MultiWriter function from the io package. On line 33 we use the
+Copy function from the io package to read the content from the response body and
+to write that to both destinations. With one call to Copy, thanks to the value provided
+by the MultiWriter function we can use a single call that writes the content to both
+destinations. 
+ Thanks to the support already provided by the io package and the implementa-
+tion of the io.Writer and io.Reader interfaces by the http and os packages, we
+don’t need to write any code to perform these lower-level functions. We can leverage
+everything that already exists and just focus on the problem we’re trying to solve. If
+we support these interfaces with our own types, we get a huge amount of functional-
+ity for free. 

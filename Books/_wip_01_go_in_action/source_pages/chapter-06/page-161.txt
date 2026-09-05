@@ -1,0 +1,74 @@
+140
+CHAPTER 6
+Concurrency
+16
+wg sync.WaitGroup
+17 )
+18
+19 // main is the entry point for all Go programs.
+20 func main() {
+21
+// Add a count of two, one for each goroutine.
+22
+wg.Add(2)
+23
+24
+// Create two goroutines.
+25
+go incCounter(1)
+26
+go incCounter(2)
+27
+28
+// Wait for the goroutines to finish.
+29
+wg.Wait()
+30
+fmt.Println("Final Counter:", counter)
+31 }
+32
+33 // incCounter increments the package level counter variable.
+34 func incCounter(id int) {
+35
+// Schedule the call to Done to tell main we are done.
+36
+defer wg.Done()
+37
+38
+for count := 0; count < 2; count++ {
+39
+// Capture the value of Counter.
+40
+value := counter
+41
+42
+// Yield the thread and be placed back in queue.
+43
+runtime.Gosched()
+44
+45
+// Increment our local value of Counter.
+46
+value++
+47
+48
+// Store the value back into Counter.
+49
+counter = value
+50
+}
+51 }
+Final Counter: 2
+The counter variable is read and written to four times, twice by each goroutine, but
+the value of the counter variable when the program terminates is 2. Figure 6.5 pro-
+vides a clue as to why this is happening. 
+ Each goroutine overwrites the work of the other. This happens when the goroutine
+swap is taking place. Each goroutine makes its own copy of the counter variable and
+then is swapped out for the other goroutine. When the goroutine is given time to exe-
+cute again, the value of the counter variable has changed, but the goroutine doesn’t
+update its copy. Instead it continues to increment the copy it has and set the value
+back to the counter variable, replacing the work the other goroutine performed. 
+ Let’s walk through the code to understand what it’s doing. Two goroutines are
+created from the function incCounter, which can be seen on lines 25 and 26. The
+Listing 6.10
+Output for listing09.go

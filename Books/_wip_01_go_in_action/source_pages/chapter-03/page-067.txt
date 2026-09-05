@@ -1,0 +1,61 @@
+46
+CHAPTER 3
+Packaging and tooling
+Looking through the list, you can see that there really is a compiler in there; it’s used
+by the build command. The build and clean commands do exactly what you’d
+expect them to do. Try them now using the source code from listing 3.2:
+go build hello.go
+You might not want that file hanging around when it’s time to check your code into
+source control. To get rid of it, use the clean command: 
+go clean hello.go
+After calling clean, the executable program is gone. Let’s take a closer look at some
+of the features of the go tool, and ways that you can save time when you’re using it. For
+the next examples, we’ll use the sample code in the following listing.
+01 package main
+02
+03 import (
+04
+"fmt"
+05
+"io/ioutil"
+06
+"os"
+07
+08
+"github.com/goinaction/code/chapter3/words"
+09 )
+10
+11 // main is the entry point for the application.
+12 func main() {
+13
+filename := os.Args[1]
+14
+15
+contents, err := ioutil.ReadFile(filename)
+16
+if err != nil {
+17
+fmt.Println(err)
+18
+return
+19
+}
+20
+21
+text := string(contents)
+22
+23
+count := words.CountWords(text)
+24
+fmt.Printf("There are %d words in your text. \n", count)
+25 }
+If you’ve downloaded the source code for the book, this package should be at
+GOPATH/src/github.com/goinaction/code/chapter3/words. Make sure you have it
+there to follow along. 
+ Most of the commands that are part of the Go tooling take a package specifier as
+an argument. Look closer at the commands we’ve just used, and you’ll see one of the
+shortcuts built into the tooling. You can omit the filename of the source code file that
+you want to build, and the go tool will default to the current package: 
+go build
+Listing 3.7
+Working with the io package

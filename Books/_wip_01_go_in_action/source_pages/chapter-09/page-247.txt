@@ -1,0 +1,67 @@
+226
+CHAPTER 9
+Testing and benchmarking
+41
+u := struct {
+42
+Name
+string
+43
+Email string
+44
+}{}
+45
+46
+if err := json.NewDecoder(rw.Body).Decode(&u); err != nil {
+47
+t.Fatal("\tShould decode the response.", ballotX)
+48
+}
+49
+t.Log("\tShould decode the response.", checkMark)
+50
+51
+if u.Name == "Bill" {
+52
+t.Log("\tShould have a Name.", checkMark)
+53
+} else {
+54
+t.Error("\tShould have a Name.", ballotX, u.Name)
+55
+}
+56
+57
+if u.Email == "bill@ardanstudios.com" {
+58
+t.Log("\tShould have an Email.", checkMark)
+59
+} else {
+60
+t.Error("\tShould have an Email.", ballotX, u.Email)
+61
+}
+62
+}
+63 }
+Listing 9.19 shows a unit test for the /sendjson endpoint. On line 03 you see the
+name of the package is different from the other tests.
+01 // Sample test to show how to test the execution of an
+02 // internal endpoint.
+03 package handlers_test
+This time, as you can see in listing 9.20, the package name also ends with _test. When
+the package name ends like this, the test code can only access exported identifiers.
+This is true even if the test code file is in the same folder as the code being tested. 
+ Just like when running the service directly, the routes need to be initialized.
+17 func init() {
+18
+handlers.Routes()
+19 }
+On line 17 in listing 9.21, an init function is declared to initialize the routes. If
+the routes aren’t initialized before the unit tests are run, then the tests will fail with
+an http.StatusNotFound error. Now we can look at the unit test for the /sendjson
+endpoint.
+Listing 9.20
+handlers/handlers_test.go: lines 01–03
+Listing 9.21
+handlers/handlers_test.go: lines 17–19

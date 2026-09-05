@@ -1,0 +1,53 @@
+53
+Dependency management
+|
+|-- bench_test.go
+|
+|-- example_test.go
+|
+|-- exampledata.txt
+|
+|-- stream.go
+|
+|-- examples
+|-- model
+|-- README.md
+|-- main.go
+Listing 3.9 shows a typical source tree when using godep to vendor the dependencies
+for a project. You can see how godep created a directory called Godeps. The source
+code for the dependencies that the tooling vendored is located inside another set of
+directories called _workspace/src.
+ Next, if you look at the import statements that are declared inside of main.go for
+these dependencies, you’ll see that some things needed to change.
+01 package main
+02
+03 import (
+04
+"bitbucket.org/ww/goautoneg"
+05
+"github.com/beorn7/perks"
+06 )
+01 package main
+02
+03 import (
+04
+"github.ardanstudios.com/myproject/Godeps/_workspace/src/
+bitbucket.org/ww/goautoneg"
+05
+"github.ardanstudios.com/myproject/Godeps/_workspace/src/
+github.com/beorn7/perks"
+06 )
+Before the dependencies were vendored, the import statements used the canonical
+path for the package. The code was physically located on disk within the scope of
+GOPATH. After vendoring, import path rewriting became necessary to reference the
+packages, which are now physically located on disk inside the project itself. You can
+see these imports are very large and tedious to use.
+ With vendoring, you have the ability to create reproducible builds, since all the
+source code required to build the binary is housed inside the single project repo. One
+other benefit of vendoring and import path rewriting is that the project repo is still
+go-gettable. When go get is called against the project repo, the tooling can find each
+package and store the package exactly where it needs to be inside the project itself. 
+Listing 3.10
+Before vendoring
+Listing 3.11
+After vendoring

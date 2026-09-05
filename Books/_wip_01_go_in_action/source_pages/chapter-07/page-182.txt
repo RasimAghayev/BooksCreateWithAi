@@ -1,0 +1,59 @@
+161
+Runner
+An operating system interrupt event is received and the program attempts to
+immediately shut down cleanly.
+Let’s walk through the code and see how each point has been implemented.
+12 // Runner runs a set of tasks within a given timeout and can be
+13 // shut down on an operating system interrupt.
+14 type Runner struct {
+15
+// interrupt channel reports a signal from the
+16
+// operating system.
+17
+interrupt chan os.Signal
+18
+19
+// complete channel reports that processing is done.
+20
+complete chan error
+21
+22
+// timeout reports that time has run out.
+23
+timeout <-chan time.Time
+24
+25
+// tasks holds a set of functions that are executed
+26
+// synchronously in index order.
+27
+tasks []func(int)
+28 }
+Listing 7.2 starts us off with the declaration of the struct named Runner on line 14.
+This type declares three channels that help manage the lifecycle of the program and a
+slice of functions that represent the different tasks to run in series. 
+ The interrupt channel on line 17 sends and receives values of interface type
+os.Signal and is used to receive interrupt events from the host operating system.
+// A Signal represents an operating system signal. The usual underlying
+// implementation is operating system-dependent: on Unix it is
+// syscall.Signal.
+type Signal interface {
+String() string
+Signal() // to distinguish from other Stringers
+}
+The declaration of the os.Signal interface is presented in listing 7.3. This interface
+abstracts specific implementations for trapping and reporting events from different
+operating systems. 
+ The second field is named complete and is a channel that sends and receives val-
+ues of interface type error.
+19
+// complete channel reports that processing is done.
+20
+complete chan error
+Listing 7.2
+runner/runner.go: lines 12–28
+Listing 7.3
+golang.org/pkg/os/#Signal
+Listing 7.4
+runner/runner.go: lines 19–20

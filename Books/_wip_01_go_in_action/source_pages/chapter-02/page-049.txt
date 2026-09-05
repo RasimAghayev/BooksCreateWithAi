@@ -1,0 +1,43 @@
+28
+CHAPTER 2
+Go quick-start
+ On lines 13 through 15 you see the implementation of the Matcher interface by
+the defaultMatcher type. The implementation of the interface method Search just
+returns nil for both return values. Other implementations, such as the implementa-
+tion for the RSS matcher, will implement the specific business rules for processing
+searches in their version of this method. 
+ The declaration of the Search method is declared with a value receiver of type
+defaultMatcher. 
+13 func (m defaultMatcher) Search
+The use of a receiver with any function declaration declares a method that’s bound to
+the specified receiver type. In our case, the declaration of the Search method is now
+bound to values of type defaultMatcher. This means we can call the method Search
+from values and pointers of type defaultMatcher. Whether we use a value or pointer
+of the receiver type to make the method call, the compiler will reference or derefer-
+ence the value if necessary to support the call.
+// Method declared with a value receiver of type defaultMatcher
+func (m defaultMatcher) Search(feed *Feed, searchTerm string)
+// Declare a pointer of type defaultMatch
+dm := new(defaultMatch)
+// The compiler will dereference the dm pointer to make the call
+dm.Search(feed, "test")
+// Method declared with a pointer receiver of type defaultMatcher
+func (m *defaultMatcher) Search(feed *Feed, searchTerm string)
+// Declare a value of type defaultMatch
+var dm defaultMatch
+// The compiler will reference the dm value to make the call
+dm.Search(feed, "test")
+It’s best practice to declare methods using pointer receivers, since many of the
+methods you implement need to manipulate the state of the value being used to make
+the method call. In the case of the defaultMatcher type, we want to use a value
+receiver because creating values of type defaultMatcher result in values of zero allo-
+cation. Using a pointer makes no sense since there’s no state to be manipulated. 
+ Unlike when you call methods directly from values and pointers, when you call a
+method via an interface type value, the rules are different. Methods declared with
+pointer receivers can only be called by interface type values that contain pointers.
+Methods declared with value receivers can be called by interface type values that con-
+tain both values and pointers.
+Listing 2.36
+search/default.go: line 13
+Listing 2.37
+Example of method calls

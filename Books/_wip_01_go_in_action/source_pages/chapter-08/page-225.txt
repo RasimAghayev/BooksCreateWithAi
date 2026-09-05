@@ -1,0 +1,46 @@
+204
+CHAPTER 8
+Standard library
+The rules in listing 8.34 come from the standard library. They mean that the imple-
+mentation of the Write method should attempt to write the entire length of the byte
+slice that’s passed in. But if that isn’t possible, then the method must return an error.
+The number of bytes reported as written can be less than the length of the byte slice,
+but never more. Finally, the byte slice must never be modified in any way. 
+ Let’s look at the declaration of the Reader interface.
+type Reader interface {
+Read(p []byte) (n int, err error)
+}
+The io.Reader interface in listing 8.35 declares a single method, Read, that accepts a
+byte slice and returns two values. The first value is the number of bytes read and the
+second value is an error. The rules for implementing this method are as follows.
+(1) Read reads up to len(p) bytes into p. It returns the number of bytes
+read (0 <= n <= len(p)) and any error encountered. Even if Read returns
+n < len(p), it may use all of p as scratch space during the call. If
+some data is available but not len(p) bytes, Read conventionally
+returns what is available instead of waiting for more.
+(2) When Read encounters an error or end-of-file condition after
+successfully reading n > 0 bytes, it returns the number of bytes read.
+It may return the (non-nil) error from the same call or return the
+error (and n == 0) from a subsequent call. An instance of this general
+case is that a Reader returning a non-zero number of bytes at the end
+of the input stream may return either err == EOF or err == nil. The next
+Read should return 0, EOF regardless.
+(3) Callers should always process the n > 0 bytes returned before
+considering the error err. Doing so correctly handles I/O errors that
+happen after reading some bytes and also both of the allowed EOF
+behaviors.
+(4) Implementations of Read are discouraged from returning a zero byte
+count with a nil error, and callers should treat that situation as a
+no-op.
+There are four rules listed in the standard library about implementing the Read
+method. The first rule states that the implementation should attempt to read the
+entire length of the byte slice that’s passed in. It’s okay to read less than the entire
+length, and it shouldn’t wait to read the entire length if that much data isn’t available
+at the time of the call. 
+ The second rule provides guidance about end of file (EOF) read conditions. When
+the last byte is read, two options are available. Read either returns the final bytes with
+the proper count and EOF for the error value, or returns the final bytes with the
+Listing 8.35
+Declaration of the io.Reader interface
+Listing 8.36
+Documentation for the io.Reader interface

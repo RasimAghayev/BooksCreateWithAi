@@ -1,0 +1,84 @@
+63
+Array internals and fundamentals
+Figure 4.8 shows the values each array contains after declaring and initializing these
+arrays.
+ To access an individual element, use the [ ] operator again and a bit of composition.
+// Declare a two dimensional integer array of two elements.
+var array [2][2]int
+// Set integer values to each individual element.
+array[0][0] = 10
+array[0][1] = 20
+array[1][0] = 30
+array[1][1] = 40
+You can copy multidimensional arrays into each other as long as they have the same
+type. The type of a multidimensional array is based on the length of each dimension
+and the type of data that can be stored in each element. 
+// Declare two different two dimensional integer arrays.
+var array1 [2][2]int
+var array2 [2][2]int
+// Add integer values to each individual element.
+array2[0][0] = 10
+array2[0][1] = 20
+array2[1][0] = 30
+array2[1][1] = 40
+// Copy the values from array2 into array1.
+array1 = array2
+Listing 4.11
+Accessing elements of a two-dimensional array
+Listing 4.12
+Assigning multidimensional arrays of the same type
+Integer array
+10
+11
+Integer array
+20
+21
+Integer array
+30
+31
+Integer array
+40
+41
+array := [4][2]int{{10, 11}, {20, 21}, {30, 31}, {40, 41}}
+[ 0 ]
+[ 1 ]
+[ 2 ]
+[ 3 ]
+Integer array
+0
+0
+Integer array
+20
+21
+Integer array
+0
+0
+Integer array
+40
+41
+array := [4][2]int{1: {20, 21}, 3: {40, 41}}
+[ 0 ]
+[ 1 ]
+[ 2 ]
+[ 3 ]
+Integer array
+0
+0
+Integer array
+20
+0
+Integer array
+0
+0
+Integer array
+0
+41
+array := [4][2]int{1: {0: 20}, 3: {1: 41}}
+[ 0 ]
+[ 1 ]
+[ 2 ]
+[ 3 ]
+Figure 4.8
+Two-dimensional 
+arrays and their outer and 
+inner values
