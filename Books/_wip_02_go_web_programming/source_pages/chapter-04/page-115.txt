@@ -1,0 +1,29 @@
+94
+CHAPTER 4
+Processing requests
+            MaxAge:  -1,
+            Expires: time.Unix(1, 0),
+        }
+        http.SetCookie(w, &rc)
+        val, _ := base64.URLEncoding.DecodeString(c.Value)
+        fmt.Fprintln(w, string(val))
+    }
+}
+First, you get the cookie. If you can’t find the cookie (err will have a value of
+http.ErrNoCookie), you’ll show the message “No message found.” 
+ If you find the message, you have to do two things:
+1
+Create a cookie with the same name, but with MaxAge set to a negative number
+and an Expires value that’s in the past.
+2
+Send the cookie to the browser with SetCookie.
+Here you’re replacing the existing cookie, essentially removing it altogether because
+the MaxAge field is a negative number and the Expires field is in the past. Once you
+do that, you can decode your string and show the value.
+ Now let’s see that in action. Start up your browser and go to http://localhost:8080/
+set_message. Figure 4.4 shows what you’ll see in Web Inspector.
+Notice that the value is Base64 URL encoded. Now, using the same browser window, go
+to http://localhost:8080/show_message. This is what you should see in the browser:
+Hello World!
+Figure 4.4
+The flash message cookie in Web Inspector (Safari)

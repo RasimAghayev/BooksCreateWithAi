@@ -1,0 +1,51 @@
+144
+CHAPTER 6
+Storing data
+First, you’ll see that because the tables are related, when you drop the posts table you
+need to cascade it; otherwise you won’t be able to drop posts because the comments
+table depends on it. We’ve added the table comments, which has the same columns as
+posts but with an additional column, post_id, that references the column id in the
+posts table. This will set up post_id as a foreign key that references the primary key id
+in the posts table.
+ With the tables set up, let’s look at the code in a single listing. The code in the fol-
+lowing listing is found in a file named store.go.
+package main
+import (
+    "database/sql"
+    "errors"
+    "fmt"
+    _ "github.com/lib/pq"
+)
+type Post struct {
+    Id     int
+    Content string
+    Author  string
+  Comments []Comment
+}
+type Comment struct {
+    Id     int
+    Content string
+    Author  string
+    Post    *Post
+}
+var Db *sql.DB
+func init() {
+    var err error
+    Db, err = sql.Open("postgres", "user=gwp dbname=gwp password=gwp 
+    ➥ sslmode=disable")
+    if err != nil {
+        panic(err)
+    }
+}
+func (comment *Comment) Create() (err error) {    
+    if comment.Post == nil {
+        err = errors.New("Post not found")
+        return
+    }
+    err = Db.QueryRow("insert into comments (content, author, post_id) 
+    ➥ values ($1, $2, $3) returning id", comment.Content, comment.Author, 
+    ➥ comment.Post.Id).Scan(&comment.Id)
+Listing 6.14
+One-to-many and many-to-one with Go
+Creates a single
+comment

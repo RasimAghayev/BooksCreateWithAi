@@ -1,0 +1,33 @@
+95
+Summary
+Go back to the Web Inspector and look at the cookies. Your cookie is gone! Setting a
+cookie with the same name to the browser will replace the old cookie with the new
+cookie of the same name. Because the new cookie has a negative number for MaxAge
+and expires in some time in the past, this tells the browser to remove the cookie,
+which means the earlier cookie you set is removed. 
+  This is what you’ll see in the browser:
+No message found
+This chapter wraps up our two-part tour of what net/http offers for web application
+development on the server. In the next chapter, we move on to the next big compo-
+nent in a web application: templates. I will cover template engines and templates in
+Go and show you how they can be used to generate responses to the client. 
+4.5
+Summary
+■
+Go provides a representation of the HTTP requests through various structs,
+which can be used to extract data from the requests.
+■
+The Go Request struct has three fields, Form, PostForm, and MultipartForm,
+that allow easy extraction of different data from a request. To get data from
+these fields, call ParseForm or ParseMultipartForm to parse the request and
+then access the Form, PostForm, or MultipartForm field accordingly.
+■
+Form is used for URL-encoded data from the URL and HTML form, PostForm is
+used for URL-encoded data from the HTML form only, and MultipartForm is
+used for multi-part data from the URL and HTML form.
+■
+To send data back to the client, write header and body data to ResponseWriter.
+■
+To persist data at the client, send cookies in the ResponseWriter.
+■
+Cookies can be used for implementing flash messages.

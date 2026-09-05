@@ -1,0 +1,47 @@
+149
+Go relational mappers
+    if err != nil {
+        return
+    }
+    return
+}
+func (post *Post) Create() (err error) {
+    err = Db.QueryRow("insert into posts (content, author) values ($1, $2) 
+    ➥ returning id", post.Content, post.AuthorName).Scan(&post.Id)
+    return
+}
+func main() {
+    post := Post{Content: "Hello World!", AuthorName: "Sau Sheong"}
+    post.Create()
+    fmt.Println(post)
+}
+The code illustrating the difference between using Sqlx and database/sql is marked in
+bold; the other code should be familiar to you. First, instead of importing database/
+sql, you import github.com/jmoiron/sqlx. Normally, StructScan maps the struct
+field names to the corresponding lowercase table columns. To show how you can tell
+Sqlx to automatically map the correct table column to the struct field, listing 6.17
+changed Author to AuthorName and used a struct tag (struct tags will be explained in
+further detail in chapter 7) to instruct Sqlx to get data from the correct column.
+ Instead of using sql.DB, you now use sqlx.DB. Both are similar, except sqlx.DB
+has additional methods like Queryx and QueryRowx.
+ In the GetPost function, instead of using QueryRow, you use QueryRowx, which
+returns Rowx. Rowx is the struct that has the StructScan method, and as you can see, it
+maps the table columns to the respective fields. In the Create method you’re still
+using QueryRow, which isn’t modified.
+ There are a few other features in Sqlx that are interesting but that I don’t cover
+here. To learn more, visit the GitHub repository at https://github.com/jmoiron/sqlx.
+ Sqlx is an interesting and useful extension to database/sql but it doesn’t add too
+many features. Conversely, the next library we’ll explore hides the database/sql
+package and uses an ORM mechanism instead.
+6.5.2
+Gorm
+The developer for Gorm delightfully calls it “the fantastic ORM for Go(lang),” and it’s
+certainly an apt description. Gorm (Go-ORM) is an ORM for Go that follows the path
+of Ruby’s ActiveRecord or Java’s Hibernate. To be specific, Gorm follows the Data-
+Mapper pattern in providing mappers to map data in the database with structs. (In the
+relational database section earlier I used the ActiveRecord pattern.)
+ Gorm’s capabilities are quite extensive. It allows programmers to define relation-
+ships, perform data migration, chain queries, and many other advanced features. It
+even has callbacks, which are functions that are triggered when a particular data event
+occurs, such as when data is updated or deleted. Describing the features would take
+{1 Hello World! Sau Sheong}}

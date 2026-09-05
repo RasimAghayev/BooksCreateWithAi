@@ -1,0 +1,42 @@
+26
+CHAPTER 2
+Go ChitChat
+2.3
+Data model
+Most applications need to work on data, in one form or another. In ChitChat, we store
+the data in a relational database (we use PostgreSQL in this book) and use SQL to
+interact with the database. 
+ ChitChat’s data model is simple and consists of only four data structures, which in
+turn map to a relational database. The four data structures are
+■
+User—Representing the forum user’s information
+■
+Session—Representing a user’s current login session
+■
+Thread—Representing a forum thread (a conversation among forum users)
+■
+Post—Representing a post (a message added by a forum user) within a thread 
+We’ll have users who can log into the system to create and post to threads. Anonymous
+users can read but won’t be able to create threads or posts. To simplify the application,
+we’ll have only one type of user—there are no moderators to approve new threads or
+posts (figure 2.5).
+With our application design firmly in mind, let’s move on to code. A bit of caution
+before we begin: there will be code in this chapter that might seem puzzling. If you’re
+a new Go programmer, it might be worth your while to refresh your memory going
+through an introductory Go programming book like Go in Action by William Kennedy
+with Brian Ketelsen and Erik St. Martin (Manning, 2015). 
+ Otherwise, please hang on; this chapter provides an overall picture of how a Go
+web application will look but is thin on details. The details will come in the later chap-
+ters. Where possible, I’ll mention which chapters explore those details as we move
+along.
+Handler
+Model: User
+Model: Session
+Model: Thread
+Database
+Model: Post
+Template engine
+Templates
+Server
+Figure 2.5
+How a web application can access the data store

@@ -1,0 +1,39 @@
+233
+Channels
+Channels are typed values that allow goroutines to communicate with each other.
+Channels are allocated using make, and the resulting value is a reference to an under-
+lying data structure. This, for example, allocates a channel of integers:
+ch := make(chan int)
+Channels are, by default, unbuffered. If an optional integer parameter is provided, a
+buffered channel of the given size is allocated instead. This creates a buffered channel of
+integers with the size 10:
+ch := make(chan int, 10)
+Unbuffered channels are synchronous. You can think of unbuffered channels as a box
+that can contain only one thing at a time. Once a goroutine puts something into this
+box, no other goroutines can put anything in, unless another goroutine takes out
+whatever is inside it first. This means if another goroutine wants to put in something
+else when the box contains something already, it will block and go to sleep until the
+box is empty. 
+ Similarly, if a goroutine tries to take out something from this box and it’s empty,
+it’ll block and go to sleep until the box has something in it.
+ The syntax for putting things into a channel is quickly recognizable, visually. This
+puts an integer 1 into the channel ch:
+ch <- 1
+Taking out the value from a channel is equally recognizable. This removes the value
+from the channel and assigns it to the variable i:
+i := <- ch
+Channels can be directional. By default, channels work both ways (bidirectional) and
+values can be sent to or received from it. But channels can be restricted to send-only or
+receive-only. This allocates a send-only channel of strings:
+ch := make(chan <- string)
+This allocates a receive-only channel of strings:
+ch := make(<-chan string)
+Although channels can be allocated to be directional, they can also be allocated as
+bidirectional but returned as directional. You’ll see an example of this near the end of
+this chapter.
+9.3.1
+Synchronization with channels
+As you can imagine, channels are useful when you want to synchronize between two
+goroutines—especially when you have one goroutine dependent on another. Let’s
+jump into some code now and use the WaitGroup example to show how synchroniza-
+tion can be done using channels instead, shown in this listing.

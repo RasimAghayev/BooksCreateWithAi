@@ -1,0 +1,52 @@
+164
+CHAPTER 7
+Go web services
+Say you want to parse the post.xml file shown in this listing with Go.
+<?xml version="1.0" encoding="utf-8"?>
+<post id="1">
+  <content>Hello World!</content>
+  <author id="2">Sau Sheong</author>
+</post>
+This listing shows the code to parse the simple XML file in the code file xml.go.
+package main
+import (
+  "encoding/xml"
+  "fmt"
+  "io/ioutil"
+  "os"
+)
+type Post struct {    //#A
+  XMLName xml.Name `xml:"post"`
+  Id      string   `xml:"id,attr"`
+  Content string   `xml:"content"`
+  Author  Author   `xml:"author"`
+  Xml     string   `xml:",innerxml"`
+}
+type Author struct {    
+  Id   string `xml:"id,attr"`
+  Name string `xml:",chardata"`
+}
+func main() {
+  xmlFile, err := os.Open("post.xml")
+  if err != nil {
+    fmt.Println("Error opening XML file:", err)
+    return
+  }
+  defer xmlFile.Close()
+  xmlData, err := ioutil.ReadAll(xmlFile)
+  if err != nil {
+    fmt.Println("Error reading XML data:", err)
+    return
+  }
+  var post Post
+  xml.Unmarshal(xmlData, &post)   
+  fmt.Println(post)
+}
+Listing 7.1
+A simple XML file, post.xml
+Listing 7.2
+Processing XML 
+Defines structs to 
+represent the data
+Unmarshals XML data
+into the struct

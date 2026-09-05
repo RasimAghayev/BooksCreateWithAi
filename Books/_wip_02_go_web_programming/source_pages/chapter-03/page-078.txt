@@ -1,0 +1,43 @@
+57
+Handlers and handler functions
+do this, we don’t specify the Handler field in the Server struct (which means it will
+use the DefaultServeMux as the handler); we use the http.Handle function to attach
+a handler to DefaultServeMux. Notice that some of the functions like Handle are
+functions for the http package and also methods for ServeMux. These functions are
+actually convenience functions; calling them simply calls DefaultServeMux’s corre-
+sponding functions. If you call http.Handle you’re actually calling DefaultServeMux’s
+Handle method.
+ In the following listing, we create two handlers and then attach the handler to the
+respective URL. If you now go to http://localhost:8080/hello you’ll get Hello! whereas
+if you go to http://localhost:8080/world, you’ll get World!.
+package main
+import (
+    "fmt"
+    "net/http"
+)
+type HelloHandler struct{}
+func (h *HelloHandler) ServeHTTP (w http.ResponseWriter, r *http.Request) {
+    fmt.Fprintf(w, "Hello!")
+}
+type WorldHandler struct{}
+func (h *WorldHandler) ServeHTTP (w http.ResponseWriter, r *http.Request) {
+    fmt.Fprintf(w, "World!")
+}
+func main() {
+    hello := HelloHandler{}
+    world := WorldHandler{}
+    server := http.Server{
+        Addr: "127.0.0.1:8080",
+    }
+    http.Handle("/hello", &hello)
+    http.Handle("/world", &world)
+    server.ListenAndServe()
+}
+3.3.3
+Handler functions
+We talked about handlers, but what are handler functions? Handler functions are
+functions that behave like handlers. Handler functions have the same signature as the
+ServeHTTP method; that is, they accept a ResponseWriter and a pointer to a Request.
+The following listing shows how this works with our server.
+Listing 3.7
+Handling requests with multiple handlers

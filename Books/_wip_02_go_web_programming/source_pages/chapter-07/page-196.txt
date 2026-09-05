@@ -1,0 +1,50 @@
+175
+Parsing and creating JSON with Go
+create web services for Internet of Things (IoT) and wearables such as smart watches.
+In many of these cases, these frontend applications are developed using JSON, and the
+most natural way to interact with a backend application is through JSON.
+ As with Go’s support for XML, Go’s support for JSON is from the encoding/json
+library. As before we’ll look into parsing JSON first, and then we’ll see how to create
+JSON data.
+7.5.1
+Parsing JSON
+The steps for parsing JSON data are similar to those for parsing XML. You parse the
+JSON into structs, from which you can subsequently extract the data. This is normally
+how you parse JSON:
+1
+Create structs to contain the JSON data.
+2
+Use json.Unmarshal to unmarshal the JSON data into the structs (see
+figure 7.7).
+The rules for mapping the structs to JSON using struct tags are easier than with XML.
+There is only one common rule for mapping. If you want to store the JSON value,
+given the JSON key, you create a field in the struct (with any name) and map it with
+the struct tag `json:"<name>"`, where <name> is the name of the JSON key. Let’s see
+in action.
+ The following listing shows the JSON file, post.json, that you’ll be parsing. The data
+in this file should be familiar to you—it’s the same data you used for the XML parsing.
+{
+  "id" : 1,
+  "content" : "Hello World!",
+  "author" : {
+    "id" : 2,
+    "name" : "Sau Sheong"
+  },
+  "comments" : [
+    { 
+      "id" : 3, 
+      "content" : "Have a great day!", 
+      "author" : "Adam"
+    },
+    {
+      "id" : 4, 
+Listing 7.9
+JSON file for parsing
+Create structs to
+store JSON
+Unmarshal JSON
+into structs
+Figure 7.7
+Parse JSON with Go by 
+creating structs and unmarshaling 
+JSON into the structs.

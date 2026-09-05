@@ -1,0 +1,42 @@
+257
+Deploying to servers
+■
+A server that’s either fully owned by you, physical, or virtual (on an Infrastruc-
+ture-as-a-Service provider, Digital Ocean)
+■
+A cloud Platform-as-a-Service (PaaS) provider, Heroku
+■
+Another cloud PaaS provider, Google App Engine
+■
+A dockerized container, deployed to a local Docker server, and also to a virtual
+machine on Digital Ocean
+It’s important to remember that there are many different ways of deploying a web app
+and in each of the methods you’ll be learning in this chapter, there are many varia-
+tions. The methods described in this chapter are based on a single person deploying
+the web app. The processes are usually a lot more involved in a production environ-
+ment, which includes additiona tasks like running test suites, continual integration,
+staging servers, and so on.
+ This chapter also introduces many concepts and tools, each of them worthy of an
+entire book. Therefore, it’s impossible to cover all of these technologies and services.
+This chapter aims to cover only a small portion, and if you want to learn more, take
+this as a starting point. 
+ In our examples, you’ll be using the simple web service in section 7.6. Wherever
+possible, you’ll use PostgreSQL (except in Google App Engine, where you’ll use
+Google Cloud SQL, which is MySQL based). The base assumption is that the setup of
+the database is done beforehand, on a separate database server, so setting up the data-
+base isn’t covered here. If you need some brief guidance, review section 2.6. 
+10.1
+Deploying to servers
+Let’s start with the simplest deployment: creating an executable binary and then run-
+ning it off a server that’s on the internet. Whether this server is a physical server con-
+nected to the internet or a virtual machine (VM) that’s been created on a provider
+like Amazon Web Services (AWS) or Digital Ocean, it’s the same. In this section, you’ll
+learn how to deploy to a server that’s running Ubuntu Server 14.04.
+Cloud computing
+Cloud computing, or “the cloud,” is a model of network and computer access that
+provides a pool of shared resources (servers, storage, network, and others). This al-
+lows the users of these resources to avoid up-front costs and the providers of the
+resources to use the resources more effectively for a larger number of users. Cloud
+computing has gained traction over the past years and is now a regular model used
+by most large infrastructure and service providers, including Amazon, Google, and
+Facebook.

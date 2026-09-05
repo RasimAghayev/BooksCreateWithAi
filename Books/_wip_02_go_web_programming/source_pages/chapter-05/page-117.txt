@@ -1,0 +1,25 @@
+96
+Displaying content
+A web template is a predesigned HTML page that’s used repeatedly by a software pro-
+gram, called a template engine, to generate one or more HTML pages. Web tem-
+plate engines are an important part of any web application framework, and most if
+not all full-fledged frameworks have one. Although a number of frameworks have
+embedded template engines, many frameworks use a mix-and-match strategy that
+allows programmers to choose the template engine they prefer. 
+ Go is no exception. Although Go is a relatively new programming language,
+there are already a few template engines built on it. However the Go’s standard
+library provides strong template support through the text/template and html/tem-
+plate libraries, and unsurprisingly, most Go frameworks support these libraries as
+the default template engine.
+ In this chapter we’ll focus on these two libraries and show how they can be used
+to generate HTML responses.
+This chapter covers
+■
+Templates and template engines
+■
+The Go template libraries text/template and 
+html/template
+■
+Actions, pipelines, and functions in templates
+■
+Nesting of templates and layouts

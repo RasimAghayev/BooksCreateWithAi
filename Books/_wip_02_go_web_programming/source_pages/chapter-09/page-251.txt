@@ -1,0 +1,46 @@
+230
+CHAPTER 9
+Leveraging Go concurrency
+  }
+}
+func printLetters2() {
+  for i := 'A'; i < 'A'+100; i++ {             
+    time.Sleep(1 * time.Microsecond)
+    // fmt.Printf("%c ", i)
+  }
+}
+Here’s the output:
+BenchmarkPrint1  20000000        86.7 ns/op
+BenchmarkGoPrint1   1000000        1177 ns/op
+BenchmarkPrint2      2000     1184572 ns/op
+BenchmarkGoPrint2   1000000       17564 ns/op
+The benchmark for the print1 function is 13 times slower, but for goPrint1 the dif-
+ference is trivial. Running with a load is even more drastic—the difference between
+running sequentially is now 67 times! The benchmark for print2 is almost 10 times
+slower than before (which makes sense since we’re running it 10 times more) whereas
+for goPrint2, the difference between running it 10 times and 100 times is almost
+imperceptible.
+ Note that we’re still using just one CPU. What happens if you switch to using two
+CPUs (but still loop 100 times)?
+go test -run x -bench . -cpu 2
+Here’s what you get:
+BenchmarkPrint1-2  20000000        87.3 ns/op
+BenchmarkGoPrint2-2   5000000         391 ns/op
+BenchmarkPrint2-2      1000     1217151 ns/op
+BenchmarkGoPrint2-2   200000        8607 ns/op
+The benchmark for print1 is no different than running it with one or four CPUs
+because the functions are called sequentially, and even if you give it four CPUs, it can
+only ever use just one of them. The benchmark for goPrint1 is fantastic; the improve-
+ment is almost three times, because the workload is shared now with two CPUs. As
+expected, the benchmark for print2 is almost the same as before because it can’t use
+more than one CPU. The benchmark for goPrint2 is twice as fast as earlier, which is as
+expected since the workload is now shared between two CPUs.
+ Time to get adventurous. What happens if you give it four CPUs instead of two?
+BenchmarkPrint1-4  20000000             90.6 ns/op
+BenchmarkGoPrint1-4   3000000         479 ns/op
+BenchmarkPrint2-4      1000     1272672 ns/op
+BenchmarkGoPrint2-4   300000        6193 ns/op
+As you’d expect, the benchmarks for the print1 and print2 functions are about the
+same. Surprisingly, though, the benchmark for goPrint1 is worse than with two CPUs
+Looping 100 times 
+instead of 10 times

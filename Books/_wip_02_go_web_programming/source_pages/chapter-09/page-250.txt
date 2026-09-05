@@ -1,0 +1,48 @@
+229
+Goroutines
+func BenchmarkGoPrint1(b *testing.B) {    
+  for i := 0; i < b.N; i++ {
+    goPrint1()
+  }
+}
+When you run the benchmark (and skip the functional test cases):
+go test -run x -bench . –cpu 1 
+this is what you see:
+BenchmarkPrint1   100000000        13.9 ns/op
+BenchmarkGoPrint1   1000000        1090 ns/op
+(For this example, I’m running the code on a single CPU first. I’ll explain why later in
+this chapter.) As you can see, the print1 function runs quickly and completes in 13.9
+nanoseconds. What is surprising, though, is that if you run the same functions as
+goroutines, it’s almost 10 times slower, with 1,090 nanoseconds! Why? Remember, there’s
+no such thing as a free lunch. Starting up goroutines has a cost no matter how lightweight
+it is. The functions printNumbers1 and printLetters1 are so trivial and it ran so
+quickly that the costs of using goroutines outweigh those of running them sequentially. 
+ What if you do some work in every iteration of the loop as in printNumbers2 and
+printLetters2? Let’s look at the benchmark cases in goroutine_test.go, in this listing. 
+func BenchmarkPrint2(b *testing.B) {   
+  for i := 0; i < b.N; i++ {
+    print2()
+  }
+}
+func BenchmarkGoPrint2(b *testing.B) {   
+  for i := 0; i < b.N; i++ {
+    goPrint2()
+  }
+}
+When you run the benchmark tests again, this is what you get:
+BenchmarkPrint2     10000      121384 ns/op
+BenchmarkGoPrint2   1000000       17206 ns/op
+You can see the marked difference now. Running printNumbers2 and printLetters2
+sequentially is about seven times slower than running them as goroutines. Let’s try
+both benchmarks again, but this time loop 100 times instead of 10 times:
+func printNumbers2() {
+  for i := 0; i < 100; i++ {                      
+    time.Sleep(1 * time.Microsecond)
+    // fmt.Printf("%d ", i)
+Listing 9.5
+Benchmarking functions that are doing work with and without goroutines
+Run as goroutines
+Normal run
+Runs as goroutines
+Looping 100 times 
+instead of 10 times

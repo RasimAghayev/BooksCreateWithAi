@@ -1,0 +1,47 @@
+84
+CHAPTER 4
+Processing requests
+ The WriteHeader method’s name is a bit misleading. It doesn’t allow you to write
+any headers (you use Header for that), but it takes an integer that represents the status
+code of the HTTP response and writes it as the return status code for the HTTP
+response. After calling this method, you can still write to the ResponseWriter, though
+you can no longer write to the header. If you don’t call this method, by default when
+you call the Write method, 200 OK will be sent as the response code.
+ The WriteHeader method is pretty useful if you want to return error codes. Let’s
+say you’re writing an API and though you defined the interface, you haven’t fleshed it
+out, so you want to return a 501 Not Implemented status code. Let’s see how this
+works by adding a new handler function to our existing server, shown in the following
+listing. Remember to register this to DefaultServeMux by calling the HandleFunc
+function!
+package main
+import (
+    "fmt"
+    "net/http"
+)
+func writeExample(w http.ResponseWriter, r *http.Request) {
+    str := `<html>
+<head><title>Go Web Programming</title></head>
+<body><h1>Hello World</h1></body>
+</html>`
+    w.Write([]byte(str))
+}
+func writeHeaderExample(w http.ResponseWriter, r *http.Request) {
+    w.WriteHeader(501)
+    fmt.Fprintln(w, "No such service, try next door")
+}
+func main() {
+    server := http.Server{
+        Addr: "127.0.0.1:8080",
+    }
+    http.HandleFunc("/write", writeExample)
+    http.HandleFunc("/writeheader", writeHeaderExample)
+    server.ListenAndServe()
+}
+Call the URL through cURL:
+curl -i 127.0.0.1:8080/writeheader
+HTTP/1.1 501 Not Implemented
+Date: Tue, 13 Jan 2015 16:20:29 GMT
+Content-Length: 31
+Content-Type: text/plain; charset=utf-8
+Listing 4.9
+Writing headers to responses using WriteHeader

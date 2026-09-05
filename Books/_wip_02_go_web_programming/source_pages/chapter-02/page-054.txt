@@ -1,0 +1,46 @@
+33
+Generating HTML responses with templates
+private_tmpl_files := []string{"templates/layout.html",
+                               "templates/private.navbar.html", 
+                               "templates/index.html"}
+The three files are HTML files with certain embedded commands, called actions, very
+similar to other template engines like Mustache or CTemplate. Actions are annota-
+tions added to the HTML between {{ and }}. 
+ You parse these template files and create a set of templates using the ParseFiles
+function. After parsing, you wrap the Must function around the results. This is to catch
+errors (the Must function panics when a ParseFiles returns an error).  
+templates := template.Must(template.ParseFiles(private_tmpl_files...))  
+We’ve talked a lot about these template files; let’s look at them now. 
+ Each template file defines a template (templates are described in detail in chapter
+5). This is not mandatory—you don’t need to define templates for every file—but
+doing so is useful, as you’ll see later. In the layout.html template file, you begin with
+the define action, which indicates that the chunk of text starting with {{ define
+"layout" }} and ending with {{ end }} is part of the layout template, as shown next. 
+{{ define "layout" }}
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=9">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>ChitChat</title>
+    <link href="/static/css/bootstrap.min.css" rel="stylesheet">
+    <link href="/static/css/font-awesome.min.css" rel="stylesheet">
+  </head>
+  <body>
+    {{ template "navbar" . }}
+    <div class="container">
+      
+      {{ template "content" . }}
+      
+    </div> <!-- /container -->
+    
+    <script src="/static/js/jquery-2.1.1.min.js"></script>
+    <script src="/static/js/bootstrap.min.js"></script>
+  </body>
+</html>
+{{ end }}
+Within the layout template, we have two other actions, both of which indicate posi-
+tions where another template can be included. The dot (.) that follows the name of
+Listing 2.7
+layout.html template file

@@ -1,0 +1,36 @@
+117
+Context awareness
+func form(w http.ResponseWriter, r *http.Request) {  
+    t, _ := template.ParseFiles("form.html")  
+    t.Execute(w, nil)  
+}
+func main() {
+    server := http.Server{
+        Addr: "127.0.0.1:8080",
+    }
+    http.HandleFunc("/process", process)
+    http.HandleFunc("/form", form)
+    server.ListenAndServe()
+}
+In your tmpl.html, clean up the output a bit to better see the results.
+<html>
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <title>Go Web Programming</title>
+  </head>
+  <body>
+    <div>{{ . }}</div>
+  </body>
+</html>
+Now compile the server and start it up, then go to http://127.0.0.1:8080/form. Enter
+the following into the text field and click the submit button, shown in figure 5.9: 
+<script>alert('Pwnd!');</script>
+A web app using a different template engine that doesn’t scrub the input, and displays
+user input directly on a web page, will get an alert message, or potentially any other
+malicious code that the attacker writes. As you probably realize, the Go template
+engine protects you from such mistakes because even if you don’t scrub the input,
+Listing 5.21
+Cleaned-up tmpl.html
+Figure 5.9
+Form for creating 
+an XSS attack

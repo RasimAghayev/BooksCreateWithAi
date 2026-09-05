@@ -1,0 +1,42 @@
+217
+Third-party Go testing libraries 
+The first line downloads Ginkgo and installs the command-line interface program
+ginkgo into $GOPATH/bin. The second line downloads Gomega, which is the default
+matcher library for Ginkgo (matchers are code that allows two different constructs
+like structs, maps, strings, and so on to be compared).
+ Before jumping into writing Ginkgo test cases, let’s see how Ginkgo taps on your
+existing test cases. Ginkgo can convert your previous test cases into Ginkgo test cases,
+literally rewriting your test cases for you. 
+ For this exercise, you’ll start from the test cases from the section on dependency
+injection. Make a copy of the test cases if you still want them intact, because they’ll be
+modified. After you’ve done that, run this in the console:
+ginkgo convert .
+This adds in a file xxx_suite_test.go where xxx is the name of the directory, shown in
+this listing.  
+package main_test
+import (
+  . "github.com/onsi/ginkgo"
+  . "github.com/onsi/gomega"
+  "testing"
+)
+func TestGinkgo(t *testing.T) {
+  RegisterFailHandler(Fail)
+  RunSpecs(t, "Ginkgo Suite")
+}
+It also changes your server_test.go file. The changed code is in bold in this listing. 
+package main
+import (
+  "encoding/json"
+  "net/http"
+  "net/http/httptest"
+  "strings"
+  . "github.com/onsi/ginkgo"
+)
+var _ = Describe("Testing with Ginkgo", func() {
+  It("get post", func() {
+    mux := http.NewServeMux()
+    mux.HandleFunc("/post/", handleRequest(&FakePost{}))
+Listing 8.22
+Ginkgo test suite file
+Listing 8.23
+Modified test file

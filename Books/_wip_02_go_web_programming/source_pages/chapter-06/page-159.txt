@@ -1,0 +1,43 @@
+138
+CHAPTER 6
+Storing data
+ Also, sql.DB doesn’t needed to be closed (you can do so if you like); it’s simply a
+handle and not the actual connection. Remember that this abstraction contains a
+pool of database connections and will maintain them. In our example, you’ll be using
+the globally defined Db variable from our various CRUD methods and functions, but
+an alternative is to pass the sql.DB struct around once you’ve created it.
+ So far we’ve discussed the Open function, which returns a sql.DB struct given the
+database driver name and a data source name. How do you get the database driver?
+The normal way that you’d register a database driver involves using the Register
+function, with the name of the database driver, and a struct that implements the
+driver.Driver interface like this:
+sql.Register("postgres", &drv{})
+In this example, postgres is the name of the driver and drv is a struct that imple-
+ments the Driver interface. You’ll notice that we didn’t do this earlier. Why not? 
+ The Postgres driver we used (a third-party driver) registered itself when we
+imported the driver, that’s why. 
+import (
+    "fmt"
+    "database/sql"
+    _ "github.com/lib/pq"
+)
+The github.com/lib/pq package you imported is the Postgres driver, and when it’s
+imported, its init function will kick in and register itself. Go doesn’t provide any offi-
+cial database drivers; all database drivers are third-party libraries that should conform
+to the interfaces defined in the sql.driver package. Notice that when you import the
+database driver, you set the name of the package to be an underscore (_). This is
+because you shouldn’t use the database driver directly; you should use database/sql
+only. This way, if you upgrade the version of the driver or change the implementation
+of the driver, you don’t need to make changes to all your code.
+ To install this driver, run this command on the console:
+go get "github.com/lib/pq"
+This command will fetch the code from the repository and place it in the package
+repository, and then compile it along with your other code.
+6.3.3
+Creating a post
+With the initial database setup done, let’s start creating our first record in the data-
+base. In this example, you’ll the same Post struct you’ve used in the previous few sec-
+tions. Instead of storing to memory or file, you’ll be storing and retrieving the same
+information from a Postgres database.
+ In our sample application, you’ll use various functions to perform create, retrieve,
+update, and delete the data. In this section, you’ll learn how to create posts using the

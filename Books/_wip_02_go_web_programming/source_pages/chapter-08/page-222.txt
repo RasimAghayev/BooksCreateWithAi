@@ -1,0 +1,53 @@
+201
+HTTP testing with Go
+  if err != nil {
+    return
+  }
+  w.Header().Set("Content-Type", "application/json")
+  w.Write(output)
+  return
+}
+Let’s look at the unit test case (figure 8.2) to test the case where an HTTP GET request,
+shown in listing 8.9, comes in. 
+package main
+import (
+  "encoding/json"
+  "net/http"
+  "net/http/httptest"
+  "testing"
+)
+func TestHandleGet(t *testing.T) {
+  mux := http.NewServeMux()              
+  mux.HandleFunc("/post/", handleRequest)                  
+  writer := httptest.NewRecorder()                       
+  request, _ := http.NewRequest("GET", "/post/1", nil)      
+  mux.ServeHTTP(writer, request)         
+  if writer.Code != 200 {                               
+    t.Errorf("Response code is %v", writer.Code)
+  }
+Listing 8.9
+Testing GET requests
+Create multiplexer
+Attach tested handler to multiplexer
+Create recorder
+Create request
+Send request to tested handler and write to recorder
+Check recorder for results
+Figure 8.2
+Sequence for doing HTTP testing with 
+Go, using the httptest package
+Creates a multiplexer
+to run test on
+Attaches
+handler you
+want to test
+Captures returned 
+HTTP response
+Creates request to 
+handler you want to test
+Sends
+request to
+tested
+handler
+Checks ResponseRecorder
+for results

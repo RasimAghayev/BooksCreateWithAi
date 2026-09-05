@@ -1,0 +1,44 @@
+71
+Requests and responses
+The general form is
+scheme://[userinfo@]host/path[?query][#fragment]
+URLs that don’t start with a slash after the scheme are interpreted as
+scheme:opaque[?query][#fragment]
+When programming web applications, we often pass information from the client to the
+server using the URL query. The RawQuery field provides the actual query string that’s
+passed through. For example, if we send a request to the URL http://www.example
+.com/post?id=123&thread_id=456 RawQuery will contain id=123&thread_id=456 and
+we’ll need to parse it to get the key-value pairs. There’s a convenient way of getting
+these key-value pairs: through the Form field in the Request. We’ll get to the Form,
+PostForm, and MultipartForm fields in a bit.
+ It’s interesting to note that you can’t extract the Fragment field out of a URL struct
+if you’re getting a request from the browser. Recall from chapter 1 that fragments are
+stripped by the browser before being sent to the server, so it’s not the Go libraries
+being annoying—it’s because the fragment you see on the browser never gets sent to
+the server. So why have it at all? It’s because not all requests come from browsers; you
+can get requests from HTTP client libraries or other tools, or even client frameworks
+like Angular. Also, Request isn’t used only at the server—it can also be used as part of
+the client library.   
+4.1.3
+Request header 
+Request and response headers are described in the Header type, which is a map repre-
+senting the key-value pairs in an HTTP header. There are four basic methods on
+Header, which allow you to add, delete, get, and set values, given a key. Both the key
+and the value are strings. 
+ The difference between adding and setting a value is straightforward but tells us
+quite a lot about the structure of the Header type. A header is a map with keys that are
+strings and values that are slices of strings. Setting a key creates a blank slice of strings
+as the value, with the first element in the slice being the new header value. To add a
+new header value to a given key, you append the new element to the existing slice of
+string (see figure 4.1).
+GET
+Allow
+Key
+Value
+PUT
+Appending an element to
+the value slice adds a new
+header value to the key.
+Figure 4.1
+A header is a map, with the key 
+a string and the value a slice of strings.

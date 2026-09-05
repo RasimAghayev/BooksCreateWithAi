@@ -1,0 +1,45 @@
+29
+Receiving and processing requests
+    templates.ExecuteTemplate(w, "layout", threads)
+  }  
+}
+Notice that you’re using the Template struct from the html/template standard library
+so you need to add that in the list of imported libraries. The index handler function
+doesn’t do anything except generate the HTML and write it to the ResponseWriter.
+We’ll cover generating HTML in the upcoming section.
+ We’ve talked about handler functions that handle requests for the root URL (/),
+but there are a number of other handler functions. Let’s look at the rest of them in
+the following listing, also in the main.go file.
+package main
+import (
+  "net/http"
+)
+func main() {
+  mux := http.NewServeMux()
+  files := http.FileServer(http.Dir(config.Static))
+  mux.Handle("/static/", http.StripPrefix("/static/", files))
+  
+  mux.HandleFunc("/", index)
+  mux.HandleFunc("/err", err)
+  mux.HandleFunc("/login", login)
+  mux.HandleFunc("/logout", logout)
+  mux.HandleFunc("/signup", signup)
+  mux.HandleFunc("/signup_account", signupAccount)
+  mux.HandleFunc("/authenticate", authenticate)
+  mux.HandleFunc("/thread/new", newThread)
+  mux.HandleFunc("/thread/create", createThread)
+  mux.HandleFunc("/thread/post", postThread)
+  mux.HandleFunc("/thread/read", readThread)  
+  server := &http.Server{
+    Addr:           "0.0.0.0:8080",
+    Handler:        mux,
+  }
+  server.ListenAndServe()      
+}  
+You might notice that the various handler functions aren’t defined in the same
+main.go file. Instead, I split the definition of the handler functions in other files
+(please refer to the code in the GitHub repository). So how do you link these files? Do
+you write code to include the other files like in PHP, Ruby, or Python? Or do you run a
+special command to link them during compile time? 
+Listing 2.3
+ChitChat main.go source file

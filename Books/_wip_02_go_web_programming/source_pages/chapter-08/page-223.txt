@@ -1,0 +1,44 @@
+202
+CHAPTER 8
+Testing your application
+  var post Post
+  json.Unmarshal(writer.Body.Bytes(), &post)
+  if post.Id != 1 {
+    t.Error("Cannot retrieve JSON post")
+  }
+}
+Every test case runs independently and starts its own web server for testing, so you
+need to create a multiplexer and attach the handleRequest handler function to it. To
+capture the returned HTTP response, use the httptest.NewRecorder function to cre-
+ate a ResponseRecorder struct. This struct will be used to store the response for
+inspection. 
+ You also need to create an HTTP request (as opposed to parsing it, as discussed in
+chapters 3 and 4) by calling the http.NewRequest function, passing it the method you
+want, the URL to send the request to, and an optional HTTP request body.
+ Once you have the response recorder and the request, send them to the multi-
+plexer using ServeHTTP. When this happens, the request is sent to the handleRequest
+handler function and then to the handleGet function, which will process it and return
+an HTTP response. But instead of sending it to the browser, the multiplexer pushes it
+into the response recorder and you can inspect the response. The next few lines are
+quite self-explanatory; you can inspect the response to see if it has the results you
+wanted. If it doesn’t, you can throw errors as per any unit test case, HTTP or otherwise.
+ All of these look simple, so let’s try another one. This listing shows how to create a
+test case for a PUT request. 
+func TestHandlePut(t *testing.T) {
+  mux := http.NewServeMux()
+  mux.HandleFunc("/post/", handleRequest)
+  writer := httptest.NewRecorder()
+  json := strings.NewReader(`{"content":"Updated post","author":"Sau 
+Sheong"}`)
+  request, _ := http.NewRequest("PUT", "/post/1", json)
+  mux.ServeHTTP(writer, request)
+  if writer.Code != 200 {
+    t.Errorf("Response code is %v", writer.Code)
+  }
+}
+As you can see, there’s not much difference between this test case and the previous
+one, except you need to send in the JSON content. You might notice that some code in
+both test case functions is repeated. Such common test code (and other test fixtures)
+can be placed together in a setup function that prepares the test cases for execution.
+Listing 8.10
+Testing PUT requests

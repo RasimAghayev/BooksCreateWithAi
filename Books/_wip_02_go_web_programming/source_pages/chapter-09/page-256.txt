@@ -1,0 +1,52 @@
+235
+Channels
+package main
+import (
+  "fmt"
+  "time"
+)
+func thrower(c chan int) {
+  for i := 0; i < 5; i++ {
+    c <- i    
+    fmt.Println("Threw  >>", i)
+  }
+}
+func catcher(c chan int) {
+  for i := 0; i < 5; i++ {
+    num := <-c    
+    fmt.Println("Caught <<", num)
+  }
+}
+func main() {
+  c := make(chan int)
+  go thrower(c)
+  go catcher(c)
+  time.Sleep(100 * time.Millisecond)
+}
+When you run this program, here’s what you get:
+Caught << 0
+Threw  >> 0
+Threw  >> 1
+Caught << 1
+Caught << 2
+Threw  >> 2
+Threw  >> 3
+Caught << 3
+Caught << 4
+Threw  >> 4
+It might seem strange that sometimes the Caught statement is run before the Threw,
+but that’s not important—it’s just the runtime scheduling between the print state-
+ments after sending or receiving from the channel. What’s more important to notice
+is that the numbers are in sequence, meaning once the number is “thrown” from the
+thrower, the same number must be “caught” by the catcher before proceeding to the
+next number.
+9.3.3
+Buffered channels
+Unbuffered or synchronous channels seem simple enough. What about buffered
+channels? Buffered channels are asynchronous, first-in, first-out (FIFO) message
+Listing 9.8
+Passing messages with channels
+Places something 
+into channel
+Takes something 
+out of channel

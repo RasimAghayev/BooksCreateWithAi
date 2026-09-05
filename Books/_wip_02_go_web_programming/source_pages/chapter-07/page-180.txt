@@ -1,0 +1,54 @@
+159
+Introducing SOAP-based web services
+As you may realize by now, all the data about the message is contained in the enve-
+lope. For SOAP-based web services, this means that the information sent through
+HTTP is almost entirely in the SOAP envelope. Also, SOAP mostly uses the HTTP POST
+method, although SOAP 1.2 allows HTTP GET as well. 
+ Here’s what a simple WSDL message looks like. You might notice that WSDL mes-
+sages can be detailed and the message can get long even for a simple service. That’s
+part of the reason why SOAP-based web services aren’t as popular as REST-based web
+services —in more complex web services, the WSDL messages can be complicated.
+<?xml version="1.0" encoding="UTF-8"?>
+<definitions  name ="ChitChat" 
+  targetNamespace="http://www.chitchat.com/forum.wsdl"
+  xmlns:tns="http://www.chitchat.com/forum.wsdl"
+  xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" 
+  xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+  xmlns="http://schemas.xmlsoap.org/wsdl/"> 
+  <message name="GetCommentRequest">
+    <part name="CommentId" type="xsd:string"/>
+  </message>
+  <message name="GetCommentResponse">
+    <part name="Text" type="xsd:string"/>
+  </message>
+  <portType name="GetCommentPortType">
+    <operation name="GetComment">
+      <input message="tns:GetCommentRequest"/>
+      <output message="tns:GetCommentResponse"/>
+    </operation>
+  </portType>
+  <binding name="GetCommentBinding" type="tns:GetCommentPortType">
+    <soap:binding style="rpc" 
+      transport="http://schemas.xmlsoap.org/soap/http"/>
+    <operation name="GetComment">
+      <soap:operation soapAction="getComment"/>
+      <input>
+        <soap:body use="literal"/> 
+      </input>
+      <output>
+        <soap:body use="literal"/> 
+      </output>
+    </operation>
+  </binding>
+  <service name="GetCommentService" >
+    <documentation>
+      Returns a comment
+    </documentation>
+    <port name="GetCommentPortType" binding="tns:GetCommentBinding">
+      <soap:address location="http://localhost:8080/GetComment"/>
+    </port>
+  </service>
+</definitions>
+The WSDL message defines a service named GetCommentService, with a port named
+GetCommentPortType that’s bound to the binding GetCommentsBinding. The service is
+defined at the location http://localhost:8080/GetComment. 

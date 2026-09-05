@@ -1,0 +1,43 @@
+110
+CHAPTER 5
+Displaying content
+5.4
+Arguments, variables, and pipelines
+An argument is a value that’s used in a template. It can be a Boolean, integer, string,
+and so on. It can also be a struct, or a field of a struct, or the key of an array. Argu-
+ments can be a variable, a method (which must return either one value, or a value and
+an error) or a function. An argument can also be a dot (.), which is the value passed
+from the template engine.
+ In the example
+{{ if arg }} 
+  some content 
+{{ end }}
+the argument is arg. 
+ We can also set variables in the action. Variables start with the dollar sign ($) and
+look like this:
+$variable := value
+Variables don’t look too useful at first glance, but they can be quite invaluable in
+actions. Here’s one way to use a variable as a variant of the iterator action:
+{{ range $key, $value := . }}
+  The key is {{ $key }} and the value is {{ $value }}
+{{ end }}
+In this snippet, the dot (.) is a map and range initializes the $key and $value variables
+with the key and value of the successive elements in the map.
+Pipelines are arguments, functions, and methods chained together in a sequence.
+This works much like the Unix pipeline. In fact, the syntax looks very similar
+{{ p1 | p2 | p3 }}
+where p1, p2, and p3 are either arguments or functions. Pipelining allows us to send
+the output of an argument into the next one, which is separated by the pipeline (|).
+The next listing shows how this looks in a template.
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <title>Go Web Programming</title>
+  </head>
+  <body>
+    {{ 12.3456 | printf "%.2f" }}
+  </body>
+</html>
+Listing 5.13
+Pipelining in a template

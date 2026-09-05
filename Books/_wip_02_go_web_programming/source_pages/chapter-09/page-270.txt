@@ -1,0 +1,43 @@
+249
+Concurrency for web applications
+Here’s where you need to be careful. Remember that you’re converting an application
+to a concurrent one, with multiple goroutines running at the same time. If you have
+some resources that are shared, the changes can possibly cause a race condition.
+In this case, you do have a shared resource: the original image that was uploaded to
+the mosaic application. The nearest function finds the best-fitting tile image and
+removes it from the tile database in order not to have duplicate tiles. This means if the
+cut goroutines happen to find the same tile as the best fitting, at the same time, there
+will be a race condition.
+ To eliminate the race condition, you can use a common technique called mutual
+exclusion, mutex for short. Mutex refers to the requirement that only one process (in our
+case, a goroutine) can access a critical section at the same time. In the case of the con-
+current mosaic application, you need to implement mutex on the nearest function.
+ To do this, you can use Go’s Mutex struct in the sync package. First, define a DB
+struct, where the struct encapsulates both the actual tile store as well as a mutex flag,
+shown next.  
+type DB struct {
+  mutex *sync.Mutex
+  store map[string][3]float64
+}
+Next, change the nearest function into a method on the DB struct, shown here.
+func (db *DB) nearest(target [3]float64) string {
+  var filename string
+  db.mutex.Lock()  
+  smallest := 1000000.0
+Race condition
+A race condition exists when the program depends on a specific sequence or timing
+for it to happen and specific sequence or timing can’t be guaranteed. As a result, the
+behavior of the program becomes erratic and unpredictable. 
+Race conditions commonly appear in concurrent programs that modify a shared re-
+source. If two or more processes or threads try to modify the shared resource at the
+same time, the one that gets to the resource first will behave as expected but the
+other processes won’t. Because we can’t predict which process gets the resource
+first, the system won’t behave consistently.
+Race conditions are notoriously difficult to debug, although they aren’t difficult to fix
+once the problem is identified.
+Listing 9.19
+The DB struct
+Listing 9.20
+The nearest method
+Sets mutex flag 
+by locking it

@@ -1,0 +1,51 @@
+4
+CHAPTER 1
+Go and web applications
+1.1
+Using Go for web applications 
+So why should you use Go for writing web applications? My guess is, having bought
+this book, you have an inclination to find out the answer. Of course, as the author of a
+book that teaches Go web programming, I believe there are strong and compelling
+reasons to do so. As you continue reading this book, you’ll get a sense of Go’s
+strengths in web application development and, I hope, agree with me about the use-
+fulness of Go.
+ Go is a relatively new programming language, with a thriving and growing commu-
+nity. It is well suited for writing server-side programs that are fast. It’s simple and famil-
+iar to most programmers who are used to procedural programming, but it also
+provides features of functional programming. It supports concurrency by default, has
+a modern packaging system, does garbage collection, and has an extensive and power-
+ful set of built-in standard libraries. 
+ Plenty of good-quality open source libraries are available that can supplement what
+the standard libraries don’t have, but the standard libraries that come with Go are
+quite comprehensive and wide-ranging. This book sticks to the standard libraries as
+much as possible but will occasionally use third-party, open source libraries to show
+alternative and creative ways the open source community has come up with.
+ Go is rapidly gaining popularity as a web development language. Many companies,
+including infrastructure companies like Dropbox and SendGrid, technology-oriented
+companies such as Square and Hailo, as well as more traditional companies such as
+BBC and The New York Times, have already started using Go. 
+ Go provides a viable alternative to existing languages and platforms for developing
+large-scale web applications. Large-scale web applications typically need to be
+■
+Scalable 
+■
+Modular 
+■
+Maintainable 
+■
+High-performance 
+Let’s take a look at these attributes in detail.
+1.1.1
+Scalable web applications and Go
+Large-scale web applications should be scalable. This means you should be able to
+quickly and easily increase the capacity of the application to take on a bigger volume
+of requests. The application should scale also linearly, meaning you should be able to
+add more hardware and process a corresponding number of requests. 
+ We can look at scaling in two ways:
+■
+Vertical scaling, or increasing the amount of CPUs or capacity in a single machine 
+■
+Horizontal scaling, or increasing the number of machines to expand capacity 
+Go scales well vertically with its excellent support for concurrent programming. A sin-
+gle Go web application with a single OS thread can be scheduled to run hundreds of
+thousands of goroutines with efficiency and performance. 

@@ -1,0 +1,31 @@
+36
+CHAPTER 2
+Go ChitChat
+generated. If we executed either one of the other two templates, we would only get
+part of the HTML we want.
+ As you might realize by now, the dot (.) represents the data that’s passed into the
+template (and a bit more, which is explained in the next section). Figure 2.7 shows
+what we end up with.
+2.5.1
+Tidying up 
+HTML generation will be used over and over again, so let’s do some tidying up and
+move those steps into a function called generateHTML, shown next.
+func generateHTML(w http.ResponseWriter, data interface{}, fn ...string) {
+  var files []string
+  for _, file := range fn {
+    files = append(files, fmt.Sprintf("templates/%s.html", file))
+  }
+  templates := template.Must(template.ParseFiles(files...))
+  templates.ExecuteTemplate(writer, "layout", data)
+}
+generateHTML takes a ResponseWriter, some data, and a list of template files to be
+parsed. The data parameter is the empty interface type, which means it can take in any
+type. This might come as a surprise if you’re a new Go programmer; isn’t Go a statically
+typed programming language? What’s this about accepting any types in as a parameter?
+ As it turns out, Go has an interesting way of getting around being a statically typed
+programming language and it provides the flexibility of accepting different types,
+using interfaces. Interfaces in Go are constructs that are sets of methods and are also
+Listing 2.10
+The generateHTML function
+Figure 2.7
+The index page of the example ChitChat web application

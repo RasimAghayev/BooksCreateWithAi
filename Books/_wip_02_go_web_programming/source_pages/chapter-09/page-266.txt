@@ -1,0 +1,47 @@
+245
+Concurrency for web applications
+          draw.Draw(newimage, tileBounds, tile, sp, draw.Src)
+        } else {
+          fmt.Println("error:", err, nearest)
+        }
+      } else {
+        fmt.Println("error:", nearest)
+      }
+      file.Close()
+    }
+  }
+  buf1 := new(bytes.Buffer)   
+  jpeg.Encode(buf1, original, nil)
+  originalStr := base64.StdEncoding.EncodeToString(buf1.Bytes())
+  buf2 := new(bytes.Buffer)
+  jpeg.Encode(buf2, newimage, nil)
+  mosaic := base64.StdEncoding.EncodeToString(buf2.Bytes())
+  t1 := time.Now()
+  images := map[string]string{
+    "original": originalStr,
+    "mosaic":   mosaic,
+    "duration": fmt.Sprintf("%v ", t1.Sub(t0)),
+  }
+  t, _ := template.ParseFiles("results.html")
+  t.Execute(w, images)
+}
+The main logic for creating the photo mosaic resides in the mosaic function, which is
+a handler function. First, you get the uploaded file and the tile size from the form.
+Next, you decode the uploaded target image and create a new photo mosaic image.
+You clone the source tile database and set up the source point for each tile (the source
+point is needed by the image/draw package later). You’re now ready to iterate
+through each tile-sized piece of the target image.
+ For every piece, you pick the top-left pixel and assume that’s the average color.
+Then you find the nearest tile in the tile database that matches this color. The tile
+database gives you a filename, so you open the tile picture and resize it to the tile size.
+The resultant tile is drawn into the photo mosaic you created earlier.
+ Once the photo mosaic is created, you encode it into JPEG format and then
+encode it once again into a base64 string. 
+ The original target picture and the photo mosaic are then sent to the results.html
+template to be displayed on the next page. As you can see, the image is displayed
+using a data URL with the base64 content that’s embedded in the web page itself (the
+code is shown in bold in the following listing). Data URLs are used as an alternative to
+a normal URL that points to another resource. In a data URL, the data itself is embed-
+ded into the URL.
+Encodes in JPEG, deliver to 
+browser in base64 string

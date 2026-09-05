@@ -1,0 +1,47 @@
+197
+Unit testing with Go
+func TestParallel_3(t *testing.T) {   
+  t.Parallel()
+  time.Sleep(3 * time.Second)
+}
+You can use the time.Sleep function to simulate processing, with three different test
+cases, working for 1, 2, and 3 seconds, respectively. To run the tests in parallel, you
+need to call the Parallel function on testing.T as the first statement in the test case. 
+ Now run this in the console:
+go test –v –short –parallel 3
+The parallel (-parallel) flag indicates that you want to run a maximum of three test
+cases in parallel. You’re still using the -short flag because you don’t want to run the
+long-running test case. Let’s see what happens.
+=== RUN TestDecode
+--- PASS: TestDecode (0.00s)
+=== RUN TestEncode
+--- SKIP: TestEncode (0.00s)
+  main_test.go:24: Skipping encoding for now
+=== RUN TestLongRunningTest
+--- SKIP: TestLongRunningTest (0.00s)
+  main_test.go:30: Skipping long-running test in short mode
+=== RUN TestParallel_1
+=== RUN TestParallel_2
+=== RUN TestParallel_3
+--- PASS: TestParallel_1 (1.00s)
+--- PASS: TestParallel_2 (2.00s)
+--- PASS: TestParallel_3 (3.00s)
+PASS
+ok    unit_testing  3.006s
+You can see that all test cases in main_test.go and parallel_test.go are executed. Also,
+notice that all three parallel test cases are executed together. Even though each paral-
+lel case has a different execution time, because all three run at the same time and all
+finish within the timing of the longest running test, the final execution timing shows
+only 3.006 seconds (0.006 seconds for the first few test cases, and then 3 seconds for
+the longest running test case, TestParallel_3). 
+8.2.3
+Benchmarking 
+The Go testing package provides two types of testing. You went through functional
+testing in the previous section, which tests the functionality of the program. The Go
+testing package also provides benchmarking, which is run to determine the perfor-
+mance of a unit of work.
+ Similar to unit testing, benchmark test cases are functions of the format:
+func BenchmarkXxx(*testing.B) { … }
+inside the _test.go files. Let’s build some benchmark test cases in a new file named
+bench_test.go, shown in this listing. 
+Works for 3 seconds
