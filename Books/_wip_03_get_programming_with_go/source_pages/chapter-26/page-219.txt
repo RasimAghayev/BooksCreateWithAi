@@ -1,0 +1,33 @@
+204
+Lesson 26  A few pointers
+26.1.1 Pointer types
+Pointers store memory addresses.
+The address variable in listing 26.2 is a pointer of type *int, as the %T format verb reveals in 
+the following listing.
+answer := 42
+address := &answer
+fmt.Printf("address is a %T\n", address)
+The asterisk in *int denotes that the type is a pointer. In this case, it can point to other 
+variables of type int.
+Pointer types can appear anywhere types are used, including in variable declarations, 
+function parameters, return types, structure field types, and so on. In the following list-
+ing, the asterisk (*) in the declaration of home indicates that it’s a pointer type.
+canada := "Canada"
+var home *string
+fmt.Printf("home is a %T\n", home)
+home = &canada
+fmt.Println(*home)
+TIP An asterisk prefixing a type denotes a pointer type, whereas an asterisk prefixing a
+variable name is used to dereference the value that variable points to.
+The home variable in the previous listing can point at any variable of type string. How-
+ever, the Go compiler won’t allow home to point to a variable of any other type, such 
+as int.
+NOTE The C type system is easily convinced that a memory address holds a different type.
+That can be useful at times but, once again, Go avoids potentially unsafe operations.
+Listing 26.3 A pointer type: type.go
+Listing 26.4 Declaring a pointer: home.go
+Prints address is a *int
+Prints home is 
+a *string
+Prints Canada
+ 

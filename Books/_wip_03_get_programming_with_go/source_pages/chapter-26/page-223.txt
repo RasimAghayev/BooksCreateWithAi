@@ -1,0 +1,39 @@
+208
+Lesson 26  A few pointers
+   
+26.2.1 Pointing to structures
+Pointers are frequently used with structures. As such, the Go language designers chose 
+to provide a few ergonomic amenities for pointers to structures.
+Unlike strings and numbers, composite literals can be prefixed with an address opera-
+tor. In the following listing, the timmy variable holds a memory address pointing to a 
+person structure.
+type person struct {
+    name, superpower string
+    age              int
+}
+timmy := &person{
+    name: "Timothy",
+    age:  10,
+}
+Furthermore, it isn’t necessary to dereference structures to access their fields. The fol-
+lowing listing is preferable to writing (*timmy).superpower.
+timmy.superpower = "flying"
+fmt.Printf("%+v\n", timmy)
+Listing 26.6 Person structure: struct.go
+Listing 26.7 Composite literals: struct.go
+Quick check 26.3 
+1
+What’s the benefit of using a pointer in listing 26.5?
+2
+Describe what the statements major := administrator and charles := *major do.
+QC 26.3 answer 
+1
+Changes can be made in one place, as the administrator variable points to a person rather than 
+storing a copy.
+2
+The variable major is a new *string pointer that holds the same memory address as administrator,
+whereas charles is a string containing a copy of the value that major was pointing to.
+Prints &{name:Timothy 
+superpower:flying 
+age:10}
+ 

@@ -1,0 +1,33 @@
+27
+Logical operators
+The previous listing will produce the following output:
+You head further up the mountain.
+Both else if and else are optional. When there are several paths to consider, you can 
+repeat else if as many times as needed.
+NOTE Go reports an error if you accidentally use assignment (=) when equality (==) is
+intended.   
+3.4
+Logical operators
+In Go the logical operator || means or, and the logical operator && means and. Use logical 
+operators to check multiple conditions at once. See figures 3.1 and 3.2 for how these 
+operators are evaluated.
+Quick check 3.3 Adventure games are divided up into rooms. Write a program that uses if
+and else if to display a description for each of three rooms: cave, entrance, and mountain.
+When writing your program, ensure the curly braces {} are placed according to the one true
+brace style as shown in listing 3.3.
+QC 3.3 answer  
+package main
+import "fmt"
+func main() {
+    var room = "cave"
+    if room == "cave" {
+        fmt.Println("You find yourself in a dimly lit cavern.")
+    } else if room == "entrance" {
+        fmt.Println("There is a cavern entrance here and a path to the east.")
+    } else if room == "mountain" {
+        fmt.Println("There is a cliff here. A path leads west down the mountain.")
+    } else {
+        fmt.Println("Everything is white.")
+    }
+}
+ 

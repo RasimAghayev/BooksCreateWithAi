@@ -1,0 +1,26 @@
+42
+Lesson 5  Capstone: Ticket to Mars
+SpaceX             31 One-way    $  41
+Space Adventures   22 Round-trip $ 100
+Space Adventures   22 One-way    $  50
+Virgin Galactic    30 Round-trip $  84
+Virgin Galactic    24 Round-trip $  94
+Space Adventures   27 One-way    $  44
+Space Adventures   28 Round-trip $  86
+SpaceX             41 Round-trip $  72
+The table should have four columns:
+The spaceline company providing the service
+The duration in days for the trip to Mars (one-way)
+Whether the price covers a return trip
+The price in millions of dollars 
+For each ticket, randomly select one of the following spacelines: Space Adventures, 
+SpaceX, or Virgin Galactic.
+Use October 13, 2020 as the departure date for all tickets. Mars will be 62,100,000 km 
+away from Earth at the time.
+Randomly choose the speed the ship will travel, from 16 to 30 km/s. This will determine 
+the duration for the trip to Mars and also the ticket price. Make faster ships more expen-
+sive, ranging in price from $36 million to $50 million. Double the price for round trips.
+When you’re done, post your solution to the Get Programming with Go forums at 
+forums.manning.com/forums/get-programming-with-go. If you get stuck, feel free to 
+ask questions on the forums, or take a peek at the appendix for our solution. 
+ 

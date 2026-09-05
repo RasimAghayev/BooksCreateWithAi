@@ -1,0 +1,18 @@
+150
+Lesson 19  The ever-versatile map
+19.3 Preallocating maps with make
+Maps are similar to slices in another way. Unless you initialize them with a composite 
+literal, maps need to be allocated with the make built-in function.
+For maps, make only accepts one or two parameters. The second one preallocates space 
+for a number of keys, much like capacity for slices. A map’s initial length will always be 
+zero when using make:
+temperature := make(map[float64]int, 8)   
+19.4 Using maps to count things
+The code in listing 19.3 determines the frequency of temperatures taken from the MAAS 
+API (github.com/ingenology/mars_weather_api). If frequency were a slice, the keys would 
+need to be integers, and the underlying array would need to reserve space to count tem-
+peratures that never actually occur. A map is clearly a better choice in this case.
+Quick check 19.3 What do you suppose is the benefit of preallocating a map with make?
+QC 19.3 answer As with slices, specifying an initial size for a map can save the computer some
+work later when the map gets bigger.
+ 

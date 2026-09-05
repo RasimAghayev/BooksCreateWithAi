@@ -1,0 +1,35 @@
+103
+Declaring new types
+type celsius float64
+const degrees = 20
+var temperature celsius = degrees
+temperature += 10
+The celsius type is a unique type, not a type alias like those mentioned in lesson 9. If you 
+try to use it with a float64, you’ll get a mismatched types error:
+var warmUp float64 = 10
+temperature += warmUp
+To add warmUp, it must first be converted to the celsius type. This version works:
+var warmUp float64 = 10
+temperature += celsius(warmUp)
+Being able to define your own types can be incredibly useful for improving both read-
+ability and reliability. The following listing demonstrates that celsius and fahrenheit 
+types can’t accidentally be compared or combined.
+type celsius float64
+type fahrenheit float64
+var c celsius = 20
+var f fahrenheit = 20
+if c == f {
+}
+c += f    
+Listing 13.2 A celsius type behaves like a float64: celsius-addition.go
+Listing 13.3 Types can’t be mixed
+Invalid operation: 
+mismatched types
+Invalid operation: 
+mismatched types 
+celsius and fahrenheit
+Quick check 13.1 What are some advantages of declaring new types, such as celsius and
+fahrenheit?
+QC 13.1 answer The new type can better describe the value it contains, such as celsius instead of
+float64. Having unique types helps avoid silly mistakes, like adding a Fahrenheit value to a Celsius value.
+ 

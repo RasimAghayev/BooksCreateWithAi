@@ -1,0 +1,34 @@
+235
+Elegant error handling
+There’s a fair amount of error-handling code in the previous listing—so much so, that 
+writing out all the Go Proverbs could become quite tedious.
+On the positive side, the code that handles errors is consistently indented, which makes 
+it easier to scan through the code without reading all the repetitive error handling. 
+Indenting errors in this way is a common pattern in the Go community, but we can 
+improve on this implementation.   
+28.2.2 The defer keyword
+To ensure that that the file is closed correctly, you can make use of the defer keyword. Go 
+ensures that all deferred actions take place before the containing function returns. In the 
+following listing, every return statement that follows defer will result in the f.Close() 
+method being called.
+func proverbs(name string) error {
+    f, err := os.Create(name)
+    if err != nil {
+        return err
+    }
+    defer f.Close()
+    _, err = fmt.Fprintln(f, "Errors are values.")
+    if err != nil {
+        return err
+    }
+    _, err = fmt.Fprintln(f, "Don’t just check errors, handle them gracefully.")
+    return err
+}
+NOTE The behavior of the preceding listing is identical to that of listing 28.3. Changing the
+code without changing its behavior is called refactoring. Much like polishing the first draft of
+an essay, refactoring is an important skill for writing better code.
+Listing 28.4 defer cleanup: defer.go
+Quick check 28.2 Why should functions return an error instead of exiting the program?
+QC 28.2 answer Returning an error gives the caller a chance to decide how to handle the error.
+For example, the program may decide to retry rather than exit.
+ 

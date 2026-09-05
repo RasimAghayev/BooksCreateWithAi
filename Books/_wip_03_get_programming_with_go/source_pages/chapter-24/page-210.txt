@@ -1,0 +1,26 @@
+195
+Summary
+24.4 Summary
+Interface types specify required behaviors with a set of methods.
+Interfaces are satisfied implicitly by new or existing code in any package.
+A structure will satisfy the interfaces that embedded types satisfy.
+Follow the example set by the standard library and strive to keep interfaces 
+small.
+Let’s see if you got this...
+Experiment: marshal.go
+Write a program that outputs coordinates in JSON format, expanding on work done for 
+the preceding quick check. The JSON output should provide each coordinate in decimal 
+degrees (DD) as well as the degrees, minutes, seconds format:
+{
+    "decimal": 135.9,
+    "dms": "135º54'0.0\" E",
+    "degrees": 135,
+    "minutes": 54,
+    "seconds": 0,
+    "hemisphere": "E"
+}
+This can be achieved without modifying the coordinate structure by satisfying the 
+json.Marshaler interface to customize the JSON. The MarshalJSON method you write may 
+make use of json.Marshal.
+NOTE To calculate decimal degrees, you’ll need the decimal method introduced in lesson 22. 
+ 

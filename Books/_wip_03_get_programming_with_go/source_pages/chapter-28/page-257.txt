@@ -1,0 +1,40 @@
+242
+Lesson 28  To err is human
+Multiple errors
+There could be several reasons why a digit can’t be placed at a particular location in 
+Sudoku. The preceding section established two rules: that the row and column are 
+within the grid, and that the digit is between 1 and 9. What if the caller passes multiple 
+invalid arguments?
+Rather than return one error at a time, the Set method could perform multiple valida-
+tions and return all the errors at once. The SudokuError type in listing 28.15 is a slice of 
+error. It satisfies the error interface with a method that joins multiple errors together into 
+one string.
+NOTE By convention, custom error types like SudokuError end with the word Error. Some-
+times they’re just the word Error, such as url.Error from the url package.
+type SudokuError []error
+// Error returns one or more errors separated by commas.
+func (se SudokuError) Error() string {
+    var s []string
+    for _, err := range se {
+        s = append(s, err.Error())
+    }
+    return strings.Join(s, ", ")
+}
+To make use of SudokuError, the Set method can be modified to validate both the boundar-
+ies and digit, returning both errors at once, as shown in the following listing.
+func (g *Grid) Set(row, column int, digit int8) error {
+    var errs SudokuError
+    if !inBounds(row, column) {
+        errs = append(errs, ErrBounds)
+    }
+    if !validDigit(digit) {
+        errs = append(errs, ErrDigit)
+    }
+    if len(errs) > 0 {
+Listing 28.15 Custom error type: sudoku3.go
+Listing 28.16 Appending errors: sudoku3.go
+Converts the errors 
+to strings
+Returns type 
+is error
+ 

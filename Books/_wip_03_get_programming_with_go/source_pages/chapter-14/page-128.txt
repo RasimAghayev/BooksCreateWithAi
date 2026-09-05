@@ -1,0 +1,28 @@
+113
+Closures and anonymous functions
+You can assign an anonymous function to a variable and then use that variable like any 
+other function, as shown in the following listing.
+package main
+import "fmt"
+var f = func() {
+    fmt.Println("Dress up for the masquerade.")
+}
+func main() {
+    f() 
+}
+The variable you declare can be in the scope of the package or within a function, as 
+shown in the next listing.
+package main
+import "fmt"
+func main() {
+    f := func(message string) { 
+        fmt.Println(message)
+Listing 14.3 Anonymous function: masquerade.go
+Listing 14.4 Anonymous function: funcvar.go
+Assigns an anonymous 
+function to a variable
+Prints Dress up for 
+the masquerade.
+Assigns an anonymous 
+function to a variable
+ 

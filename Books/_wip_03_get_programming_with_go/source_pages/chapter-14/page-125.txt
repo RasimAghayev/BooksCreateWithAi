@@ -1,0 +1,35 @@
+110
+Lesson 14  First-class functions
+Now calling sensor() will effectively call either realSensor or fakeSensor, depending on 
+which function sensor is assigned to.
+The sensor variable is of type function, where the function accepts no parameters and 
+returns a kelvin result. When not relying on type inference, the sensor variable would be 
+declared like this:
+var sensor func() kelvin
+NOTE You can reassign sensor to realSensor in listing 14.1 because it matches the func-
+tion signature of fakeSensor. Both functions have the same number and type of parameters
+and return values.   
+14.2 Passing functions to other functions
+Variables can refer to functions, and variables can be passed to functions, which means 
+Go allows you to pass functions to other functions.
+To log temperature data every second, listing 14.2 declares a new measureTemperature func-
+tion that accepts a sensor function as a parameter. It calls the sensor function periodi-
+cally, whether it’s a fakeSensor or a realSensor.
+The ability to pass functions around gives you a powerful way to split up your code. 
+If not for first-class functions, you would likely end up with measureRealTemperature and 
+measureFakeTemperature functions containing nearly identical code.
+Quick check 14.1 
+1
+How can you distinguish between assigning a function to a variable versus assigning the 
+result of calling the function?
+2
+If there existed a groundSensor function that returned a celsius temperature, could it be
+assigned to the sensor in listing 14.1?
+QC 14.1 answer 
+1
+Function and method calls always have parentheses (for example, fn()) whereas the function 
+itself can be assigned by specifying a function name without parentheses.
+2
+No. The parameters and return values must be of the same type to reassign the sensor vari-
+able. The Go compiler will report an error: cannot use groundSensor in assignment.
+ 

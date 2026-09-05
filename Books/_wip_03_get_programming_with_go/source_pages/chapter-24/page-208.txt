@@ -1,0 +1,37 @@
+193
+Satisfying interfaces
+24.3 Satisfying interfaces
+The standard library exports a number of single-method interfaces that you can imple-
+ment in your code.
+Go encourages composition over inheritance, using simple, often one-method interfaces …
+that serve as clean, comprehensible boundaries between components. 
+—Rob Pike, 
+“Go at Google: Language Design in the 
+Service of Software Engineering”
+(see talks.golang.org/ 2012/splash.article)
+As an example, the fmt package declares a Stringer interface as follows:
+type Stringer interface {
+    String() string
+}
+If a type provides a String method, Println, Sprintf, and friends will use it. The following 
+listing provides a String method to control how the fmt package displays a location.
+package main
+import "fmt"
+// location with a latitude, longitude in decimal degrees.
+type location struct {
+    lat, long float64
+}
+// String formats a location with latitude, longitude.
+func (l location) String() string {
+    return fmt.Sprintf("%v, %v", l.lat, l.long)
+}
+func main() {
+    curiosity := location{-4.5895, 137.4417}
+    fmt.Println(curiosity)
+}
+In addition to fmt.Stringer, popular interfaces in the standard library include io.Reader, 
+io.Writer, and json.Marshaler.
+Listing 24.12 Satisfying stringer: stringer.go
+Prints -4.5895, 
+137.4417
+ 

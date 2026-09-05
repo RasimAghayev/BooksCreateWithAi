@@ -1,0 +1,37 @@
+234
+Lesson 28  To err is human
+NOTE Operating systems can only have so many files open at once, so every open file cuts
+into that limit. When a file is unintentionally left open, the waste of that resource is an exam-
+ple of a leak.
+The main function in listing 28.2 calls proverbs to create a file and handles any error by 
+displaying it and exiting. A different implementation could handle errors differently, 
+perhaps prompting the user for a different path and filename. Though the proverbs func-
+tion could have been written to exit on errors, it’s useful to let the caller decide how to 
+handle errors.
+err := proverbs("proverbs.txt")
+if err != nil {
+    fmt.Println(err)
+    os.Exit(1)
+}
+The proverbs function may return an error, which is a special built-in type for errors. The 
+function attempts to create a file. If an error occurs at this point, there’s no need to close 
+the file, so it aborts immediately. The remainder of the function writes lines out to the 
+file and ensures that the file is closed whether it succeeds or fails, as shown in the fol-
+lowing listing.
+func proverbs(name string) error {
+    f, err := os.Create(name)
+    if err != nil {
+        return err
+    }
+    _, err = fmt.Fprintln(f, "Errors are values.")
+    if err != nil {
+        f.Close()
+        return err
+    }
+    _, err = fmt.Fprintln(f, "Don’t just check errors, handle them gracefully.")
+    f.Close()
+    return err
+}
+Listing 28.2 Calling proverbs: proverbs.go
+Listing 28.3 Writing Go Proverbs: proverbs.go
+ 

@@ -1,0 +1,31 @@
+202
+Lesson 26  A few pointers
+A pointer is a variable that points to the address of another variable. In computer science, 
+pointers are a form of indirection, and indirection can be a powerful tool.
+All problems in computer science can be solved by another level of indirection…
+—David Wheeler
+Pointers are quite useful, but over the years they’ve been associated with a great deal of 
+angst. Languages in the past—C in particular—had little emphasis on safety. Many 
+crashes and security vulnerabilities can be tied back to the misuse of pointers. This gave 
+rise to several languages that don’t expose pointers to programmers.
+Go does have pointers, but with an emphasis on memory safety. Go isn’t plagued with 
+issues like dangling pointers. This would be like heading to the address for your favorite 
+shop, only to find it was accidentally replaced with the parking lot for a new casino. 
+If you’ve encountered pointers before, take a deep breath. This isn’t going to be so bad. 
+If this is your first encounter, relax. Go is a safe place to learn pointers.
+26.1 The ampersand and the asterisk
+Pointers in Go adopt the well-established syntax used by C. There are two symbols to be 
+aware of, the ampersand (&) and the asterisk (*), though the asterisk serves a dual pur-
+pose, as you’ll soon see.
+The address operator, represented by an ampersand, determines the address of a variable 
+in memory. Variables store their values in a computer’s RAM, and the location where a 
+value is stored is known as its memory address. The following listing prints a memory 
+address as a hexadecimal number, though the address on your computer will differ.
+answer := 42
+fmt.Println(&answer) 
+Listing 26.1 Address operator: memory.go
+Consider this Like the shop sign directing visitors to a new address, pointers direct a
+computer where to look for a value. What’s another situation where you’re directed to
+look somewhere else?
+Prints 0x1040c108
+ 

@@ -23,6 +23,17 @@
       "started_at": "2026-09-05",
       "completed_at": "2026-09-06",
       "filename_safe": "Go Web Programming - Sau Sheong Chang - 2016 - v1"
+    },
+    {
+      "book_id": "get_programming_with_go_2018_v1",
+      "title": "Get Programming with Go",
+      "author": "Nathan Youngman, Roger Peppé",
+      "year": 2018,
+      "version": 1,
+      "pages": 360,
+      "status": "reading",
+      "started_at": "2026-09-06",
+      "filename_safe": "Get Programming with Go - Nathan Youngman, Roger Peppé - 2018 - v1"
     }
   ]
 }

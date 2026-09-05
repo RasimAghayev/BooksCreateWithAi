@@ -1,0 +1,30 @@
+187
+The interface type
+24.1 The interface type
+The majority of types focus on the values they store: integers for whole numbers, strings 
+for text, and so on. The interface type is different. Interfaces are concerned with what a 
+type can do, not the value it holds.
+Methods express the behavior a type provides, so interfaces are declared with a set of 
+methods that a type must satisfy. The following listing declares a variable with an inter-
+face type.
+var t interface {
+    talk() string
+}
+The variable t can hold any value of any type that satisfies the interface. More specifi-
+cally, a type will satisfy the interface if it declares a method named talk that accepts no 
+arguments and returns a string.
+The following listing declares two types that meet these requirements.
+type martian struct{}
+func (m martian) talk() string {
+    return "nack nack"
+}
+type laser int
+func (l laser) talk() string {
+    return strings.Repeat("pew ", int(l))
+}
+Listing 24.1 A set of methods: talk.go
+Listing 24.2 Satisfying an interface: talk.go
+Consider this What are some concrete things around you? What can you do with
+them? Can you do the same thing with something else? What is the common behavior
+or interface that they have?
+ 

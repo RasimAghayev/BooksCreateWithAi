@@ -1,0 +1,16 @@
+119
+UNIT
+4
+Collections
+Collections are just groups of things. You probably 
+have a music collection. Each album has a collection 
+of songs, and each song has a collection of musical 
+notes. If you want to build a music player, you’ll be 
+happy to know that programming languages have 
+collections too.
+In Go, you can use the primitive types covered in 
+unit 2 to compose more interesting composite types. 
+These composite types allow you to group values 
+together, providing new ways to collect and access 
+data.
+ 

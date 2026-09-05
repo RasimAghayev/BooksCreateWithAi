@@ -1,0 +1,13 @@
+197
+Your task is to create a simulation of the first animal sanctuary on Mars. Make a few 
+types of animals. Each animal should have a name and adhere to the Stringer interface to 
+return their name.
+Every animal should have methods to move and eat. The move method should return a 
+description of the movement. The eat method should return the name of a random food 
+that the animal likes.
+Implement a day/night cycle and run the simulation for three 24-hour sols (72 hours). 
+All the animals should sleep from sunset until sunrise. For every hour of the day, pick 
+an animal at random to perform a random action (move or eat). For every action, print 
+out a description of what the animal did.
+Your implementation should make use of structures and interfaces. 
+ 

@@ -1,0 +1,42 @@
+75
+Decoding strings into runes
+The following listing will decipher a message from space. Run it in the Go Playground 
+to find out what the aliens are saying.
+message := "uv vagreangvbany fcnpr fgngvba"
+for i := 0; i < len(message); i++ {
+    c := message[i]
+    if c >= 'a' && c <= 'z' {
+        c = c + 13
+        if c > 'z' {
+            c = c - 26
+        }
+    }
+    fmt.Printf("%c", c)
+}
+Note that the ROT13 implementation in the previous listing is only intended for ASCII 
+characters (bytes). It will get confused by a message written in Spanish or Russian. The 
+next section looks at a solution for this issue.   
+9.5
+Decoding strings into runes
+Strings in Go are encoded with UTF-8, one of several encodings for Unicode code 
+points. UTF-8 is an efficient variable length encoding where a single code point may use 
+8 bits, 16 bits, or 32 bits. By using a variable length encoding, UTF-8 makes the transition 
+from ASCII straightforward, because ASCII characters are identical to their UTF-8 
+encoded counterparts.
+Listing 9.7 ROT13 cipher: rot13.go
+Iterates through each 
+ASCII character
+Leaves spaces 
+and punctuation 
+as they are
+Quick check 9.5 
+1
+What does the built-in len function do when passed a string?
+2
+Type listing 9.7 into the Go Playground. What does the message say?
+QC 9.5 answer 
+1
+The len function returns the length of a string in bytes.
+2
+hi international space station
+ 

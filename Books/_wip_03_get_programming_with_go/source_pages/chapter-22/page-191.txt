@@ -1,0 +1,67 @@
+176
+Lesson 22  Go’s got no class
+Summary
+Combining methods and structures provides much of what classical languages 
+provide without introducing a new language feature.
+Constructor functions are ordinary functions.
+Let’s see if you got this...
+Experiment: landing.go
+Use the code from listings 22.1, 22.2, and 22.3 to write a program that declares a location 
+for each location in table 22.1. Print out each of the locations in decimal degrees.
+Experiment: distance.go
+Use the distance method from listing 22.4 to write a program that determines the dis-
+tance between each pair of landing sites in table 22.1.
+Which two landing sites are the closest?
+Which two are farthest apart?
+To determine the distance between the following locations, you’ll need to declare other 
+worlds based on table 22.2:
+Find the distance from London, England (51°30’N 0°08’W) to Paris, France 
+(48°51’N 2°21’E).
+Find the distance from your city to the capital of your country.
+Find the distance between Mount Sharp (5°4' 48"S, 137°51’E) and Olympus Mons 
+(18°39’N, 226°12’E) on Mars.   
+Table 22.1
+Landing sites on Mars
+Rover or lander
+Landing site
+Latitude
+Longitude
+Spirit
+Columbia Memorial Station
+1434'6.2" S
+17528'21.5" E
+Opportunity
+Challenger Memorial Station
+156'46.3" S
+35428'24.2" E
+Curiosity
+Bradbury Landing
+435'22.2" S
+13726'30.1" E
+InSight
+Elysium Planitia
+430'0.0" N
+13554'0" E
+Table 22.2
+The volumetric mean radius of various planets
+Planet
+Radius (km)
+Planet
+Radius (km)
+Mercury
+2439.7
+Jupiter
+69911
+Venus
+6051.8
+Saturn
+58232
+Earth
+6371.0
+Uranus
+25362
+Mars
+3389.5
+Neptune
+24622
+ 

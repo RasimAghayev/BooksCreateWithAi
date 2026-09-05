@@ -1,0 +1,33 @@
+164
+Lesson 21  A little structure
+   
+21.3 Initialize structures with composite literals
+Composite literals for initializing structures come in two different forms. In listing 21.3, 
+the opportunity and insight variables are initialized using field-value pairs. Fields may be 
+in any order, and fields that aren’t listed will retain the zero value for their type. This 
+form tolerates change and will continue to work correctly even if fields are added to the 
+structure or if fields are reordered. If location gained an altitude field, both opportunity 
+and insight would default to an altitude of zero.
+type location struct {
+    lat, long float64
+}
+opportunity := location{lat: -1.9462, long: 354.4734}
+fmt.Println(opportunity)
+insight := location{lat: 4.5, long: 135.9}
+fmt.Println(insight)
+The composite literal in listing 21.4 doesn’t specify field names. Instead, a value must be 
+provided for each field in the same order in which they’re listed in the structure defini-
+tion. This form works best for types that are stable and only have a few fields. If the loca-
+tion type gains an altitude field, spirit must specify a value for altitude for the program 
+to compile. Mixing up the order of lat and long won’t cause a compiler error, but the pro-
+gram won’t produce correct results.
+Listing 21.3 Composite literal with field-value pairs: struct-literal.go
+Quick check 21.2 How would you adapt the code from listing 21.1 to use the location type
+for the Curiosity rover at Bradbury Landing?
+QC 21.2 answer 
+var curiosity location
+curiosity.lat = -4.5895
+curiosity.long = 137.4417
+Prints {-1.9462 354.4734}
+Prints {4.5 135.9}
+ 

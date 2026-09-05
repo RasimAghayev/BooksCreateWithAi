@@ -1,0 +1,45 @@
+30
+Lesson 3  Loops and branches
+3.5
+Branching with switch
+When comparing one value to several others, Go provides the switch statement, which 
+you can see in the following listing.
+fmt.Println("There is a cavern entrance here and a path to the east.")
+var command = "go inside"
+switch command {
+case "go east":
+    fmt.Println("You head further up the mountain.")
+case "enter cave", "go inside":
+    fmt.Println("You find yourself in a dimly lit cavern.")
+case "read sign":
+    fmt.Println("The sign reads 'No Minors'.")
+default:
+    fmt.Println("Didn't quite get that.")
+}
+The previous listing will produce the following output:
+There is a cavern entrance here and a path to the east.
+You find yourself in a dimly lit cavern.
+NOTE You can also use the switch statement with numbers.
+Or you can use the switch statement with conditions for each case, much like using 
+if…else. One unique feature of switch is the fallthrough keyword, which is used to execute 
+the body of the next case, as shown in the next listing.
+var room = "lake"
+switch {
+case room == "cave":
+    fmt.Println("You find yourself in a dimly lit cavern.")
+case room == "lake":
+    fmt.Println("The ice seems solid enough.")
+    fallthrough
+case room == "underwater":
+Listing 3.6 The switch statement: concise-switch.go
+Listing 3.7 The switch statement: switch.go
+Compares cases 
+to command
+A comma- 
+separated list of 
+possible values
+Expressions are 
+in each case.
+Falls through to 
+the next case
+ 

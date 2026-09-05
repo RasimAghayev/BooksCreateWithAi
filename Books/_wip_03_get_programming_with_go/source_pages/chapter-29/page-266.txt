@@ -1,0 +1,18 @@
+251
+UNIT
+7
+Concurrent programming
+Computers are excellent at doing many things at 
+the same time. You might want the computer to 
+speed up a calculation, download many web pages 
+simultaneously, or control different parts of a robot 
+independently. This ability to deal with several 
+things at once is called concurrency.
+Go has a different approach to concurrency than 
+most other programming languages. Any Go code 
+can be made concurrent by starting it in a goroutine. 
+Goroutines use channels for communication and 
+coordination, making it straightforward to have 
+multiple concurrent tasks working toward the 
+same end.
+ 

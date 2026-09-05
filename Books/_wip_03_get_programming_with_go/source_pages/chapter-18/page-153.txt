@@ -1,0 +1,18 @@
+138
+18 
+LESSON
+A BIGGER SLICE
+After reading lesson 18, you’ll be able to
+Append more elements to slices
+Investigate how length and capacity work
+Arrays have a fixed number of elements, and slices are just views into those fixed-length 
+arrays. Programmers often need a variable-length array that grows as needed. By combin-
+ing slices and a built-in function named append, Go provides the capabilities of variable-
+length arrays. This lesson delves into how it works.
+Consider this Have you ever had your books outgrow your shelves, or your family out-
+grow your home or vehicle?
+Like bookshelves, arrays have a certain capacity. A slice can focus on the portion of the
+array where the books are, and grow to reach the capacity of the shelf. If the shelf is full,
+you can replace the shelf with a larger one and move all the books over. Then point the
+slice at the books on the new shelf with a greater capacity.
+ 

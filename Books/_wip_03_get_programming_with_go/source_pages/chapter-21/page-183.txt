@@ -1,0 +1,37 @@
+168
+Lesson 21  A little structure
+// exitOnError prints any errors and exits.
+func exitOnError(err error) {
+    if err != nil {
+        fmt.Println(err)
+        os.Exit(1)
+    }
+}
+Notice that the JSON keys match the field names of the location structure. For this to 
+work, the json package requires fields to be exported. If Lat and Long began with a lower-
+case letter, the output would be {}.   
+21.7 Customizing JSON with struct tags
+Go’s json package requires that fields have an initial uppercase letter and multiword 
+field names use CamelCase by convention. You may want JSON keys in snake_case, par-
+ticularly when interoperating with Python or Ruby. The fields of a structure can be 
+tagged with the field names you want the json package to use.
+The only change from listing 21.9 to listing 21.10 is the inclusion of struct tags that alter 
+the output of the Marshal function. Notice that the Lat and Long fields must still be 
+exported for the json package to see them.
+type location struct {
+    Lat  float64 `json:"latitude"`
+    Long float64 `json:"longitude"`
+}
+curiosity := location{-4.5895, 137.4417}
+bytes, err := json.Marshal(curiosity)
+exitOnError(err)
+fmt.Println(string(bytes))
+Listing 21.10 Customizing location fields: json-tags.go
+Quick check 21.6 What does the abbreviation JSON stand for?
+QC 21.6 answer JSON stands for JavaScript Object Notation.
+Struct tags alter 
+the output.
+Prints 
+{"latitude":-4.5895,
+"longitude":137.4417}
+ 

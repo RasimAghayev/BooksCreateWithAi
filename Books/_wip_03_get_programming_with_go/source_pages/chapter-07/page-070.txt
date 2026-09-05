@@ -1,0 +1,47 @@
+55
+Declaring integer variables
+That’s a lot of types to choose from! Later in this lesson, we’ll show some examples 
+where specific integer types make sense, along with what happens if your program 
+exceeds the available range.
+There are two integer types not listed in table 7.1. The int and uint types are optimal for 
+the target device. The Go Playground, Raspberry Pi 2, and older mobile phones provide 
+a 32-bit environment where both int and uint are 32-bit values. Any recent computer 
+will provide a 64-bit environment where int and uint will be 64-bit values.
+TIP If you’re operating on numbers larger than two billion, and if the code could be run on
+older 32-bit hardware, be sure to use int64 or uint64 instead of int and uint.
+NOTE Although it’s tempting to think of int as an int32 on some devices and an int64 on
+other devices, these are three distinct types. The int type isn’t an alias for another type.   
+7.1.2
+Knowing your type
+If you’re ever curious about which type the Go compiler inferred, the Printf function 
+provides the %T format verb to display a variable’s type, as shown in the following 
+listing.
+Table 7.1
+Architecture-independent integer types
+Type
+Range
+Storage
+int8
+–128 to 127
+8-bit (one byte)
+uint8
+0 to 255
+int16
+–32,768 to 32,767
+16-bit (two bytes)
+uint16
+0 to 65535
+int32
+–2,147,483,648 to 2,147,483,647
+32-bit (four bytes)
+uint32
+0 to 4,294,967,295
+int64
+–9,223,372,036,854,775,808 to 
+9,223,372,036,854,775,807
+64-bit (eight bytes)
+uint64
+0 to 18,446,744,073,709,551,615
+Quick check 7.2 Which integer types support the value –20,151,021?
+QC 7.2 answer The int32, int64, and int types would work.
+ 

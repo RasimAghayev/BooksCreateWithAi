@@ -1,0 +1,34 @@
+128
+Lesson 16  Arrayed in splendor
+For these reasons, arrays aren’t used as function parameters nearly as often as slices, cov-
+ered in the next lesson.   
+16.6 Arrays of arrays
+You’ve seen arrays of strings, but you can also have arrays of integers, arrays of floating-
+point numbers, and even arrays of arrays. The 8 x 8 chessboard in the following listing is 
+an array of arrays of strings.
+var board [8][8]string 
+board[0][0] = "r"
+board[0][7] = "r" 
+for column := range board[1] {
+    board[1][column] = "p"
+}
+fmt.Print(board)
+Listing 16.8 Chessboard: chess.go
+Quick check 16.5 
+1
+How did Earth survive in planetsMarkII of listing 16.6?
+2
+How could listing 16.7 be modified so that the planets array in main is changed?
+QC 16.5 answer 
+1
+The planetsMarkII variable received a copy of the planets array, so modifications to either array 
+are independent of each other.
+2
+The terraform function could return the revised [8]string array, so that main could reassign
+planets to the new value. Lesson 17 on slices and lesson 26 on pointers present other alterna-
+tives.
+An array of eight 
+arrays of eight strings
+Places a rook at a 
+[row][column] coordinate
+ 

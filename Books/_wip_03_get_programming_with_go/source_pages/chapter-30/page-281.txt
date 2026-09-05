@@ -1,0 +1,36 @@
+266
+Lesson 30  Goroutines and concurrency
+With these new tools, we can easily close down the whole pipeline. The following listing 
+shows the source goroutine at the head of the pipeline.
+func sourceGopher(downstream chan string) {
+    for _, v := range []string{"hello world", "a bad apple", "goodbye all"} 
+➥{
+        downstream <- v
+    }
+    close(downstream)
+}
+The next listing shows how the filter goroutine now looks.
+func filterGopher(upstream, downstream chan string) {
+    for {
+        item, ok := <-upstream
+        if !ok {
+            close(downstream)
+            return
+        }
+        if !strings.Contains(item, "bad") {
+            downstream <- item
+        }
+    }
+}
+This pattern of reading from a channel until it’s closed is common enough that Go pro-
+vides a shortcut. If we use a channel in a range statement, it will read values from the 
+channel until the channel is closed.
+This means our code can be rewritten more simply with a range loop. The following list-
+ing accomplishes the same thing as before.
+func filterGopher(upstream, downstream chan string) {
+    for item := range upstream {
+        if !strings.Contains(item, "bad") {
+Listing 30.11 Assembly: pipeline2.go
+Listing 30.12 Assembly: pipeline2.go
+Listing 30.13 Assembly: pipeline2.go
+ 

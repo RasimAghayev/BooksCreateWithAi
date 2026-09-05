@@ -1,0 +1,42 @@
+95
+Function declarations
+In Go, the functions, variables, and other identifiers that begin with an uppercase
+letter are exported and become available to other packages. The rand package contains 
+functions that begin with a lowercase letter too, but they’re not accessible from the main 
+package.
+The Intn function accepts a single parameter, which is surrounded by parentheses. The 
+parameter is a variable name followed by a type, consistent with variable declarations:
+var n int
+When calling the Intn function, the integer 10 is passed as a single argument, also sur-
+rounded by parentheses. The argument corresponds to the single parameter Intn 
+expects. If no argument is passed, or if the argument isn’t of type int, the Go compiler 
+reports an error.
+TIP Parameter and argument are terms from mathematics, with a subtle distinction. A
+function accepts parameters and is invoked with arguments, though at times people may
+use the terms interchangeably.
+The Intn function returns a single result, a pseudorandom integer of type int. The result 
+is passed back to the caller, where it’s used to initialize the newly declared variable num.
+The Intn function only accepts a single parameter, but functions can accept multiple 
+parameters with a comma-separated list. If you recall from lesson 7, the Unix function 
+from the time package accepts two int64 parameters, corresponding to the number of sec-
+onds and the number of nanoseconds since January 1, 1970. The declaration from the 
+documentation looks like this:
+func Unix(sec int64, nsec int64) Time
+Here’s the example of calling the Unix function with two arguments, corresponding to 
+the sec and nsec parameters respectively:
+future := time.Unix(12622780800, 0)
+result
+type
+function
+name
+function
+name argument
+package
+keyword
+parameter
+type
+name
+func Intn(n int) int
+num := rand.Intn(10)
+Figure 12.1 The Intn function declaration and calling the Intn function
+ 

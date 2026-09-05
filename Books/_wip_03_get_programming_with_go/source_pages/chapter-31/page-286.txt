@@ -1,0 +1,36 @@
+271
+Mutexes
+Note that there’s nothing that 
+physically stops a gopher from 
+using the phone without taking 
+the token. But if they do, there may 
+be unintended consequences from 
+two gophers talking over one 
+another on the phone. Also, con-
+sider what happens if the gopher 
+with the token forgets to return it: 
+no other gopher will be able to use 
+the phone until they remember to 
+return it.
+In a Go program, the equivalent of 
+that glass jar is called a mutex. The word mutex is short for mutual exclusion. Goroutines 
+can use a mutex to exclude each other from doing something at the same time. The some-
+thing in question is up to the programmer to decide. Like the jar in the factory, the only 
+“mutual exclusion” properties of a mutex come from the fact that we’re careful to use it 
+whenever we access the thing we’re guarding with it.
+Mutexes have two methods: Lock and Unlock. Calling Lock is like taking the token from the 
+jar. We put the token back in the jar by calling Unlock. If any goroutine calls Lock while the 
+mutex is locked, it’ll wait until it’s unlocked before locking it again.
+To use the mutex properly, we need to make sure that any code accessing the shared val-
+ues locks the mutex first, does whatever it needs to, then unlocks the mutex. If any code 
+doesn’t follow this pattern, we can end up with a race condition. Because of this, 
+mutexes are almost always kept internal to a package. The package knows what things 
+the mutex guards, but the Lock and Unlock calls are nicely hidden behind methods or 
+functions.
+Unlike channels, Go mutexes aren’t built into the language itself. Rather, they’re available 
+in the sync package. Listing 31.1 is a complete program that locks and unlocks a global 
+mutex value. We don’t need to initialize the mutex before using it—the zero value is an 
+unlocked mutex.
+The defer keyword introduced in lesson 28 can help with mutexes too. Even if there are 
+many lines of code in a function, the Unlock call stays next to the Lock call.
+ 

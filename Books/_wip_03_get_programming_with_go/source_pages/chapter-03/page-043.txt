@@ -1,0 +1,42 @@
+28
+Lesson 3  Loops and branches
+The code in listing 3.4 determines whether 2100 
+will be a leap year. The rules for determining a 
+leap year are as follows:
+Any year that is evenly divisible by 4 but 
+not evenly divisible by 100
+Or any year that is evenly divisible by 400
+NOTE Recall that modulus (%) obtains the remain-
+der of dividing two whole numbers. A remainder of
+zero indicates that a number is evenly divisible by
+another.
+fmt.Println("The year is 2100, should you leap?")
+var year = 2100
+var leap = year%400 == 0 || (year%4 == 0 && year%100 != 0)
+if leap {
+    fmt.Println("Look before you leap!")
+} else {
+    fmt.Println("Keep your feet on the ground.")
+}
+Listing 3.4 Leap year determination: leap.go
+false
+true
+false
+false
+true
+true
+true
+true
+Figure 3.1 True if either 
+a || b is true (or)
+false
+true
+false
+false
+false
+true
+false
+true
+Figure 3.2 True if both 
+a && b are true (and)
+ 

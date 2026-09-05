@@ -1,0 +1,36 @@
+233
+Elegant error handling
+28.2 Elegant error handling
+Gophers are encouraged to consider and handle any errors that functions return. The 
+amount of code dedicated to handling errors can quickly add up. Fortunately, there are 
+several ways to reduce the amount of error-handling code without sacrificing reliability.
+Some functions perform equations, data transformations, and other logic without ever 
+needing to return an error. Then there are functions that communicate with files, databases, 
+and servers. Communication is messy and can fail. One strategy to reduce error-handling 
+code is to isolate an error-free subset of a program from the inherently error-prone code.
+But what about code that does return errors? We can’t remove the errors, but we can 
+work to simplify the error-handling code. To demonstrate, we’ll make a small program 
+that writes the following Go Proverbs to a file and then improve the error handling until 
+the code becomes palatable.
+Errors are values.
+Don’t just check errors, handle them gracefully.
+Don’t panic.
+Make the zero value useful.
+The bigger the interface, the weaker the abstraction.
+interface{} says nothing.
+Gofmt’s style is no one’s favorite, yet gofmt is everyone’s favorite.
+Documentation is for users.
+A little copying is better than a little dependency.
+Clear is better than clever.
+Concurrency is not parallelism.
+Don’t communicate by sharing memory, share memory by communicating.
+Channels orchestrate; mutexes serialize.
+—Rob Pike, Go Proverbs
+(see go-proverbs.github.io)
+28.2.1 Writing a file
+Any number of things can go wrong when writing a file. If the path is invalid or there’s 
+an issue with permissions, creating the file may fail before we even start writing. Once 
+writing, the device could run out of disk space or be unplugged. In addition, a file must 
+be closed when done, both to ensure it is successfully flushed to disk, and to avoid leak-
+ing resources.
+ 

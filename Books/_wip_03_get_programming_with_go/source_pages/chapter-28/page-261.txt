@@ -1,0 +1,30 @@
+246
+Lesson 28  To err is human
+var zero int
+_ = 42 / zero 
+   
+28.4.3 Keep calm and carry on
+To keep panic from crashing your program, Go provides a recover function, shown in list-
+ing 28.18.
+Deferred functions are executed before a function returns, even in the case of panic. 
+If a deferred function calls recover, the panic will stop, and the program will continue 
+running. As such, recover serves a similar purpose to catch, except, and rescue in other 
+languages.
+defer func() {
+    if e := recover(); e != nil {
+         fmt.Println(e)
+    }
+}()
+panic("I forgot my towel")
+NOTE The preceding listing uses an anonymous function, a topic covered in lesson 14.   
+Listing 28.18 Keep calm and carry on: panic.go
+Runtime error: integer 
+divide by zero
+Quick check 28.10 When should your program panic?
+QC 28.10 answer Panic should be rare.
+Recovers from panic
+Prints I forgot my towel
+Causes panic
+Quick check 28.11 Where can the recover built-in function be used?
+QC 28.11 answer Only deferred functions can make use of recover.
+ 

@@ -1,0 +1,39 @@
+258
+Lesson 30  Goroutines and concurrency
+To create a channel, use make, the same built-in function used to make maps and slices. 
+Channels have a type that’s specified when you make them. The following channel can 
+only send and receive integer values:
+c := make(chan int)
+Once you have a channel, you can send values to it and receive the values sent to it. You 
+send or receive values on a channel with the left arrow operator (<-).
+To send a value, point the arrow toward the channel expression, as if the arrow were 
+telling the value on the right to flow into the channel. The send operation will wait until 
+something (in another goroutine) tries to receive on the same channel. While it’s wait-
+ing, the sender can’t do anything else, although all other goroutines will continue run-
+ning freely (assuming they’re not waiting on channel operations too). The following 
+sends the value 99:
+c <- 99
+To receive a value from a channel, the arrow points away from the channel (it’s to the 
+left of the channel). In the following code, we receive a value from channel c and assign 
+it to variable r. Similarly to sending on a channel, the receiver will wait until another 
+goroutine tries to send on the same channel:
+r := <-c
+NOTE Although it’s common to use a channel receive operation on its own line, that’s not
+required. The channel receive operation can be used anywhere any other expression can be
+used.
+The code in listing 30.4 makes a channel and passes it to five sleepy gopher goroutines. 
+Then it waits to receive five messages, one for each goroutine that’s been started. Each 
+goroutine sleeps and then sends a value identifying itself. When execution reaches the 
+end of the main function, we know for sure that all the gophers will have finished sleep-
+ing, and it can return without disturbing any gopher’s sleep. For example, say we have a 
+program that saves the results of some number-crunching computation to online stor-
+age. It might save several things at the same time, and we don’t want to quit before all 
+the results have been successfully saved.
+func main() {
+    c := make(chan int) 
+    for i := 0; i < 5; i++ {
+        go sleepyGopher(i, c)
+Listing 30.4 Channeled sleeping gophers: simplechan.go
+Makes the channel to 
+communicate over
+ 

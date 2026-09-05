@@ -1,0 +1,24 @@
+130
+17 
+LESSON
+SLICES: WINDOWS INTO ARRAYS
+After reading lesson 17, you’ll be able to
+Use slices to view the solar system through a window
+Alphabetize slices with the standard library
+The planets in our solar system are classified as terrestrial, gas giants, and ice giants, as 
+shown in figure 17.1. You can focus on the terrestrial ones by slicing the first four ele-
+ments of the planets array with planets[0:4]. Slicing doesn’t alter the planets array. It just 
+creates a window or view into the array. This view is a type called a slice.
+0
+1
+2
+3
+4
+5
+6
+7
+terrestrial
+gasGiants
+iceGiants
+Figure 17.1 Slicing the solar system
+ 

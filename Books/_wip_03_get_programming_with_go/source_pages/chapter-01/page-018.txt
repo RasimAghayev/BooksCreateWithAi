@@ -1,0 +1,22 @@
+3
+1 
+LESSON
+GET READY, GET SET, GO
+After reading lesson 1, you’ll be able to
+Know what sets Go apart
+Visit the Go Playground
+Print text to the screen
+Experiment with text in any natural language
+Go is the contemporary programming language of cloud computing. Amazon, Apple, 
+Canonical, Chevron, Disney, Facebook, General Electric, Google, Heroku, Microsoft, 
+Twitch, Verizon, and Walmart are among the companies adopting Go for serious pro-
+jects (see thenewstack.io/who-is-the-go-developer/ and golang.org/wiki/GoUsers). 
+Much of the infrastructure underlying the web is shifting to Go, driven by companies 
+like CloudFlare, Cockroach Labs, DigitalOcean, Docker, InfluxData, Iron.io, Let’s 
+Encrypt, Light Code Labs, Red Hat CoreOS, SendGrid, and organizations like the Cloud 
+Native Computing Foundation.
+Go excels in the data center, but its adoption extends beyond the workplace. Ron Evans 
+and Adrian Zankich created Gobot (gobot.io), a library to control robots and hardware. 
+Alan Shreve created the development tool ngrok (ngrok.com) as a project to learn Go, 
+and has since turned it into a full-time business.
+ 

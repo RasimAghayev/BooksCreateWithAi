@@ -1,0 +1,39 @@
+104
+Lesson 13  Methods
+13.2 Bring your own types
+The previous section declared new celsius and fahrenheit types, bringing the domain of 
+temperatures to the code, while de-emphasizing the underlying storage representation. 
+Whether a temperature is represented as a float64 or float32 says little about the value a 
+variable contains, whereas types like celsius, fahrenheit, and kelvin convey their purpose.
+Once you declare a type, you can use it everywhere you would use a predeclared Go 
+type (int, float64, string, and so on), including function parameters and results, as shown 
+in the following listing.
+package main
+import "fmt"
+type celsius float64
+type kelvin float64
+// kelvinToCelsius converts ºK to ºC
+func kelvinToCelsius(k kelvin) celsius {
+    return celsius(k - 273.15)
+}
+func main() {
+    var k kelvin = 294.0 
+    c := kelvinToCelsius(k)
+    fmt.Print(k, "º K is ", c, "º C")
+}
+The kelvinToCelsius function will only accept an argument of the kelvin type, which can 
+prevent silly mistakes. It won’t accept an argument of the wrong type, such as fahrenheit, 
+kilometers, or even float64. Go is a pragmatic language, so it’s still possible to pass a literal 
+value or untyped constant. Rather than write kelvinToCelsius(kelvin(294)), you can write 
+kelvinToCelsius(294).
+The result returned from kelvinToCelsius is of type celsius, not kelvin, so the type must be 
+converted to celsius before it can be returned.
+Listing 13.4 Functions with custom types: temperature-types.go
+A type conversion 
+is necessary.
+The argument 
+must be of type 
+kelvin.
+Prints 294º K is 
+20.850000000000023º C
+ 

@@ -1,0 +1,42 @@
+97
+Function declarations
+fmt.Println("Hello, playground")
+fmt.Println(186, "seconds")
+The function declaration in the documentation may look a bit strange, because it uses 
+features we haven’t yet covered:
+func Println(a ...interface{}) (n int, err error)
+The Println function accepts a single parameter, a, but you’ve already seen that passing it 
+multiple arguments is possible. More specifically, you can pass the Println function a 
+variable number of arguments, a feature indicated by the ellipsis (…). There’s a special 
+term for this: Println is said to be a variadic function. The parameter a is a collection of the 
+arguments passed to the function. We’ll return to variadic functions in lesson 18.
+The type of the a parameter is interface{}, known as the empty interface type. We won’t be 
+covering interfaces until lesson 24, but now you know that this special type is what 
+enables Println to accept an int, float64, string, time.Time, or any other type without the Go 
+compiler reporting an error.
+The combination of variadic functions and the empty interface, written together as 
+…interface{}, means you can pass Println any number of arguments of any type. It does a 
+good job of displaying whatever you throw at it.
+NOTE So far we’ve been ignoring the two results that Println returns, even though ignoring
+errors is considered a bad practice. Good error-handling practices are covered in lesson 28.   
+Quick check 12.1 
+1
+Do you call a function with arguments or parameters?
+2
+Does a function accept arguments or parameters?
+3
+How does a function with an uppercase first letter (Contains) differ from one with a lower-
+case first letter (contains)?
+4
+What does the ellipsis (…) in a function declaration indicate?
+QC 12.1 answer 
+1
+Arguments
+2
+Parameters
+3
+Lowercase indicates functions that can only be used by the package they are declared in,
+whereas capitalized functions are exported for use anywhere.
+4
+The function is variadic. You can pass it a variable number of arguments.
+ 

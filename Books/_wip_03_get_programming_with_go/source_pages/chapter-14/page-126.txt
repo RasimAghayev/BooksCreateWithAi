@@ -1,0 +1,36 @@
+111
+Passing functions to other functions
+package main
+import (
+    "fmt"
+    "math/rand"
+    "time"
+)
+type kelvin float64
+func measureTemperature(samples int, sensor func() kelvin) { 
+    for i := 0; i < samples; i++ {
+k := sensor()
+fmt.Printf("%vº K\n", k)
+time.Sleep(time.Second)
+    }
+}
+func fakeSensor() kelvin {
+    return kelvin(rand.Intn(151) + 150)
+}
+func main() {
+    measureTemperature(3, fakeSensor)
+}
+The measureTemperature function accepts two parameters, with the second parameter being 
+of type func() kelvin. This declaration looks like a variable declaration of the same type:
+var sensor func() kelvin
+The main function is able to pass the name of a function to measureTemperature.   
+Listing 14.2 A function as a parameter: function-parameter.go
+measureTemperature 
+accepts a function as 
+the second parameter.
+Passes the name 
+of a function to a 
+function
+Quick check 14.2 How is the ability to pass functions to other functions beneficial?
+QC 14.2 answer First-class functions provide another way to divide and reuse code.
+ 

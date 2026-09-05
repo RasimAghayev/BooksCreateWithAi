@@ -1,0 +1,30 @@
+227
+Nil interfaces
+for ingredient, measurement := range soup {
+    fmt.Println(ingredient, measurement)
+}
+If a function only reads from a map, it’s fine to pass the function nil instead of making 
+an empty map.   
+27.6 Nil interfaces
+When a variable is declared to be an interface type without an assignment, the zero 
+value is nil. The following listing demonstrates that the interface type and value are 
+both nil, and the variable compares as equal to nil.
+var v interface{}
+fmt.Printf("%T %v %v\n", v, v, v == nil)
+When a variable with an interface type is assigned a value, the interface internally 
+points to the type and value of that variable. This leads to the rather surprising behavior 
+of a nil value that doesn’t compare as equal to nil. Both the interface type and value 
+need to be nil for the variable to equal nil, as shown in the following listing.
+var p *int
+v = p
+fmt.Printf("%T %v %v\n", v, v, v == nil)
+The %#v format verb is shorthand to see both type and value, also revealing that the vari-
+able contains (*int)(nil) rather than just <nil>, as shown in listing 27.12.
+Listing 27.10 Interfaces can be nil: interface.go
+Listing 27.11 Wat?: interface.go
+Quick check 27.5 What action on a nil map will cause a panic?
+QC 27.5 answer Writing to a nil map (soup["onion"] = 1) will panic with: assignment to entry in nil
+map.
+Prints <nil> <nil> true
+Prints *int <nil> false
+ 

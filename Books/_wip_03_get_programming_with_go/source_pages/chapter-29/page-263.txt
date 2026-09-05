@@ -1,0 +1,23 @@
+248
+29 
+LESSON
+CAPSTONE: SUDOKU RULES
+Sudoku is a logic puzzle that takes place on a 
+9 x 9 grid (see en.wikipedia.org/wiki/Sudoku). 
+Each square can contain a digit from 1 through 
+9. The number zero indicates an empty square.
+The grid is divided into nine subregions that 
+are 3 x 3 each. When placing a digit, it must 
+adhere to certain constraints. The digit being 
+placed may not already appear in any of the 
+following:
+The horizontal row it’s placed in
+The vertical column it’s placed in
+The 3 x 3 subregion it’s placed in
+Use a fixed-size (9 x 9) array to hold the Sudoku grid. If a function or method needs to 
+modify the array, remember that you need to pass the array with a pointer.
+Implement a method to set a digit at a specific location. This method should return an 
+error if placing the digit breaks one of the rules.
+Also implement a method to clear a digit from a square. This method need not adhere to 
+these constraints, as several squares may be empty (zero).
+ 

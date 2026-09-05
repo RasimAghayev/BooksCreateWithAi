@@ -1,0 +1,31 @@
+257
+Channels
+When you run the next listing, you should see that even though we started all the gor-
+outines in order from zero to nine, they all finished at different times. If you run this 
+outside the Go playground, you’ll see a different order every time.
+func main() {
+    for i := 0; i < 5; i++ {
+        go sleepyGopher(i)
+    }
+    time.Sleep(4 * time.Second)
+}
+func sleepyGopher(id int) {
+    time.Sleep(3 * time.Second)
+    fmt.Println("... ", id, " snore ...")
+}
+There’s a problem with this code. It’s waiting for four seconds when it only needs to wait 
+for just over three seconds. More importantly, if the goroutines are doing more than just 
+sleeping, we won’t know how long they’re going to take to do their work. We need some 
+way for the code to know when all the goroutines have finished. Fortunately Go pro-
+vides us with exactly what we need: channels.   
+30.3 Channels
+A channel can be used to send values safely from one goroutine to another. Think of a 
+channel as one of those pneumatic tube systems in old offices that passed around mail. 
+If you put an object into it, it zips to the other end of the tube and can be taken out by 
+someone else.
+Like any other Go type, channels can be used as variables, passed to functions, stored in 
+a structure, and do almost anything else you want them to do.
+Listing 30.3 Identified gophers: identifiedgophers.go
+Quick check 30.2 What order do different goroutines run in?
+QC 30.2 answer Any order.
+ 

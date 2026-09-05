@@ -1,0 +1,33 @@
+256
+Lesson 30  Goroutines and concurrency
+30.2 More than one goroutine
+Each time we use the go keyword, a new goroutine is started. All goroutines appear to 
+run at the same time. They might not technically run at the same time, though, because 
+computers only have a limited number of processing units.
+In fact, these processors usually spend some time on one goroutine before proceeding to 
+another, using a technique known as time sharing. Exactly how this happens is a dark 
+secret known only to the Go runtime and the operating system and processor you’re 
+using. It’s best always to assume that the operations in different goroutines may run in 
+any order.
+The main function in listing 30.2 starts five sleepyGopher goroutines. They all sleep for three 
+seconds and then print the same thing.
+package main
+import (
+    "fmt"
+    "time"
+)
+func main() {
+    for i := 0; i < 5; i++ {
+        go sleepyGopher()
+    }
+    time.Sleep(4 * time.Second)
+}
+func sleepyGopher() {
+    time.Sleep(3 * time.Second)
+    fmt.Println("... snore ...")
+}
+We can find out which ones finish first by passing an argument to each goroutine. Pass-
+ing an argument to a goroutine is like passing an argument to any function: the value is 
+copied and passed as a parameter.
+Listing 30.2 Five sleepy gophers: sleepygophers.go
+ 

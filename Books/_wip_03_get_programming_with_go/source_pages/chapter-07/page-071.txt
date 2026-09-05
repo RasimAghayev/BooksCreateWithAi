@@ -1,0 +1,46 @@
+56
+Lesson 7  Whole numbers
+year := 2018
+fmt.Printf("Type %T for %v\n", year, year)
+Instead of repeating the variable twice, you can tell Printf to use the first argument [1] 
+for the second format verb:
+days := 365.2425
+fmt.Printf("Type %T for %[1]v\n", days)
+   
+7.2
+The uint8 type for 8-bit colors
+In Cascading Style Sheets (CSS), colors on screen are specified as a red, green, blue trip-
+let, each with a range of 0–255. It’s the perfect situation to use the uint8 type, an 8-bit 
+unsigned integer able to represent values from 0–255:
+var red, green, blue uint8 = 0, 141, 213
+Here are the benefits of uint8 instead of a regular int for this case:
+With a uint8, the variables are restricted to the range of valid values, eliminating 
+over four billion incorrect possibilities compared to a 32-bit integer.
+If there are a lot of colors to store sequentially, such as in an uncompressed 
+image, you could achieve considerable memory savings by using 8-bit integers.
+Listing 7.1 Inspect a variable’s type: inspect.go
+Prints Type int 
+for 2018
+Prints Type float64 
+for 365.2425
+Quick check 7.3 Which types does Go infer for text between quotes, a whole number, a real
+number, and the word true (without quotes)? Expand listing 7.1 to declare variables with different
+values and run the program to see which types Go infers.
+QC 7.3 answer 
+a := "text"
+fmt.Printf("Type %T for %[1]v\n", a)
+b := 42
+fmt.Printf("Type %T for %[1]v\n", b)
+c := 3.14
+fmt.Printf("Type %T for %[1]v\n", c)
+d := true
+fmt.Printf("Type %T for %[1]v\n", d)
+Prints Type 
+string for text
+Prints Type 
+int for 42
+Prints Type 
+float64 for 3.14
+Prints Type 
+bool for true
+ 

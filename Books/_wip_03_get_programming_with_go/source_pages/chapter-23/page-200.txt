@@ -1,0 +1,24 @@
+185
+Summary
+Summary
+Composition is a technique of breaking large structures down into small struc-
+tures and putting them together.
+Embedding gives access to the fields of inner structures in the outer structure.
+Methods are automatically forwarded when you embed types in a structure.
+Go will inform you of name collisions caused by embedding, but only if those 
+methods are being used.
+Let’s see if you got this...
+Experiment: gps.go
+Write a program with a gps structure for a Global Positioning System (GPS). This struct 
+should be composed of a current location, destination location, and a world.
+Implement a description method for the location type that returns a string containing the 
+name, latitude, and longitude. The world type should implement a distance method 
+using the math from lesson 22.
+Attach two methods to the gps type. First, attach a distance method that finds the distance 
+between the current and destination locations. Then implement a message method that 
+returns a string describing how many kilometers remain to the destination.
+As a final step, create a rover structure that embeds the gps and write a main function to 
+test everything out. Initialize a GPS for Mars with a current location of Bradbury Land-
+ing (-4.5895, 137.4417) and a destination of Elysium Planitia (4.5, 135.9). Then create a 
+curiosity rover and print out its message (which forwards to the gps). 
+ 
