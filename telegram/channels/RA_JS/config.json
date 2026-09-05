@@ -1,0 +1,4 @@
+{
+  "channel": {"name": "RA_JS", "enabled": true},
+  "rules": {"languages": ["JavaScript"]}
+}

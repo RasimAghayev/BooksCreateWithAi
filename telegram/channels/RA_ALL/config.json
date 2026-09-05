@@ -1,0 +1,4 @@
+{
+  "channel": {"name": "RA_ALL", "enabled": true},
+  "rules": {"match": "*"}
+}

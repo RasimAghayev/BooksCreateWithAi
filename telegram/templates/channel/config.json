@@ -1,0 +1,25 @@
+{
+  "channel": {
+    "name": "RA_EXAMPLE",
+    "enabled": true,
+    "description": "Optional description of what this channel is for"
+  },
+  "rules": {
+    "match": "*",
+    "languages": ["Go", "JavaScript", "Python"],
+    "technologies": ["Docker", "Kubernetes", "gRPC", "Redis"],
+    "domains": ["Backend", "Frontend", "DevOps", "Microservices", "Database"],
+    "levels": [1, 2, 3, 4, 5]
+  },
+  "telegram": {
+    "send_file": true,
+    "send_metadata": true,
+    "send_caption": true,
+    "send_teacher_notes": false
+  },
+  "behavior": {
+    "priority": 100,
+    "max_retries": 3,
+    "retry_delay_seconds": 60
+  }
+}

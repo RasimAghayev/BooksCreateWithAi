@@ -1,0 +1,40 @@
+{
+  "book": {
+    "title": "Explore Go: Cryptography",
+    "author": "John Arundel",
+    "year": 2026,
+    "version": 1,
+    "page_count": 329
+  },
+  "filename_safe": "Explore_Go_Cryptography - John Arundel - 2026 - v1",
+  "title_original": "Explore Go: Cryptography",
+  "classification": {
+    "primary_language": "Go",
+    "level": 2,
+    "level_name": "Elementary",
+    "domains": ["Cryptography", "Backend Development", "Security"],
+    "technologies": ["Go", "Cryptography", "SHA-256", "AES", "RSA", "HMAC"],
+    "tags": ["#go", "#golang", "#cryptography", "#security", "#backend"]
+  },
+  "chapters": [
+    {"chapter": 0, "title": "Introduction", "start_page": 1, "end_page": 19, "slug": "introduction"},
+    {"chapter": 1, "title": "Ciphers", "start_page": 20, "end_page": 44, "slug": "ciphers"},
+    {"chapter": 2, "title": "Enciphering", "start_page": 45, "end_page": 60, "slug": "enciphering"},
+    {"chapter": 3, "title": "Deciphering", "start_page": 61, "end_page": 73, "slug": "deciphering"},
+    {"chapter": 4, "title": "Cracking", "start_page": 74, "end_page": 84, "slug": "cracking"},
+    {"chapter": 5, "title": "Keys", "start_page": 85, "end_page": 103, "slug": "keys"},
+    {"chapter": 6, "title": "Cribs", "start_page": 104, "end_page": 113, "slug": "cribs"},
+    {"chapter": 7, "title": "Passwords", "start_page": 114, "end_page": 126, "slug": "passwords"},
+    {"chapter": 8, "title": "Blocks", "start_page": 127, "end_page": 145, "slug": "blocks"},
+    {"chapter": 9, "title": "Modes", "start_page": 146, "end_page": 161, "slug": "modes"},
+    {"chapter": 10, "title": "Padding", "start_page": 162, "end_page": 177, "slug": "padding"},
+    {"chapter": 11, "title": "Enumeration", "start_page": 178, "end_page": 198, "slug": "enumeration"},
+    {"chapter": 12, "title": "Entropy", "start_page": 199, "end_page": 212, "slug": "entropy"},
+    {"chapter": 13, "title": "Randomness", "start_page": 213, "end_page": 225, "slug": "randomness"},
+    {"chapter": 14, "title": "Chains", "start_page": 226, "end_page": 247, "slug": "chains"},
+    {"chapter": 15, "title": "Hashing", "start_page": 248, "end_page": 267, "slug": "hashing"},
+    {"chapter": 16, "title": "Coins", "start_page": 268, "end_page": 277, "slug": "coins"},
+    {"chapter": 17, "title": "Authentication", "start_page": 278, "end_page": 294, "slug": "authentication"},
+    {"chapter": 18, "title": "Cryptography", "start_page": 295, "end_page": 329, "slug": "cryptography"}
+  ]
+}

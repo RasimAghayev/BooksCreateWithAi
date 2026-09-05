@@ -1,1 +1,10 @@
-Books/
+Books/**/source/
+Books/**/raw/
+Books/**/external/source-code/
+Books_*/
+telegram_upload/*
+telegram/channels/*/.env
+*.exe
+*.db
+*.sqlite
+*.sqlite3

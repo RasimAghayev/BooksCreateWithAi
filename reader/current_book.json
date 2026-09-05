@@ -1,14 +1,9 @@
 {
-  "book_id": "go-microservices-popova-2026-v1",
-  "title": "Go: разработка приложений в микросервисной архитектуре с нуля",
-  "author": "Попова Ю.Ю.",
+  "book_id": "explore_go_cryptography_john_arundel_2026_v1",
+  "title": "Explore_Go_Cryptography",
+  "author": "John Arundel",
   "year": 2026,
   "version": 1,
-  "pages": 322,
-  "started_at": "2026-09-04",
-  "current_chapter": 1,
-  "current_section": "1.1",
-  "last_page": 13,
-  "status": "processing",
-  "completed_chapters": [0]
+  "status": "reading",
+  "started_at": "2026-09-05"
 }
