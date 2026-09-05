@@ -1,0 +1,54 @@
+46
+CHAPTER 2
+A solid foundation
+ 
+package main
+import (
+     "fmt"
+     "net/http"
+     "os"
+)
+func main() {
+     http.HandleFunc("/shutdown", shutdown)
+     http.HandleFunc("/", homePage)
+     http.ListenAndServe(":8080", nil)
+}
+func shutdown(res http.ResponseWriter, req *http.Request) {
+     os.Exit(0)
+}
+func homePage(res http.ResponseWriter, req *http.Request) {
+     if req.URL.Path != "/" {
+            http.NotFound(res, req)
+            return
+     }
+     fmt.Fprint(res, "The homepage.")
+}
+We don’t recommend this method, but we share it because it’s a pattern easily found
+on the internet. Although its simplicity is an advantage, the list of disadvantages is
+problematic and includes the following:
+The URL needs to be blocked in production, or more likely, removed before
+going to production. Needing to have code differences for development and
+production is prone to introducing bugs. If this URL were left in for produc-
+tion, anyone who discovered it could easily take down your service.
+When the callback URL receives a request, the server shuts down immediately.
+Any actions in progress are immediately stopped. Any data not saved to disk is
+lost because there’s no opportunity to save it before exiting.
+Using a URL sidesteps typical operations tooling such as Ansible, Chef, and Pup-
+pet or initialization toolchains. More-appropriate tools exist that manage
+updates and running applications.
+We don’t recommend using this method. It’s most useful for development when the
+process is in the background or being run as a daemon. Go applications typically
+shouldn’t be daemons, and better methods are available for starting and stopping the
+server, even for development.
+TECHNIQUE 5
+Graceful shutdowns using manners
+When a server shuts down, you’ll often want to stop receiving new requests, save any
+data to disk, and cleanly end connections with existing open connections. The http
+Listing 2.14
+Callback shutdown URL: callback_shutdown.go
+A special path registered 
+to shut down the server
+Tells the 
+application 
+to exit 
+immediately

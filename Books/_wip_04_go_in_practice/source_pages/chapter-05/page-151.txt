@@ -1,0 +1,48 @@
+128
+CHAPTER 5
+Debugging and testing
+     "fmt"
+     "runtime"
+)
+func main() {
+     foo()
+}
+func foo() {
+     bar()
+}
+func bar() {
+     buf := make([]byte, 1024)
+     runtime.Stack(buf, false)
+     fmt.Printf(“Trace:\n %s\n", buf)
+}
+In this example, you send the stack to Standard Output, but you could just as easily
+log or store it. Running this code produces output like this:
+$ go run trace.go
+Trace:
+ goroutine 1 [running]:
+main.bar()
+     /Users/mbutcher/Code/go-in-practice/chapter5/stack/trace.go:18 +0x7a
+main.foo()
+     /Users/mbutcher/Code/go-in-practice/chapter5/stack/trace.go:13 +0x1b
+main.main()
+You may notice that this version is shorter than the other. The lower-level system calls
+are left out of Stack’s data. We have a few quick things to point out about this code.
+ First, with Stack, you must supply a presized buffer. But there’s no convenient way
+to determine how big the buffer needs to be to capture all of the output. (And in
+some cases, the output is so big that you might not want to capture it all.) You need to
+decide ahead of time how much space you’d like to allocate.
+ Second, Stack takes two arguments. The second is a Boolean flag, which is set to
+false in this example. Setting it to true will cause Stack to also print out stacks for all
+running goroutines. This can be tremendously useful when debugging concurrency
+problems, but it substantially increases the amount of output. The trace of the preced-
+ing code, for example, runs an entire printed page.
+ If all of this isn’t sufficient, you can use the runtime package’s Caller and Callers
+functions to get programmatic access to the details of the call stack. Although it’s
+quite a bit of work to retrieve and format the data, these functions give you the flexi-
+bility to discover the details of a particular call stack. Both the runtime and the
+runtime/debug packages contain numerous other functions for analyzing memory
+usage, goroutines, threading, and other aspects of your program’s resource usage.
+ In the last part of this chapter, we switch from debugging to testing.
+Makes a buffer
+Writes the stack into the buffer
+Prints the results

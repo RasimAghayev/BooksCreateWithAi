@@ -1,0 +1,46 @@
+231
+TECHNIQUE 60
+Cross-compiling
+This tells go to build a Windows binary for the 386 architecture. Specifically, the
+resulting executable will be of the type “PE32 executable for MS Windows (console)
+Intel 80386 32-bit.”
+WARNING
+If your application is using cgo to interact with C libraries, com-
+plications can arise. Be sure to test the applications on all cross-compiled
+platforms.
+If you want to compile to multiple operating systems and architectures, one option is
+gox, which enables building multiple binaries concurrently, as shown in figure 9.4. 
+You can install gox as follows:
+$ go get -u github.com/mitchellh/gox
+After gox is installed, you can create binaries in parallel by using the gox command.
+The following listing provides an example of building an application for OS X, Win-
+dows, and Linux on both the AMD64 and 386 architectures.
+$ gox \
+  -os="linux darwin windows " \
+  -arch="amd64 386" \
+  -output="dist/{{.OS}}-{{.Arch}}/{{.Dir}}" .
+When building binaries in other operating systems—especially when operating them
+in the cloud—it’s a best practice to test the result before deploying. This way, any envi-
+ronment bugs can be detected before deploying to that environment.
+Listing 9.8
+Cross-compile an application with gox
+gox
+linux amd64 build
+linux 386 build
+windows amd64 build
+darwin amd64 build
+...
+The operating system and architecture 
+combinations to build are passed into gox.
+The binaries are built concurrently.
+Figure 9.4
+gox builds binaries for different 
+operating systems and architectures concurrently.
+Uses the os flag to 
+specify multiple 
+operating systems
+The arch flag is used 
+to specify one or 
+more architectures.
+A template is used to specify the output location. This way, binaries
+with the same name end up in different identifying directories.

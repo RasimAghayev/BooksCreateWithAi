@@ -1,0 +1,53 @@
+272
+CHAPTER 11
+Reflection and code generation
+common idiom for tag values to contain a comma-separated list of params
+(json:”myField,omitempty"). For our simple tags, though, you allow only a single
+field in the VALUE space. Finally, if you don’t get any tag data for the field, you return
+the struct field’s name.
+This Marshal() function isn’t particularly flexible. For example, it’ll read only structs.
+Maps, which could just as easily be converted to INI fields, aren’t supported. Likewise,
+your Marshal() function is going to work well only on certain data types. It won’t, for
+example, produce useful results for fields whose values are structs, channels, maps,
+slices, or arrays. Yet although those operations require lots of code, there’s nothing
+particularly daunting about extending this Marshal() function to support a broader
+array of types.
+ In the next listing you can look at the process of taking an existing bit of INI data
+and turning it into a struct. Again, this uses annotations and the reflection subsystem.
+func Unmarshal(data []byte, v interface{}) error {
+     val := reflect.Indirect(reflect.ValueOf(v))
+     t := val.Type()
+     b := bytes.NewBuffer(data)
+     scanner := bufio.NewScanner(b)
+     for scanner.Scan() {
+            line := scanner.Text()
+            pair := strings.SplitN(line, "=", 2)
+            if len(pair) < 2 {
+                   // Skip any malformed lines.
+                   continue
+            }
+            setField(pair[0], pair[1], t, val)
+     }
+     return nil
+}
+The Unmarshal() function reads []byte and tries to convert the fields it finds there
+into matching fields on the supplied v interface{}. Your INI parser is trivially simple:
+it iterates through the lines of the file and splits name-value pairs. But when it comes
+time to populate the given struct with the newly loaded values, you have to do a fair
+amount of work.
+Listing 11.15
+The Unmarshal function
+Ignoring struct fields with annotations
+Sometimes you want to tell encoders to ignore fields on a struct. The common idiom
+for doing this is to use a dash (-) in the name field of the annotation (json:"-"“).
+Although we don’t support this in the preceding code, you could extend the example
+to ignore fields whose name is -.
+Again, you begin with a 
+(dereferenced) 
+reflect.Value.
+From data, you use a scanner to 
+read one line of INI data at a time.
+Splits a line at the 
+equals sign
+Passes the task of setting 
+the value to setField()

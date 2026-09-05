@@ -1,7 +1,6 @@
 {
-  "book_id": null,
-  "title": null,
-  "status": "idle",
-  "started_at": null,
-  "last_completed": "get_programming_with_go_2018_v1"
+  "book_id": "go_in_practice_2016_v1",
+  "title": "Go in Practice",
+  "status": "reading",
+  "started_at": "2026-09-06"
 }

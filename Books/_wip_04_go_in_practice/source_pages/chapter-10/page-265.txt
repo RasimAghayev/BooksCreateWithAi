@@ -1,0 +1,57 @@
+242
+CHAPTER 10
+Communication between cloud services
+DISCUSSION
+Reflection in Go is fairly fast. It does allocate memory that needs to be garbage-
+collected, and there’s a small computational cost. When using optimized generated
+code, those costs can be reduced, and you can see a performance improvement.
+ Several packages are designed to do this. In listing 10.4 you’ll look at the package
+github.com/ugorji/go/codec, which is designed to work with Binc, MessagePack,
+and Concise Binary Object Representation (CBOR) in addition to JSON. Binc,
+MessagePack, and CBOR are alternative data exchange formats, though none is as
+popular as JSON.
+//go:generate codecgen -o user_generated.go user.go
+package user
+type User struct { 
+     Name  string `codec:"name"`
+     Email string `codec:",omitempty"`
+}
+A struct marked up for the codec package is almost the same as the json package. The
+difference is in the name codec.
+ To generate code, the codecgen command needs to be installed. This can be done
+as follows:
+$ go get -u github.com/ugorji/go/codec/codecgen
+After codecgen is installed, you can use it to generate code on this file, named user.go,
+by executing the following command:
+$ codecgen -o user_generated.go user.go
+The output file is named user_generated.go. In the generated file, you’ll notice that
+two public methods have been added to the User type: CodecEncodeSelf and Codec-
+DecodeSelf. When these are present, the codec package uses them to encode or
+decode the type. When they’re absent, the codec package falls back to doing these at
+runtime.
+ When the codecgen command is installed, it can be used with go generate. go
+generate will see the first comment line of the file, which is specially formatted for it,
+and execute codecgen. To use go generate, run the following command:
+$ go generate ./...
+Listing 10.4
+A struct annotated for codec
+codec can’t generate code 
+for main packages. Here the 
+user functionality is in the 
+user package.
+The User struct is annotated 
+for codec instead of JSON
+The Name property will be 
+found as “name” in the JSON 
+file. The difference is the 
+case on the name.
+The codec annotation
+will omit Email when
+it generates JSON
+output and the Email
+value is empty.
+A code comment for 
+the go generate 
+command to know 
+how to generate code 
+from this file

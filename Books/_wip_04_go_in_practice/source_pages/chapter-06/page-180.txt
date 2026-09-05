@@ -1,0 +1,56 @@
+157
+TECHNIQUE 35
+Nested templates
+This nested template example starts out with index.html. This is similar to the simple
+template from listing 6.1. The difference is that instead of a <head> section, there’s a
+directive to include another template.
+ The directive {{template "head.html" .}} has three parts. template tells the tem-
+plate engine to include another template, and head.html is the name of that template.
+The final part is the . after head.html. This is the dataset to pass to the template. In
+this case, the entire dataset from the parent template is passed to this template. If a
+property on the dataset contained a dataset for a subtemplate, that could be passed in
+(for example, if {{template "head.html" .Foo}} were used, the properties on .Foo
+would be the ones available inside head.html). See the following listing.
+<head>
+  <meta charset="utf-8">
+  <title>{{.Title}}</title>
+</head>
+When head.html, as seen in listing 6.7, is invoked by index.html, the entire dataset is
+passed in. When Title is used, it’s the same Title used in index.html, as head.html
+has access to the entire dataset. 
+ The next listing brings the example together.
+package main
+import (
+     "html/template"
+     "net/http"
+)
+var t *template.Template
+func init() {
+     t = template.Must(template.ParseFiles("index.html", "head.html"))
+}
+type Page struct {
+     Title, Content string
+}
+func diaplayPage(w http.ResponseWriter, r *http.Request) {
+     p := &Page{
+            Title:   "An Example",
+            Content: "Have fun stormin’ da castle.",
+     }
+     t.ExecuteTemplate(w, "index.html", p)
+}
+func main() {
+     http.HandleFunc("/", diaplayPage)
+     http.ListenAndServe(":8080", nil)
+}
+Listing 6.7
+Head template included in the index: head.html
+Listing 6.8
+Using the nested templates: nested_templates.go
+Title is the same value 
+used in index.html.
+Loads the two templates
+into a template object
+Invokes the template 
+with the page data
+Serves the page on the 
+built-in web server

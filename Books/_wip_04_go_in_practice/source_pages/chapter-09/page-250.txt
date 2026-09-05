@@ -1,0 +1,43 @@
+227
+TECHNIQUE 58
+Gathering information on the host
+ Logging is important to observe an application operating in its environment and
+debug issues, but that’s just the beginning of operating in the cloud. Detecting the
+environment, building in environment tolerance, monitoring the runtime, detecting
+information when it’s needed, and numerous other characteristics affect how well it
+runs and your ability to tune the application. Next you’ll look at applications running
+in the cloud.
+9.3
+Running on cloud servers
+When an application is being built to run in the cloud, at times you may know all the
+details of the environment, but at other times information will be limited. Building
+applications that are tolerant to unknown environments will aid in the detection and
+handling of problems that could arise.
+ At the same time, you may develop applications on one operating system and
+architecture but need to operate them on another. For example, you could develop
+an application on Windows or Mac OS X and operate it on Linux in production.
+ In this section, you’ll explore how to avoid pitfalls that can come from assuming
+too much about an environment.
+9.3.1
+Performing runtime detection
+It’s usually a good idea to detect the environment at runtime rather than to assume
+characteristics of it in your code. Because Go applications communicate with the ker-
+nel, one thing you need to know is that if you’re on Linux, Windows, or another sys-
+tem, details beyond the kernel that Go was compiled for can be detected at runtime.
+This allows a Go application to run on Red Hat Linux or Ubuntu. Or a Go application
+can tell you if a dependency is missing, which makes troubleshooting much easier.
+TECHNIQUE 58
+Gathering information on the host
+Cloud applications can run in multiple environments such as development, testing,
+and production environments. They can scale horizontally, with the potential to have
+many instances dynamically scheduled. And they can run in multiple data centers at
+the same time. Being run in this manner makes it difficult to assume information
+about the environment or pass in all the details with application configuration.
+ Instead of knowing through configuration, or assuming host environment details,
+it’s possible to detect information about the environment.
+PROBLEM
+How can information about a host be detected within a Go application?
+SOLUTION
+The os package enables you to get information about the underlying system. Informa-
+tion from the os package can be combined with information detected through other
+packages, such as net, or from calls to external applications.

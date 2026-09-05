@@ -1,0 +1,52 @@
+43
+TECHNIQUE 4
+Configuration via environment variables
+TECHNIQUE 4
+Configuration via environment variables
+The venerable configuration file certainly provides a great vehicle for passing configu-
+ration data to programs. But some of today’s emerging environments defy some of the
+assumptions we make when using traditional configuration files. Sometimes the one
+configuring the application won’t have access to the filesystem at the level we assume.
+Some systems treat configuration files as part of the source codebase (and thus as
+static pieces of an executable). This removes some of the utility of configuration files.
+ Nowhere is this trend clearer than in the emerging PaaS cloud services. Deploying
+into these systems is usually accomplished by pushing a source-code bundle to a con-
+trol server (like a Git push). But the only runtime configuration you get on such serv-
+ers is done with environment variables. Let’s take a look at a technique for working in
+such an environment.
+PROBLEM
+Many PaaS systems don’t provide a way to specify per-instance configuration files. Con-
+figuration opportunities are limited to a small number of environmental controls,
+such as environment variables.
+SOLUTION
+Twelve-factor apps, commonly deployed to Heroku, Cloud Foundry, Deis, and other
+PaaS or container cluster managers (covered in chapter 11), are becoming more com-
+mon. One of the factors of a twelve-factor app is storing the configuration in the envi-
+ronment. This provides a way to have a different configuration for each environment
+an application runs in. 
+Twelve-factor apps
+This popular and widely used methodology for building web applications, software as
+a service, and similar applications uses the following 12 factors:
+1
+Use a single codebase, tracked in revision control, that can be deployed mul-
+tiple times.
+2
+Explicitly declare dependencies and isolate them from other applications.
+3
+Store application configuration in the environment.
+4
+Attach supporting services.
+5
+Separate the build and run stages.
+6
+Execute the application as one or more stateless processes.
+7
+Export services via TCP port binding.
+8
+Scale horizontally by adding processes.
+9
+Maximize robust applications with fast startup and graceful shutdown.
+10 Keep development, staging, and production as similar as possible.
+11 Handle logs as event streams.
+12 Run admin tasks as separate processes.
+More details can be found on these factors at http://12factor.net.

@@ -1,0 +1,40 @@
+111
+Summary
+In this example, you define a simple function that satisfies the GoDoer type (it has no
+parameters and no return value). Then when you call safely.Go(message), it exe-
+cutes your message function in a new goroutine, but with the added benefit of trap-
+ping any panics. Because message does panic, running this program provides the
+following output:
+$ go run safely_example.go
+Outside goroutine
+Inside goroutine
+2015/04/08 08:28:00 Panic in safely.Go: Oops!
+Instead of the panic stopping the program execution, safely.Go traps and logs the
+panic message.
+This particular library might not suit your exact needs, but it illustrates a good prac-
+tice: construct libraries so that a panic on a goroutine doesn’t have the surprising or
+unintended result of halting your program.
+ Go’s provision of both an error-handling system and a runtime panic system is ele-
+gant. But as you’ve seen in this section, panics tend to arise in surprising situations. If
+you forget to plan for them, you can find yourself mired in difficult debugging situa-
+tions. That’s why we’ve spent so much time discussing remedial techniques here—and
+why we suggest preventative no-brainer techniques like safely.Go instead of relying
+on developers to remember to do the right thing.
+4.3
+Summary
+Let’s be honest: there’s nothing glamorous about error handling. But we firmly
+believe that one of the traits that distinguishes a good programmer from a great pro-
+grammer is the way the developer writes error-handling code. Great programmers are
+mindful of protecting the system against bugs and failures.
+ That’s why we spent an entire chapter covering the details of the error and panic
+systems in Go, and providing techniques for handling common situations. We showed
+you best practices for providing meaningful data with errors and how such techniques
+extend to issuing panics. And we wrapped up with a long look at panics and gorou-
+tines. We covered these topics:
+Understanding Go’s patterns for error handling
+Using error variables
+Closures help here
+Instead of using a named function such as message, you could use a closure. A clo-
+sure allows you to access variables that are in scope, and can be used to sidestep
+the fact that GoDoer doesn’t accept any parameters. But if you do this, beware of
+race conditions and other concurrency issues!

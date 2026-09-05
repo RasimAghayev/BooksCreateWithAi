@@ -1,0 +1,42 @@
+104
+CHAPTER 4
+Handling errors and panics
+function appears inside the OpenCSV function. This deferred function is designed to
+do three things:
+Trap any panics.
+Make sure that if a panic occurs, the file is closed. This is considered good prac-
+tice even though in this context it may be redundant.
+Get the error from the panic and pass it back by using the regular error-
+handling mechanism.
+One detail of the declaration of OpenCSV is worth mentioning: we label the return val-
+ues in the function declaration. That makes it possible to refer to the file and err
+variables inside the closure, and ensures that when err is set to the panic’s error, the
+correct value is returned.
+ As we’ve shown, defer is a powerful and useful way of dealing with panics, as well
+as reliably cleaning up. As we close out this technique, here are a few useful guidelines
+for working with deferred functions:
+Put deferred functions as close to the top of a function declaration as possible.
+Simple declarations such as foo := 1 are often placed before deferred functions.
+More-complex variables are declared before deferred functions (var myFile
+io.Reader), but not initialized until after.
+Although it’s possible to declare multiple deferred functions inside a function,
+this practice is generally frowned upon.
+Best practices suggest closing files, network connections, and other similar
+resources inside a defer clause. This ensures that even when errors or panics
+occur, system resources will be freed.
+In the next technique, you’ll take one more step in handling panics and learn how to
+reliably prevent panics on goroutines from halting a program.
+4.2.4
+Panics and goroutines
+So far, we haven’t talked much about one of Go’s most powerful features: goroutines.
+You start goroutines by using the go keyword; if you have a function called run, you
+can start it as a goroutine like this: go run. To quote the Go Programming Language
+Specification, the go statement “starts the execution of a function call as an indepen-
+dent concurrent thread of control, or goroutine, within the same address space”
+(http://golang.org/ref/spec#Go_statements). More simply, you can think of it as run-
+ning a function on its own thread, but without having access to that thread.
+Goroutines beneath the hood
+The implementation of goroutines is a little more sophisticated than just running a
+function on its own thread. The Go Concurrency Wiki page (https://github
+.com/golang/go/wiki/LearnConcurrency) provides a big list of articles that dive into
+various aspects of Go’s CSP-based concurrency model.

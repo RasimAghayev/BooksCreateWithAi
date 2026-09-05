@@ -1,0 +1,44 @@
+57
+TECHNIQUE 9
+Faster routing (without the work)
+likely want to have tests to make sure your regular expressions are matching the
+proper paths.
+TECHNIQUE 9
+Faster routing (without the work)
+One criticism of Go’s built-in http package is that its routing and multiplexing (mux-
+ing) is basic. In the previous sections, we showed some straightforward ways of work-
+ing with the http package, but depending on your needs, you may not be satisfied
+with the configurability, performance, or capabilities of the built-in HTTP server. Or
+you may just want to avoid writing boilerplate routing code.
+PROBLEM
+The built-in http package isn’t flexible enough, or doesn’t perform well in a particu-
+lar use case.
+SOLUTION
+Routing URLs to functions is a common problem for web applications. Therefore,
+numerous packages have been built and tested, and are commonly used to tackle the
+problem of routing. A common technique is to import an existing request router and
+use it within your application.
+ Popular solutions include the following:
+
+github.com/julienschmidt/httprouter is considered a fast routing package
+with a focus on using a minimal amount of memory and taking as little time
+as possible to handle routing. It has features such as the ability to have case-
+insensitive paths, cleaning up /../ in a path, and dealing with an optional
+trailing /.
+
+github.com/gorilla/mux is part of the Gorilla web toolkit. This loose collec-
+tion of packages provides components you can use in an application. The mux
+package provides a versatile set of criteria to perform matching against, includ-
+ing host, schemes, HTTP headers, and more.
+
+github.com/bmizerany/pat provides a router inspired by the routing in Sina-
+tra. The registered paths are easy to read and can contain named parameters
+such as /user/:name. It has inspired other packages such as github.com/
+gorilla/pat.
+Each package has a different feature set and API. Numerous other routing packages
+exist as well. With a little investigation, you can easily find a quality third-party package
+that meets your needs.
+Sinatra web application library
+Sinatra is an open source web application framework written in Ruby. This framework
+has been used by numerous organizations and has inspired well over 50 comparable
+frameworks in many other languages, including several in Go.

@@ -35,6 +35,17 @@
       "started_at": "2026-09-06",
       "completed_at": "2026-09-06",
       "filename_safe": "Get Programming with Go - Nathan Youngman, Roger Peppé - 2018 - v1"
+    },
+    {
+      "book_id": "go_in_practice_2016_v1",
+      "title": "Go in Practice",
+      "author": "Matt Butcher, Trevor Matteson",
+      "year": 2016,
+      "version": 1,
+      "pages": 314,
+      "status": "reading",
+      "started_at": "2026-09-06",
+      "filename_safe": "Go in Practice - Matt Butcher, Trevor Matteson - 2016 - v1"
     }
   ]
 }

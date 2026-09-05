@@ -1,0 +1,46 @@
+70
+CHAPTER 3
+Concurrency in Go
+runtime.growWork(0xca600, 0x8202142d0, 0x31)
+     /usr/local/go/src/runtime/hashmap.go:795 +0x8a fp=0x82029ccd0
+     sp=0x82029ccb0
+runtime.mapassign1(0xca600, 0x8202142d0, 0x82029ce70, 0x82029cdb0)
+     /usr/local/go/src/runtime/hashmap.go:433 +0x175 fp=0x82029cd78
+     sp=0x82029ccd0
+…
+At least some of the time, this will fail. Why? The error gives a hint: concurrent map
+writes. If you rerun the command with the --race flag, you’ll get an even better idea:
+go run --race race.go *.txt
+==================
+WARNING: DATA RACE
+Read by goroutine 8:
+  runtime.mapaccess2_faststr()
+      /tmp/workdir/go/src/runtime/hashmap_fast.go:281 +0x0
+  main.tallyWords()
+      /Users/mbutcher/Code/go-in-practice/chapter3/race/race.go:62 +0x3ed
+  main.main.func1()
+      /Users/mbutcher/Code/go-in-practice/chapter3/race/race.go:18 +0x66
+Previous write by goroutine 6:
+  runtime.mapassign1()
+      /tmp/workdir/go/src/runtime/hashmap.go:411 +0x0
+  main.tallyWords()
+      /Users/mbutcher/Code/go-in-practice/chapter3/race/race.go:62 +0x48a
+  main.main.func1()
+      /Users/mbutcher/Code/go-in-practice/chapter3/race/race.go:18 +0x66
+Goroutine 8 (running) created at:
+  main.main()
+      /Users/mbutcher/Code/go-in-practice/chapter3/race/race.go:22 +0x238
+Goroutine 6 (running) created at:
+  main.main()
+      /Users/mbutcher/Code/go-in-practice/chapter3/race/race.go:22 +0x238
+==================
+The call to words.add has a problem. Multiple goroutines are accessing the same bit
+of memory, the words.found map, at the same time (note the bold lines). This causes
+a race condition to modify the map.
+If you look back at the original program, you can quickly find the problem. If add is
+called by multiple goroutines at around the same time, multiple simultaneous opera-
+tions may occur on the same map. This is a recipe for corrupting the map.
+Go includes built-in race detection
+Many of the Go tools, including go run and go test, accept a --race flag, which
+enables race detection. Race detection substantially slows execution, but it’s useful
+for detecting race conditions during the development cycle.

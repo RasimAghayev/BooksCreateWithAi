@@ -1,0 +1,19 @@
+168
+Serving and receiving
+assets and forms
+If you think about it, the original web service was serving files. This is what was first
+created back in 1991 when the web began. The interaction we enjoy today wasn’t
+there at the beginning. When interaction came, it did so through web forms. These
+constructs, created decades ago, are still synonymous with the modern web and
+foundational to modern web applications.
+ This chapter starts by presenting methods to serve static files for your Go appli-
+cation. Because Go is a web server, rather than running behind a web server such as
+Apache or Nginx, you need to set up how you want files such as Cascading Style
+Sheets (CSS), JavaScript, images, or other files to be served. You’ll learn several
+ways to store and serve files that provide solutions for varying applications.
+This chapter covers
+Serving static files such as those needed 
+to view a website
+Handling HTML forms, including file 
+uploads
+Working with raw multipart messages

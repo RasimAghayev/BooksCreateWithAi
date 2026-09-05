@@ -1,0 +1,41 @@
+136
+CHAPTER 5
+Debugging and testing
+data of the right parameter type. If you wanted to test longer strings, for example, you
+could change your fn function to take a uint16 instead of a uint8.
+ If you run this test, you’ll discover a bug in the original code:
+$ go test
+2015/07/21 09:20:15 Testing Len: 6, Str: test
+2015/07/21 09:06:09 Testing Len: 32, Str: XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
+--- FAIL: TestPadGenerative (0.00s)
+     generative_test.go:39: #1: failed on input 
+"\U000305ea\U000664e9\U000cbd92\U00091bbf\U0010b40d\U000fd581…", 0x20
+FAIL
+exit status 1
+FAIL _/Users/mbutcher/Code/go-in-practice/chapter5/tests/generative
+0.005s
+What happened? One of the strings that was generated was longer than its maximum
+length, which kicked off the truncation code (listing 5.17) that your previous test
+didn’t account for. You accidentally sliced incorrectly—s[:max-1] should be s[:max]
+because you’re giving it a length, not an index. After you’ve fixed that, rerunning the
+test should show many tests using randomly generated values.
+Go’s quick testing package comes with other utilities. Most of these are designed to
+help you quickly generate test data, as in the preceding example. Go’s generator is
+good enough that it can extend beyond simple types like integers and strings, and
+even generate random struct instances.
+5.5
+Using performance tests and benchmarks
+Which is faster: the path-matching package or a custom-written regular expression to
+patch paths? How is that fan-out pattern working in practice? Why is my HTTP server
+so slow? One of the frequent tasks of the seasoned programmer is to identify and fix
+performance issues with code. Once again, Go provides some useful tools.
+ Nestled inside Go’s testing package are some performance-testing features
+designed to repeatedly run pieces of code and then report on their efficiency.
+Go’s random generator
+If the values are randomly generated, why do you get the same strings when you run
+the test repeatedly? Go doesn’t automatically seed the "math/rand".Rand gener-
+ator each time it runs. If you want different data each run, you can pass a seeded
+random generator by using "testing/quick".Config. This is a good way to
+increase test data coverage, but it comes at the cost of repeatability. If you do hit a
+failure, you’ll need to make note of the data that caused the error because it may not
+come up again for a long time.

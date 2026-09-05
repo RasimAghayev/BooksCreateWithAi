@@ -1,0 +1,43 @@
+220
+CHAPTER 9
+Using the cloud
+operations, scale, and updates to a service provider. Using APIs, you set up a database
+and access it. This ladder case is an example of software as a service (SaaS), shown in
+figure 9.2.
+ SaaS comprises a wide range of software, from the building blocks to other applica-
+tions to consumer applications. Using SaaS for application building blocks, such as
+databases and storage, allows teams to focus on the activities that make their applica-
+tions different. 
+ SaaS examples are wide-ranging and include Salesforce, Microsoft Office 365, and
+the payment processor Stripe.
+9.1.2
+Containers and cloud-native applications
+When Docker, the container management software, came into the public eye, using
+containers to run and distribute applications became popular. Containers are differ-
+ent from virtual machines or traditional servers.
+ Figure 9.3 compares virtual machines and containers. On the left is a system, going
+all the way down to the hardware server, that runs virtual machines. On the right is a
+separate system running containers. Each is running two applications as workloads,
+with App A being scaled horizontally to have two instances, for a total of three work-
+load instances.
+ When virtual machines run, the hypervisor provides an environment for an operat-
+ing system to run in that emulates hardware or uses special hardware for virtual
+machines. Each virtual machine has a guest operating system with its own kernel. Inside
+the operating system are all the applications, binaries, and libraries in the operating sys-
+tem or set up by the users. Applications run in this environment. When two instances
+Software as a service
+(e.g., database as a service)
+Platform as a service
+Infrastructure as a service
+(e.g., virtual machines)
+Infrastructure as a Service (IaaS) is accessible 
+to both build applications on and run
+other services on.
+Platform as a Service (PaaS) is usually run
+on IaaS, is accessible to build applications
+on, and it can run SaaS applications on it.
+Software as a Service (SaaS) can be run in
+IaaS or PaaS environments and is accessible
+for other applications and people to use.
+Figure 9.2
+The layers of cloud services can sit on each other.

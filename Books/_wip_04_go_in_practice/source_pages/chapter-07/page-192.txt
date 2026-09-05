@@ -1,0 +1,48 @@
+169
+Serving static content
+ From there, we move into form handling. Form handling with Go may seem fairly
+straightforward, and for simple cases it is. Yet, cases such as handling files as multipart
+form data can require tapping into parts of Go not often touched or understood. This
+is especially true if you want to work with large files.
+ File serving and form handling combined with template handling from the previ-
+ous chapter lay a foundation for building web applications in Go. You can use these
+techniques with your front-end technologies of choice to build rich web applications.
+7.1
+Serving static content
+A website or web application built with Go doesn’t need to sit behind a web server.
+Instead, it handles serving all of the content with its web server, whether that content
+is application pages or static files, such as CSS, images, or JavaScript. Figure 7.1 illus-
+trates the difference between a Go application and one using a separate web server.
+A common pattern has an
+application running behind a
+web server. The web server
+receives user connections
+and passes data between the
+connection and application. 
+A Go application receives
+connections directly from
+clients using a built-in web
+server. No intermediate
+application is necessary. Go
+handles the thread
+management.
+Web
+Server
+Application process
+Application process
+Application process
+...
+Operating system
+Operating system
+Go application
+HTTP server package
+Figure 7.1
+A Go application communicating over HTTP compared to a common web server model
+Common Gateway Interface
+Although Go is typically run as a server that serves all content, it can be used with a
+Common Gateway Interface (CGI) or FastCGI server. The net/http/cgi package
+works with the CGI interface, and the net/http/fastcgi package works with a
+FastCGI interface. In this environment, static content may be served by another web
+server. These packages are intended for compatibility with existing systems. CGI
+starts up a new process to respond to each request, which is less efficient than typ-
+ical Go serving. This is a setup we don’t recommend using.

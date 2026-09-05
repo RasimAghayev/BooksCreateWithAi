@@ -1,0 +1,10 @@
+83
+Summary
+Communicating between goroutines with channels
+Closing channels properly
+In the coming chapters, you’ll see goroutines and channels in practice. You’ll see how
+Go’s web server starts a new goroutine for each request, and how patterns such as fan-
+out work for distributing a workload among multiple channels. If there’s one feature
+that makes Go a standout system language, it’s Go’s concurrency model.
+ Next, we turn to error handling. Although it’s not a glamorous topic, Go’s method
+of handling errors is one of its exceptional features.

@@ -1,0 +1,48 @@
+277
+TECHNIQUE 70
+Generating code with go generate
+ 
+package main
+import (
+     "fmt"
+     "os"
+     "strings"
+     "text/template"
+)
+var tpl = `package {{.Package}}
+type {{.MyType}}Queue struct {
+     q []{{.MyType}}
+}
+func New{{.MyType}}Queue() *{{.MyType}}Queue {
+     return &{{.MyType}}Queue{
+            q: []{{.MyType}}{},
+     }
+}
+func (o *{{.MyType}}Queue) Insert(v {{.MyType}}) {
+     o.q = append(o.q, v)
+}
+func (o *{{.MyType}}Queue) Remove() {{.MyType}} {
+     if len(o.q) == 0 {
+            panic("Oops.")
+     }
+     first := o.q[0]
+     o.q = o.q[1:]
+     return first
+}
+`
+Your template is almost the same as the target code you wrote previously, but with the
+package name replaced with {{.Package}}, and the MyType prefix replaced with
+{{.MyType}}. From here, you need to write the code that performs the generation.
+This is a command-line tool designed to fit the //go:generate COMMAND ARGUMENT…
+pattern. Ideally, what you’d like is to be able to write something like this:
+//go:generate queue MyInt
+And as a result, the generator would generate a MyIntQueue implementation. It’d be
+even nicer if you could generate queues for multiple types at once:
+//go:generate queue MyInt MyFloat64
+You should be able to easily accommodate that, too, as shown in the next listing.
+Listing 11.19
+The queue template
+.Package is your 
+package placeholder
+.MyType is your 
+type placeholder

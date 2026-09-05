@@ -1,0 +1,48 @@
+141
+TECHNIQUE 31
+Detecting race conditions
+ Unsurprisingly, your earlier nonparallel tests don’t perform any better when using
+more CPUs. With only one main goroutine running, there’s no optimization to be
+had. A noticeable hit occurs, due to the higher accounting overhead of multiple CPUs,
+but that disappears when you look at the results of BenchmarkParallelTemplates.
+There, you drop about a third of the time off when you spread processing over multi-
+ple CPU cores. The slightly higher time for the four cores, compared to two, may indi-
+cate that locking slows you down ever so slightly.
+ What if you make a naïve mistake, though, and try a quick optimization?
+TECHNIQUE 31
+Detecting race conditions
+When attempting to parallelize processing with multiple goroutines and multiple
+CPUs, you run the possibility of accidentally accessing things in the wrong order. A
+race condition occurs when two or more goroutines attempt to modify the same piece of
+information at about the same time. If the execution order differs from what you
+intend, the result may be surprising. And these conditions are often hard to diagnose.
+But Go includes a race detection tool, and the preceding parallel benchmark tech-
+nique provides an opportunity to try it.
+PROBLEM
+In programs with many goroutines, race conditions could occur. Being able to test for
+this possibility is desirable.
+SOLUTION
+Use the –race flag (sometimes called go race or grace).
+DISCUSSION
+Let’s begin with listing 5.22 and make an ill-conceived performance optimization.
+Instead of declaring a new buffer for each goroutine, let’s share one in the following
+listing. This will reduce the allocations your tested code has to perform.
+func BenchmarkParallelOops(b *testing.B) {
+     tpl := "Hello {{.Name}}"
+     t, _ := template.New("test").Parse(tpl)
+     data := &map[string]string{
+            "Name": "World",
+     }
+     var buf bytes.Buffer
+     b.RunParallel(func(pb *testing.PB) {
+            for pb.Next() {
+                   t.Execute(&buf, data)
+                   buf.Reset()
+            }
+     })
+}
+Now let’s run that code sample. It’s likely that the parallel benchmark will fail:
+Listing 5.24
+Benchmarks and race conditions
+Moved out of 
+the closure

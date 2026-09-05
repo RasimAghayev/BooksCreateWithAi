@@ -1,0 +1,51 @@
+102
+CHAPTER 4
+Handling errors and panics
+ 
+package main
+import "fmt"
+func main() {
+     var msg string
+     defer func() {
+            fmt.Println(msg)
+     }()
+msg = "Hello world"
+}
+Because msg is defined before the closure, the closure may reference it. And as
+expected, the value of the message will reflect whatever the state of msg is when the
+deferred function executes. The preceding code prints Hello world.
+ But even though defer is executed after the rest of the function, a closure doesn’t
+have access to variables that are declared after the closure is declared. The closure is
+evaluated in order, but not executed until the function returns. For that reason, the
+following listing causes a compile error.
+package main
+import "fmt"
+func main() {
+     defer func() {
+            fmt.Println(msg)
+     }()
+     msg := "Hello world"
+}
+Because msg isn’t declared prior to the deferred function, when the code is evaluated,
+msg is undefined.
+ Bringing together the details, you can take one final step in this technique. Let’s
+look at a slightly more sophisticated use of a deferred function. This one handles a
+panic and cleans up before returning, and is a good representative sample of how to
+use deferred functions and recover in practice.
+ Imagine that you’re writing a piece of code that preprocesses a CSV file, removing
+empty lines from the beginning. For the sake of boiling this code down to an example,
+RemoveEmptyLines isn’t fully implemented. Instead, it always returns a panic. With
+this bad behavior, we can illustrate how to recover from a panic, close the problematic
+file, and then return an error, as shown in the following listing.
+Listing 4.14
+Scope for deferred closures
+Listing 4.15
+msg out of scope
+Defines the variable 
+outside the closure
+Prints the variable in the 
+deferred closure
+Sets the value of the variable
+Prints a variable
+Declares and sets the variable. Compiles will fail 
+because the declaration is after the function.

@@ -1,0 +1,43 @@
+156
+CHAPTER 6
+HTML and email template patterns
+TECHNIQUE 35
+Nested templates
+Sharing and reusing sections of templates, like code reuse, is a common need. If you
+have an application with numerous web pages, you’ll typically find that most elements
+are common across pages, and some elements are custom.
+PROBLEM
+You want to avoid duplicating the common sections of HTML markup in each tem-
+plate and the maintenance burden that goes along with that. Like the software you’re
+developing, you want to take advantage of reuse.
+SOLUTION
+Use nested templates to share common sections of HTML, as shown in figure 6.1. The
+subtemplates enable reuse for sections of markup, cutting down on duplication.
+DISCUSSION
+The template system in Go is designed to handle multiple templates and allow them
+to work together. A parent template can import other templates. When the parent is
+executed to render the output, the subtemplates are included as well. The following
+listing shows how this works, touching on some important nuances.
+<!DOCTYPE HTML>
+<html>
+  {{template "head.html" .}}
+  <body>
+       <h1>{{.Title}}</h1>
+       <p>{{.Content}}</p>
+  </body>
+</html>
+Listing 6.6
+Index template including head template: index.html
+Page template
+Header template
+Footer template
+A template for a full web page.
+Templates containing common sections
+of markup are included for reusabillity.
+When a page is rendered, the template 
+and all nested subtemplates are used 
+to generate the output.
+Figure 6.1
+Using nested subtemplates to share common template code
+Includes another template in this 
+one, passing in entire dataset

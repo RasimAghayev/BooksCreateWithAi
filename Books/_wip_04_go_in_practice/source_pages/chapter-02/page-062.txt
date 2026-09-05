@@ -1,0 +1,39 @@
+39
+TECHNIQUE 3
+Using configuration files
+Whereas the preceding section talked about passing in configuration via command-
+line options, this section looks at passing in configuration via files, or in the case of
+12-factor apps, using environment variables. In this section, we add support for com-
+mon configuration formats, including JSON, YAML, and INI. Then we present the
+approach favored in the 12-factor pattern, which passes in configuration through
+environment variables.
+TECHNIQUE 3
+Using configuration files
+Command-line arguments, like those in the preceding section, are good for many
+things. But when it comes to one-time configuration of a program installed into a par-
+ticular environment, command-line arguments aren’t the right fit. The most common
+solution is to store configuration data in a file that the program can load at startup.
+ In the next few sections, you’ll look at the three most popular configuration file
+formats and how to work with them in Go.
+PROBLEM
+A program requires configuration above and beyond that which you can provide with
+a few command-line arguments. And it would be great to use a standard file format.
+SOLUTION
+One of today’s most popular configuration file formats is JavaScript Object Notation
+(JSON). The Go standard library provides JSON parsing and handling. It should be no
+surprise that JSON configuration files are common.
+DISCUSSION
+Consider the JSON file config.json with the following:
+{
+     "enabled": true,
+     "path": "/usr/local"
+}
+The following listing showcases a JSON configuration parser.
+Ansible, Chef, and Puppet
+Ansible, Chef, and Puppet are popular ops platforms for managing computers and
+their configurations. They’re commonly used to manage the software installed on
+clusters of servers and the configuration needed for the applications running in them.
+For example, take an application connected to a database. The database could be
+on the same server, a different server, or a cluster of servers. The ops platform would
+manage the installation and configuration, providing the right connection information
+to the application.

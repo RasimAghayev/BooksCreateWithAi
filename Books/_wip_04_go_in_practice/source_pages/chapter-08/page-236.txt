@@ -1,0 +1,35 @@
+213
+Summary
+if res.Header.Get("Content-Type") != ct {
+     fmt.Println("Unexpected content type returned")
+     return
+}
+b, _ := ioutil.ReadAll(res.Body)
+res.Body.Close()
+fmt.Printf("%s", b)
+Although this method provides the capability to have multiple API versions from a sin-
+gle endpoint, you need to be aware of the following considerations:
+Content types in the vnd. namespace are supposed to be registered with the
+Internet Assigned Numbers Authority (IANA).
+When making a request for a nondefault version, you need to add extra steps to
+specify the content type for the version. This adds more work to applications
+consuming the API.
+8.5
+Summary
+In this chapter, you started with the basics of working with web services such as making
+REST requests. You quickly moved from the basics to elements of building robust web
+service interactions that included the following:
+Detecting network timeouts, even when the network layer doesn’t formally flag
+them, and resuming downloads when timeouts occur.
+Passing errors between API endpoints and client requestors by using and going
+beyond the HTTP status header.
+Parsing JSON, even when you don’t know the structure ahead of time.
+Using two methods for versioning REST APIs and working with versioned APIs.
+In the next chapter, you’ll learn about working with cloud services. Running applica-
+tions effectively in the cloud involves more than working with the APIs that let you
+configure them. In chapter 9, you’ll learn techniques to help your Go applications be
+effective in the cloud.
+Verifies that the 
+response used the 
+expected content type
+Prints the response body

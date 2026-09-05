@@ -1,0 +1,62 @@
+35
+TECHNIQUE 2
+Avoiding CLI boilerplate code
+USAGE:
+   hello_cli [global options] command [command options] [arguments...]
+VERSION:
+   0.0.0
+COMMANDS:
+   help, h   Shows a list of commands or help for one command
+GLOBAL OPTIONS:
+   --name, -n 'World'      Who to say hello to.
+   --help, -h              show help
+   --version, -v           print the version
+Using cli.go, the application-specific code needed to generate this application is
+only 26 lines long and can be seen in the following listing. The rest of the work and
+user interface is handled by cli.go.
+package main
+import (
+     "fmt"
+     "os"
+     "gopkg.in/urfave/cli.v1"
+)
+func main() {
+     app := cli.NewApp()
+     app.Name = "hello_cli"
+     app.Usage = "Print hello world"
+     app.Flags = []cli.Flag{
+            cli.StringFlag{
+                   Name:  "name, n",
+                   Value: "World",
+                   Usage: "Who to say hello to.",
+            },
+     }
+     app.Action = func(c *cli.Context) error {
+            name := c.GlobalString("name")
+            fmt.Printf("Hello %s!\n", name)
+            return nil
+     }
+     app.Run(os.Args)
+}
+After cli.go is imported, a new application is created using cli.NewApp. The
+returned variable is the basis for the application. Setting the Name and Usage proper-
+ties is useful for documentation B.
+TIP
+If the Name property is left unset, cli.go will attempt to determine the
+name by using the name of the application. If an application may be
+renamed, it’s useful to use the default behavior.
+Listing 2.7
+Hello World CLI: hello_cli.go
+Includes the 
+cli.go package
+Creates a new 
+application
+B
+Sets up a 
+global flag
+C
+Defines the action 
+to run
+D
+Runs the application
+E

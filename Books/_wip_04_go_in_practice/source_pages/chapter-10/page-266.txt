@@ -1,0 +1,68 @@
+243
+TECHNIQUE 63
+Faster JSON marshal and unmarshal
+NOTE
+The next chapter covers generators and reflection in depth.
+After the User type is ready for use, the encoding and decoding can be incorporated
+into the rest of the application, as shown in the next listing.
+jh := new(codec.JsonHandle)
+u := &user.User{
+     Name:  "Inigo Montoya",
+     Email: "inigo@montoya.example.com",
+}
+var out []byte
+err := codec.NewEncoderBytes(&out, jh).Encode(&u)
+if err != nil {
+     …
+}
+fmt.Println(string(out))
+Here’s the output of this code:
+{"name":"Inigo Montoya","Email":"inigo@montoya.example.com"}
+Notice that the name key is lowercase, whereas the Email key has an uppercase first let-
+ter. The User type, defined in listing 10.4, has uppercase property names leading to
+key names that directly reflect that. But the Name property has a custom key of name
+used here.
+ The byte slice with the JSON that was created in listing 10.5 can be decoded into an
+instance of User, as shown in the following listing.
+var u2 user.User
+err = codec.NewDecoderBytes(out, jh).Decode(&u2)
+if err != nil {
+     …
+}
+fmt.Println(u2)
+Although the API to github.com/ugorji/go/codec is different from the encoding
+/json package in the standard library, it’s simple enough to be easily used.
+Listing 10.5
+Encode an instance to JSON with codec
+Listing 10.6
+Decode JSON into an instance of a type
+Creates a new JSON handler for 
+the encoder. The codec package 
+has handlers for each type it 
+works with.
+Creates a byte slice to
+store the output in.
+This will be the
+generated JSON from
+the instance of User.
+Encodes the instance of User into
+the output using the JSON handle.
+The codec package does this in two
+steps that can be done together.
+Creates an instance 
+of User populated 
+with data
+Converts the byte 
+slice to a string 
+and prints it
+Creates a variable to 
+hold the decoded JSON
+Decodes the JSON by using the 
+JSON handler, both created in 
+listing 10.5, into the new instance 
+of the User type. The decoder uses 
+two steps that can be used 
+together. The decoder can reuse 
+the JSON handler.
+Prints the populated 
+instance of User

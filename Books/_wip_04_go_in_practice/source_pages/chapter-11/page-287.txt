@@ -1,0 +1,61 @@
+264
+CHAPTER 11
+Reflection and code generation
+     fmt.Printf("%sValue is type %q (%s)\n", tabs, t, val.Kind())
+     if val.Kind() == reflect.Struct {
+            for i := 0; i < t.NumField(); i++ {
+                   field := t.Field(i) 
+                   fieldVal := reflect.Indirect(val.Field(i))
+                   tabs := strings.Repeat("\t", depth+2)
+                   fmt.Printf("%sField %q is type %q (%s)\n",
+                          tabs, field.Name, field.Type, fieldVal.Kind())
+                   if fieldVal.Kind() == reflect.Struct {
+                          walk(fieldVal.Interface(), depth+1)
+                   }
+            }
+     }
+}
+The preceding example combines just about everything you’ve learned about reflec-
+tion. Types, values, and kinds all come into play as you walk through a value and exam-
+ine its reflection data. If you run this little program, the output looks like this:
+$ go run structwalker.go
+Walking a simple integer
+     Value is type "main.MyInt" (int)
+Walking a simple struct
+     Value is type "struct { Name string }" (struct)
+            Field "Name" is type "string" (string)
+Walking a struct with struct fields
+     Value is type "main.Person" (struct)
+            Field "Name" is type "*main.Name" (struct)
+            Value is type "main.Name" (struct)
+                   Field "Title" is type "string" (string)
+                   Field "First" is type "string" (string)
+                   Field "Last" is type "string" (string)
+            Field "Address" is type "*main.Address" (struct)
+            Value is type "main.Address" (struct)
+                   Field "Street" is type "string" (string)
+                   Field "Region" is type "string" (string)
+In this output, you can see the program examine each of the values you’ve given it.
+First, it checks a MyInt value (of kind int). Then it walks the simple struct. Finally, it
+walks the more complex struct and recurses down through the struct until it hits only
+nonstruct kinds.
+ The walk() function does all of the interesting work in this program. It begins
+with an unknown value, u, and inspects it. While you’re walking through an unknown
+value, you want to make sure that you follow pointers. If reflect.ValueOf() is called
+on a pointer, it will return a reflect.Value describing a pointer. That isn’t interesting
+in this case. Instead, what you want is the value at the other end of that pointer, so you
+use reflect.Indirect() to get a reflect.Value describing the value pointed to. The
+reflect.Indirect() method is useful in that if it’s called on a value that’s not a
+pointer, it will return the given reflect.Value, so you can safely call it on all values:
+val := reflect.Indirect(reflect.ValueOf(u))
+If the kind
+is struct,
+you
+examine
+its fields.
+For each field, you
+need both the
+reflect.StructField
+and the reflect.Value.
+If the field is also a struct, you
+can recursively call walk().

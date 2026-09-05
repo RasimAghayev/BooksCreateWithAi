@@ -1,0 +1,57 @@
+221
+What is cloud computing?
+of an application run in parallel (which is how horizontal scaling works), the entire
+guest operating system, applications, libraries, and your application are replicated.
+ Using virtual machines comes with certain architectural elements worth noting:
+When a virtual machine starts up, the kernel and guest operating system need
+time to boot up. This takes time because computers take time to boot up.
+Hypervisors and modern hardware can enforce a separation between each vir-
+tual machine.
+Virtual machines provide an encapsulated server with resources being assigned
+to it. Those resources may be used by that machine or held for that machine.
+Containers operate on a different model. The host server, whether it’s a physical
+server or virtual machine, runs a container manager. Each container runs in the host
+operating system. When using the host kernel, its startup time is almost instantaneous.
+Containers share the kernel, and hardware drivers and the operating system enforce a
+separation between the containers. The binaries and libraries used, commonly associ-
+ated with the operating system, can be entirely separate. For example, in figure 9.3,
+App A could be using the Debian binaries and libraries, and App B could be running
+on those from CentOS. The applications running in those containers would see their
+environment as Debian or CentOS.
+ Cloud-native applications is a term that tends to be used alongside containers. Cloud-
+native applications take advantage of the programmatic nature of the cloud to scale
+with additional instances on demand, remediate failures so many problems in the sys-
+tems are never experienced by end users, tie together microservices to build larger
+applications, and more.  Containers, with their capability to start almost instantly
+while being more densely placed on the underlying servers than virtual machines,
+provide an ideal environment for scaling, remediation, and microservices.
+DEFINITION
+Remediation is the automatic correction of problems in running
+applications. Microservices are small, independent processes that communicate
+with other small processes over defined APIs. Microservices are used together
+to create larger applications. Microservices are covered in more detail in
+chapter 10.
+App B
+App B
+App A1
+App A2
+App A2
+App A1
+bins/libs
+bins/libs
+bins/libs
+Guest OS
+Guest OS
+Guest OS
+Hypervisor
+Host OS
+Server
+bins/libs
+bins/libs
+Host OS
+Server
+Container manager
+Virtual machine
+Container
+Figure 9.3
+Comparing containers and virtual machines

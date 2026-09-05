@@ -1,0 +1,59 @@
+208
+CHAPTER 8
+Working with web services
+The JSON parsed here contains a variety of structure situations. This is important
+because working with the interface{} isn’t the same as working with JSON parsed
+into a struct. You’ll look at working with this data in a moment.
+ When JSON data is parsed into a struct, such as the example in listing 8.9, it’s eas-
+ily accessible. In that case, the name of the person from the parsed JSON is available at
+p.Name. If you tried to access firstName on the interface{} in the same way, you’d
+see an error. For example:
+fmt.Println(f.firstName)
+Accessing firstName like a property would generate an error:
+f.firstName undefined (type interface {} is interface with no methods)
+Before you can work with the data, you need to access it as a type other than interface{}.
+In this case, the JSON represents an object, so you can use the type map[string]
+interface{}. It provides access to the next level of data. The following is a way to access
+firstName:
+m := f.(map[string]interface{})
+fmt.Println(m["firstName"])
+At this point, the top-level keys are all accessible, allowing firstName to be accessible
+by name.
+ To programmatically walk through the resulting data from the JSON, it’s useful to
+know how Go treats the data in the conversion. When the JSON is unmarshaled, the
+values in JSON are converted into the following Go types:
+
+bool for JSON Boolean
+
+float64 for JSON numbers
+
+[]interface{} for JSON arrays
+
+map[string]interface{} for JSON objects
+
+nil for JSON null
+
+string for JSON strings
+Knowing this, you can build functionality to walk the data structure. For example, the
+following listing shows functions recursively walking the parsed JSON, printing the key
+names, types, and values.
+func printJSON(v interface{}) {
+     switch vv := v.(type) {
+     case string:
+            fmt.Println("is string", vv)
+     case float64:
+            fmt.Println("is float64", vv)
+     case []interface{}:
+            fmt.Println("is an array:")
+Listing 8.11
+Walk arbitrary JSON
+Switch
+ based on
+the data
+type for a
+value
+For each type of data from the JSON, 
+displays information about the type and 
+value. On objects and arrays from the 
+JSON, recursively calls printJSON to 
+display the properties inside them.

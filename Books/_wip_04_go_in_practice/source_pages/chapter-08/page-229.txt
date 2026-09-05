@@ -1,0 +1,64 @@
+206
+CHAPTER 8
+Working with web services
+8.3
+Parsing and mapping JSON
+When communicating over REST APIs, the most common format to transfer informa-
+tion is JSON. Being able to easily and quickly convert JSON strings into native Go data
+structures is useful, and the Go standard library provides that functionality out of the
+box via the encoding/json package. For example, the following listing parses a simple
+JSON data structure into a struct.
+package main
+import (
+     "encoding/json"
+     "fmt"
+)
+type Person struct {
+     Name string `json:"name"`
+}
+var JSON = `{
+  "name": "Miracle Max"
+}`
+func main() {
+     var p Person
+     err := json.Unmarshal([]byte(JSON), &p)
+     if err != nil {
+            fmt.Println(err)
+            return 
+     }
+     fmt.Println(p)
+}
+Although the standard library provides everything you need for the foundational
+JSON-parsing use cases, you may run into some known and common situations without
+an obvious solution.
+TECHNIQUE 53
+Parsing JSON without knowing the schema
+The structure of JSON is often passed along via documentation, examples, and from
+reading the structure. Although schemas exist for JSON, such as JSON Schema, they’re
+often not used. Not only is JSON schemaless, but API responses may vary the structure,
+and in some cases you may not know the structure.
+ When JSON data is parsed in Go, it goes into structs with a structure defined in the
+code. If you don’t know the structure when the structs are being created, or the struc-
+ture changes, that presents a problem. It may seem as though it’s difficult to intro-
+spect JSON or operate on documents with a varying structure. That’s not the case.
+PROBLEM
+How can you parse a JSON data structure into a Go data structure when you don’t
+know the structure ahead of time?
+Listing 8.9
+A simple custom JSON-parsing example
+A struct that also represents information 
+in JSON. The json tag maps the Name 
+property to name in the JSON.
+JSON represented 
+as a string
+An instance of the 
+Person struct to hold 
+the parsed JSON data
+Parses the JSON data 
+into the instance of 
+the Person struct
+Handles any 
+parsing 
+errors
+Acts on the now populated Person 
+object, in this case printing it

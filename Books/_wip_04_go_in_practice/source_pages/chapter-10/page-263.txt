@@ -1,0 +1,64 @@
+240
+CHAPTER 10
+Communication between cloud services
+Unless you have a reason to disable keep-alive, we suggest you use it. When making
+many HTTP requests to the same endpoint, it provides for faster performance.
+ The other behavior that can prevent connection reuse occurs when the body of a
+response isn’t closed. Prior to HTTP/2, pipelining was almost never implemented or
+used. Pipelining allows multiple requests and their responses to be communicated in
+parallel rather than in serial, as you can see in figure 10.3. Prior to HTTP/2, one
+request and response needed to be completed before the next could be used. The
+body of the response would need to be closed before another HTTP request and
+response could use the connection.
+ The following listing illustrates a common case of one response body not being
+closed before another HTTP request is made.
+func main() {
+r, err := http.Get("http://example.com")
+if err != nil {
+            …
+}
+defer r.Body.Close()
+o, err := ioutil.ReadAll(r.Body)
+if err != nil {
+            …
+}
+// Use the body content
+r2, err := http.Get("http://example.com/foo")
+if err != nil {
+            …
+}
+defer r2.Body.Close()
+o, err = ioutil.ReadAll(r2.Body)
+if err != nil {
+            …
+}
+…
+}
+Listing 10.2
+Failing to close an HTTP response body
+Open
+Close
+Open
+Close
+In pipelining, 
+requests are concurrent.
+Requests in serial, 
+one after another
+Server
+Client
+Server
+Client
+Time
+Figure 10.3
+HTTP Pipelining compared to serial requests
+Makes an HTTP 
+request and gets 
+a response
+Defers closing the 
+body until the main() 
+function exits
+Makes a second HTTP 
+request. Because the body 
+isn’t yet closed on the 
+first, a new connection 
+needs to be made.

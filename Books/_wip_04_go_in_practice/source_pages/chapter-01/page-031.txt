@@ -1,0 +1,61 @@
+8
+CHAPTER 1
+Getting into Go
+ 
+package main
+import (
+    "bufio"
+    "fmt"
+    "net"
+)
+func main() {
+    conn, _ := net.Dial("tcp", "golang.org:80")
+    fmt.Fprintf(conn, "GET / HTTP/1.0\r\n\r\n")
+    status, _ := 
+➥bufio.NewReader(conn).ReadString('\n')
+    fmt.Println(status) 
+}
+Connecting directly to a port is part of the net package, in which Go provides a com-
+mon setup for different types of connections. The Dial function B connects using
+the type and endpoint specified. In this case, it makes a TCP connection to golang.org
+on port 80. Over the connection, a GET request is sent C, and the first line of the
+response is printed D.
+ The ability to listen on a port is similarly easy to work with. Instead of calling out to
+an endpoint by using Dial, the Listen function in the net package enables an appli-
+cation to listen on a port and act on incoming connections.
+ HTTP, Representational State Transfer (REST), and web servers are incredibly com-
+mon. To handle this common case, Go has the http package for providing both a cli-
+ent and a server (see the following listing). The client is simple enough to use that it
+meets the needs of the common everyday cases and extensible enough to use for the
+complex cases.
+package main
+import (
+     "fmt"
+     "io/ioutil"
+     "net/http"
+)
+func main() {
+     resp, _ := 
+➥http.Get("http://example.com/")
+     body, _ := 
+➥ioutil.ReadAll(resp.Body)
+     fmt.Println(string(body))
+     resp.Body.Close()
+}
+Listing 1.3
+Read TCP status: read_status.go
+Listing 1.4
+HTTP GET: http_get.go
+Connects over TCP
+B
+Sends string over 
+the connection
+C
+Prints the first response line
+D
+Makes an HTTP GET request
+Reads the body from the response
+Prints the
+body as a
+string
+Closes the connection

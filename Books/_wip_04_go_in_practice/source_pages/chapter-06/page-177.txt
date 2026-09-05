@@ -1,0 +1,42 @@
+154
+CHAPTER 6
+HTML and email template patterns
+Instead of parsing the template in the handler function, as listing 6.2 does, the tem-
+plate is parsed once when the package is initialized. When the http handler function
+is executed, the template is executed normally.
+ As the benchmark test examples from chapter 5 showed, parsing a template and
+reusing the parsed template is faster than parsing each time. This is a subtle, simple
+way to speed up application responses.
+6.1.4
+When template execution breaks
+All software has the potential to fail. Template execution is no exception. When tem-
+plate execution fails, an error is returned. But in some cases, template execution can
+fail and partial output is displayed to the end user. This can provide an experience
+you want to avoid.
+TECHNIQUE 34
+Handling template execution failures
+When templates are executed, the output is written as it walks through the template.
+If a function is called, causing an error midway through the template, an error will be
+returned and execution will stop. But the part of the template before the error would
+already be displayed to end users.
+PROBLEM
+When an error happens while executing a template, you want to catch the error
+before anything is displayed to the user. Instead of displaying the partially broken
+pages, display something more appropriate, such as an error page.
+SOLUTION
+Write the output of the template to a buffer. If no errors occur, write the output of the
+buffer to end users. Otherwise, handle the error.
+DISCUSSION
+Templates should be fairly unintelligent. They display data, and functions can be used
+to format the data. Any errors in the data should be handled before templates are
+used with the data, and the functions called within the templates should be for display
+purposes. This keeps the separation of concerns in place and limits failures when tem-
+plates are executed, which is important for streaming.
+ Streaming responses is useful. When you execute a template to a response writer, end
+users start to receive the page more quickly. When you buffer a response, there’s a delay
+in end users receiving it. End users expect native desktop performance out of web appli-
+cations, and streaming responses helps achieve that. When possible, write to output.
+ But at times, the optimal case doesn’t work out. If executing templates carries a
+potential for errors, you can write the output of the template to a buffer. If errors
+occur, they can be handled before displaying anything to the end users. The following
+listing builds on listing 6.4 to introduce a buffered output.

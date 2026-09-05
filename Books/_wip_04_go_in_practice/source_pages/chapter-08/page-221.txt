@@ -1,0 +1,52 @@
+198
+CHAPTER 8
+Working with web services
+     case net.Error:
+            if err.Timeout() { 
+                   return true
+            }
+     case *net.OpError:
+            if err.Timeout() {
+                   return true
+            }
+     }
+     errTxt := "use of closed network connection"
+     if err != nil && strings.Contains(err.Error(), errTxt) {
+            return true
+     }
+     return false
+}
+This function provides the capability to detect a variety of timeout situations. The fol-
+lowing snippet is an example of using that function to check whether an error was
+caused by a timeout:
+res, err := http.Get("http://example.com/test.zip")
+if err != nil && hasTimedOut(err) {
+     fmt.Println("A timeout error occured")
+     return
+}
+Reliably detecting a timeout is useful, and the next technique highlights this in practice.
+TECHNIQUE 50
+Timing out and resuming with HTTP
+If a large file is being downloaded and a timeout occurs, starting the download from
+the beginning isn’t ideal. This is becoming truer with the growth of file sizes. In many
+cases, files are gigabytes or larger. It’d be nice to avoid the extra bandwidth use and
+time to redownload data.
+PROBLEM
+You want to resume downloading a file, starting from the end of the data already
+downloaded, after a timeout occurs.
+SOLUTION
+Retry the download again, attempting to use the Range HTTP header in which a range
+of bytes to download is specified. This allows you to request a file, starting partway
+through the file where it left off.
+DISCUSSION
+Servers, such as the one provided in the Go standard library, can support serving parts
+of a file. This is a fairly common feature in file servers, and the interface for specifying
+ranges has been a standard since 1999, when HTTP 1.1 came out:
+ 
+ 
+Looks for timeouts 
+detected by the net 
+package
+Some errors, without a custom
+type or variable to check against,
+can indicate a timeout.

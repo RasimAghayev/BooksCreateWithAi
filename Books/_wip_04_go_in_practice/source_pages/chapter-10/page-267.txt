@@ -1,0 +1,59 @@
+244
+CHAPTER 10
+Communication between cloud services
+10.2.2 Moving beyond REST
+Although REST is common and usable for end-user-facing APIs, alternatives may be
+faster and more efficient for communication between your microservices. Given the
+rise of microservices, the amount of communication between them, and the manner
+in which network communication can be a bottleneck, exploring other options is
+worthwhile.
+ The network bottleneck has become enough of an issue that companies that oper-
+ate on a large scale, such as Google and Facebook, have innovated new technologies
+to speed up communication between microservices.
+TECHNIQUE 64
+Using protocol buffers
+JSON and XML are commonly used to serialize data. These formats are fairly easy to
+use and the transfer format is easy to read, but they’re not optimized for transport
+over a network or for serialization. 
+PROBLEM
+What formats that are optimized for network transfer and serialization are available
+for use in Go applications?
+SOLUTION
+Some more recent formats, including protocol buffers (a.k.a. protobuf) by Google
+and Apache Thrift and originally developed at Facebook, are faster in network trans-
+fer and serialization. These are available in Go, along with numerous other languages.
+DISCUSSION
+Protocol buffers, by Google, are a popular choice for a high-speed transfer format.
+The data in the messages being transferred over the network is smaller than XML or
+JSON and it can be marshaled and unmarshaled faster than XML and JSON as well.
+The transfer method isn’t defined by protocol buffers. They can be transferred on a
+filesystem, using RPC, over HTTP, via a message queue, and numerous other ways. 
+ Google provides support for working with protocol buffers in C++, C#, Go, Java, and
+Python. Other languages, such as PHP, have third-party libraries that provide support.
+ A protocol format is defined in a file. It contains the structure of the message and
+can be used to automatically generate the needed code. The following listing contains
+an example of the file user.proto.
+package chapter10;
+message User {
+  required string name = 1;
+  required int32 id = 2;
+  optional string email = 3;
+}
+Listing 10.7
+Protocol buffer file
+Protocol buffers have package names used to avoid naming 
+collisions. These are different from Go packages, but the name 
+will be used when the Go code is generated.
+A message is an aggregate of fields and 
+other messages. It’s represented in a Go 
+application by generated code.
+The field name is a required string. 
+The “= 1” is the unique tag in the 
+binary encoding for the field.
+A required int32. Protocol buffers can 
+represent other types including int64, 
+float32, and float64.
+Some
+fields
+can be
+optional.

@@ -1,0 +1,48 @@
+139
+TECHNIQUE 30
+Parallel benchmarks
+The second benchmark, BenchmarkCompiledTemplates, compiles the template once
+and then executes it multiple times. You can guess that this optimization reduces run-
+time, but how much?
+$ go test -bench .
+testing: warning: no tests to run
+PASS
+BenchmarkTemplates       200000          10167 ns/op
+--- BENCH: BenchmarkTemplates
+     bench_test.go:10: b.N is 1
+     bench_test.go:10: b.N is 100
+     bench_test.go:10: b.N is 10000
+     bench_test.go:10: b.N is 200000
+BenchmarkCompiledTemplates      1000000           1318 ns/op
+--- BENCH: BenchmarkCompiledTemplates
+     bench_test.go:23: b.N is 1
+     bench_test.go:23: b.N is 100
+     bench_test.go:23: b.N is 10000
+     bench_test.go:23: b.N is 1000000
+ok       _/Users/mbutcher/Code/go-in-practice/chapter5/tests/bench     3.483s
+These results show that reusing the compiled template shaves almost 9,000 nanosec-
+onds off the average loop iteration. It runs in one-tenth the original time! The bench-
+marking package provides other features that can assist in creating good benchmarks.
+Here you’ll look at another benchmarking technique for testing concurrency.
+TECHNIQUE 30
+Parallel benchmarks
+One of Go’s strongest points is its goroutine model of concurrent programming. But
+for any given piece of code, how can you tell how well it will perform when spread out
+over multiple goroutines? Again, the benchmarking tool can help you here.
+PROBLEM
+You want to test how a given piece of code performs when spread over goroutines. Ide-
+ally, you want to test this with a variable number of CPUs.
+SOLUTION
+A *testing.B instance provides a RunParallel method for exactly this purpose. Com-
+bined with command-line flags, you can test how well goroutines parallelize.
+DISCUSSION
+Beginning with listing 5.21, you can fashion the template test into a parallel test.
+Instead of executing the body of a loop, the testing framework executes a function
+repeatedly, but as separate goroutines, as shown in the following listing.
+func BenchmarkParallelTemplates(b *testing.B) {
+     tpl := "Hello {{.Name}}"
+     t, _ := template.New("test").Parse(tpl)
+     data := &map[string]string{
+            "Name": "World",
+Listing 5.23
+Parallel benchmarking

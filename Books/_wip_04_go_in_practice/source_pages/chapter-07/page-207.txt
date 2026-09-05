@@ -1,0 +1,76 @@
+184
+CHAPTER 7
+Serving and receiving assets and forms
+processed as text, while the file is handled using its own file type. The input field is
+typed for a file, which tells browsers to use a file picker and upload the contents of the
+file. This form is served and processed by the handler function for the http package
+in the following listing.
+func fileForm(w http.ResponseWriter, r *http.Request) {
+     if r.Method == "GET" {
+            t, _ := template.ParseFiles("file.html")
+            t.Execute(w, nil)
+     } else {
+            f, h, err := r.FormFile("file")
+            if err != nil {
+                   panic(err)
+            }
+            defer f.Close()
+            filename := "/tmp/" + h.Filename
+            out, err := os.Create(filename)
+if err != nil {
+                   panic(err)
+            }
+            defer out.Close()
+            io.Copy(out, f)
+            fmt.Fprint(w, "Upload complete")
+     }
+}
+This handler, meant to be used with the web server in the http package, handles both
+displaying the form and processing the submitted form. It opens by detecting the
+method for the request. When a GET request is submitted, it returns the form from list-
+ing 7.12. When another HTTP method is used, such as a POST or PUT request, the form
+submission is processed.
+ The first step used to process the file field is to retrieve it by using the FormFile
+method on the Request. If the form hasn’t been parsed, FormFile will call Parse-
+MultipartForm. FormFile then returns a multipart.File object, a *multipart
+.FileHeader object, and an error if there is one. The *multipart.FileHeader object
+has a Filename property that it uses here as part of the location on the local filesystem
+to store the upload. To save the file locally, a new file is created on the filesystem and
+the contents of the upload are copied into this new file.
+ This solution works well for a field with a single file. HTML forms allow for multi-
+value fields, and this solution will pick up only the first of the files. For multivalue file
+uploads, see the next technique.
+Listing 7.13
+Handle a single file upload
+http handler to display and 
+process the form in file.html
+When the path is accessed with a GET
+request, displays the HTML page and form
+Gets the file 
+handler, header 
+information, and 
+error for the 
+form field keyed 
+by its name
+Handles any errors 
+retrieving the form field
+Be sure to close the
+form fields file before
+leaving the function.
+Creates a local location to 
+save the file, including the 
+file’s name. In this case, it’s a 
+temp location, but a 
+production application would 
+have a file store location.
+Creates a
+local file to
+store the
+uploaded file
+Be sure to close the 
+local file before 
+leaving the function.
+Copies the
+uploaded file
+to the local
+location

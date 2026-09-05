@@ -1,0 +1,63 @@
+71
+TECHNIQUE 12
+Locking with a mutex
+ One simple solution is to lock the map before you modify it, and then unlock it
+afterward. You can accomplish this with a few changes to the code, as shown in the
+next listing.
+package main
+import (
+     // Same as before…
+     "sync"
+)
+func main() {
+     var wg sync.WaitGroup
+     w := newWords()
+     for _, f := range os.Args[1:] {
+            wg.Add(1)
+            go func(file string) {
+                    if err := tallyWords(file, w); err != nil {
+                           fmt.Println(err.Error())
+                    }
+                    wg.Done()
+            }(f)
+     }
+     wg.Wait()
+     fmt.Println("Words that appear more than once:")
+     w.Lock()
+     for word, count := range w.found {
+            if count > 1 {
+                   fmt.Printf("%s: %d\n", word, count)
+            }
+     }
+     w.Unlock()
+}
+type words struct {
+     sync.Mutex 
+     found map[string]int
+}
+func newWords() *words {
+     return &words{found: map[string]int{}}
+}
+func (w *words) add(word string, n int) {
+     w.Lock()
+     defer w.Unlock()
+     count, ok := w.found[word]
+     if !ok {
+            w.found[word] = n
+            return
+     }
+     w.found[word] = count + n
+}
+Listing 3.6
+Word counter with locks
+Locks and unlocks the map 
+when you iterate at the end. 
+Strictly speaking, this isn’t 
+necessary because you know 
+that this section won’t 
+happen until all files are 
+processed.
+The words struct now 
+inherits the mutex lock.
+Locks the object, modifies the 
+map, and then unlocks the object

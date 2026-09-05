@@ -1,0 +1,48 @@
+236
+CHAPTER 10
+Communication between cloud services
+ In this chapter, you’ll first learn about a microservice architecture and how the net-
+work can become a bottleneck or cause performance slowdowns when these services
+communicate. From there, you’ll learn techniques that can speed up REST communi-
+cations—in particular, JSON communications. Then you’ll explore communication
+techniques other than REST and JSON that can provide an alternative approach.
+ After this chapter, you’ll be able to move beyond the REST communication tech-
+niques covered in this book and into faster alternatives used by microservices operat-
+ing quickly and at scale.
+10.1
+Microservices and high availability
+Applications built with a microservice architecture are created as collections of inde-
+pendently deployable services. The rise of complex systems, the desire to indepen-
+dently scale parts of an application, and the need to have applications that are less
+brittle and more resilient have led to the rise of these microservices. Examples of
+microservices include configuration manager applications such as etcd, or applica-
+tions that transcode media from one format to another. Microservices tend to have
+the following characteristics:
+Perform a single action. For example, store configuration or transcode media
+from one format to another.
+Elastic and can be horizontally scaled. As load on a microservice changes, it can
+be scaled up or down as needed.
+Resilient to failures and problems. The service can be deployed so that it
+doesn’t go offline, even when instances of the application have problems.
+This is similar to and inspired by the UNIX philosophy of Do one thing and do it well.
+ Imagine that you’re building a service that transcodes media from one format to
+another. A user can upload media, the format is transcoded, and later the media in
+the new format is available for download. This could be built as a monolithic applica-
+tion in which all elements are part of the same application, or as microservices with
+different functional parts that are their own applications.
+ A simple transcoding application built using microservices is illustrated in figure 10.1.
+User
+User
+interface
+API server
+Message queue
+Transcoder
+Notifications
+File storage
+Each part of a transcoding
+application is a separate
+microservice that
+communicates with
+other parts via APIs.
+Figure 10.1
+A simple transcoding application broken into microservices

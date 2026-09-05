@@ -1,0 +1,46 @@
+185
+TECHNIQUE 46
+Uploading multiple files
+TECHNIQUE 46
+Uploading multiple files
+File fields on forms can optionally have the multiple attribute. When this attribute is
+on the input element, any number of files can be uploaded. In this case, using Form-
+File won’t work to process the form. It assumes there’s only one file per input field
+and will return only the first file.
+PROBLEM
+How do you process the files when multiple files are uploaded to a single file-input
+field on a form?
+SOLUTION
+Instead of using FormFile, which handles single files, parse the form and retrieve a
+slice with the files from the MultipartForm property on the Request. Then iterate
+over the slice, individually handling each file.
+DISCUSSION
+An input field handling multiple files needs to have only the multiple attribute on it.
+For example, the difference between the following listing and the single file-upload
+form in listing 7.12 is the multiple attribute.
+<!doctype html>
+<html>
+  <head>
+    <title>File Upload</title>
+  </head>
+  <body>
+    <form action="/" method="POST" enctype="multipart/form-data">
+      <label for="files">File:</label>
+      <input type="file" name="files" id="files" multiple>
+      <br>
+      <button type="submit" name="submit">Submit</button>
+    </form>
+  </body>
+</html>
+This form, with the multipart encoding, has an input to handle multiple files. The
+multiple attribute turns a single file-input field into one accepting multiple files. The
+following listing processes this form to handle multiple files.
+Listing 7.14
+A form with a multiple value file-upload field
+The form must be
+multipart for file uploads.
+A button is needed to 
+submit the form.
+A multivalue file field with
+the name “files” and the
+multiple attribute

@@ -1,0 +1,53 @@
+41
+TECHNIQUE 3
+Using configuration files
+SOLUTION
+YAML, a recursive acronym meaning YAML Ain’t Markup Language, is a human-readable
+data serialization format. YAML is easy to read, can contain comments, and is fairly easy
+to work with. Using YAML for application configuration is common and a method we,
+the authors, recommend and practice. Although Go doesn’t ship with a YAML proces-
+sor, several third-party libraries are readily available. You’ll look at one here.
+DISCUSSION
+Consider this simple YAML configuration file:
+# A comment line
+enabled: true
+path: /usr/local
+The following listing is an example of parsing and printing configuration from a
+YAML file.
+package main
+import (
+     "fmt"
+     "github.com/kylelemons/go-gypsy/yaml"
+)
+func main() {
+     config, err := yaml.ReadFile("conf.yaml")
+if err != nil {
+            fmt.Println(err)
+     }
+     fmt.Println(config.Get("path"))
+     fmt.Println(config.GetBool("enabled"))
+}
+To work with YAML files and content, this listing imports the github.com/kylelemons/
+go-gypsy/yaml package B. This package, which we’ve used and recommend, provides
+features to read YAML as a string or from a file C, deal with different types, and turn
+configuration into YAML output.
+ Using the function ReadFile, the configuration file is read in and returns a File
+struct from the yaml package. This struct provides access to the data in the YAML file.
+Using the Get method, the value of a string can be obtained D. For other types, such
+as a Boolean, you can use methods such as GetBool. Each type has its own method to
+ensure proper handling and return type.
+SOLUTION
+INI files are a format in wide use and have been around for decades. This is another
+format your Go applications can potentially use. Although the Go developers didn’t
+include a processor in the language, once again libraries are readily available to meet
+your needs.
+Listing 2.10
+Parsing a YAML configuration file: yaml_config.go
+Imports a third-party YAML 
+B
+Reads a YAML file into 
+a struct parser
+C
+Prints the values 
+from the YAML file
+D
