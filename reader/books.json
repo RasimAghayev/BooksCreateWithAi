@@ -7,8 +7,10 @@
       "year": 2016,
       "version": 1,
       "pages": 266,
-      "status": "reading",
-      "started_at": "2026-09-05"
+      "status": "completed",
+      "started_at": "2026-09-05",
+      "completed_at": "2026-09-05",
+      "filename_safe": "Go in Action - William Kennedy, Brian Ketelsen, Erik St. Martin - 2016 - v1"
     }
   ]
 }

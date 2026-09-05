@@ -1,0 +1,19 @@
+{
+  "book_id": "go_in_action_2016_v1",
+  "status": "completed",
+  "completed_at": "2026-09-05",
+  "chapters_processed": 9,
+  "stages_completed": [
+    "CONVERT_TO_RAW",
+    "IDENTIFY_BOOK",
+    "RENAME",
+    "BUILD_METADATA",
+    "FIND_TOC",
+    "BUILD_INDEX",
+    "BUILD_CHAPTER_FOLDERS",
+    "EXTRACT_KNOWLEDGE",
+    "HANDLE_LINKS",
+    "BUILD_CHEATSHEETS",
+    "BUILD_TEACHER_SUMMARY"
+  ]
+}
