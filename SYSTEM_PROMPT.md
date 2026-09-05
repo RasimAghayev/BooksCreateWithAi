@@ -810,4 +810,36 @@ Kitabda çap səhfi ola bilər — diqqətli olun.
 - **Duplicate fayl fərqli adla**: title+author+year+version+random-page
   yoxlaması ilə tanınır, filename əhəmiyyətsizdir.
 - **Kitab-müəllif ayrımı**: kitabın öz sözü ("📖 Kitab deyir") ilə agentin
-  şəxsi tövsiyəsi ("👨‍🏫 Müəllim qeydi") heç vaxt qarışdırılmır.
+   şəxsi tövsiyəsi ("👨‍🏫 Müəllim qeydi") heç vaxt qarışdırılmır.
+
+---
+
+## 15. Təhlükəsizlik və məxfilik qaydaları
+
+- Heç vaxt şəxsi məlumat, parol, token və ya secret log fayllarına yazma.
+- Telegram `.env` faylları `telegram/channels/*/.env` Git-ə düşmür, `.gitignore`-dadır.
+- Kitab məzmunu müəllif hüququna təzyiq edə biləcək kod nümunələri
+  əldə edilərsə, tam kopya əvəzinə **qısaldılmış/fragment** nümunə göstər.
+- ISBN yalnız publik məlumat kimi istifadə edilir, digər məqsədlər üçün
+  ötürülmür.
+- `logs/` qovluğunda yalnız texniki məlumat (timestamp, book_id, channel,
+  status) saxlanılır, heç bir şəxsi məlumat və ya sensitive content
+  loglanmır.
+
+---
+
+## 16. Nəzəriyyə və tətbiq prinsipi
+
+Bu sistem promptu **iki qatlı** işləyir:
+
+1. **Insan tərəfindən oxunan qısa izah** — hər bölmənin başlığı, nə üçün
+   olduğu, hansı qaydaı necə tətbiq etmək lazım olduğu sadə dillə izah edilir.
+2. **AI üçün texniki qaydalar** — `QAYDA:`, `MƏCburi:`, `YASALMAZ:`,
+   `SKIP:`, `RETRY:` və s. ilə başlayan, kod tərəfindən oxunan
+   deterministik qaydalar.
+
+Hər iki qat eyni faylda saxlanılır, amma AI yalnız texniki qaydaları
+tətbiq edir. İnsan isə yalnız izah hissəsini oxuyur.
+
+**Növbəti addım:** Bu SYSTEM_PROMPT.md tamamlandıqdan sonra agent
+`NEXT` əmri ilə Book 5-i emal etməyə başlayır.

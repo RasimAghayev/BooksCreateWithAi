@@ -36,7 +36,7 @@ func (c *Client) SendDocument(ctx context.Context, filename string, jsonData []b
 	var body bytes.Buffer
 	writer := multipart.NewWriter(&body)
 
-	part, err := writer.CreateFormFile("document", filename+".json")
+	part, err := writer.CreateFormFile("document", filename)
 	if err != nil {
 		return nil, fmt.Errorf("failed to create form file: %w", err)
 	}

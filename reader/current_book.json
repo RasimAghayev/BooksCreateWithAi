@@ -1,10 +1,6 @@
 {
-  "book_id": "react_18_design_patterns_and_best_practices_carlos_santana_roldan_2023_v1",
-  "title": "React 18 Design Patterns and Best Practices",
-  "author": "Carlos Santana Roldán",
-  "year": 2023,
-  "version": 1,
-  "status": "telegram_ready",
-  "started_at": "2026-09-05",
-  "telegram_ready_at": "2026-09-05"
+  "book_id": null,
+  "title": null,
+  "status": "idle",
+  "started_at": null
 }

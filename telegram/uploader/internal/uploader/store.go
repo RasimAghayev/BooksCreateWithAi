@@ -12,23 +12,24 @@ import (
 )
 
 type BookRecord struct {
-	BookFile      string    `json:"book_file"`
-	Title         string    `json:"title"`
-	TitleOriginal string    `json:"title_original"`
-	Author        string    `json:"author"`
-	Year          int       `json:"year"`
-	Version       int       `json:"version"`
-	Pages         int       `json:"pages"`
-	Level         int       `json:"level"`
-	LevelName     string    `json:"level_name"`
-	PrimaryLanguage string `json:"primary_language"`
-	Technologies  []string  `json:"technologies"`
-	Domains       []string  `json:"domains"`
-	Tags          []string  `json:"tags"`
-	ProcessedAt   time.Time `json:"processed_at"`
-	UploadedAt    time.Time `json:"uploaded_at,omitempty"`
-	TelegramFileID string `json:"telegram_file_id,omitempty"`
-	TelegramMessageID int64 `json:"telegram_message_id,omitempty"`
+	BookID          string    `json:"book_id"`
+	BookFile        string    `json:"book_file"`
+	Title           string    `json:"title"`
+	TitleOriginal   string    `json:"title_original"`
+	Author          string    `json:"author"`
+	Year            int       `json:"year"`
+	Version         int       `json:"version"`
+	Pages           int       `json:"pages"`
+	Level           int       `json:"level"`
+	LevelName       string    `json:"level_name"`
+	PrimaryLanguage string    `json:"primary_language"`
+	Technologies    []string  `json:"technologies"`
+	Domains         []string  `json:"domains"`
+	Tags            []string  `json:"tags"`
+	ProcessedAt     time.Time `json:"processed_at"`
+	UploadedAt      time.Time `json:"uploaded_at,omitempty"`
+	TelegramFileID  string    `json:"telegram_file_id,omitempty"`
+	TelegramMessageID int64   `json:"telegram_message_id,omitempty"`
 }
 
 type ChapterInfo struct {
@@ -38,13 +39,17 @@ type ChapterInfo struct {
 }
 
 type UploadRecord struct {
-	BookFile     string    `json:"book_file"`
-	Channel      string    `json:"channel"`
-	Status       string    `json:"status"`
-	ProcessedAt  time.Time `json:"processed_at"`
-	UploadedAt   time.Time `json:"uploaded_at,omitempty"`
-	TelegramFileID string `json:"telegram_file_id,omitempty"`
-	TelegramMessageID int64 `json:"telegram_message_id,omitempty"`
+	BookID           string    `json:"book_id"`
+	BookFile         string    `json:"book_file"`
+	Channel          string    `json:"channel"`
+	Status           string    `json:"status"`
+	RetryCount       int       `json:"retry_count"`
+	ProcessedAt      time.Time `json:"processed_at"`
+	UploadedAt       time.Time `json:"uploaded_at,omitempty"`
+	TelegramFileID   string    `json:"telegram_file_id,omitempty"`
+	TelegramMessageID int64    `json:"telegram_message_id,omitempty"`
+	LastError        string    `json:"last_error,omitempty"`
+	LastAttempt      time.Time `json:"last_attempt,omitempty"`
 }
 
 type Store struct {
@@ -96,10 +101,10 @@ func (s *Store) load() error {
 
 	s.data = make(map[string]map[string]UploadRecord)
 	for _, r := range records {
-		if s.data[r.BookFile] == nil {
-			s.data[r.BookFile] = make(map[string]UploadRecord)
+		if s.data[r.BookID] == nil {
+			s.data[r.BookID] = make(map[string]UploadRecord)
 		}
-		s.data[r.BookFile][r.Channel] = r
+		s.data[r.BookID][r.Channel] = r
 	}
 
 	return nil
@@ -121,17 +126,17 @@ func (s *Store) save() error {
 	return os.WriteFile(s.path, data, 0644)
 }
 
-func (s *Store) IsBookProcessed(bookFile string) bool {
+func (s *Store) IsBookProcessed(bookID string) bool {
 	s.mu.RLock()
 	defer s.mu.RUnlock()
-	_, ok := s.books[bookFile]
+	_, ok := s.books[bookID]
 	return ok
 }
 
 func (s *Store) RegisterBook(record BookRecord) error {
 	s.mu.Lock()
 	defer s.mu.Unlock()
-	s.books[record.BookFile] = record
+	s.books[record.BookID] = record
 	return s.saveBooks()
 }
 
@@ -143,11 +148,11 @@ func (s *Store) saveBooks() error {
 	return os.WriteFile(s.path, data, 0644)
 }
 
-func (s *Store) GetUploadStatus(bookFile string) (map[string]string, error) {
+func (s *Store) GetUploadStatus(bookID string) (map[string]string, error) {
 	s.mu.RLock()
 	defer s.mu.RUnlock()
 
-	channels, ok := s.data[bookFile]
+	channels, ok := s.data[bookID]
 	if !ok {
 		return make(map[string]string), nil
 	}
@@ -160,52 +165,75 @@ func (s *Store) GetUploadStatus(bookFile string) (map[string]string, error) {
 	return status, nil
 }
 
-func (s *Store) MarkUploaded(bookFile, channel, fileID string, messageID int64) error {
+func (s *Store) GetUploadDetails(bookID string) (map[string]UploadRecord, error) {
+	s.mu.RLock()
+	defer s.mu.RUnlock()
+
+	channels, ok := s.data[bookID]
+	if !ok {
+		return make(map[string]UploadRecord), nil
+	}
+
+	result := make(map[string]UploadRecord)
+	for ch, r := range channels {
+		result[ch] = r
+	}
+
+	return result, nil
+}
+
+func (s *Store) MarkUploaded(bookID, bookFile, channel, fileID string, messageID int64) error {
 	s.mu.Lock()
 	defer s.mu.Unlock()
 
-	if s.data[bookFile] == nil {
-		s.data[bookFile] = make(map[string]UploadRecord)
+	if s.data[bookID] == nil {
+		s.data[bookID] = make(map[string]UploadRecord)
 	}
 
-	s.data[bookFile][channel] = UploadRecord{
-		BookFile:          bookFile,
-		Channel:           channel,
-		Status:            "success",
-		ProcessedAt:       time.Now(),
-		UploadedAt:        time.Now(),
-		TelegramFileID:    fileID,
+	s.data[bookID][channel] = UploadRecord{
+		BookID:           bookID,
+		BookFile:         bookFile,
+		Channel:          channel,
+		Status:           "success",
+		RetryCount:       0,
+		ProcessedAt:      time.Now(),
+		UploadedAt:       time.Now(),
+		TelegramFileID:   fileID,
 		TelegramMessageID: messageID,
 	}
 
 	return s.save()
 }
 
-func (s *Store) MarkFailed(bookFile, channel string) error {
+func (s *Store) MarkFailed(bookID, bookFile, channel, errMsg string) error {
 	s.mu.Lock()
 	defer s.mu.Unlock()
 
-	if s.data[bookFile] == nil {
-		s.data[bookFile] = make(map[string]UploadRecord)
+	if s.data[bookID] == nil {
+		s.data[bookID] = make(map[string]UploadRecord)
 	}
 
-	s.data[bookFile][channel] = UploadRecord{
-		BookFile:    bookFile,
-		Channel:     channel,
-		Status:      "failed",
-		ProcessedAt: time.Now(),
-		UploadedAt:  time.Now(),
+	existing := s.data[bookID][channel]
+	s.data[bookID][channel] = UploadRecord{
+		BookID:           bookID,
+		BookFile:         bookFile,
+		Channel:          channel,
+		Status:           "failed",
+		RetryCount:       existing.RetryCount + 1,
+		ProcessedAt:      time.Now(),
+		LastError:        errMsg,
+		LastAttempt:      time.Now(),
 	}
 
 	return s.save()
 }
 
-func (s *Store) DeleteRecord(bookFile string) error {
+func (s *Store) DeleteRecord(bookID string) error {
 	s.mu.Lock()
 	defer s.mu.Unlock()
 
-	delete(s.data, bookFile)
-	delete(s.books, bookFile)
+	delete(s.data, bookID)
+	delete(s.books, bookID)
 	return s.save()
 }
 
