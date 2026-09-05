@@ -1,6 +1,7 @@
 {
-  "book_id": "get_programming_with_go_2018_v1",
-  "title": "Get Programming with Go",
-  "status": "reading",
-  "started_at": "2026-09-06"
+  "book_id": null,
+  "title": null,
+  "status": "idle",
+  "started_at": null,
+  "last_completed": "get_programming_with_go_2018_v1"
 }
