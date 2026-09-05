@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"os"
 	"path/filepath"
+	"strings"
 	"time"
 
 	"uploader/internal/config"
@@ -200,6 +201,8 @@ func (u *Uploader) uploadMetadataToChannel(ctx context.Context, pair *scanner.Up
 
 func (u *Uploader) cleanup(jsonPath string) {
 	_ = os.Remove(jsonPath)
+	pdfPath := strings.Replace(jsonPath, ".json", ".pdf", 1)
+	_ = os.Remove(pdfPath)
 }
 
 func buildCaption(meta *scanner.BookMetadata) string {
