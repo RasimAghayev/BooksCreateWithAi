@@ -1,6 +1,7 @@
 {
-  "book_id": "go_web_programming_2016_v1",
-  "title": "Go Web Programming",
-  "status": "reading",
-  "started_at": "2026-09-05"
+  "book_id": null,
+  "title": null,
+  "status": "idle",
+  "started_at": null,
+  "last_completed": "go_web_programming_2016_v1"
 }
