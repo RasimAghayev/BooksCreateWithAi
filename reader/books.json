@@ -1,13 +1,13 @@
 {
   "books": [
     {
-      "book_id": "explore_go_cryptography_john_arundel_2026_v1",
-      "title": "Explore Go Cryptography",
-      "author": "John Arundel",
-      "year": 2026,
+      "book_id": "react_18_design_patterns_and_best_practices_carlos_santana_roldan_2023_v1",
+      "title": "React 18 Design Patterns and Best Practices",
+      "author": "Carlos Santana Roldán",
+      "year": 2023,
       "version": 1,
-      "filename_safe": "Explore_Go_Cryptography - John Arundel - 2026 - v1",
-      "page_count": 329,
+      "filename_safe": "react-18-design-patterns-and-best-practices",
+      "page_count": 525,
       "status": "telegram_ready",
       "added_at": "2026-09-05",
       "telegram_ready_at": "2026-09-05"
