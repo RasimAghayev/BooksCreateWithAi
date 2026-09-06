@@ -1,0 +1,31 @@
+something else, such as data from a file or a network connection. I/O can be
+extraordinarily slow compared to code, since it depends on things like storage
+hardware or packets coming over the network, each of which can be orders of
+magnitude slower than the code running on the processor. If every task
+stopped to wait for every I/O operation, your profgram would spend most of
+its time waiting or even grind to a halt when it could be doing other things!
+The business of tracking all of these moving pieces is called "scheduling",
+and it’s also tricky to get right.
+Go addresses these problems by integrating concurrency directly into the
+language runtime itself, making all Go programs concurrent by default.[1]
+This allows you to concentrate on writing code that is easy to read and reason
+about without managing all of these complexities yourself. In fact, thanks to
+the concurrency features built into the standard library, a lot of the time you
+won’t even have to write a single line of concurrent code yourself! A great
+example of this is the net/http package, which allows you to write things
+like web APIs that can handle thousands of simultaneous requests with ease.
+Goroutines
+For those times when you need to write your own concurrent code, Go has a
+couple of killer features that help cut down on a lot of the headache of
+managing concurrency yourself: goroutines and channels.
+Goroutines are the name given to functions run with the go keyword, which
+causes them to run concurrently with the rest of the code.
+Listing 1.2. Running A Function As A Goroutine
+func makeMeConcurrent() {
+// Do some concurrent work...
+}
+func main() {
+go makeMeConcurrent()
+// Continue with the main goroutine...
+}
+Goroutines are managed by the Go runtime, and you can think of them as a

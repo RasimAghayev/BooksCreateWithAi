@@ -1,0 +1,452 @@
+﻿1 Introducing Go
+This chapter covers
+Solving modern computing challenges with Go
+Using the Go tools
+Computers have evolved, and programming languages have needed to evolve
+with them. While processor speed continues to increase, the demands of
+modern computing are such that this alone has not been enough to keep up
+with the pace of technology, and many of the recent advances in CPU
+manufacturing have focused on ways of doing work in parallel. The mobile
+devices in our pockets might have more CPU cores than the high-end laptops
+we used just a few years ago, and high-powered servers now have 64, 128, or
+even more cores, yet programming languages have struggled to enable
+effective use of these advances.
+In part, this is because programming languages had little cause to embrace
+parallelism during much of their evolution in the face of ever-increasing
+processing speed. The problem space of concurrent programming is much
+larger, with exponentially more interactions that can occur between parts of
+otherwise simple code, and so it was easier to defer the problem. Now that
+the needs are greater, modern programming languages need built in
+abstractions around concurrency, freeing the programmer to focus less on
+minutiae of coordinating concurrency, and more on the important work of
+solving problems.
+The business of writing software itself has changed as well. Most programs
+are no longer written by a single developer, but by teams of people, often
+spread across several time zones and work schedules. Large projects are often
+broken up into units worked on in parallel by one or more developers who
+integrate their work into a larger whole, or provide reusable libraries that can
+be deployed across an entire suite of applications.
+Recent decades have also seen the rise in popularity of the open source
+software movement, allowing developers across the spectrum of technology
+to share in innovation, quality and collective oversight. Todayâ€™s programmers
+and companies believe more than ever in the power of open source software,
+and the desire to participate in this movement only continues to grow.
+Go has sought to meet all of these needs. As a language, it provides
+developers with refined abstractions around concurrency and a powerful
+runtime to make efficient use of it with the resources at hand. As a
+programming environment, it provides robust tooling to make inspection,
+observation, dependency resolution and code sharing sane and easy. As an
+enterprise language, it has adopted a simple, opinionated syntax and coding
+standards as first principles to enable efficient collaboraction across large
+teams. Finally, the project has embraced the open source ethos, with all work
+in the open for all to see, while also integrating with public open source
+repositories and revision control systems such as Github.
+In this book, you will explore these features and gain a sense of the many
+decisions that have shaped the language, so that you can undersdand not only
+how the language works, but a bit more about why it works the way it does.
+Go was not developed in isolation, but as a response to the perceived deficits
+in programming environments that existed at the time of its creation. Its
+design is practical, and informed by many collective decades of programming
+experience, in a variety of environments and languages.
+Much of what makes Go special is how it is deliberately different to that
+which came before it, and so, while the reader is not expected to have
+"decades" of programming experience, an intermediate-level developer with
+experience in at least one or two other languages will get the most from this
+text, and is our target audience.
+The decision to pick up a new programming language is an inportant one, so
+the goal of this book is to help developers and other technical roles get a feel
+for what working in Go is like, and what its strenghts are, so you can make a
+more informed decision about whether or not to adopt Go into your tech
+stack. To this end, we wonâ€™t dwell too much on introductory concepts,
+though we may revisit them from time to time where it makes sense to show
+how Go might do things differently to what youâ€™re used to.
+What we will cover are as many of the practical aspects of using this
+language as a daily driver as we can, including syntax, concurrency
+primitives, and testing. For those of you with some prior experience in Go,
+we will try to hit the most important changes to the language since the first
+edition, such as modules, fuzzing, and the most recent major language
+addition: generic programming with type parameters.
+We hope that by the time youâ€™ve finished reading, youâ€™ll be just as hooked as
+we are, and on your way to writing better, faster, more reliable software!
+The source code for the examples in the book is available at
+https://github.com/flowchartsman/go-in-action
+1.1 Solving modern programming challenges with
+Go
+Developers today often have to make an uncomfortable choice between rapid
+development and performance when choosing a language for their projects.
+Languages like C and C++ offer fast execution, whereas languages like Ruby
+and Python offer rapid development. The Go designers went to great lengths
+to create a language that bridges these competing worlds and offers a high-
+performance language with features that make development fast, without
+unnecessary complexity.
+As you explore Go, youâ€™ll find well-planned features and a concise syntax.
+As a language, Go is defined not only by what it includes, but by what it
+doesnâ€™t include. Go has few keywords to memorize and a type system which
+provides expressiveness, composition and code reuse without all of the
+cognitive overhead of a rigidly object-oriented paradigm. If youâ€™ve been at
+the mercy of long compilation times, you will be refreshed to use a compiler
+thatâ€™s so fast, sometimes youâ€™ll forget itâ€™s running. Because of Goâ€™s built-in
+concurrency features, your software will scale to use the resources available
+without forcing you to use special threading libraries. The Go runtime also
+has a highly-optimized, concurrent garbage collector, freeing you from the
+tedious and error-prone process of manual memory management. Letâ€™s look
+quickly at these key features.
+1.1.1 Development speed
+Compiling a large application in C or C++ takes more time than getting a cup
+of coffee. Figure 1.1 shows an XKCD classic excuse for messing around in
+the office.
+Figure 1.1. Working hard? (via XKCD)
+As a Go developer, you will need to find another excuse if you want to slack
+off. Go offers lightning-quick compiles by using a smart compiler and
+simplified dependency resolution algorithms, made reproducible and explicit
+by the recent addition of the Go Modules ecosystem. When you build a Go
+program, the compiler only needs to look at the libraries that you directly
+need, rather than traversing all the libraries that are included in the entire
+dependency chain like Java, C, and C++. Consequently, many Go
+applications compile in under a second. The entire Go source tree compiles in
+under 20 seconds on modern hardware.
+This focus on quick compilation helps close the productivity gap with
+dynamic languages, which have traditionally enjoyed an advantage in
+productivity by eliminating the expensive compilation and linking steps. By
+allowing you to minimize the time between writing your code and running it,
+Go provides much of the speed of writing dynamic languages.
+1.1.2 Type Safety
+If youâ€™ve ever worked in a dynamic language before, you have likely seen an
+error message that looks something like this:
+Figure 1.2. A Common Dynamic Typing Exception
+If youâ€™re lucky, you ran into it during testing, however many of us have also
+been surprised and confused by a message very much like this one in our logs
+after something goes wrong.
+Type errors like this occur when a weakly-typed variable is assigned a value
+that is incompabible with its usage elsewhere in the program. They can be
+notoriously difficult to debug, since they often sneak in as edge cases that
+crop up rarely or in unexpected circumstances, making it unclear where a
+problematic value came from. The addition of user input to the mix only
+serves to complicate this further, since you have less control over the values
+that are flowing through your program.
+With a strongly-typed language like Go, every value has a type assigned to it
+at its creation that is tracked by the compiler, making this sort of bug
+impossible. This is appealing to developers, and for this reason we have seen
+a push for at least some level of type safety in popular dynamic languages.
+Typscript, for example, brings type safety to Javascript by converting (or
+"transpiling") strongly-typed Typescript code into the weakly-typed
+Javascript code that actually runs in the browser, while Pythonâ€™s type hinting
+system has been growing in popularity. Both approaches have their tradeoffs,
+of course; transpiled languages can provide strong guarantees, but the
+transpilation steps mean that the code you write isnâ€™t the code that actually
+runs, and can come with some performance hit, while type hints serve
+primarily to inform, and are not enforced natively without special extensions.
+Go, on the other hand, is strongly-typed by design, and simply wonâ€™t let you
+use a value in an inconsistent way:
+Listing 1.1. Attempting To Assign Values Of Different Types
+var number int
+var str string
+number = 1
+str = "one"
+number = str
+// Error: cannot use str (variable of type string) as type int in assignment
+This code will not cause an error when it runs, becuse it cannot be run in the
+first placeâ€”it simply wonâ€™t build at all.
+1.1.3 Concurrency
+As we approach the limits of how small we can make transistors, chip
+manufacturers have been turning to multi-core processors and parallel
+computing techniques to speed up execution time. New techniques and novel
+architectures are constantly being developed to make the most of multi-
+threaded computing, however developments in programming languages have
+lagged behind somewhat.
+In part, this is due to the inherent difficulty in programming for a multi-
+threaded environment using languages that were not designed with this in
+mind. Special care needs to be taken to synchronize access to shared memory
+to prevent simultaneous writes, which which can corrupt data. Doing this
+correctly can be difficult, and doing it efficiently is even more so.
+Another difficulty is that itâ€™s not enough to just run multiple things at once,
+you also need to pay attention to when tasks are blocked, or waiting, on
+something else, such as data from a file or a network connection. I/O can be
+extraordinarily slow compared to code, since it depends on things like storage
+hardware or packets coming over the network, each of which can be orders of
+magnitude slower than the code running on the processor. If every task
+stopped to wait for every I/O operation, your profgram would spend most of
+its time waiting or even grind to a halt when it could be doing other things!
+The business of tracking all of these moving pieces is called "scheduling",
+and itâ€™s also tricky to get right.
+Go addresses these problems by integrating concurrency directly into the
+language runtime itself, making all Go programs concurrent by default.[1]
+This allows you to concentrate on writing code that is easy to read and reason
+about without managing all of these complexities yourself. In fact, thanks to
+the concurrency features built into the standard library, a lot of the time you
+wonâ€™t even have to write a single line of concurrent code yourself! A great
+example of this is the net/http package, which allows you to write things
+like web APIs that can handle thousands of simultaneous requests with ease.
+Goroutines
+For those times when you need to write your own concurrent code, Go has a
+couple of killer features that help cut down on a lot of the headache of
+managing concurrency yourself: goroutines and channels.
+Goroutines are the name given to functions run with the go keyword, which
+causes them to run concurrently with the rest of the code.
+Listing 1.2. Running A Function As A Goroutine
+func makeMeConcurrent() {
+// Do some concurrent work...
+}
+func main() {
+go makeMeConcurrent()
+// Continue with the main goroutine...
+}
+Goroutines are managed by the Go runtime, and you can think of them as a
+bit like threads, only they are much more lightweight, and less expensive to
+create. In fact, many Goroutines can share a single OS thread, and can be
+started and stopped as needed to allow other goroutines to run.
+Figure 1.3. Many Goroutines Execute On a Single OS Thread
+Because they are so cheap, you donâ€™t need to worry about using them
+whenever you need them, and it is not uncommon for a single Go program to
+have many hundreds or even thousands of them active at one time.
+If you want to execute some code that might be slow while you move on to
+accomplish other things, a goroutine is the perfect tool for the job. Creating
+one is as easy as calling a function with the go keyword. Hereâ€™s a quick
+example:
+Listing 1.3. Doing Something Slow
+func DoSomethingSlow() {
+fmt.Println("SLOW: maybe I'm doing network stuff?")
+time.Sleep(1 * time.Second)
+fmt.Println("SLOW: Okay, finally finished!")
+}
+func main() {
+fmt.Println("Starting the main task...")
+// Create a goroutine to do something slow.
+go DoSomethingSlow()
+fmt.Println("Resuming the main task...")
+time.Sleep(500 * time.Millisecond)
+fmt.Println("Finished the main task!")
+time.Sleep(1 * time.Second)
+}
+Listing 1.4. Running A Slow Function Concurrently
+Doing the main task...
+Resuming the main task...
+SLOW: maybe I'm doing network stuff?
+Finished the main task!
+SLOW: Okay, finally finished!
+Calling DoSomethingSlow function with the go keyword is all you need to run
+the slow code while the rest of the main function does other work. This often
+results in greater thoroughput and thus better performance for your users.
+You will learn more about this in Chapter 8
+Channels
+For synchronization and shared data, Go provides _channel_s, which are
+typed, synchronizd buffers and combine access and locking with a single
+operation.
+You can think of channels as a synchronized message box, where one or
+more "senders" place data thatâ€™s ready to be shared, and one or more
+"receivers" wait to take custody of it. Channels can be "buffered", meaning
+they can hold more than one message in the order they were sent, or
+"unbuffered", meaning they can hold only one message at a time, but the
+underlying mechanisms are the same.
+In the case of an unbuffered channel (or a buffered channel which is full) the
+sending goroutine will wait until the receiving goroutine has received the
+message or the receiving goroutine will wait until the message is sent,
+depending on who accesses the channel first. You can see an example of this
+flow in figure 1.3, where a channel is used to send data between two running
+goroutines. Imagine an application where many different processes need to
+know about or modify data sequentially. Using goroutines and channels, you
+can model this process safely.
+Figure 1.4. Channels Pass Data Between Goroutines
+Figure 1.3 shows two goroutines and a shared channel. The first goroutine
+passes a data value through the channel to the second goroutine, which
+receives a copy of it. This exchange is synchronized, so both goroutines
+know the exchange took place, and can do other work before exchanging data
+again. After the second goroutine performs its tasks with the data, it then
+sends the data back to the first, waiting for acknowledgement. If the first
+goroutine is already ready to receive, the exchange will take place
+immediately, otherwise the second goroutine will wait patiently until the data
+is exchanged. This process requires no other locks or synchronization
+mechanisms beyond the send and receive operations themselves. In code, that
+might look something like this, with the second goroutine sending the final
+message back to main on another channel.
+Listing 1.5. Exchanging Data With A Channel
+func main() {
+channel := make(chan string)
+output := make(chan string)
+go func() {
+// First goroutine waits for a message.
+s := <-channel
+s = s + "World!"
+output <- s
+}()
+go func(){
+// Second goroutine sends the initial message.
+s := "Hello, "
+channel <- s
+}()
+// Main goroutine waits for the final output.
+finalString := <- output
+fmt.Println("This string was built concurrently:", finalString)
+}
+Listing 1.6. The Final Result On The output Channel
+This string was built concurrently: Hello, World!
+This is a simple and powerful abstraction, and, because the data is copied, it
+is generally a much safer way to share data between concurrent processes.
+Note
+Special care must be taken if the data contains pointers, since only the pointer
+itself is copied (not the underlying data). This will be covered more in
+Chapter 8, but a good rule of thumb to remember for now is that when you
+pass data on a channel, you should be done with it.
+1.1.4 Goâ€™s Type System
+Go provides a flexible type system that is similar to that of object-oriented
+langauges such as C++ in that it defines new types out of existing types, but
+where it differs is that it has no concept of a class hierarchy. There are no
+classes or inheritance in Go. Instead, Go types are composed of simpler types,
+which allows you, the programmer, to focus on your data first, rather than
+requiring you to come up with a class hierarchy first:
+Figure 1.5. Inheritance Vs. Composition
+Types Are Simple
+Go types are made up of basic types such as int or string compoised together
+in struct types, which will be familiar to you if you have dealt with other C-
+like languages:
+Listing 1.7. A Go Struct
+type Person struct {
+FirstName string
+LastName string
+Age int
+}
+Types can have methods, which help to define their behavior:
+Listing 1.8. A Go Struct And Method
+type Person struct {
+FirstName string
+LastName string
+Age int
+}
+func (p Person) Name() string {
+return p.FirstName + " " + p.LastName
+}
+func (p Person) Describe() string {
+return fmt.Sprintf("%s is %d years old", p.Name(), p.Age)
+}
+func main(){
+andy := Person{
+FirstName: "Andy",
+LastName: "Walker",
+Age: 43,
+}
+fmt.Println(andy.Describe())
+}
+Listing 1.9. Output Of Calling The Describe() Method
+Andy Walker is 43 years old.
+Go encourages simple types that define their own behavior, rather than
+inheriting it from somewhere else.
+Interfaces Unify Behavior
+Interfaces, in turn, allow related types to be used interchangably, provided
+they have the same behavior (as defined by their methors).[2] For example,
+you could make an interface, Describer, which represents anything that has a
+description.
+Listing 1.10. An Interface And A Function That Uses It
+type Describer interface {
+Describe() string
+}
+func PrintDescription(d Describer) {
+fmt.Println(d.Describe())
+}
+type Person struct {
+FirstName string
+LastName string
+Age int
+}
+func (p Person) Name() string {
+return p.FirstName + " " + p.LastName
+}
+func (p Person) Describe() string {
+return fmt.Sprintf("%s is a %d year-old human", p.Name(), p.Age)
+}
+type Cat struct {
+Name string
+Attitude string
+Color string
+}
+func (c Cat) Describe() string {
+return fmt.Sprintf("%s is a %s cat (%s)", c.Name, c.Color, c.Attitude)
+}
+func main() {
+andy := Person{
+FirstName: "Andy",
+LastName: "Walker",
+Age: 43,
+}
+barry := Cat{
+Name: "Barry",
+Attitude: "the best lil' duder",
+Color: "black and white",
+}
+benny := Cat{
+Name: "Benny",
+Attitude: "kind of a jerk",
+Color: "orange",
+}
+PrintDescription(andy)
+PrintDescription(barry)
+PrintDescription(benny)
+}
+Listing 1.11. Output Of Calling PrintDescription On Values Of Different Types
+Andy Walker is a 43 year-old human
+Barry is a black and white cat (the best lil' duder)
+Benny is a orange cat (kind of a jerk)
+Itâ€™s super easy to use interfaces in Go, since any type will "just work" as a n
+interface value, provided it matches the types. Thereâ€™s no need to explicitly
+declare that a particular class implemented the Describer interface, the
+compiler can figure that out all on its own! As long as your type implements
+an interface, itâ€™s good to go.
+Interfaces are a powerful tool, and you will learn more about them in
+Chapter 5, which takes a deeper dive on the type system.
+Generics Pick Up Where Interfaces Leave Off
+Finally, as one of the more recent changes to the language, Go supports
+generic programming using type parameters, allowing you even greater
+flexibility in designing generic methods and data structures that work with a
+variety of different types directly:
+Listing 1.12. Generic Sums
+func SumNumbers[N int | float64](numberSlice ...N) N {
+var total N
+for i := range numberSlice {
+total += numberSlice[i]
+}
+return total
+}
+func main() {
+fmt.Println(SumNumbers(1, 2, 3))
+fmt.Println(SumNumbers(1.1, 2.2, 3.3))
+}
+//output:
+// 6
+// 6.6
+This is just the tip of this iceberg! Generics are among the newest features to
+the Go language, and entire chapter of this book is dedicated to helping you
+get the most of them.
+1.1.5 Garbage Collection
+Like many of its peers, Go is a garbage-collected language, which means that
+you do not need to manage allocation of memory, since the runtime will take
+care of that for you.
+Like the rest of the language, Goâ€™s memory managent is fully-concurrent,
+meaning it does not need to stop the entire program periodically to clean up
+memory, which is often a side-effect of this feature in languages that provide
+it.
+Instead, Goâ€™s automatic memory management is highly optimized for
+intensive workloads common to the sorts of applications where it shines, and
+the performance and efficacy of Go memory management improves with
+each new release. Sub-millisecond pauses are now the norm, and soft
+memory limits and profile-guided optimizations can help ensure that your
+application is performing as well as it can, with in the bounds of its situation.
+[1] "Runtime" here refers to the code that is part of every compiled Go
+program. This is all of the low-level stuff for managing memory and
+concurrency, such as the garbage collector.
+[2] This is known as polymorphism, specifically runtime polymorphism
+through structural typing for you compsci nerds.
+1.2 Summary
+Go is a modern general-purpose language with powerful built-in
+concurrency features.
+Go is fast, and compiles quickly, leading to reduced development
+overhead.
+Go has a simple, easy-to-use type system with implicit interface
+implementation and generic programming features.
+Go is memory-safe and garbage collected, freeing the programmer from
+both the tedium and the worry of manual memory management.
+Hopefully by this point youâ€™re as sold on Go as we were when we released
+the first edition of Go In Action, hot on the heels of Go Version 1.5. Now
+here we are nearly 8 years and 14 release cycles later, and there is more to be
+excited about than ever! Go has grown by leaps and bounds in popularity and
+features, including Generics, which are the largest addition to the language to
+date! Itâ€™s never been a better time to be a Gopher, and we are happy to
+welcome you into the fold. Letâ€™s Go!

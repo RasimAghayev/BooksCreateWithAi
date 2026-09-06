@@ -1,0 +1,33 @@
+Go types are made up of basic types such as int or string compoised together
+in struct types, which will be familiar to you if you have dealt with other C-
+like languages:
+Listing 1.7. A Go Struct
+type Person struct {
+FirstName string
+LastName string
+Age int
+}
+Types can have methods, which help to define their behavior:
+Listing 1.8. A Go Struct And Method
+type Person struct {
+FirstName string
+LastName string
+Age int
+}
+func (p Person) Name() string {
+return p.FirstName + " " + p.LastName
+}
+func (p Person) Describe() string {
+return fmt.Sprintf("%s is %d years old", p.Name(), p.Age)
+}
+func main(){
+andy := Person{
+FirstName: "Andy",
+LastName: "Walker",
+Age: 43,
+}
+fmt.Println(andy.Describe())
+}
+Listing 1.9. Output Of Calling The Describe() Method
+Andy Walker is 43 years old.
+Go encourages simple types that define their own behavior, rather than

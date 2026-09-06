@@ -1,0 +1,878 @@
+﻿3 Primitive Types And Operators
+This chapter covers
+Numeric Types and numeric operations
+The bool type
+Structs
+Pointers
+Strings, runes and string manipulation
+Go comes with a number of types built in to the language for some of the
+most common computing tasks, such as working with numbers, strings and
+boolean types. In a statically-typed language like Go, these built-in types are
+often called primitive types, since they are the building blocks for all of the
+other types in the language.
+Primitive types are the most fundamental tools in your toolbelt when building
+software with Go, and you will use them in every single program you write.
+If you think of writing software like building a house, the types in this
+chapter are like the nails and the screws that hold everything together.
+In this chapter youâ€™ll learn more about these fundamental types, as well as
+some tips on using them most effectively.
+3.1 Integer Types
+Integer types store whole numbers of a certain range, depending on their size.
+In Go we have two varieties of integerâ€”signed and unsignedâ€”along with
+several different size variations for each, along with a couple of alias types
+which declare alternate names for certain circumstances. Integer types are
+very common in Go, and are used for basic math, array and slice indices, and
+as configuration arguments to many of the standard library functions.
+Table 3.1. Predeclared Integer Types
+Type
+Description Value Range
+Name
+int signed integers architecture-dependent1
+int8 signed 8-bit integers -128 to 127
+int16 signed 16-bit integers -32768 to 32767
+int32 signed 32-bit integers -2147483648 to 2147483647
+-9223372036854775808 to
+int64 signed 64-bit integers
+9223372036854775807
+uint unsigned integers architecture-dependent1
+uint8 unsigned 8-bit integers 0 to 255
+uint16 unsigned 16-bit integers 0 to 65535
+uint32 unsigned 32-bit integers 0 to 4294967295
+uint64 unsigned 64-bit integers 0 to 18446744073709551615
+byte an alias for uint8
+rune an alias for int32
+1either 32 or 64 bits, depending on your architecture
+The types that start with int are the signed integers, which are stored in
+twoâ€™s complement format, allowing them to represent positive and negative
+values. The types that start with uint are unsigned integers, and these types
+can only store positive values starting from 0. You might notice that the
+range of positive values for unsigned integers is higher than in the
+corresponding signed equivalent. This is because signed integers reserve one
+of their bits for indicating whether the value is negative or not. Unsigned
+integers have a few quirks that make them useful for a more narrow range of
+purposes, which we will discuss later in the chapter.
+Types with a numeric suffix such as int64 or uint8 are constant-sized or
+architecture-independent types, and the number indicates the size of each
+type in bits. These types will always consume the same amount of memory,
+and have the same range of values whether they are being run on a 32-bit or
+64-bit system.
+By contrast, the int, and uint types are architecture-dependent, which
+means they will be either 32 or 64 bits in size, depending on the architecture
+of the system they are compiled for. These types are provided to give you
+general-purpose default integer types that will perform optimally, no matter
+which architecuture they are compiled for.
+Rounding out the list, byte and rune are aliases that exist to give more
+meaningful names to integer values in certain contexts. byte is an alias for
+uint8, because it is extremely common to refer to data in terms of 8-bit
+chunks, or "bytes." The alias was created to distinguish between when code is
+dealing with data and when it is dealing with a numeric value. This
+convention is ubiquitous in the Go ecosystem, and youâ€™ll run across many
+functions in the standard library and elsewhere that either accept or return
+data as a sequence of bytes ([]byte). Similarly, rune is exactly the same as
+int32, except that it is used when talking about unicode characters in a string.
+This will be covered in greater detail when we explore the string type, later
+in the chapter.
+Figure 3.1. Integer Type Sizes In Memory
+As you learned in Chapter 2, variables can be declared using the var keyword
+with an optional value, or with the short declaration operator :=, which
+declares the variable and sets the value at the same time. Integers declared
+with var will be of whatever type you choose, and will receive the zero value
+of 0 if you donâ€™t assign one. Integers declared with short declaration will
+receive the type of int along with whatever value you assign.
+Listing 3.1. Declaring And Initializing Integer Values
+// Declare a variable with a type of int (and a default value of 0).
+var myInt int
+// Declare variable with type int64
+var largeInt int64
+// Use short declaration to create variable with type int and a value
+// of 3.
+i := 3
+// Use a type conversion if you want to use short declaration with other
+// integer types.
+u := uint64(4)
+The values 3 and 4 in the example above are known as integer literals, which
+is another term for an integer value appearing directly in the code. Integer
+literals can be positive or negative, and can be written in base-10,
+hexadecimal, octal or binary notation, depending on the prefix:
+Listing 3.2. Integer Declaration With Various Different Notations
+// These are different ways of writing the same value.
+decInt := 1000 // Base 10 Notation (no prefix)
+hexInt := 0x3E8 // Hexadecimal Notation (Prefix: "0x")
+octInt := 01750 // Octal Notation (Prefix: "0")
+octInt = 0o1750 // Alternate Octal Notation (Prefix: "0o")
+binInt := 0b1111101000 // Binary Notation (Prefix: "0b")
+// Optional underscores can be used to separate digits for readability.
+withSep := 1_000
+hexWithSep := 0x3_E_8
+// Notation is purely cosmetic, and does not affect value:
+fmt.Println(decInt, hexInt, octInt, binInt, withSep, hexWithSep)
+// Output: 1000 1000 1000 1000 1000 1000
+// Negative integer literals:
+negativeInt := -10
+negativeHexInt := -0xa
+What Are Literals?
+A literal or constant value is an explicit, fixed value appearing in your source
+code. They are called "literals", to indicate that the value being assigned is
+specified in the source, as opposed to coming from somewhere else, like a
+variable or function call. When you make an assignment such as myInt := 5
+or myString = "hello", the 5 and the "hello" are literals.
+3.1.1 Choosing An Integer Type
+With so many integer types to choose from, it helps to know which types you
+might want to use, and for what purpose. For most tasks, you will probably
+want to reach for int first, since it can represent both positive and negative
+values, and because it will be the most efficient integer type for your
+architecture. It will also be less work for you in terms of conversions because
+it is:
+1. The default type for integer literals
+2. The most common integer type in standard library functions and most
+3rd party packages
+3. The type returned by built-in functions such as len() and cap()
+4. The type used in indices in for-range loops
+int64 is the largest native integer type in the language, and youâ€™ll find it used
+in the standard library for values that need the greatest range, such as
+timestamps, file offsets and size limites. If you need the full range of values
+provided by int64, or if you will be making a lot of calls to functions that
+take an int64 as an argument, it can sometimes be helpful to have a value of
+this type for compatibility. Otherwise, you can just convert from int as
+needed.
+As for the rest of the signed types (int32, int16, and int8), consider them on
+an as-needed basis if required for compatibility or if there are measurable
+performance reasons for using them. If you donâ€™t know you need them, you
+probably donâ€™t. Try to avoid using another type just because it "takes less
+memory", since this is a form a premature optimization, and will come with
+extra overhead in type conversions in order to interoperate with more
+common types. When in doubt, run benchmarks and profile your programs to
+ensure that your choice in types is really the problem (usually itâ€™s not).
+Unsigned integers can be a bit trickier to use correctly since they can easily
+"wrap around", especially when values are small. You can see this in action
+by subtracting from an unsigned integer to create a value that would
+otherwise be negative:
+Listing 3.3. Subtracting From An Unsigned Integer
+var u uint64 // 0
+u = u - 1
+fmt.Println(u) // output: 18446744073709551615
+All of the sudden, the result is much larger! The reason this happens is
+because the value of u is already as low as it can go and so subtracting causes
+the bits to "wrap around" from 0 to the maximum value the type can hold.
+You can think of this a bit like an odometer in reverse: once the value
+bottoms out at zero, the bits roll back around again.
+Figure 3.2. Unsigned Integer Wraparound
+This behavior is common to all integer types when they reach the limits of
+the values they can contain, however itâ€™s much more likely with unsigned
+integers, since they start at the edge of their range.
+A similar condition can happen when exposing unsigned integers as function
+arguments. It can be tempting to declare functions that take unsigned integers
+to indicate that only positive values are accepted, but this can have
+unintended consequences.
+Consider the following function which takes a uint in an attempt to assert
+that it only takes positive values:
+Listing 3.4. Function Taking An Unsigned Int
+// OnlyPositive only accepts positive values.
+func OnlyPositive(u uint) {
+fmt.Println("positive value is", u)
+}
+If you call the function with a negative literal value, this will appear to work
+as intended, since the compiler can recognize that a negative value cannot go
+inside of an unsigned variable:
+Listing 3.5. Calling An Unsigned Int Function With An Explicitly Negative Value
+func main() {
+OnlyPositive(-1)
+}
+// error: cannot use -1 (untyped int constant) as uint value in argument to
+// OnlyPositive (overflows)
+However, functions are not always called with literal value. You may end up
+in a situation where a user has an int value they wish to pass to your
+function, which means they will need to convert their int to a uint first. This
+is where it can go horribly wrong:
+Listing 3.6. Call A Function That Takes A uint With A Converted Negative Value
+func main() {
+// User has a signed integer value from somewhere else that is
+// unintentionally negative.
+configVal := GetConfigValue() // returns int(-1)
+// They need to convert it to call your function, but wait...
+OnlyPositive(uint(configVal))
+}
+// output: positive value is 18446744073709551615
+All of the sudden itâ€™s the maximum value again! This time itâ€™s because the
+signed value passed is negative, and it just so happens that negative signed
+values contain a lot of 1s, thanks to twoâ€™s complement, so youâ€™re back in a
+similar situation, only itâ€™s much harder to spot ahead of time.[6] Bugs like this
+can be tough to find once they bite you.
+To avoid this pitfall, itâ€™s better to take an int and handle negative values
+yourself. The simplest option is just to return an error if a negative value is
+unacceptable along with some helpful documentation on the function so that
+the user knows the score:
+Listing 3.7. Checking For A Negative Value And Returning An Error
+// BetterOnlyPositive only accepts positive values. An error will be
+// returned if a negative value is passed.
+func BetterOnlyPositive(i int) error {
+if i < 0 {
+return fmt.Errorf("value must be positive!")
+}
+fmt.Println("positive value is", i)
+return nil
+}
+func main() {
+configVal := GetConfigValue() // returns int(-1)
+if err := BetterOnlyPositive(configVal); err != nil {
+// Now you can detect the error!
+log.Fatal(err)
+}
+// Output (failure):
+// value must be positive!
+}
+Another technique is to give negative numbers a special meaning, if it applies
+to your use case. This is a technique you can find in the standard library for
+functions that perform an action some number of times, with negative
+numbers meaning "unlimited" or "as many times as necessary". An example
+of this is strings.Replace, which uses negative numbers to mean "replace
+every occurrence":
+Listing 3.8. go doc for strings.Replace
+func Replace(s, old, new string, n int) string
+Replace returns a copy of the string s with the first n non-overlapping
+instances of old replaced by new. If old is empty, it matches at the
+beginning of the string and after each UTF-8 sequence, yielding up to
+k+1 replacements for a k-rune string. If n < 0, there is no limit on the
+number of replacements.
+Tip
+Do not use unsigned integers to mean "I donâ€™t accept positive values".
+Instead, just use a signed integer and either return an error if itâ€™s negative or,
+alternatively use negative numbers as a "special" value, if your use case
+supports it.
+This doesnâ€™t mean you shouldnâ€™t use unsigned integers, though! One place
+unsigned integers are actually very useful is in bitwise operations, since they
+are treated as large bit fields and you donâ€™t have to worry about the sign bit.
+Unsigned integers are much more predictable when shifting bits around, since
+they will always shift in a 0, while signed integegers will have special
+behavior shifting from the right, and will use whatever their sign bit happens
+to be.[7]
+Figure 3.3. Right Shifting In Signed And Unsigned Integer
+When doing bitwise operations on unsigned values, the opposite advice
+applies to picking a signed type: you will probably want to stick to sized
+variants for these kinds of operations. This is because they will be exact sizes,
+and this almost always what you want when doing bit manipulation, since it
+will model the data in memory more precisely. The uint type doesnâ€™t provide
+this, because its length will change depending on the architecture, so you
+wonâ€™t have as much use for it.
+[6] The full particulars of twoâ€™s complement are beyond the scope of this
+book, but youâ€™re encouraged to look it up if youâ€™re curious. Go is far from the
+only language to use this technique, and this potential pitfall is shared by all
+languages that represent numbers in this way.
+[7] This is another twoâ€™s complement behavior.
+3.2 Floating-point Number Types
+Floating-point types are used for those situations you need a number with a
+frational (or decimal) part, such as when calculating percentages or doing
+scientific calculations. These numbers can represent a greater range of values
+than integers, at the cost of some precision.
+Go provides two types that implement the IEEE-754 standard for binary
+floating-point number representation:
+Table 3.2. Predeclared Floating-point Types
+Type Name Description
+float32 Single-precision floating-point numbers
+float64 Double-precision floating-point numbers
+float32 takes up 32 bits of memory, while float64 takes up 64 bits, which
+gives it greater precision. If youâ€™re coming from C or Java, these are
+equivalent to the float and double types, respectively.
+Figure 3.4. Floating-point Type Sizes In Memory
+Similar to integer declaration, floating-point variables declared with var will
+get a value of 0 if a value is not specified, while floating-point numbers
+declared with short declaration will get a type of float64 by default:
+Listing 3.9. Declaring And Initializing Floating-point Types
+// Declare a variable doubleFloat with type float64 (and a default
+// value of 0).
+var doubleFloat float64
+// Declare a variable with type float32.
+var singleFloat float32
+// Use short declaration to create a variable f with type float64 and a
+// value of 12.1.
+f := 12.1
+// Use a type conversion if you want to use short declaration with float32.
+g := float32(12.1)
+Why Isnâ€™t There A Plain float Type?
+You may have noticed that, while Go provides architecture-dependent int
+and uint types, there is no such corresponding type for floating-point
+numbers. This is because the bit size of floating-point numbers is very
+important for precision, so it was decided early on in the evolution of the
+language to force an explicit choice. This is also why there is no complex
+type, since complex numbers are made up of a combination of two floating-
+point values.
+To assign floating-point values using literals, you can add a decimal point .
+to tell the compiler that you want a floating-point value instead of an integer.
+You can leave out either the integer or fractional parts if you want, so 1.0,
+1., 0.1 and .1 will all work. Another option is to use scientific notation by
+adding the e character to your number, followed by a positive or negative
+integer exponent:
+Listing 3.10. Floating Point Literal Notations
+// The following are different ways to write the same value.
+floatVal = 12. // fractional part is optional
+floatVal = 12e0 // decimal point not required with exponent
+floatVal = 012. // leading zero is fine
+floatVal = .12e+2 // integer part is optional
+floatVal = 1_2. // underscores allowed in floats, too
+floatVal = float64(12) // explicit type for otherwise integer literal
+fmt.Println(floatVal, myFloat)
+// Output: 12 12
+// Floats can be negative.
+negativeFloat := -12.0
+fmt.Println(negativeFloat)
+// Output: -12
+Note
+The easiest way to use an integer value as a floating point is to simply add a
+decimal point on the end (12. instead of 12), but you can also wrap the literal
+with a floating point type if you want to be more explicit like so:
+x:=float64(12).
+3.2.1 Special Floating-point Values
+The standard Go compiler does not do any special checks for floating-point
+math in cases of overflow, division by zero or operations which are not
+mathematically valid, such as taking the natural logarithm of a negative
+number. In these situations the value will be set to one of the following
+values:
+Table 3.3. Special Floating-point Values
+Value Description
++Inf Positive Infinity
+-Inf Negative Infinity
+NaN Not a Number
+These values are defined by the IEEE-754 standard
+These values can be checked with the `math.IsInf` and `math.IsNaN` functions, respectively:
+Listing 3.11. Checking For Special Floating-point Values
+f := 2.0
+// Make an "infinitely huge" number.
+posInf := math.Pow(f, 10_000)
+fmt.Println(posInf) // output: +Inf
+// Make an "infinitely small" number.
+negInf := f - math.Pow(f, 10_000)
+fmt.Println(negInf) // output: -Inf
+// The second argument to math.IsInf lets you check for a specific infinity:
+// <0: negative infinity
+// >0: positive infinity
+// 0: either infinity
+fmt.Println(math.IsInf(posInf, 0)) // true
+fmt.Println(math.IsInf(negInf, 1)) // false
+fmt.Println(math.IsInf(negInf, -1)) // true
+// Make an invalid number.
+notANumber := math.Log(-f)
+fmt.Println(notANumber) // output: NaN
+fmt.Println(math.IsNaN(notANumber)) // true
+Tip
+Make sure to use use the checks in the math package if thereâ€™s a possibility
+you could generate floating-point numbers that are invalid or out of range.
+3.2.2 Choosing A Floating-point Type
+For floating-point operations, you should pick float64 unless you have a
+compelling performance reason to do otherwiwse. Most modern hardware,
+including 32-bit architectures, has special support for 64-bit floating-point
+numbers, so there little reason to sacrifice the greater precision by using
+float32.
+Similar to the advice we gave in choosing integer types, you should only use
+float32 if you are trying to decrease memory consumption or improve
+performance, and you have determined that using float64 is a significant
+bottleneck.
+3.3 Complex Number Types
+Complex numbers are a type of value that has both real and imaginary parts,
+and are useful in calculations for physics and signal analysis, among others.
+Many languages implement complex numbers in special libraries, however
+Go has them as native types. Complex types in Go are made up of two
+floating-point values representing the real and imaginary parts of the number,
+which makes them double the size of the float type used to implement them:
+Table 3.4. Predeclared Complex Types
+Type Name Usage
+complex64 complex numbers with float32 real and imaginary parts
+complex128 complex numbers with float64 real and imaginary parts
+Figure 3.5. Complex Type Sizes In Memory
+Complex numbers are a bit different to the other primitive types, since they
+need to be declared using either the special built-in complex() function, or
+with special complex expressions.
+The complex() function takes two arguments, which are taken to be float
+values, and will determine the type of the resulting complex value. If the
+values are float64 or literals, they will result in a value that has the type
+complex128. If the values are float32, the result will be a complex64. Types
+cannot be mixed.
+Listing 3.12. Creating Complex Values Using The Built-in complex() Function
+cmplxValue1 := complex(1.1, 2.2) // complex128
+cmplxValue2 := complex(float32(1.1), float32(2.2)) // complex64
+cmplxValue3 := complex(1, 2) // complex128, equivalent to 1+2i
+cmplxValue4 := complex(0, -3) // complex128, equivalent to 0-3i
+cmplxValue5 := complex(-3.3, -4.4) // complex128, equivalent to -3.3-4.4i
+Complex expression declarations take the form of an optional numeric value,
+which can be a float or an integer literal, followed by a + or -, and then an
+imaginary literal, which is a numeric value followed by the i character.
+Listing 3.13. Creating Complex Values Using Complex Expressions
+cmplxValue1 = 1.1 + 2.2i // equivalent to complex(1.1, 2.2)
+cmplxValue3 = 1 + 2i // equivalent to complex(1,2)
+cmplxValue4 = -3i // equivalent to complex(0, -3)
+cmplxValue5 = -3.3 - 4.4i // equivalent to complex(-3.3,-4.4)
+Go also has special built-in functions real and imag that can be used to
+extract the float components that make up the complex number. In essence,
+these are the inverse of the complex function, and will return float32 or
+float64 values, depending on the type.
+Listing 3.14. Using The real() And imag() Functions
+cmplxValue1 := complex(1.1, 2.2)
+fmt.Println(real(c1), imag(c1)) // "1.1 2.2"
+Complex types in Go are rarely used on their own, since most of the useful
+functions to manipulate them reside in the math and math/cmplx packages.
+Additionally, most uses of complex numbers are relatively niche andâ€¦ well,
+honestly theyâ€™re pretty complex. Most programmers could go years without
+using them even once, but itâ€™s important to know that they exist.[8]
+[8] And we would have felt bad if we left them out and then people went
+online and left bad book reviews because we didnâ€™t mention them.
+3.4 Mathematical Operators
+Numeric types are kind of boring if you canâ€™t do math and stuff with them, so
+Go defines all of the basic arithmetic opetations youâ€™d expect, along with
+bitwise operations so you can manipulate the individual bits of integer values.
+Table 3.5. Binary Arithmetic Operators
+Operator Description For Types
++ sum integers, floating-point, complex, strings
+- difference integers, floating-point, complex
+* product integers, floating-point, complex
+/ quotient integers, floating-point, complex
+% remainder integers
+With the exception of the remainder (or modulo) operatior %, binary
+arithmetic operators apply to all numeric types, and return the corresponding
+types of their operands. Importantly, operations must be performed on values
+of the same type, or on literals that can represent that type.
+Listing 3.15. Examples Of Arithmetic In Go
+a := 7
+b := 3
+var i int
+i = a + b // 10
+i = a - b // 4
+i = b - a // -4
+i = a * b // 21
+i = a % b // 1
+// Divide by zero can be caught by the compiler if the 0 is a literal.
+//c = a / 0 // error: invalid operation: division by zero
+// Otherwise, divide by zero is a runtime panic.
+zero := 0
+c = a / zero // panic: runtime error: integer divide by zero
+// Float divide by zero does not panic and will result in an infinite
+// value.
+f := 1.0
+f = f / float64(zero) // +Inf
+u := uint64(1)
+u = u + i // error: mismatched types uint64 and int
+// Type conversion is needed to allow different types to work together.
+u = u + uint64(i) // 2
+Bitwise operations only operate on integers, and will be familiar if you have
+worked with them in other languages. The exception is the bit clear operator
+&^, which is unique to Go, and can be thought of as the opposite of bitwise-
+OR (|), where all of the 1 bits in the second operand will be set to 0 in the
+result.
+Table 3.6. Bitwise Operators (Integers Only)
+Operator Description
+& AND
+| OR
+^ XOR
+&^ bit clear
+<< shift left
+>> shift right
+3.5 The bool Type
+Go has a dedicated bool type for representing boolean (true/false) values.
+Values of this type can have one of two predeclared values, true and false,
+and have a zero value of false. bool is also the default type for boolean
+expressions, so short variable declarations such as value := x â‡ y will
+create variables of this type.
+Listing 3.16. Examples Of Boolean Values
+var boolVar bool // Defaults to false
+// Boolean variables can be used for conditionals, either
+// on their own, or as part of a boolean expression. In this case,
+// boolVar has not been explicitly set to anything yet, so its value is
+// false, and the if block will not run.
+if boolVar {
+fmt.Println("boolVal is true.")
+}
+// Once boolVar is set to true, the same if condition will pass and the
+// block will run.
+boolVar = true
+if boolVar {
+fmt.Println("NOW boolVal is true!")
+}
+// Short declaration variables assigned to boolean expressions will be
+// given the bool type.
+x := 0
+y := 1
+v := x < y // Type: bool, value: true.
+3.5.1 Boolean Functions
+Booleans are used primarily in conditional logic such as if statements, often
+as the return value for a helper function intended to give you a yes or no
+answer about a particular condition or a piece of data with some meaningful
+name. For example, if you wanted to print all of the even items from a list of
+integers, you might write a helper function called IsEven that would take an
+integer value and return a boolean indicating whether or not the number was
+evenly divisible by two.
+Listing 3.17. A Boolean Helper Function For Use In Conditional Logic
+func IsEven(i int) bool {
+return i%2 == 0
+}
+func main() {
+numbers := []int{1, 2, 3, 4}
+for _, n := range numbers {
+if IsEven(n) {
+fmt.Printf("%d is even.\n", n)
+}
+}
+}
+While you could easily replace IsEven with a simple boolean expression (if
+n%2 == 0 {}) and not lose too much clarity, more complex tests or those that
+might depend on several pieces of information will benefit greatly from
+having a dedicated function, since it allows you to keep all of the logic in one
+place without repeating it and allows you to add additional logic to that
+function later if necessary without changing the calling code.
+For example, you might want to write a function to tell you whether or not a
+particular time is during normal working hours or not. This would depend on
+a couple of pieces of information, such as the day of the week, and the time
+of day. By putting this logic into a function called IsWorkHours() which
+returns a bool value, you could then make determinations about things like
+sending a push notification, versus an email:
+Listing 3.18. Using A bool As A Return Value For A More Complicated Query
+// IsWorkHours returns true if the given time falls within standard working
+// hours.
+func IsWorkHours(t time.Time) bool {
+switch t.Weekday() {
+case time.Saturday, time.Sunday:
+return false
+}
+if t.Hour() < 9 || t.Hour() > 17 {
+return false
+}
+// TODO: Add holiday tracking
+return true
+}
+func main() {
+if IsWorkHours(time.Now()) {
+fmt.Println("During working hours - sending a push notification.")
+// notification sending code
+} else {
+fmt.Println("Outside of working hours - sending an email.")
+// email sending code
+}
+}
+By putting all of this logic in IsWorkHours, you can use the funtion in a
+conditional for any actions you only want to take during working hours. It
+can also be extended later to take holidays into account, as marked by the
+TODO.
+3.6 Struct Types
+Struct types are a useful way to bundle several related values together into a
+single unit. Each struct is defined as a set of named values, called fields, each
+of which can be accessed separately.
+Structs are declared using the struct keyword, followed by a list of fields
+enclosed by brackets.
+Listing 3.19. An Example Struct Type
+var person struct {
+name string
+age int
+}
+Fields can then be assigned and retrieved by name using dot-notation:
+Listing 3.20. Setting And Retrieving Struct Values With Dot Notation
+andy.name = "Andy"
+andy.age = 42
+fmt.Println(andy.name, andy.age) // output: Andy 42
+Struct variables can also be initialized with short declaration using struct
+literals, which are a list of the names values for each field:
+Listing 3.21. Declaring A Struct With Struct Literals
+james := struct {
+name string
+age int
+}{
+name: "James",
+age: 25,
+}
+fmt.Println(james.name, james.age) // output: James 26
+There are a couple of things to note here, however. For one, the trailing
+comma after the value for age is required. This is different to what you might
+expect if you have experience with Javascript. In Go, it is always required,
+which makes actually makes it easier to rearrange and add lines without
+worrying about removing or adding commas, and has the nice side-effect of
+reducing the noise in diffs!
+The second thing to note is that this is ugly and tedious. While it might be
+useful for declaring one-off structs, no one wants to clutter up their code with
+a bunch of random struct defintions if they can help it!
+For this reason, structs will often take the form of types, which allow them to
+be reused and passed around.
+3.6.1 Structs As Types
+Listing 3.22. A Simple Struct Type In Go
+type person struct {
+name string
+age int
+}
+Using a type like this lets you give a struct definition a meaningful name, and
+use it multiple times. With person declared as a type, variable declaration is
+as simple as providing the type and the values for each field, which is much
+nicer:
+Listing 3.23. Using A Type In Declartion
+andy := person{
+name: "Andy",
+age: 42,
+}
+james := person{
+name: "James",
+age: 26,
+}
+fmt.Println(andy.name, andy.age) // output: Andy 42
+fmt.Println(james.name, james.age) // output: James 26
+Structs and types form the basis of user-defined types in Go, and this
+example is just the very beginning of whatâ€™s possible. Check out Chapter 5
+for more information about declaring types in Go.
+3.7 Pointer Types
+Pointers are special types that represent the location of data, rather than the
+data itself. They provide a way to share memory across different parts of a
+program without needing to copy it. This can be very useful for passing
+around large or complex data structures such as those representing a
+connection to a database or collections of data. Pointers play a large role in
+Go since they are the basis for the map and slice types as well as a
+fundamental part of the type system.
+To define a pointer variable with var, you can add a * in front of the type,
+which tells the compiler which type your variable will point to:
+Listing 3.24. Pointer Variable Declaration
+var intPtr *int //intPtr is a pointer(*) to an integer value(int)
+As with all declarations, pointer values will start out with the a zero value
+when they are initialized. The zero value for pointers is the special variable
+nil, indicating that the pointer does not yet point to a value.
+Figure 3.6. An Uninitialized Pointer Variable
+In order to get an address to store in a pointer, you need to use the address
+operator, &, which will return the memory address of the value itâ€™s in front
+of. This address value will be of the type *T, where T is the type of the object.
+Listing 3.25. Assigning The Address Of a Value To A Pointer
+// declare an integer variable
+intValue := 0
+var intPtr *int
+// get the address (&) of the variable to store in the pointer
+intPtr = &intValue
+// when the address operator is used with short declaration,
+// the new variable will automatically be the appropriate pointer type
+intPtr2 := &intValue //intPtr2 is type *int
+Figure 3.7. The Address Operator Returns The Memory Address Of A Variable.
+By convention, we say that the pointer variable, "points to" the variable it
+references, and we will represent this with an arrow throughout the book for
+simplicity (and to avoid drawing a bunch of variables with random addresses
+in them):
+Figure 3.8. intPtr "Points To" intVar.
+The address operator is used whenever you need to get the location of a value
+in memory somewhere, and, with a few exceptions, you can get a pointer to
+almost anything. Weâ€™ll cover these exceptions in the section on addressability
+in Chapter 5.
+3.7.1 Dereferencing Pointers
+Once assigned, the value of a pointer is just the address that it points to,
+which you can see if you try and print out the value of intPtr:
+Listing 3.26. A Pointer Variable Just Holds An Address
+fmt.Println(intPtr) //output: 0x14000122008#1
+To get at the actual value being pointed to, you need to prefix the pointer
+variable with a *, which is known as dereferencing. This allows you to access
+the value at that location in memory and even modify it, if you wish.
+Listing 3.27. Dereferencing A Pointer To Access Or Modify Its Contents
+fmt.Println(*intPtr) //output: 0
+// You can also use dereferencing to assign to the value.
+*intPtr = 1
+fmt.Println(intValue) //output: 1
+Dereferencing, in effect, follows the reference to get the actual value behind
+it.
+Figure 3.9. Pointer Dereference Vs. Pointer Value
+REMEMBER: To refer to the actual value thatâ€™s being pointed to, use
+*variableName (with a *). To get the pointer address value, use
+variableName.
+3.7.2 Creating Pointers With new And Literals
+Pointers can also be created without an intermediate value by using the
+address operator and a literal directly or with the built-in function new.
+Listing 3.28. Creating Pointers Directly
+type person struct {
+name string
+age int
+}
+// These are the same.
+newPerson := new(person)
+newPerson = &person{}
+These are functionally identical, however the second form is preferred when
+working with struct types, since it also allows you to initialize struct fields
+while creating the pointer.
+Listing 3.29. Creating A Pointer With Struct Initialization
+newPerson = &person{
+name: "Andy",
+age: 42,
+}
+This is the more flexible style of pointer initialization for most types, and the
+one youâ€™ll be using most of the time, instead of new. The main reason to still
+use new is that it is the only way to initialize pointers to built-in types such as
+int:
+Listing 3.30. Using new To Create A Reference To A Fundamental type
+newIntPtr := &int // This is not allowed
+newIntPtr := &int(1) // Neither is this
+newIntPtr := new(int) // New is required for fundamental types.
+3.8 The string Type
+Textual data is an important thing for programming languages in order to
+allow them to display and process messages in a variety of different
+langauges. Go supports this through a combination of robust unicode support
+and a dedicated string type.
+string a relatively simple data type in Go, which is essentially a read-only
+array of bytes designed for holding text. What makes it different to the other
+types youâ€™ve learned about in this chapter is how those bytes are interpreted
+for display, and what happens when you modify these values.
+3.8.1 Interpreted Strings
+There are two different types of string literals in Go, both of which can be
+assigned to string variables. The first is the interpreted string, which uses
+the double quote ("") style common to most other languages:
+Listing 3.31. Declaring A String In Go
+basicStr := "Hello, Gophers!"
+Because Go source code supports UTF-8, this means that any printable
+character is valid in a string:
+Listing 3.32. Declaring A String With Unicode Characters
+unicodeStr := "ä½ å¥½ï¼Œåœ°é¼ !"
+Interpreted strings also support a variety of escape codes, allowing you to
+represent non-printable characters such as tabs and newlines or to reference
+unicode characters by their codepoint number.
+Listing 3.33. Strings With Escape Sequences
+strWithEscapes := "Hello\n\u5730\u9F20"
+fmt.Println(strWithEscapes) // output: Hello<newline>åœ°é¼ 
+3.8.2 Raw String Values
+The second type of string is enclosed with backtick characters (``), and is
+known as a raw string. Raw strings may span multiple lines, and are
+interpreted literally, without any escape codes whatsoever. They also support
+raw unicode characters:
+Listing 3.34. Declaring A Raw String
+rawString := `Hello\n\u5730\u9F20`
+fmt.Println(rawString)
+rawStrWithNewlines := `I can
+span à¤¿à¤µà¤¿à¤­(cid:580) lines`
+fmt.Println(rawStrWithNewlines)
+Listing 3.35. Raw String Output
+Hello\n\u5730\u9F20
+I can
+span à¤¿à¤µà¤¿à¤­(cid:580) lines
+3.8.3 String Operations
+Strings can be compared using the standard comparison operators, with "less
+than" and "greater than" being calculated from the byte values of the string.
+Listing 3.36. String Operations
+fmt.Println("hello" == "hello") // true
+fmt.Println("åœ°é¼ " == "\u5730\u9F20") // true, these escape codes are the
+// same characters
+fmt.Println("åœ°é¼ " == `\u5730\u9F20`) // false, escape codes do not interpret
+// in raw strings
+fmt.Println("abc" < "cba") // true
+fmt.Println("andy" > "bill") // false
+Strings can also be concatenated to with the + operator:
+Listing 3.37. Basic String Contcatenation
+strHello := "hello"
+strGophers := " Gophers!"
+strHello += strGophers
+fmt.Println(strHello) // output: "hello Gopher!"
+3.8.4 len() And Unicode Characters
+As we touched on in the last chapter, a string variable is essentially just a
+length value, coupled with a pointer to a backing array. You can use the built-
+in len function to get the length of the string in bytes, and, if your string is
+entirely ASCII characters this works exactly as youâ€™d expect:
+Listing 3.38. Using len On An ASCII String
+asciiCharStr := "easy, right?"
+fmt.Println(len(asciiCharStr)) // output: 12
+Things get a little different once Unicode characters enter the mix, however:
+Listing 3.39. Using len On A Unicode String
+unicodeCharStr := "åœ°é¼ "
+fmt.Println(len(unicodeCharStr)) // output: 6
+All of the sudden, the length doesnâ€™t match up! What looks like two
+characters actually has a length that is three times that.
+This is one of the most common head-scratchers people have when first
+experimenting with strings in Go, and the answer involves a surprising truth:
+strings are not actually arrays of characters, but arrays of the bytes that
+represent those characters in UTF-8.
+Without getting too far into the weeds on UTF-8 encoding in Go (see
+Appendix A for that), the simple answer is that not all characters use the
+same number of bytes for representation. When you create a string in Go that
+contains characters beyond the basic ASCII characters (i.e. basic English
+characters and numbers), Go transparently encodes that string into UTF-8 and
+stuffs those bytes into the backing array for your string.
+You can get an idea for the size of different characters by using fmt.Printf
+along with the special %x (hex) verb to visualize the bytes that make up your
+string:
+Listing 3.40. Print Several Single-Character Strings Of Different Lengths
+fmt.Printf("%x\n", "A") // output: 41
+fmt.Printf("%x\n", "Ã€") // output: c380
+fmt.Printf("%x\n", "á¾¸") // output: e1beb8
+fmt.Printf("%x\n", "(cid:4223)") // output: f09f85b0
+The output of these lines shows that characters can be anywhere from 1-4
+bytes in total length, depending on the character.
+Figure 3.10. Visualizing Character Size In Bytes
+Note that "A" is just one byte in length, exactly as it would be in ASCII. This
+is no coincidence, since UTF-8 is backwards-compatible with ASCII, which
+is the reason you can iterate a basic ASCII string with a traditional for loop
+and things work as youâ€™d expect:
+Listing 3.41. Getting ASCII Bytes As Strings With A For Loop
+asciiCharStr := "easy, right?"
+for i := 0; i < len(asciiCharStr); i++ {
+fmt.Print(string(asciiCharStr[i]) + " ")
+}
+fmt.Println()
+// output: e a s y , r i g h t ?
+But, try that with a string containing unicode, and youâ€™re gonna have a bad
+time:
+Listing 3.42. Attempting To Get Unicode Bytes As Strings With A For Loop
+unicodeCharStr := "åœ°é¼ "
+for i := 0; i < len(unicodeCharStr); i++ {
+fmt.Print(string(unicodeCharStr[i]) + " ")
+}
+fmt.Println()
+// output: Ã¥ Â° Ã© Â¼
+To get at the individual characters, another approach is called for.
+3.8.5 Iterating Unicode Strings Using A range Loop
+As a special case for strings, you can use a range loop instead, to get a list of
+characters one at a time:
+Listing 3.43. range loop On A string
+unicodeCharStr := "åœ°é¼ "
+for i, r := range unicodeCharStr {
+fmt.Printf("%d:%s ", i, string(r))
+}
+fmt.Println()
+//output: 0:åœ° 3:é¼ 
+This breaks the string up into its consituent characters, regardless of their
+size. You still get the index where each character starts, but instead of
+individual bytes, you get one individual character at a time as a rune value.
+3.8.6 The rune Type
+Earlier in the chapter, we mentioned that the rune type was an alias for int32
+for string characters. This is so that you can have a type that is large enough
+to represent any single character that you might find in a string, and a way to
+compare them to each other.
+Runes also separate the characters from their encoding, since they represent
+the value of the unicode character itself, and, once you have a characterâ€™s
+rune, you can get more information about it, using the unicode and
+unicode/utf8 packages:
+Listing 3.44. Using The unicode and unicode/utf8 Packages To Inspect Characters
+interestingCharacters := "Ã€(cid:4223)"
+for _, r := range interestingCharacters {
+fmt.Printf("rune: %s byte length: %d\n", string(r), utf8.RuneLen(r))
+if unicode.IsLetter(r) && unicode.IsUpper(r) {
+fmt.Println("rune is an uppercase letter")
+fmt.Println("lowercase is:", string(unicode.ToLower(r)))
+}
+if unicode.IsSymbol(r) {
+fmt.Println("rune is a symbolic character")
+}
+}
+This can provide some interesting insight into the characters of a string:
+Listing 3.45. Output Of Unicode Character Information
+rune: Ã€ byte length: 2
+rune is an uppercase letter
+lowercase is: Ã 
+rune: (cid:4223) byte length: 4
+rune is a symbolic character
+Check out the documentation for these packages for more useful info!
+3.8.7 Converting A string To A Slice Of rune
+The rune type also gives you another way to get at the characters of a string,
+which is to convert the string directly into a slice of runes. This will give you
+similar results, except that now the index represents the character position in
+the printed string.
+Listing 3.46. Converting A string To A []rune
+unicodeCharStr := "åœ°é¼ "
+characters := []rune(unicodeCharStr)
+for i, r := range characters {
+fmt.Printf("%d:%s ", i, string(r))
+}
+fmt.Println()
+//output: 0:åœ° 1:é¼ 
+3.9 Summary
+Go provides a number of built-in primitive types for common computing
+tasks.
+There are several different integer types, however int is the most
+flexible, and the one you should use for most tasks.
+bool types are useful in constructing conditional logic, and can make
+complex checks easier when used as return values.
+Struct types group related values together, and are used in defining new
+types.
+Go supports pointer types, allowing you to pass references to data
+without copying it.
+Strings are read-only arrays of bytes that can contain UTF-8-encoded
+characters from any language.

@@ -1,0 +1,1357 @@
+﻿4 Collection Types
+This chapter covers
+Ordered Collections Of Data With Arrays
+Dynamic Ordered Collections Using Slices
+Slice Manipulation And Slice Expressions
+Key-value Data With Maps
+Programming would be very difficult if you could only ever deal with one
+piece of data at a time. This is the reason we have collection types, which
+help us gather items together.
+Go has three different collection types: arrays, slices and maps. Arrays
+represent fixed-sized lists like you might find in C or C++, while slices take
+this a step further and provide an efficient dynamic array type. If youâ€™ve ever
+wanted a flexible list of items that can expand as needed to suit dynamic data
+at runtime, slices have your back.
+If you need more flexibility, the native map type allows you to store any type
+of data using a key of any type. If you want to store items by name, size or
+any other index you might want, maps are a great solution.
+The best part is that these data structures are baked into the language, so that
+they can be used anywhere in your program at any time, without needing to
+import a special package.
+Between slices and maps, you can solve a whole host of interesting problems
+and, once you learn how these data structures work, programming in Go will
+become fun, fast, and flexible.
+4.1 Arrays
+An array in Go is a fixed-length collection that contains a contiguous block of
+elements of any type.
+Listing 4.1. An Example Array
+var intArray [5]int
+intArray[1] = 20
+intArray[2] = 30
+intArray[3] = 40
+intArray[4] = 50
+Figure 4.1. Illustation Of intArray In Listing 4.1 After Declaration And Assignment
+The fiture above illustrates the data structure intArray as it exists in memory
+after its declaration. The elements of the array are marked a grey boxes and
+are connected in series to each other. Each element contains the same type
+and can be accessed through a unique index position.
+Note
+Indexes start at 0.
+Arrays are valuable data structures because the memory is allocated
+sequentially. Having memory in a contiguous form can help keep data loaded
+within CPU caches longer. Using index arithmetic, you can iterate through all
+the elements of an array quickly.[9]
+4.1.1 Declaring Arrays
+Arrays in Go require a size, which defines the number of elements they can
+hold, as well as the type of elements. Together, the size and the element type
+form the type of the array. Array declaration can take several different forms,
+depending on the size of the array you want and whether or not you want to
+give a starting set of values
+Table 4.1. Different Types Of Array Declarations
+Format Description Example Result
+Array
+[0 0 0 0
+var A [SIZE]TYPE Variable var intArray[5]int
+0]
+Declaration
+Array
+literal with
+A := intArray := [10 20 30
+optional
+[SIZE]TYPE{VALUES} [5]int{10,20,30} 0 0]
+starting
+values
+Array
+A :=
+literal with intArray := [0 20 0 40
+[SIZE]TYPE{INDEX:
+sparse [5]int{1: 20, 3: 40} 0]
+VALUE}
+values
+Array
+literal with intArray := [â€¦]
+A := [â€¦]TYPE{VALUES} [10 30 30]
+automatic {10,20,30}
+size
+Arrays are always initialized with zero values when created, depending on the
+type of their elements. For example, arrays of numbers will start out with 0
+for all unspecified values, while arrays of strings will have the empty string
+(""), and so on.
+Once an array is declared, neither the type of data being stored nor its length
+can be changed. If you need more elements, you need to create a new array
+with the length needed and then copy the values from one array to the other.
+Declaring an array with var will give you an array of the specified size, with
+all values pre-set to the zero value:
+Listing 4.2. Declaring An Array With var
+var intArray [5]int
+Figure 4.2. The intArray Value, After Declaration
+You can also use short variable declaration with an array literal to declare
+and initialize an array at the same time. Array literals take the form of two
+curly brackets ({}) with a comma-separated list of values inside:
+Listing 4.3. Initializing An Array With Values Using Short Variable Declaration
+// Declare and initialize an array with values.
+intArrayShort := [5]int{1, 2, 3, 4, 5}
+Figure 4.3. The intArrayShort Value, After Declaration
+Optionally, you can specify only certain indices allowing you to set specific
+values or start from another location.
+Listing 4.4. Initializing Only Some Elements Of An Array
+// Declare and initialize an array with only certain values.
+intArraySparse := [5]int{1: 2, 3: 4}
+// Declare and initialize an array starting from index 2.
+intArrayLast3 := [5]int{2: 3, 4, 5}
+Figure 4.4. Array Declared With Only Certain Values
+As a further convenience, you can also replace the length with â€¦, and the
+compiler will automatically create an array type of the approproate length.
+Listing 4.5. Initializing An Array With Automatic Length
+// Declare and initialize an array with automatic length.
+intArrayAuto := [...]int{5, 4, 3, 2, 1}
+// If only using certain values, the largest value will be taken as the
+// size.
+intArrayAutoSparse := [...]int{0: 5, 3: 2}
+Figure 4.5. Arrays Declared With Lengths Automatically Calculated
+Important
+While automatic array length is a useful feature in fixtures such as tests, it
+should be used with care, since you may end up with lengths you did not
+intend. It is better to be explicit.
+4.1.2 Array Type And Length
+In Go, the length of the array is part of its type, which is the reason you
+cannot change an arrayâ€™s size, since that would make it something else!
+This also means that the type [5]int is completely different to [4]int, and
+so they are not interchangable, even if you attempt to assign a smaller array
+to a larger one.
+Listing 4.6. Attempting To Assign Array Values Of Different Lengths
+var (
+fourArray [4]int
+fiveArray [5]int
+)
+fiveArray = fourArray
+// error: cannot use fourArray (variable of type [4]int) as type [5]int
+// in assignment
+To get the size of an array, you can use the builtin len() function, which will
+return an int value representing the number of elements the array can hold.
+This number will always be the full size of the array, whether youâ€™ve chosen
+to initialize any of its values or not:
+Listing 4.7. Getting The Size Of An Array With len()
+var intArray [3]int
+myArray := [3]int{1, 2, 3}
+fmt.Println(len(intArray)) //output: 3
+fmt.Println(len(myArray)) //output: 3
+4.1.3 Working Array Elements
+Array elements can be set and retrieved using the familiar square bracket
+notation, where the index is an integer literal or a variable of any integer type.
+Listing 4.8. Accessing Array Elements With Bracket Notation
+intArray := [5]int{1, 2, 3, 4, 5}
+firstValue := intArray[0] // 1
+// Access the item using a variable value as the index.
+index := 0
+integerValue := intArray[index] // 1
+// Other integer types work as well.
+index32 := int32(1)
+index64 := int64(2)
+indexUint := uint64(3)
+integerValue = intArray[index32] // 2
+integerValue = intArray[index64] // 3
+integerValue = intArray[indexUint] // 4
+Changing the value of an array value is done in the same way:
+Listing 4.9. Changing An Array Element
+intArray := [5]int{1, 2, 3, 4, 5}
+intArray[3] = 6
+Figure 4.6. Retrieving And Setting Array Values
+If the array value is a pointer, the value of that pointer can be accessed using
+the indirection operator, like you learned in Chapter 3.
+Listing 4.10. Accessing Array Pointer Elements
+// Declare an integer pointer array of five elements.
+// Initialize index 0 and 1 of the array with integer pointers.
+ptrArray := [5]*int{0: new(int), 1: new(int)}
+// Assign values to index 0 and 1.
+*ptrArray[0] = 10
+*ptrArray[1] = 20
+valOfPtr := *ptrArray[0] // 10
+This will result in the following, after the array operations are complete:
+Figure 4.7. An Array Of Pointers That Point To Integers
+4.1.4 Iterating Arrays With for
+Iterating arrays in Go is done with a for loop, using either a range clause, or
+the more traditional way using len and indices.
+Listing 4.11. Example Loops
+for i := range items {
+// do something with items[i]
+}
+for i, item := range items {
+// do something with item or items[i]
+}
+for i := 0; i < len(items); i++{
+// do something with items[i]
+}
+range loops are the easiest and most flexible way to loop through items in
+Go, since they take care of providing sequential indices and items for you,
+and will and will stop at the end of the list automatically. In the case of arrays
+(and slices, which we will explore shortly), range loops can be used with
+either 1 or 2 values. When used with a single value, you will get an integer
+value starting at 0, representing the starting index, and this value will increase
+by one for each iteration of the loop, until it has returned the final index.
+Listing 4.12. Iterating An Array Using range To Get Indices
+array := [...]int{1, 2, 3, 4}
+// Use a range statement to provide indices in order.
+fmt.Println("Starting range loop:")
+for i := range array {
+fmt.Printf("index %d is: %d\n", i, array[i])
+}
+fmt.Println("Range loop complete!")
+// output:
+// Starting range loop:
+// index 0 is: 1
+// index 1 is: 2
+// index 2 is: 3
+// index 3 is: 4
+// Range loop complete!
+If you add a second value to the range expression, you will receive both the
+current index as well as a copy of the value at that index:
+Listing 4.13. Iterating An Array Using range To Get Indices And Values
+array := [...]int{1, 2, 3, 4}
+// Use a range statement to provide indices and copies of each value.
+for i, item := range array {
+fmt.Printf("index %d is: %d\n", i, item)
+}
+// output:
+// index 0 is: 1
+// index 1 is: 2
+// index 2 is: 3
+// index 3 is: 4
+You can also ignore the index by assigning it to the blank identifier (_),
+leaving you with just a copy of each value. This can be useful for performing
+actions on every item in a list without needing to handle the index:
+Listing 4.14. Iterating An Array Using range To Get Indices And Values
+array := [...]int{1, 2, 3, 4}
+// Use a range statement to operate on values only.
+for _, item := range array {
+fmt.Println(item)
+}
+// output:
+// 1
+// 2
+// 3
+// 4
+Range Loops And Value Copies
+As mentioned above, the values you get from a two-value range loop will be
+copies of the values in the array, which can result in unexpected behavior if
+you attempt to modify them:
+Listing 4.15. Attempting To Modify Items In A Range Loop
+strings := [...]string{"hello", "gophers"}
+// Get each element of the array as variable 's'.
+for _, s := range strings {
+// Add an exclamation point.
+s = s + "!"
+}
+fmt.Println(strings)
+// output: [hello gophers]
+This example does not do what you might want, since each value is a copy.
+To actually modify the elements, you could either make the array a list of
+pointers, or simply just use the index to change them directly.
+Listing 4.16. Modifying Items In A Range Loop Using Their Index
+for i := range strings {
+strings[i] = strings[i] + "!"
+}
+fmt.Println(strings)
+// output: [hello! gophers!]
+Iterating with a for loop and indices is fairly straightforward, and will be
+familiar to you if you have used any C-like language before:
+Listing 4.17. Iterating An Array Using for and indices
+array := [...]int{1, 2, 3, 4}
+for i := 0; i < len(array); i++ {
+fmt.Printf("index %d is: %d\n", i, array[i])
+}
+This style of iteration is useful if you need to go through the elements in
+another order, such as in reverse or skipping every other element:
+Listing 4.18. Iterating An Array Using for to traverse the list in a different order.
+array := [...]int{1, 2, 3, 4}
+// Iterate the array backwards.
+for i := len(array) -1; i >=0 ; i-- {
+fmt.Printf("index %d is: %d\n", i, array[i])
+}
+// output:
+// index 3 is: 4
+// index 2 is: 3
+// index 1 is: 2
+// index 0 is: 1
+// Skip every other element.
+for i := 0; i<len(array); i+=2 {
+fmt.Printf("index %d is: %d\n", i, array[i])
+}
+// output:
+// index 0 is: 1
+// index 2 is: 3
+4.1.5 Arrays As Values
+An array is a value in Go, which means you can assign array values of the
+same type to each other. The variable name denotes the entire array and,
+therefore, an array can be assigned to other arrays of the same type.
+Listing 4.19. Assigning One Array To Another Of The Same Type
+// Declare a string array of length five.
+var colors [5]string
+// Initialize another five element array with values.
+favoriteColors := [5]string{"Red", "Blue", "Green", "Yellow", "Pink"}
+// Assignment will copy the contents of the array.
+colors = favoriteColors
+Itâ€™s important to note that copying an array duplicates all of the contents and
+places them into the new array. After the line colors = favoriteColors you
+will have two separate arrays with two sets of identical values.
+Figure 4.8. Array Assignment
+This applies to all arrays, regardless of the type. Even if the array contains
+pointer types like the one you saw earler, copies of those pointers will be
+created. Try adding an additional assignment to that example.
+Listing 4.20. Listing 4.x With An Additional Assignment
+ptrArray := [5]*int{0: new(int), 1: new(int)}
+*ptrArray[0] = 10
+*ptrArray[1] = 20
+ptrArray2 := ptrArray
+What youâ€™ll get in ptrArray2 is still a separate array with separate pointer
+values. They just happen to point to the same memory.
+Figure 4.9. Two Arrays Of Pointers Referencing The Same Objects
+4.1.6 Multidimensional Arrays
+While Go does not have true multidimensional array support in the form of
+concise declaration or matrix math, you can simulate the access semantics by
+composing arrays together. This can be useful for representing tabular data or
+things like cordinate systems.
+Listing 4.21. Declaring Two-dimensional Arrays
+// Declare a two dimensional integer array of four elements by
+//two elements.
+var array [4][2]int
+// Use an array literal to nitialize a two dimensional integer array.
+array = [4][2]int{{10, 11}, {20, 21}, {30, 31}, {40, 41}}
+// Declare and initialize index 1 and 3 of the outer array.
+array = [4][2]int{1: {20, 21}, 3: {40, 41}}
+// Declare and initialize individual elements of the outer
+// and inner array.
+array = [4][2]int{1: {0: 20}, 3: {1: 41}}
+These declarations will result in the following data structures:
+Figure 4.10. Two-dimensional Arrays And Their Outer and Inner Values
+Because these are just arrays of arrays, you can simply add another set of
+brackets to access the inner values:
+Listing 4.22. Accessing Elements Of A Two-Dimensional Array
+// Declare a two dimensional integer array of two elements.
+var array2D [2][2]int
+// Set integer values to each individual element.
+array2D[0][0] = 10
+array2D[0][1] = 20
+array2D[1][0] = 30
+array2D[1][1] = 40
+Figure 4.11. Assigning An Element Of A Two-Dimensional Array
+As with other arrays, you can copy multimiensional arrays into each other, so
+long as they have the same element type and the lengths are the same all the
+way down.
+Listing 4.23. Assigning Multidimensional Arrays Of The Same Type
+// Declare two different two dimensional integer arrays.
+var array1 [2][2]int
+var array2 [2][2]int
+// Add integer values to each individual element.
+array2[0][0] = 10
+array2[0][1] = 20
+array2[1][0] = 30
+array2[1][1] = 40
+// Copy the values from array2 into array1.
+array1 = array2
+Because each array is a value, you extract individual sub-arrays or values,
+depending on how many levels you access:
+Listing 4.24. Copying A Sub-array And Value
+array2D := [2][2]int{{10, 11}, {20, 21}}
+array1D := array2D[1] // [20 21]
+intValue := array1D[0] // 20
+Figure 4.12. Values At Different Levels
+What Is The Type Of A Collection?
+Every variable in Go has one --and only one-- type. This is easy to see with
+simple variables like var count int, since it reads naturally as "variable
+count is an integer", but it can be harder to intuit with collections like var
+coordinates [4][2]int, since it is temping to think of collections only in
+terms of the items they contain. A helpful trick can be to use the %T print verb
+with fmt.Printf. This will tell you the Go type of a variable:
+Listing 4.25. Printing The Type Of A Variable
+var array3D [4][3][2]string
+fmt.Printf("array3D is a %T\n", array3D)
+This will output array3D is a [4][3][2]string, which you can read as
+"array3D is a length-four array of length-three arrays of length-two arrays of
+strings".
+4.1.7 Passing Arrays To Functions
+Passing an array value to a function can be a an expensive operation in terms
+of performance and memory usage if youâ€™re not careful. This is because all
+values in Go are passed by value, so every time you pass an array to a
+function, your program will copy the entire array and pass it to the function,
+regardless of how large it is.
+For example, letâ€™s say you have a large array representing a 4K image, and
+you want to pass those to a function for processing. Thatâ€™s 3840 x 2160,
+which is around 8.2 million pixels.
+Listing 4.26. Passing A Large Array By Value To A Function
+// image4K is a large array representing a 4K image #1
+type image4K [829400]int // 3840 * 2160
+func processPixels(pixels image4K) image4K {
+// Image Processing Code Here.
+return pixels
+}
+func main() {
+var pixels image4K
+pixels = processPixels(pixels)
+}
+Every time processPixels is called, 8.2 million new integer values will be
+be allocated, and all of the values in the pixels array will be copied into that
+allocation. On return, the values will be copied again.
+Figure 4.13. Passing A Large Array By Value
+Go can handle this copy operation for you, but thereâ€™s a better and more
+efficient way of doing this, which is to pass a pointer.
+Listing 4.27. Passing A Large Array By Pointer To A Function
+func processPixels(pixels *image4K) {
+// Processing code...
+}
+func main() {
+var pixels image4K
+processPixels(&pixels)
+}
+This time processPixels takes a pointer to an array, which only uses about 8
+bytes of memory, as opposed to the roughly 66 megabytes of it would take to
+copy 8.2 million integers.
+This operation is much more efficient with memory and will yield better
+performance, though you need to keep in mind that any changes to the array
+will be reflected in the original value.
+4.1.8 The Problem With Arrays
+While they are useful for certain applications requiring a fixed number of
+items, arrays are actually a very poor general collection type.
+Because the size is fixed, there is no way for them to grow or shrink in
+response to different circmustances, which makes them difficult to use in
+real-world situations where the number of items in a list is not always known
+ahead of time. Arrays will always take up the same amount of memory which
+is determined when the program is compiled, which means that if you use
+less than the full amount you will be wasting memory, and if you need more
+space, you will need to rebuild your program with a larger array size.
+Arrays also take extra care to use when sharing their contents, since, as
+youâ€™ve just learned, they are copied every time they pass from function to
+function.
+Slices address both of these problems in an elegant way, and allow you to
+work with lists much more effectively.
+[9] Note that while index arithmetic works in Go, pointer arithmetic is not
+allowed, so indices are the only way to access elements in an array or slice.
+4.2 Slices
+Slices are Goâ€™s primary ordered data type, and can be used in all of the same
+ways you would use an array, with additional dynamic features that make
+them much more flexible and memory efficient. On first glance, slices a lot
+like arrays, except that they do not specify a size:
+Listing 4.28. An Example Slice
+slice := []int{1, 2, 3, 4}
+value := slice[0] // 1
+for i := range slice {
+fmt.Println(slice[i])
+}
+// output:
+// 1
+// 2
+// 3
+// 4
+However, if you pull back the curtain and look at their representation in
+memory, slices start to get a bit more interesting:
+Figure 4.14. Slice Internals
+From this diagram, you can see that slices are comprised of two parts: an
+array used for storage (called the backing array), and the slice data structure
+itself, also called the slice header. The slice header is the data that is actually
+stored in the slice variable, and represents a dynamic view, or "slice", of an
+array, which is where the data structure gets its name.
+The slice header contains just three values: a pointer to the memory location
+where the slice begins, an int representing the number of elements in the
+slice (the length), and an int that specifies the total number of items available
+for storage or expansion (the capacity). This simple structure is what gives
+slices their flexibility and what makes them so powerful. By separating the
+storage of an array from its representation, slices provide a collection type
+that works like an array, but can grow or shrink as needed, and be efficiently
+copied without needing to copy all of the values in the array. Itâ€™s a really neat
+trick!
+4.2.1 Declaring Slices With Slice Literals
+Using slice literals is the most straightforward way to create a new slice, and
+looks exactly like using an array literal without a size:
+Listing 4.29. Declaring And Initializing A Slice With A Literal
+// Declare and initialize an integer slice with a literal.
+sliceLit := []int{10, 20, 30}
+Figure 4.15. Slice Variable Declared And Initialized With A Literal
+Slices declared in this way will be allocated with a new backing array
+containing the items provided, and will point to the first element of that array.
+The length and capacity will also be set to the number of values provided,
+which you can inspect using the built-in len and cap functions:
+Listing 4.30. Getting The Length And Capacity Of A Slice
+// Get the length and capacity of newly-created slice.
+sliceLitLen := len(sliceLit) // int(3)
+sliceLitCap := cap(sliceLit) // int(3)
+4.2.2 Declaring Slices With make
+You can also create new slices using the built-in make function, which returns
+a new slice with all of the values set to the zero value for its element type.
+Calls to make take the form of make([]T, length) or make([]T, length,
+capacity), where T is the element type of the slice and length and capacity
+are integers defining the number of values in your slice and extra capacity for
+expansion. Specifying a capacity allows you to pre-allocate storage for a slice
+ahead of time which allows it to grow without needing to create a new
+backing array. This is be helpful in cases where you will be expanding your
+slice with the append call, which is how slices grow in Go.
+If make is called with only a length, it will return a slice pointing to a backing
+array of exactly that size, with all values zeroed-out.
+Listing 4.31. Declaring A Slice With make And A Length
+// Declare and initialize an integer slice with length 3
+sliceWithLen := make([]int, 3) // identical to []int{0, 0, 0}
+fmt.Println(len(sliceWithLen)) // 3
+Figure 4.16. Slice Initialized With make And A Length
+If make is given a capacity, it will allocate extra storage beyond the length
+value for use in further expansion.
+Listing 4.32. Declaring A Slice With make And Both Length And Capacity
+// Declare and initialize an integer slice with length 3, and capacity 5
+sliceWithLenAndCap := make([]int, 3, 5)
+fmt.Println(len(sliceWithLenAndCap)) // 3
+Figure 4.17. Slice Initialized With A Length And A Larger Capacity
+Here the dashed values in white represent items in the backing array that have
+been allocated, but are currently inaccessible from within the slice, since they
+are reserved for expansion.
+Important
+Capacity must be greater than or equal to length. If the compiler can catch
+this for you, it will throw an error, otherwise, you will get a runtime panic.
+If the slice is declared with a capacity greater than zero but a length of 0, the
+slice will appear to be empty, however it will be backed by an array of the
+specified capacity size:
+Listing 4.33. Declaring A Slice With make And Capacity, But Zero Length
+// Declare and initialize an integer slice with length 0, and capacity 5
+sliceWithCap := make([]int, 0, 5)
+fmt.Println(len(sliceWithCap)) // 0
+Figure 4.18. Slice Initialized With Length 0 And A Larger Capacity
+4.2.3 Nil Slices
+Slices declared with var are uninitialized, and are known as nil slices,
+because they point to nil instead of a backing array. They will still return
+values for len and cap (both 0), but are considered to be equal to nil, and
+attempts to access their values will cause a runtime panic, since they donâ€™t
+point to anything yet:
+Listing 4.34. Slice Variable Declaration with var
+// Declare an integer slice variable.
+var sliceVar []int
+fmt.Println(len(sliceVar), cap(sliceVar)) // 0 0
+fmt.Println(sliceVar == nil) // output: true
+value := sliceVar[0] // panic: index out of range [0] with length 0
+Figure 4.19. A Nil-slice
+Nil slices can be useful as a placeholder if the slice is optional (for example
+as part of a struct), or you plan to assign a value later through other means,
+however itâ€™s important to ensure that they are allocated before you attempt to
+access values from them. This can be done with literals or make, as above, or
+with an assignment using append or slice expressions.
+Important
+Slices declared with var are not usable until they have a value assigned.
+4.2.4 Growing Slices With append
+One of the benefits to the way slices are implemented is that they can grow
+by increasing their length if capacity is available or allocate new storage if it
+is not. This is done with the built-in append function.
+Listing 4.35. The Append Function
+func append(slice []Type, elems ...Type) []Type
+The append function works by taking an existing slice and one or more new
+values as arguments, and returning a modified slice with the new values
+added. It examines the input slice and will allocate storage as necessary to
+grow the slice. This makes it safe to call on any slice, even those that have
+not been initialized yet:
+Listing 4.36. Using Append To Add An Element To A Slice
+// Initialize a slice of integers with three values.
+intSlice := []int{10, 20, 30}
+// Assign the slice to the appended version of itself.
+intSlice = append(intSlice, 40)
+fmt.Println(intSlice)
+// output: [10 20 30 40]
+var sliceVar []string // nil slice
+sliceVar := append(sliceVar, "This works!")
+fmt.Println(sliceVar)
+// output: ["This works!"]
+Using append is easy and fairly straightforward, but it helps to know a bit
+more about how it works to understand how it can change the underlying
+array. Letâ€™s take a look at the intSlice example again, only this time with
+some extra print statements to see what happens to the length and capacity:
+Listing 4.37. The Affect Of append On Length And Capacity
+intSlice := []int{10, 20, 30}
+fmt.Printf("len: %d, cap: %d\n", len(intSlice), cap(intSlice))
+// output: len 3, cap: 3
+intSlice = append(intSlice, 40)
+fmt.Printf("len: %d, cap: %d\n", len(intSlice), cap(intSlice))
+// output: len: 4, cap: 6
+From the output you can see that the capacity of the slice starts out at 3,
+which means that the underlying array only has the space to represent three
+values, and will need to grow in order to accomodate more. After the append
+the length of the slice is 4, which makes sense since one element has been
+added, but the capacity is now 6, which is twice that of the original slice. This
+hints that the underlying array has increased in size. To see how this works,
+letâ€™s take a look at what happens during the call to append:
+First, a new, larger backing array is allocated to hold the new slice values.
+Figure 4.20. Append With Allocation Step 1: Allocate New Slice With Storage
+Next, the old values are copied into the new array, along with any new values
+to be appended:
+Figure 4.21. Append With Allocation Step 2: Copy Old Values And Assigne New Ones
+Finally, the new slice header is returned, and the assignment overwrites the
+old one, releasing the memory held by the old array.
+Figure 4.22. Append With Allocation Step 3: Return The New Slice To Overwrite The Old One
+The reason the new slice has a larger capacity than it needs is because
+copying values is an expensive operation, and doing it for every append
+would be wasteful, so Go pre-allocates extra memory every time a slice needs
+to allocate new storage, so that, over time, the cost incurred by copying
+doesnâ€™t happen as much.[10]
+Keeping this behavior in mind, what do you think will happen to the capacity
+if you append to this same slice again?
+Listing 4.38. Appending To A Slice That Has Capacity
+slice = append(slice, 50)
+fmt.Println(slice)
+// output: [10 20 30 40 50]
+fmt.Printf("len: %d, cap: %d\n", len(slice), cap(slice))
+// output: len: 5, cap: 6
+The length has now increased, but the capacity has stayed the same. This is
+because the previous allocation left enough extra capacity to hold the new
+value without a reallocation.
+Figure 4.23. Append Without Allocation
+This approach makes appending much less expensive over time, since the
+extra capacity means that the slice wonâ€™t need to be copied again until the
+new storage is used up.
+How Much Will append Grow The Capacity?
+The append operation is clever when growing the capacity of the backing
+array. As of this printing, the algoritm will always double the existing
+capacity if the total number of elements less than 1,024. Past this number, the
+capacity is grown by a factor of .25, or 25%, though this could change in
+future versions of the language as more optimizations are added.
+Multiple values can be appended by simply adding more arguements or, if
+you are appending one slice to another, you can unpack the second slice with
+the special â€¦ operator, which will transform a slice into a list of arguments.
+Listing 4.39. Using Append To Add Multiple Values To A Slice
+slice := []int{10, 20, 30}
+slice := append(slice, 40, 50)
+fmt.Println(slice)
+// output: [10 20 30 40 50]
+slice2 := []int{60, 70}
+slice := append(slice, slice2...) // The same as append(slice, 60, 70)
+fmt.Println(slice)
+// output: [10 20 30 40 50 60 70]
+Why Does Append Return A New Slice?
+It might look a little strange to append to slices with an assignment instead of
+a built-in method, but this approach is actually more flexible, since it allows
+you to choose whether or not you want to modify a slice by inserting new
+values or simply create a new slice with extra elements.
+4.2.5 Avoiding Append Surprises
+Because append will sometimes allocate new storage, it can sometimes be a
+source of confusion to new Go programmers who expect to be able to see
+changes to their slice after every append, but things can get a little tricky
+when slices cross function boundaries. Normally, values in a slice can be
+modified by functions, like the following, which adds 1 to every slice
+element.
+Listing 4.40. Modifying A Slice With A Function
+// addOneToAll adds 1 to every slice value.
+func addOneToAll(s []int) {
+for i := range s{
+s[i]+=1
+}
+}
+func main(){
+slice := []int{1,2,3}
+addOneToAll(slice)
+fmt.Println(slice)
+}
+Listing 4.41. Output After addOneToAll
+[2 3 4]
+This function works as intended, but if an append is added the results are
+different:
+Listing 4.42. Adding An Append To addOneToAll
+// addOneToAll grows the slice and adds 1 to every slice
+// value.
+func addOneToAll(s []int) {
+s = append(s, 0)
+for i := range s {
+s[i] += 1
+}
+}
+func main(){
+slice := []int{1,2,3}
+addOneToAll(slice)
+fmt.Println(slice)
+}
+Listing 4.43. Output After addOneToAll With An Append
+[1 2 3]
+What happened to the changes? In fact they were made, only it was to a
+completely different slice! In the original, both slices pointed to the same
+memory, so after the function is complete, the slice in main points to the new
+values.
+Figure 4.24. addOneToAll Modifying The Same Values In Memory
+However, once an append is added, a new backing array is allocated, and the
+two slice variables no longer point to the same memory. addOneToAll is
+making its changes to a slice that only exists within that function.
+Figure 4.25. addOneToAll Modifying A New Slice After Append
+You can try and get around this by adding extra capacity in main before
+calling the function, but this doesnâ€™t quite work either:
+Listing 4.44. Attempting To Avoid The Append Allocation With Extra Capacity
+func main(){
+// Create A Slice With Extra Capacity
+slice := make([]int, 0, 4)
+slice[0] = 1
+slice[1] = 2
+slice[2] = 3
+addOneToAll(slice)
+fmt.Println(slice)
+}
+Listing 4.45. Output After addOneToAll With Extra Capacity
+[2 3 4]
+The values were incremented, but the final value is missing. This is because
+the length of the original slice in main remains the same, meaning it cannot
+"see" the new value.
+Figure 4.26. addOneToAll Appending And Modifying, But New Value Is Inaccessible
+The right thing to do in this case is to either append to slices before passing
+them on, or to return the appended slice from the function, similar to how
+append works:
+Listing 4.46. Returning An Appended Slice From addOneToAll
+func addOneToAll(s []int) []int {
+s = append(s, 0)
+for i := range s {
+s[i] += 1
+}
+return s
+}
+func main() {
+slice := []int{1, 2, 3}
+slice = addOneToAll(slice)
+fmt.Println(slice)
+// output: [2 3 4 1]
+}
+Listing 4.47. Output After addOneToAll With Returned Slice
+[2 3 4 1]
+4.2.6 Slice Expressions
+One of the other things that makes slices so flexible is that they can be
+created from sections of other slices or arrays while still sharing the same
+storage. This is done with slice expressions which allow you to specify a
+range of values from a slice, creating a window into the existing slice.
+Slice expressions take the form of a[low : high], where a is an existing
+slice or array, and low and high are indices representing the range of values
+you want in the new slice. You can leave out one or both of these values, and
+they will default to 0, and len(a), respectively, making it easy to specify
+ranges "starting from" or "up to" a particular index.
+Figure 4.27. Slice Expression Syntax Illustrated
+When used with a slice, a slice expression will create a new slice, pointing to
+the low index in the backing array with a length value set based on the high
+value.
+Listing 4.48. Creating Slices From An Existing Slice
+stringSlice := []string{"A", "B", "C", "D", "E", "F", "G", "H", "I"}
+newSliceA := stringSlice[3:6] // [D E F]
+newSliceB := stringSlice[:2] // [A B] - "up to" index 2
+newSliceC := stringSlice[7:] // [H I] - "starting from" index 7
+Figure 4.28. New Slices Created With Slice Expressions
+When used with an array, a slice expression will create a new slice using the
+array for its storage:
+Listing 4.49. Creating A Slice From An Array.
+stringArray := [5]string{"A", "B", "C", "D", "E"}
+newStringSlice := stringArray[1:3] // [B C]
+Figure 4.29. New Slice Created From An Array
+Slice Expressions With Capacity
+By default, slices created with slice expressions will inherit the remaining
+portion of the slice or array they came from as capacity. Normally this is not
+an issue, but under certain circumsances, you might wish to restrict the
+capacity of the new slice so that it cannot be appended to past a certain point.
+For this, you can use a slice expression with three indices provided in the
+form of a[low : high : max]. In this form, the capacity of the new slice
+will cut off at the max index, preventing any modification of the original slice
+beyond this point.
+Listing 4.50. Slice Expressions With And Without A max Value
+intSlice = []int{1, 2, 3, 4, 5}
+newSliceA = intSlice[:2] // [1 2]
+newSliceB = intSlice[:2:3] // [1 2] (same values, less capacity)
+Figure 4.30. New Slices Created With And Without A max Value
+Slice Expressions In Action
+Slice Expressions can be useful for passing only a portion of a slice to a
+function that operates on slices. For example, letâ€™s say that you want to write
+a function to average the values in a slice of float64 values. If you write it
+using range and len, you can get meaningful values from slices of any size.
+Listing 4.51. Function To Return The Average Value Of A Slice Of float64
+// avg returns the average of a []float64.
+func avg(fs []float64) float64 {
+var sum float64
+// Add each value to the sum.
+for i := range fs {
+sum += fs[i]
+}
+// Divide the sum by the length of the slice.
+return sum /float64(len(fs))
+}
+If you need to create an average from a large slice, of values, like metrics or
+sensor readings, you can choose to extract only a subset of values to pass to
+the function:
+Listing 4.52. Averagigng Only The First 10 Entries In A Slice Using A Slice Expression
+func getMeasurements() []float64 {
+// Simulate a large slice with 10 values and a bunch of zeros.
+return []float64{3.3, 1.5, 3.5, 2.9, 2.7, 3.0, 3.1, 4.5, 2.9, 3.5, 99: 0}
+}
+func main(){
+measurements := getMeasurements()
+fmt.Printf("averaging 10 out of of %d\n measurements", len(measurements))
+averageMeasurement := avg(measurements[:10])
+fmt.Printf("average measurement is: %f\n", averageMeasurement)
+}
+Listing 4.53. Output From Averaging A Subset Of A Slice
+averaging 10 out of of 100 measurements
+average measurement is: 3.090000
+4.2.7 Copying Slices with copy
+While append and slice expressions provide a fast and flexible way to create
+new slices and save on allocations, sometimes you will want to duplicate the
+contents of a slice into a new slice, and this is what the built-in copy function
+is for.
+Listing 4.54. The Copy Function
+func copy(dst, src []Type) int
+The copy function takes two slices of the same type and copies the elements
+of src into dst, returning the number of elements copied. The one thing to
+keep in mind when using copy is that, when the lengths of slices are different,
+it will only use the shorter of the two. If the source slice is shorter, copy will
+copy all of the the elements from the source slice, leaving the rest of the
+elements in the destination slice untouched. If the destination slice is shorter,
+copy will only copy enough values to fill the slice. This often trips people up,
+since, unlike append, copy will not do any allocations for you; if either of the
+slices has a length of 0, nothing will be copied.
+Listing 4.55. Using Copy On Slices Of Different Lengths
+sliceLen6 := []int{0, 0, 0, 0, 0, 0}
+sliceLen4 := []int{1, 1, 1, 1}
+sliceLen2 := []int{2, 2, 2}
+sliceLen0 := []int{}
+copy(sliceLen6, sliceLen4)
+fmt.Println(sliceLen6) // output: [1 1 1 1 0 0]
+copy(sliceLen2, sliceLen4)
+fmt.Println(sliceLen2) // output: [1 1 1]
+copy(sliceLen0, sliceLen4)
+fmt.Println(sliceLen0) // output: []
+Figure 4.31. Copy Illustrated
+Copy can be useful if you want to create a separate copy of a slice
+expression, or you want to get a copy of a slice before or after calls to append
+that might modify it. You just need to ensure that you allocate a destination
+slice of the correct length to hold the copy. This is where make can be
+particularly helpful, since you can use it to create a new slice of exactly the
+right length to hold the copied elements:
+Listing 4.56. Using copy To Create A Separate Copy Of A Slice Expression
+intSlice := []int{1, 2, 3, 4, 5, 6}
+subSlice := intSlice[2:4] //[3 4]
+subSliceCopy := make([]int, len(subSlice))
+copy(subSliceCopy, subSlice)
+// Change a value in the original slice.
+intSlice[2] = 10
+// Change is visible in subSlice, but not in subSliceCopy
+fmt.Println(subSlice) //output: [10 4]
+fmt.Println(subSliceCopy) //output: [3 4]
+4.2.8 Avoiding Runtime Panics When Accessing Slice Values
+Because the size of a slice isnâ€™t set until the program is running, you can
+sometimes run into a situation where a value youâ€™re expecting to find isnâ€™t
+there.
+As an example, letâ€™s say you have a function to print the top three finishers in
+a race:
+Listing 4.57. Function To Print The Top Three Items
+func printMedalists(raceName string, contestants []string) {
+fmt.Printf("Results for %s:\n", raceName)
+fmt.Printf("Gold Medal: %s\n", contestants[0])
+fmt.Printf("Silver Medal: %s\n", contestants[1])
+fmt.Printf("Bronze Medal: %s\n", contestants[3])
+}
+This function expects a sorted list with at least three entries, which it gets
+directly from the slice by index. If you pass a slice with more than three
+values, it works fine, however a slice with less than three values will cause a
+runtime panic:
+Listing 4.58. Passing Different Lengths Of Slices to printMedalists
+func main() {
+race1 := []string{"Sally", "Steve", "Jo", "Adam"}
+printMedalists("Race 1", race1)
+race2 := []string{"Jon", "Jen"}
+printMedalists("Race 2", race2)
+}
+Listing 4.59. Output From printMedalists With A Runtime Panic
+Results for Race 1:
+Gold Medal: Sally
+Silver Medal: Steve
+Bronze Medal: Adam
+Results for Race 2:
+Gold Medal: Jon
+Silver Medal: Jen
+panic: runtime error: index out of range [3] with length 2
+The reason for the panic is that thereâ€™s really no graceful way for the Go
+runtime to handle a missing element that you explicitly asked for, so the only
+thing it can do is stop the program immediately and tell you what went
+wrong.
+Out-of-bounds errors on slices like this are one of the most common panic
+conditions youâ€™ll encounter when starting out with Go, but fortunately they
+are pretty easy to handle with a little foresight.
+The first technique is to verify that you have at least the number of items you
+need by calling len on the incoming slice. In this case, you know that the
+function is expecting three entries, so you can just add a check for a length
+below that and return an error otherwise:
+Listing 4.60. Verifying Slice Size With len()
+func printMedalists2(raceName string, contestants []string) error {
+if len(contestants) < 3 {
+return fmt.Errorf("not enough contestants for %s. Want: 3 Got: %d",
+raceName, len(contestants))
+}
+fmt.Printf("Results for %s:\n", raceName)
+fmt.Printf("Gold Medal: %s\n", contestants[0])
+fmt.Printf("Silver Medal: %s\n", contestants[1])
+fmt.Printf("Bronze Medal: %s\n", contestants[3])
+return nil
+}
+func main() {
+race2 := []string{"Jon", "Jen"}
+// Test an invalid race with new error handling.
+err := printMedalists2("Race 2", race2)
+if err != nil {
+log.Println(err)
+}
+}
+Listing 4.61. Output From printMedalists2 With Slice Length Checking
+not enough contestants for Race 2. Want: 3 Got: 2
+By adding a length check, you ensure that accessing an invalid entry is
+impossible, since the function will just return an error otherwise. It also gives
+you the opportunity to log a helpful error message with the name of the
+invalid condition and the number of arguments you actually got. Of course,
+this means every call to your function needs to do error checking to ensure
+that nothing went wrong, and this function is pretty inflexible, since races
+with less than three people are invalid.
+A much more flexible technique is to avoid direct index access altogether,
+and write your code to handle the entire slice with a range loop.
+Listing 4.62. Using A range Statement Instead Of Explicit Indices
+func printMedalists3(raceName string, contestants []string) {
+fmt.Printf("Results for %s:\n", raceName)
+for place, contestant := range contestants {
+switch place {
+case 0:
+fmt.Printf("Gold Medal: %s\n", contestant)
+case 1:
+fmt.Printf("Silver Medal: %s\n", contestant)
+case 2:
+fmt.Printf("Bronze Medal: %s\n", contestant)
+default:
+fmt.Printf("Finisher: %s\n", contestant)
+// or just return
+}
+}
+}
+func main() {
+race1 := []string{"Sally", "Steve", "Jo", "Adam"}
+race2 := []string{"Jon", "Jen"}
+race3 := []string{}
+printMedalists3("Race 1", race1)
+// Race 2 only has two contestants, but we still need to list them!
+printMedalists3("Race 2", race2)
+// Throw in a race with no contestants at all.
+printMedalists3("Race 3", race3)
+}
+Listing 4.63. Output From printMedalists3 With More Flexible Algorithm
+Results for Race 1:
+Gold Medal: Sally
+Silver Medal: Steve
+Bronze Medal: Jo
+Finisher: Adam
+Results for Race 2:
+Gold Medal: Jon
+Silver Medal: Jen
+Results for Race 3:
+By making the code more flexible, you can handle any number of
+constestants, and even add new features, like printing fourth-place and
+beyond, after all, sometimes just finishing is a victory! Because this code
+uses a range loop, it will repeat as few or as many times as it needs to, or, in
+the case of no items at all, it will simply just skip it altogether.
+Tip
+When working with slices, it is often more flexible to use a range loop than to
+attempt random index access.
+Of course, another option is to just do nothing at all, and let the program
+panic if the truly unexpected occurs. If you are always expecting your slices
+to have a certain length, an exception to this might represent a significant
+enough bug that a panic will give a pretty clear message that something is
+very wrong (panics have their purpose, after all). However, if thereâ€™s any
+valid possibilty that you could be getting slices of an unexpected size, you
+might want to opt for one of the other techniques.
+4.2.9 Nil Slices Versus Empty Slices
+It might be tempting to use if slice == nil to check if a slice is empty, but
+this can lead to surprising results. This is because slices are only nil if they
+have not been initialized or if they have been explicitly set to nil by the
+programmer. A slice can have a len of 0, yet still not be a nil slice:
+Listing 4.64. Creating Various Slices Of Zero Length
+// An uninitialized slice is == nil.
+var slice []int
+fmt.Println(slice == nil) // true
+fmt.Println(len(slice)) // 0
+// A slice with an explicit len of zero is != nil.
+sliceLenZero := make([]int, 0)
+fmt.Println(sliceLenZero == nil) // false
+fmt.Println(len(sliceLenZero)) // 0
+// A slice made from an empty literal is != nil.
+sliceEmptyLit := []int{}
+fmt.Println(sliceEmptyLit == nil) // false
+fmt.Println(len(sliceEmptyLit)) // 0
+// A slice of a slice that has a length of zero is != nil.
+sliceWithValues := []int{1, 2, 3}
+slicedSlice := sliceWithValues[0:0]
+fmt.Println(slicedSlice == nil) // false
+fmt.Println(len(slicedSlice)) // 0
+// The only way to get back to a nil slice is to set it to nil explicitly.
+sliceLenZero = nil
+fmt.Println(sliceLenZero == nil) // true
+This code illustrates several different slices which are effectively empty, yet
+are not equal to nil for different reasons.
+Figure 4.32. Different Zero-length Slices Illustrated
+In the case of sliceLenZero and sliceEmptyLit, they become initialized
+even if the backing array they point to is empty, since there are valid
+conditions in which this can occur, such as explicit reallocation. In the case of
+slicedSlice, it still shares a backing array that has values, but the slice
+header itself has a length of 0. This can happen when programmatically
+resizing slices that might not meet some threshold.
+For this reason, you should always use a len check if you need to find out if a
+slice is empty, since checking for nil equality will not always give you the
+answer you want.
+Explicit nil checks should be reserved for those cases when you want to tell
+the difference between a slice that somehow been has a length of 0, versus
+one that was never initialized in the first place.
+[10] This is sometimes called array doubling or amortized doubling
+4.3 Maps
+Like arrays and slices, maps are collection types for storing multiple values
+of any type you need, however the way in which the values are indexed is
+much more flexible.
+In arrays and slices, values are set and retrieved based off of an integer index,
+which represents the valueâ€™s position in the list. In maps, values are accessed
+using another value called the key, which can be almost any type you want.
+This lets you retrieve values quickly, using values that are more meaningful
+to your use case.
+For example, letâ€™s say you need to write an inventory system for a grocery
+store, and you need to calculate the weights for shipping items in bulk. This
+would be kind of a pain with list types like arrays and slices, since youâ€™d
+have to keep two separate lists for both items names (strings) and weights
+(ints), but with maps you can store them together:
+Listing 4.65. An Example Map
+// fruitWeight stores the average weight of different kinds of fruit
+// in grams
+fruitWeight := map[string]int {
+"orange" : 130,
+"apple" : 195,
+"watermelon": 10000,
+}
+// About how heavy are 10 apples and 30 oranges?
+fmt.Println(10*fruitWeight["apple"] + 30*fruitWeight["orange"])
+// output:
+//
+In this example, the fruitWeight map stores the average weight of different
+kinds of fruit. The key type is string, while the value type is int, since
+weights are generally specified in numeric form.
+You can think of a map as a bit like a dictionary where definitions (values)
+are found by looking up the word(key) they are associated with.
+Figure 4.33. Example Map Illustrated
+In the above example namedNumbers is a map that stores int values usint a
+string key, which means that each integer stored in the map is associated
+with a particular unique string value, which can be used to access it.
+You can think of maps as a bit like a dictionary, where definitions (values)
+are retrieved by looking up the word (key).
+Maps are valuable data structures because they provide a fast way to take a
+key, such as a string or or a struct, and use it as an index to store and retrieve
+values from the map.
+Figure 4.34. Relationship Between Keys And Values
+Internally, maps are implemented using hash tables, which contain a
+collection of buckets. When youâ€™re storing, removing, or looking up a
+key/value pair, everything starts with selecting a bucket.
+Figure 4.35. Simple Representation Of The Internal Structure Of A Map
+This is performed by passing the key specified in your map operation to the
+mapâ€™s hash function. The purpose of the hash function is to generate an index
+that evenly distributes key/value pairs across all available buckets.
+The better the distribution, the quicker you can find your key/value pairs as
+the map grows. If you store 10,000 items in your map, you donâ€™t want to ever
+look at 10,000 key/value pairs to find the one you want. You want to look at
+the least number of key/value pairs possible. Looking at only 8 key/value
+pairs in a map of 10,000 items is a good and balanced map. A balanced list of
+key/value pairs across the right number of buckets makes this possible.
+Figure 4.36. Simple Representation Of The Internal Structure Of A Map
+The hash key thatâ€™s generated for a Go map is a bit longer than what it
+appears in this illustration, but it works the same way. In this example, the
+keys are strings that represents a color. Those strings are converted into a
+numeric value within the scope of the number of buckets we have available
+for storage. The numeric value is then used to select a bucket for storing or
+finding the specific key/value pair. In the case of a Go map, a portion of the
+generated hash key, specifically the low order bits (LOB), is used to select
+the bucket.
+There are two data structures that contain the data for the map. First, thereâ€™s
+an array with the top eight high order bits (HOB) from the same hash key that
+was used to select the bucket. This array distinguishes each individual
+key/value pair stored in the respective bucket. Second, thereâ€™s an array of
+bytes that stores the key/value pairs. The byte array packs all the keys and
+then all the values together for the respective bucket. The packing of the
+key/value pairs is implemented to minimize the memory required for each
+bucket.
+There are a lot of other low-level implementation details about maps that are
+outside the scope of this chapter. You donâ€™t need to understand all the
+internals to learn how to create and use maps. Just remember one thing: a
+map is an unordered collection of key/value pairs.
+4.3.1 Declaring Maps
+Map declarations take the form of map[K]E where K is the key type used for
+looking up values, and E is the element type, which is the type of value stored
+in the map. Just like slices, maps can be created using make, or they can be
+created and initialized at the same time, using map literals, which specify a
+starting list of key/value pairs.
+Listing 4.66. Declaring Maps With make And Literals
+// Declare and initialize a map with make
+intToString := make(map[int]string)
+// Declare an empty map with a literal.
+// (this is identical to using make)
+intToString := map[int]string{}
+// Declare and populate a map with a literal.
+// Keys are separated from values with a colon, and commas separate
+// key-value pairs.
+intToString := map[int]string{
+1: "one",
+2: "two",
+}
+Figure 4.37. Map Declarations Visualized
+You can also declare map variables using the var keyword, however this
+comes with a caveat: values cannot be added to or retrieved from a map until
+it has been intialized, and attempts to do so will result in a runtime panic:
+Listing 4.67. Declaring A Map With var
+// Declare a map variable using var
+var intToString map[int]string
+// Attempt to set a value in the map
+intToString[1] = "one" // panic: assignment to entry in nil map
+The reason for this is that maps declared without a literal are uninitialized,
+which means they do not have any memory allocated for their internal data
+structures, and so they arenâ€™t set up to store values yet. This is known as a nil
+map. Like nil slices, nil maps are equal to nil, which you can check for.
+However, unlike nil slices, there is nothing like append that can add values to
+a nil map, so it is easier to forget to initialize them and end up with a panic.
+For this reason, you should prefer using make or map literal initialization
+when you can. If a map value is optional, you need to remember to check for
+nil first.
+Important
+Nil maps must be initialized before they can be used. When in doubt, check
+to see if the map is nil first.
+Nil map panics can be avoided by checking to see if a map value is == nil,
+and initializing it if so:
+Listing 4.68. Initializing A Map If It Is A Nil Map
+// Declare a map variable using var
+var intToString map[int]string
+if intToString == nil {
+intToString = map[int]string{}
+}
+// Assignment succeeds after the map has been initialized.
+intToString[1] = "one"
+How Should You Initialize Maps?
+Because map literals can create new maps and also optionally populate them
+with values, they are generally the preferred method to allocate new map
+values. They are also somewhat shorter, since you donâ€™t need two separate
+steps to create the map and populate it.
+Tip
+Map literals are the most flexible and idiomatic way to initialize maps in Go.
+Use them unless you have a good reason not to.
+4.3.2 Accessing Map Values
+To set a map value, you need to provide a key and an element of the correct
+types. If a value already exists for the given key, it will be overwritten.
+Listing 4.69. Assigning Values For Different Map Types
+colors := map[string]string{}
+// The key type of colors is string, so the indices are strings
+// representing the name of the color.
+colors["red"] = "#FF0000"
+colors["green"] = "#00FF00"
+// Assigning a value using an existing key will overwrite the old value.
+colors["red"] = "#DD2222" // (replaces "#FF0000")
+userIDs := map[string]int{}
+// The element type of userIDs is int, so the values are integers.
+userIDs["Andy"] = 1
+userIDs["Sarah"] = 2
+// Variables can be used for both the key value and the element value.
+userName := "Brian"
+userID := 3
+userIDs[userName] = userID
+When retrieving values from a map, you can access values by their key. If the
+key does not exist, Go will return the zero value for your element type
+instead. If you need to test whether a particular key exists, you can use two-
+variable assignment form, which will return a second boolean value
+representing whether or not the key was found in the map.
+Listing 4.70. Retrieving Values From A Map
+userIDs := map[string]int{
+"Andy": 1,
+"Sarah": 2,
+}
+AndyID := userIDs["Andy"] // 1
+JenID := userIDs["Jen"] // 0 (key is not in the map)
+JeffID, found := userIDs["Jeff"] // 0, false
+// You can also omit the value variable if you are just checking for
+// membership. Using if with a simple-statement if is a common idiom.
+if _, found := userIDs["Carmen"]; !found {
+fmt.Println("Didn't find user Carmen")
+}
+Nonexistent Keys And Zero Values
+It might seem odd at first that maps will return values for keys that donâ€™t
+exist, but this actually enables some handy behavior in cases where the
+existence of the key isnâ€™t important.
+One example might be a membership list, using string as the key type
+(representing a memberâ€™s name) and bool for the element type, representing
+whether they are a member of the club or not.
+Listing 4.71. Using Zero Values For Membership Queries
+clubMembers := map[string]bool{
+"Susan": true,
+"Aditya": true,
+}
+for _, name := range []string{"Aditya", "Andy", "Susan"} {
+if clubMembers[name] {
+fmt.Printf("%s is a member.\n", name)
+} else {
+fmt.Printf("%s is not a member.\n", name)
+}
+}
+// output:
+// Aditya is a member.
+// Andy is not a member.
+// Susan is a member.
+Because the zero value of bool is false, you can get away with only storing
+members who are in the club, and all other queries will return false. This is a
+common way to create sets in Go, since you can check for membership with a
+simple if statement.[11]
+Another case where this might be useful is when looking up numeric data for
+some entity that might or might not be tracked yet.
+Listing 4.72. Using The Zero Value With Numeric Data
+wordsWritten := map[string]int {
+"Andy": 1000,
+"Jen": 500,
+}
+for _, name := range []string{"Jen", "Andy", "Eve"} {
+fmt.Printf("%s has written %d words\n", name, wordsWritten[name])
+}
+// output:
+// Jen has written 500 words
+// Andy has written 1000 words
+// Eve has written 0 words
+In this example, "Eve" is not in the map, so you can assume they have written
+zero words, and can just let the zero value speak for itself.
+This attribute makes maps more consistent to work with, and means that
+value access will never cause a panic. It also allows you to decide whether or
+not key existence is important. When it is necessary to distinguish between
+"not in the map" and "in the map, but with a zero value", you can use the two-
+value assignment as you need.
+4.3.3 Removing Values From Maps.
+The built-in delete function is used to remove items from a map by key.
+Removing keys that do not exist is safe, and will not result in an error.
+Listing 4.73. Removing A Value From A Map With delete
+countryCodes := map[string]string{
+"FR": "France",
+"CN": "China",
+"ES": "Spain",
+"TX": "Texas",
+}
+fmt.Println(countryCodes)
+// output: map[CN:China ES:Spain FR:France TX:Texas]
+// Delete the value associated with key "TX" from the map
+delete(countryCodes, "TX")
+fmt.Println(countryCodes)
+// output: map[CN:China ES:Spain FR:France]
+// The "XX" key does not exist, so no changes will be made to the map, and
+// no error will result.
+delete(countryCodes, "XX") // Key "XX" does not exist, so no action will be
+fmt.Println(countryCodes)
+// output: map[CN:China ES:Spain FR:France]
+4.3.4 Getting The Number Of Values In A Map
+To get the number of values in a map, you can use the len built-in.
+Listing 4.74. Using len to get the number of keys/values In A Map
+petWeightsKG := map[string]float64 {
+"Baxter": 8.6,
+"Barry": 3.17,
+"Bobby": 9.07,
+"Benny": 1.08,
+}
+numberOfPets := len(petWeightsKG) // 4
+4.3.5 Iterating Maps
+To iterate a map, you can use a range loop which will return a single map
+key for each iteration of the loop, along with an optional copy of the value.
+Listing 4.75. Iterating A Map Using for and range
+groupNouns := map[string]string{
+"eagle": "convocation",
+"cat": "clowder",
+"kangaroo": "mob",
+"dog": "pack",
+}
+// Iterate with keys only.
+for animal := range groupNouns {
+fmt.Printf("A group of %ss is called a %s.\n", k, groupNouns[animal])
+}
+// Iterate with keys and values.
+for animal, group := range groupNouns {
+fmt.Printf("A group of %ss is called a %s.\n", animal, group)
+}
+Because of the way maps are implented, they have no specific order, and the
+order you will receive keys from the range statement can be different each
+time.[12]. If you run the above code multiple times, you will likely see the
+order change:
+Listing 4.76. Map Iteration Output From Multiple Runs
+A group of cats is called a clowder.
+A group of kangaroos is called a mob.
+A group of dogs is called a pack.
+A group of eagles is called a convocation.
+A group of eagles is called a convocation.
+A group of cats is called a clowder.
+A group of kangaroos is called a mob.
+A group of dogs is called a pack.
+Map iteration can also be combined with the delete function, allowing you
+to examine each item of the map, removing it if necessary. This is useful for
+"filtering" a map by some criteria:
+Listing 4.77. Filtering A Map Using A range loop
+familyAges := map[string]int{
+"Grandpa": 83,
+"Homer": 36,
+"Marge": 34,
+"Bart": 10,
+"Lisa": 8,
+"Maggie": 1,
+}
+for person, age := range familyAges {
+if age < 18 {
+delete(familyAges, person)
+}
+}
+fmt.Println(familyAges)
+// output: map[Grandpa:83 Homer:36 Marge:34]
+In the example above, the list is filtered based on whether or not each person
+is over the age of 18. This is safe to do in Go, provided the map is not being
+accessed elsewhere at the same time.[13].
+4.3.6 Passing Maps To Functions
+Like slices, maps are fundamentally reference types, since they are
+4.3.7 Key And Value Types
+You can use any type you like for map elements, while key types are slightly
+more restricted. The only requirement for key types is that they must be able
+to be compared using the == operator. Types that are not comparable in this
+way cannot be key types, so you cannot use functions, slices or maps for your
+key type, or any structs that contain them. Everything else is fair game. This
+leads to some interesting possibilities, such as maps using a struct type as a
+key and slices as a value:
+Listing 4.78. Example Map With A Struct Type Key And A Slice Value
+favoriteFoods := map[person][]string{}
+andy := person{
+firstName: "Andy",
+lastName: "Walker",
+age: 42,
+}
+john := person{
+firstName: "John",
+lastName: "Smith",
+age: 53,
+}
+favoriteFoods[andy] = []string{"jambalaya", "bulgogi"}
+favoriteFoods[john] = []string{"crab cakes", "licorice"}
+johnFoods, found := favoriteFoods[person{
+firstName: "John",
+lastName: "Smith",
+age: 29,
+}]
+// The "firstName" and "lastName" fields are the same, but the "age"
+// field is different, so there is no match.
+fmt.Println(johnFoods, found) // output: [], false
+// All fields match a key value in the map, so the element value is
+// returned.
+andyFoods, found := favoriteFoods[person{
+firstName: "Andy",
+lastName: "Walker",
+age: 42,
+}]
+fmt.Println(andyFoods, found) // output: [jambalaya bulgogi] true
+[11] For larger sets, there is another technique using empty structs that is
+slightly less readable, but consumes less memory. Weâ€™ll go over this in
+Chapter: Generics
+[12] This is actually by design, since map order is unspecified, and can differ
+from architecture to architecture.
+[13] You will learn more about concurrent map access safety in Chapter
+Concurrency
+4.4 Summary
+Arrays are constant-sized collections of data that form the basis of the
+slice and map types.
+Slices are powerful and flexible ordered collection types, and the
+primary ordered collection type in Go.
+append works by returning a new slice header, though it does not always
+allocate new storage.
+Maps are Goâ€™s associative array or "dictionary" type, and allow you to
+store values of any type using a key type best suited for your use-case.
+Slices and maps are fundamentally reference types that point to the data
+they contain, and it helps to be mindful of how they work and when you
+should modify them.
