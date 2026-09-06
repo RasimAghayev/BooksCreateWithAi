@@ -1,0 +1,58 @@
+Supporting Unicode
+65
+Running this produces the following output:
+1
+%s
+ABC 你好
+2
+%q
+"ABC 你好"
+3
+%+q
+"ABC \u4f60\u597d"
+4
+%x
+41424320e4bda0e5a5bd
+5
+% x
+41 42 43 20 e4 bd a0 e5 a5 bd
+6
+%# x
+0x41 0x42 0x43 0x20 0xe4 0xbd 0xa0 0xe5 0xa5 0xbd
+The showVerb function is a single line that prints the given verb v, plus the string s formatted using
+that verb. We use the fmt.Sprintf function to create a new string formatted with the passed in verb
+v. On the next line we print v and the new string n, to see what it looks like.
+The verb following the % character specifies how Go should format the given parameter. There are
+many verbs to choose from, including some verbs for specific data types. The following verbs can
+be used for any data type [^verb_fmt_source]:
+1
+%v
+the value in a default format
+2
+when printing structs, the plus flag (%+v) adds field names
+3
+%#v
+a Go-syntax representation of the value
+4
+%T
+a Go-syntax representation of the type of the value
+5
+%%
+a literal percent sign; consumes no value
+and these verbs are only for strings and slices of bytes (treated equivalently by the:
+1
+%s
+the uninterpreted bytes of the string or slice
+2
+%q
+a double-quoted string safely escaped with Go syntax
+3
+%x
+base 16, lower-case, two characters per byte
+4
+%X
+base 16, upper-case, two characters per byte
+Other common verbs include those for integers (e.g. %d for numbers in base 10) and booleans (%b).
+You can refer to the fmt package documentation for the full list.
+As our example demonstrated, some verbs allow special flags between the % symbol and the verb.
+From the fmt package documentation:

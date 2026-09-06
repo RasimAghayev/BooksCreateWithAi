@@ -1,0 +1,60 @@
+Basics
+38
+Checking length of channel
+1
+package main
+2
+3
+import "fmt"
+4
+5
+func main() {
+6
+ch := make(chan int, 5)
+7
+8
+ch <- 1
+9
+ch <- 2
+10
+ch <- 3
+11
+ch <- 4
+12
+ch <- 5
+13
+14
+fmt.Println("channel length:", len(ch))
+15
+switch {
+16
+case len(ch) >= 5:
+17
+<-ch
+18
+case len(ch) < 5:
+19
+ch <- 6
+20
+}
+21
+}
+$ go run channels_check_length.go
+channel length: 5
+We could also use a select statement with a default that does nothing when the channel is full:
+Channel select statement
+1
+package main
+2
+3
+import "fmt"
+4
+5
+func main() {
+6
+ch := make(chan int, 5)
+7
+8
+ch <- 1
+9
+ch <- 2

@@ -1,0 +1,30 @@
+Installing Go
+Installation
+The Go Downloads page¹ contains binary distributions of Go for Windows, Apple macOS, or Linux.
+You can also find instructions for installing Go from source on their Installing Go from source²
+page. We recommend installing a binary release first, as there are some extra steps necessary to
+install from source, and you really only need to install from source if you’re planning to contribute
+changes upstream to the Go language itself.
+Also, if you use Homebrew on macOS, you should be able to install go with a simple brew install
+go.
+Once installed, test the command by running:
+$ go version
+and you should see something like:
+go version go1.9 darwin/amd64
+GOPATH
+Once you’ve installed Go, you need to set up a workspace. Traditionally this is called the GOPATH,
+but since Go 1.8 there is a default workspace at $HOME/go on Unix and %USERPROFILE%/go on Windows
+(for the sake of brevity, we’re going to assume you’re using UNIX and only refer to $HOME/go from
+now on). You’ll have to create this directory if it doesn’t already exist. This is where you’ll be writing
+most if not all of your Go code.
+Typically you’ll be working with Go packages that are hosted on GitHub. When you retrieve
+a package using the go get command, the source will be automatically downloaded into your
+workspace. For example, if you want to download the popular URL router library gorilla/mux³,
+you would run:
+go get github.com/gorilla/mux
+and the source of that library will be downloaded into $HOME/go/src/github.com/gorilla/mux. You
+can now also import that library in your own code. Here’s an example based on some sample code
+from the gorilla/mux README:
+¹https://golang.org/dl/
+²https://golang.org/doc/install/source
+³https://github.com/gorilla/mux

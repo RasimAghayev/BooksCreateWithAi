@@ -1,0 +1,48 @@
+Tooling
+117
+A test for the simple program with an update method
+1
+package cat
+2
+3
+import (
+4
+"testing"
+5
+)
+6
+7
+func TestUpdateCat(t *testing.T) {
+8
+c := Cat{noise: "meow"}
+9
+c = updateCat(c)
+10
+if got := c.Noise(); got != "にゃん" {
+11
+t.Fatalf("c.Noise() = %q, want %q", got, "にゃん")
+12
+}
+13
+}
+When running this test normally with go test, we might get lucky and it will pass:
+go test
+2017/09/24 16:14:52 meow
+PASS
+ok
+github.com/gopher/cat
+0.007
+When we run the test with the race detector enabled, however, we’ll see something different:
+$ go test -race
+==================
+WARNING: DATA RACE
+Write at 0x00c4200783e0 by goroutine 7:
+github.com/gopher/cat.(*Cat).SetNoise()
+/Users/gopher/mygo/src/github.com/gopher/cat/cat.go:14 +0x3b
+Previous read at 0x00c4200783e0 by goroutine 6:
+github.com/gopher/cat.updateCat()
+/Users/gopher/mygo/src/github.com/gopher/cat/cat.go:19 +0x76
+github.com/gopher/cat.TestUpdateCat()
+/Users/gopher/mygo/src/github.com/gopher/cat/cat_test.go:9 +0x88
+testing.tRunner()
+/Users/gopher/go/src/testing/testing.go:746 +0x16c

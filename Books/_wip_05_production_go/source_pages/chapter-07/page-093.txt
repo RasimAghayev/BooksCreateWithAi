@@ -1,0 +1,49 @@
+Testing
+87
+in Go ²⁸. In the error message, first state the function called and the parameters it was called with,
+then the actual result, and finally, the result that was expected. We saw before that this results in a
+message like
+prime_test.go:25: IsPrime(17) = true, want false
+This makes it clear to the reader of the error message what function was called, what happened, and
+what should have happened. The onus is on you, the test author, to leave a helpful message for the
+person debugging the code in the future. It is a good idea to assume that the person debugging your
+failing test is not you, and is not your team. Make both the name of the test and the error message
+relevant.
+Testing HTTP Handlers
+Let’s look at an example of testing that comes up often when developing web applications: testing an
+HTTP handler. First, let’s define a comically simple HTTP handler that writes a friendly response:
+A very simple HTTP handler
+1
+package main
+2
+3
+import (
+4
+"fmt"
+5
+"net/http"
+6
+)
+7
+8
+// helloHandler writes a friendly "Hello, friend :)" response.
+9
+func helloHandler(w http.ResponseWriter, r *http.Request) {
+10
+fmt.Fprintln(w, "Hello, friend :)")
+11
+}
+12
+13
+func main() {
+14
+http.HandleFunc("/hello", helloHandler)
+15
+http.ListenAndServe(":8080", nil)
+16
+}
+The httptest package provides us with the tools we need to test this handler as if it were running
+in a real web server. The TestHTTPHandler function in the following example illustrates how to use
+httptest.NewRecorder() to send a real request to our friendly helloHandler, and read the resulting
+response.
+²⁸https://github.com/golang/go/wiki/CodeReviewComments#useful-test-failures

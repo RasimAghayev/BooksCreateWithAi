@@ -1,0 +1,12 @@
+Further Reading
+The Go Programming Language Specification⁵⁰
+Effective Go⁵¹ is a good overview document for how to write idiomatic Go code.
+Golang Weekly⁵² is a weekly newsletter about Go.
+The Go Blog⁵³ is the official blog for Go.
+Gophers Slack⁵⁴ is a Slack community of Go developers. There is a #golang-newbies channel,
+#performance, #golang-jobs, and many more.
+⁵⁰https://golang.org/ref/spec
+⁵¹https://golang.org/doc/effective_go.html
+⁵²https://golangweekly.com/
+⁵³https://blog.golang.org/
+⁵⁴https://invite.slack.golangbridge.org/

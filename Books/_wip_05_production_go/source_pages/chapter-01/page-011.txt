@@ -1,0 +1,40 @@
+Installing Go
+5
+Once you have installed vim-go, you can add the following line to your .vimrc file in order to run
+goimports on save:
+let g:go_fmt_command="goimports"
+Linters and Correctness Tooling
+If you want to install a suite of linters and tools to run on your code, we recommend gometalinter⁶.
+To install:
+$ go get -u github.com/alecthomas/gometalinter
+$ gometalinter --install
+Gometalinter allows you to run a variety of linters and tooling and conveniently combines all of
+their output into a standard format. We’ve found the deadcode, ineffassign, and misspell (disabled
+by default, enable with --enable=misspell) to be particularly useful. If you don’t want to install all
+of the linters available, you can install them individually instead. For misspell for example, install
+with:
+$ go get -u github.com/client9/misspell/cmd/misspell
+Gometalinter should automatically pick up that you have misspell installed and you’ll be able to do:
+$ gometalinter --deadline=180s --exclude=vendor --disable-all --enable=misspell ./...
+While you may not want to require some of these linters to pass in your build, one tool we
+recommend requiring is go vet⁷. Go vet is a tool concerned with code correctness. It will find
+problems in your code such as using the wrong string formatting verb in a call to Printf:
+1
+package main
+2
+3
+import (
+4
+"fmt"
+5
+)
+6
+7
+func main() {
+8
+fmt.Printf("%d", "test")
+9
+}
+This code compiles and runs, but if you do actually run it you’ll see this:
+⁶https://github.com/alecthomas/gometalinter
+⁷https://golang.org/cmd/vet/

@@ -1,0 +1,71 @@
+Basics
+40
+11
+12
+type Book struct {
+13
+Name
+string
+14
+Author
+string
+15
+Published time.Time
+16
+}
+17
+18
+func (b Book) Title() string {
+19
+return fmt.Sprintf("%s by %s (%s)", b.Name, b.Author, b.Published.Format("Ja\
+20
+n 2006"))
+21
+}
+22
+23
+type Movie struct {
+24
+Name
+string
+25
+Director string
+26
+Year
+int
+27
+}
+28
+29
+func (m Movie) Title() string {
+30
+return fmt.Sprintf("%s (%d)", m.Name, m.Year)
+31
+}
+32
+33
+func Display(e Entry) string {
+34
+return e.Title()
+35
+}
+36
+37
+func main() {
+38
+b := Book{Name: "John Adams", Author: "David McCullough", Published: time.Da\
+39
+te(2001, time.May, 22, 0, 0, 0, 0, time.UTC)}
+40
+m := Movie{Name: "The Godfather", Director: "Francis Ford Coppola", Year: 19\
+41
+72}
+42
+fmt.Println(Display(b))
+43
+fmt.Println(Display(m))
+44
+}
+Note that the Display function takes e Entry, not a concrete type like Book or Movie. Our concrete
+types implement the Entry interface, so we’re now allowed to pass implementations of those types
+into any function that takes an Entry.

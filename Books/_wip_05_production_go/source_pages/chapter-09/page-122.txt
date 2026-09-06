@@ -1,0 +1,56 @@
+Tooling
+116
+A simple program with an asynchronous update method
+1
+package cat
+2
+3
+import (
+4
+"log"
+5
+)
+6
+7
+// Cat is a small, carnivorous mammal with excellent night vision
+8
+type Cat struct {
+9
+noise string
+10
+}
+11
+12
+// SetNoise sets the noise that our cat makes
+13
+func (c *Cat) SetNoise(n string) {
+14
+c.noise = n
+15
+}
+16
+17
+// Noise makes the cat make a noise
+18
+func (c *Cat) Noise() string {
+19
+return c.noise
+20
+}
+21
+22
+func updateCat(c *Cat) {
+23
+go c.SetNoise("にゃん")
+24
+25
+log.Println(c.Noise())
+26
+}
+In the above code, we execute a goroutine that sets the Noise attribute of the Cat argument to "にゃん".
+That goroutine goes off and runs in the background and the flow of execution continues to where
+we attempt to log c.Noise. This causes a race condition as we might end up writing the value in the
+goroutine at the same time as reading it in the log.Println call.
+Without considering the race condition and reading the code from top to bottom, the expected
+functionality of the updateCat function is that the Noise attribute for the passed-in"cat" will be set
+to "にゃん". So let’s write a test that makes that assertion for us:

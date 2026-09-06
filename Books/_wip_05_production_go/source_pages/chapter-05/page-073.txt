@@ -1,0 +1,36 @@
+Supporting Unicode
+67
+Iterating over the characters in a string
+1
+package main
+2
+3
+import "fmt"
+4
+5
+func ExampleIteration() {
+6
+s := "ABC你好"
+7
+for i, r := range s {
+8
+fmt.Printf("%q(%d) ", r, i)
+9
+}
+10
+// Output: 'A'(0) 'B'(1) 'C'(2) '你'(3) '好'(6)
+11
+}
+Running this, we get the following output:
+1
+'A'(0) 'B'(1) 'C'(2) '你'(3) '好'(6)
+The range keyword returns two values on each iteration: an integer indicating the current position
+in the string, and the current rune. rune is a built-in type in Go, and it is meant to contain a single
+Unicode character. As such, it is an alias of int32, and contains 4 bytes. So on every iteration, we
+get the current position in the string, in this case called i, and a rune called r. We use the %q and %d
+verbs to print out the current rune and position in the string.
+By now it might be clear why the position variable i jumps from 3 to 6 between 你and 好. Below
+the hood, instead of going byte by byte, the range keyword is fetching the next rune in the string.
+We can achieve the same effect without range by using the NextRune
+Handling right-to-left languages
+[^verb_fmt_source](https://golang.org/pkg/fmt/#pkg-overview)

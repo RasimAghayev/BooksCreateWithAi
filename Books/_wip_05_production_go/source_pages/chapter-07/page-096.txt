@@ -1,0 +1,74 @@
+Testing
+90
+Using an interface to abstract away API calls
+1
+package eightball
+2
+3
+import (
+4
+"math/rand"
+5
+"time"
+6
+)
+7
+8
+// randIntGenerator is an interface that includes Intn, a
+9
+// method in the built-in math/rand package. This allows us
+10
+// to mock out the math/rand package in the tests.
+11
+type randIntGenerator interface {
+12
+Intn(int) int
+13
+}
+14
+15
+// EightBall simulates a very simple magic 8-ball,
+16
+// a magical object that predicts the future by
+17
+// answering yes/no questions.
+18
+type EightBall struct {
+19
+rand randIntGenerator
+20
+}
+21
+22
+// NewEightBall returns a new EightBall.
+23
+func New() *EightBall {
+24
+return &EightBall{
+25
+rand: rand.New(rand.NewSource(time.Now().UnixNano())),
+26
+}
+27
+}
+28
+29
+// Answer returns a magic eightball answer
+30
+// based on a random result provided by
+31
+// randomGenerator. It supports only four
+32
+// possible answers.
+33
+func (e EightBall) Answer(s string) string {
+34
+n := e.rand.Intn(3)
+35
+switch n {
+36
+case 0:
+37
+return "Definitely not"
+38
+case 1:

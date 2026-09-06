@@ -1,0 +1,37 @@
+Continuous Integration
+133
+Go Report Card .travis.yml
+1
+language: go
+2
+3
+go:
+4
+- 1.8.x
+5
+- 1.9.x
+6
+- 1.10.x
+7
+- 1.11.x
+8
+- tip
+9
+10
+install:
+11
+- make install
+12
+13
+script:
+14
+- make lint
+15
+- make test
+This runs our make lint and make test targets on multiple Go versions.
+Drone
+This section is a work in progress.
+General tips
+We recommend setting up a Makefile with targets for installing, building, and testing the application.
+Here is a slightly modified example from Go Report Card⁴⁹:
+⁴⁹http://github.com/gojp/goreportcard

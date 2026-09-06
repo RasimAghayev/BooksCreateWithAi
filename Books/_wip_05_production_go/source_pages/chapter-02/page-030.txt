@@ -1,0 +1,34 @@
+Basics
+24
+Slices
+While arrays have a fixed size, slices are dynamic. To create a slice of integers for example, we can
+do:
+1
+x := []int{1, 2, 3, 4, 5}
+Slices are abstractions on top of arrays. A slice contains a pointer to an array, its length, and its
+capacity. We can get the length and capacity of a slice with the built-in len and cap functions,
+respectively. We’ll call “slicing” the act of creating a new slice which points to a range of contiguous
+elements in the original array. We can “slice” arrays as well as slices - in which case the new slice
+will point to the underlying array. For example:
+1
+x := []int{1, 2, 3, 4, 5}
+2
+y := x[0:3]
+3
+fmt.Println(y)
+will give us:
+[1 2 3]
+We can also leave out the 0:
+1
+y := x[:3]
+and the result will be the same. Likewise for the high bound, we can leave that out and it will default
+to the length of the slice:
+1
+x := []int{1, 2, 3, 4, 5}
+2
+y := x[3:]
+3
+fmt.Println(y)
+and we get:
+[4 5]
+A slice’s zero value is nil:

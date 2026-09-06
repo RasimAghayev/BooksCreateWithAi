@@ -1,0 +1,56 @@
+Style and Error Handling
+50
+1
+func truncate(s, suf string, l int) string {
+2
+if len(s) < l {
+3
+return s
+4
+}
+5
+return s[:l] + suf
+6
+}
+Which is a bit smaller and easier to read.
+That’s all we’re going to cover on golint - we do suggest using it because it can show you ways to
+make your code simpler as well as more suitable for godoc. There’s no need to fix all of its warnings
+though, if you think it’s too noisy.
+Error Handling
+Error handling may take some getting used to when learning Go. In Go, your functions will normally
+return whatever values you want to return, as well as an optional error value. To give a simple
+example:
+1
+// lineCount returns the number of lines in a given file
+2
+func lineCount(filepath string) (int, error) {
+3
+out, err := exec.Command("wc", "-l", filepath).Output()
+4
+if err != nil {
+5
+return 0, err
+6
+}
+7
+// wc output is like: 999 filename.go
+8
+count, err := strconv.Atoi(strings.Fields(string(out))[0])
+9
+if err != nil {
+10
+return 0, err
+11
+}
+12
+13
+return count, nil
+14
+}
+Note the multiple if err != nil checks. These are very common in idiomatic Go code, and
+sometimes people who are new to Go have trouble adjusting to having to write them all the time.
+You may see it as unnecessary code duplication. Why not have try/except like other languages?
+We had similar thoughts when first starting out with Go, but eventually warmed up to the error
+checking. When you’re that strict about returning and checking errors, it’s very hard to miss where
+and why an error is happening.
+We could even go ahead and make those errors more specific:

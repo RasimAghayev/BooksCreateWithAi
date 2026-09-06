@@ -1,0 +1,27 @@
+Testing
+100
+1
+type User struct {
+2
+Name string
+3
+}
+4
+5
+func (u *User) ValidateName() (bool, error) {
+6
+...
+7
+}
+Then our example code would look like this:
+1
+func ExampleUser_ValidateName() {
+2
+...
+3
+}
+where the convention for writing examples for methods on types is ExampleT_M().
+If we need multiple examples for a single function, that can be done by appending an underscore
+and a lowercase letter. For example with our Validate function, we could have ExampleValidate,
+ExampleValidate_second, ExampleValidate_third, and so on.
+In the next chapter, we will discuss one last important use of the Go testing package: benchmarking.

@@ -1,0 +1,56 @@
+Basics
+43
+Error handling example
+1
+package strconv
+2
+3
+import "fmt"
+4
+5
+func ParseBool(str string) (bool, error) {
+6
+switch str {
+7
+case "1", "t", "T", "true", "TRUE", "True":
+8
+return true, nil
+9
+case "0", "f", "F", "false", "FALSE", "False":
+10
+return false, nil
+11
+}
+12
+return false, fmt.Errorf("invalid input %q", str)
+13
+}
+Here we are returning a nil error when we’re able to parse the input properly, and using fmt.Errorf
+to return an error in the case that we cannot parse the input.
+We’ll cover more about error handling in the “Style and Error Handling” chapter that follows this
+one.
+Reading Input
+You can use a bufio.Scanner to read input from stdin, which by default will split the input line by
+line. Here is an example of a Go program that reads a file containing one word per line, and keeps
+a count of every occurrence of each word:
+Reading standard input
+1
+package main
+2
+3
+import (
+4
+"bufio"
+5
+"log"
+6
+"os"
+7
+)
+8
+9
+func main() {
+10
+m := map[string]int{}
+11
+scanner := bufio.NewScanner(os.Stdin)

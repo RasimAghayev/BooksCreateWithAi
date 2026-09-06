@@ -1,0 +1,43 @@
+Installing Go
+4
+1
+go get golang.org/x/tools/cmd/goimports
+We now discuss some useful plugins for three common editors, in (arguably!) decreasing order of
+complexity.
+GoLand
+GoLand is a powerful and mature IDE for Go. It features code completion, the ability to jump to
+variable and type definitions, standard debugging tools like run-time inspection and setting break
+points, and more. A free 30-day trial can be downloaded from https://www.jetbrains.com/go/
+Once installed, we recommend installing goimports on save. To do this, go to File -> Settings -> Tools
+-> File Watchers. Click the Plus (+) icon, and select “goimports”. Press OK. When you now save a
+Go file in the project, it should get formatted according to Go standards automatically.
+Sublime Text
+For Sublime Text 3, we recommend installing a package called GoSublime⁴. This is done via
+Sublime Text package control. Package control can be installed with the commands provided at
+https://packagecontrol.io/installation. Once installed, open package control by pressing Ctrl+Shift+P
+on Windows and Linux, or Cmd+Shift+P on OS X. Then type “install package” and select “Package
+control: install package”. Now type “GoSublime” and choose the matching option. Finally, open the
+GoSublime settings by going to Preferences -> Package Settings -> GoSublime -> Settings-User. Make
+sure that GOPATH matches the path you configured earlier. Here are some typical settings:
+1
+{
+2
+// you may set specific environment variables here
+3
+// e.g "env": { "PATH": "$HOME/go/bin:$PATH" }
+4
+// in values, $PATH and ${PATH} are replaced with
+5
+// the corresponding environment(PATH) variable, if it exists.
+6
+"env": {"GOPATH": "$HOME/Code/go", "PATH": "$GOPATH/bin:$PATH" },
+7
+8
+"fmt_cmd": ["goimports"]
+9
+}
+vim
+For vim, you will want to install vim-go⁵. Instructions can be found on that page for the various vim
+package managers.
+⁴https://github.com/DisposaBoy/GoSublime
+⁵https://github.com/fatih/vim-go

@@ -1,0 +1,7 @@
+Testing
+99
+Godoc example full
+Another note about examples is that they have a specific naming convention. Our example above
+is named ExampleUsername because we wrote an example for the Username function. But what if we
+want to write an example for a method on a type? Let’s say we had a type User with a method
+ValidateName:

@@ -1,0 +1,37 @@
+Basics
+22
+1
+var x *int = nil
+2
+*x
+// causes a run-time panic
+The Receive Operator
+The receive operator, <- is a special operator used to receive data from a channel. For more details
+on this, see channels.
+Conditional Statements
+We’ve seen some simple if statements in previous sections’ code snippets. Here we’ll cover some
+other common uses of conditional statements in Go.
+An if can contain a variable declaration before moving on to the condition. This can often be seen
+in tests, like in this example from the Go source code (bytes/reader_test.go):
+1
+if got := string(buf); got != want {
+2
+t.Errorf("ReadAll: got %q, want %q", got, want)
+3
+}
+Variables declared in the condition are restricted to the scope of the if statement - meaning that in
+the example above, we cannot access the got variable outside of the if statement’s scope.
+An else statement is done as follows (this example is taken from Go’s time package, in time/for-
+mat.go):
+1
+if hour >= 12 {
+2
+b = append(b, "PM"...)
+3
+} else {
+4
+b = append(b, "AM"...)
+5
+}
+It is also quite common to see switch statements used in lieu of if/else statements. Here is an
+example from Go’s source code (net/url/url.go), of a switch statement:

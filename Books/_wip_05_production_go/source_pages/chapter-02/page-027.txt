@@ -1,0 +1,46 @@
+Basics
+21
+var x int = 1
+var y int = 2
+// eq will be false
+var eq bool = x == y
+but this is not valid, and will result in a compile-time type error:
+var x int = 1
+var y int32 = 2
+// error: mismatched types int and int32
+var eq bool = x == y
+Logical Operators
+Logical operators apply to boolean values and yield a boolean result.
+&&
+conditional AND
+p && q
+is
+"if p then q else false"
+||
+conditional OR
+p || q
+is
+"if p then true else q"
+!
+NOT
+!p
+is
+"not p"
+As in C, Java, and JavaScript, the right operand of && and || is evaluated conditionally.
+Address Operators
+Go has two address operators: the address operation, &, and the pointer indirection, *.
+&x returns a pointer to x. The pointer will be a pointer of the same type as x. A run-time panic will
+occur if the address operation is applied to an x that is not addressable.
+1
+var x int
+2
+var y *int = &x
+3
+4
+// Print the memory address of x,
+5
+// e.g. 0x10410020
+6
+fmt.Println(y)
+When x is a pointer, *x denotes the variable pointed to by x. If x is nil, an attempt to evaluate *x will
+cause a run-time panic.

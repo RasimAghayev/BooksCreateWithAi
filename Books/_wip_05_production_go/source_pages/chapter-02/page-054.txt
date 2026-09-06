@@ -1,0 +1,61 @@
+Style and Error Handling
+48
+1
+package main
+2
+3
+type Animal struct {
+4
+Name
+string
+5
+Species string
+6
+}
+7
+8
+func main() {
+9
+animals := []Animal{
+10
+{"Henry", "cat"},
+11
+{"Charles", "dog"},
+12
+}
+13
+}
+Note how the extra Animal struct names are unnecessary in the slice []Animal, and are therefore
+removed. gofmt -s makes stylistic changes and does not affect the logic of the code at all, meaning
+it is safe to run gofmt -s all the time.
+Short Variable Names
+Another contentious topic in the earlier days of Go was the use of short variable names. If you look
+at the Go source code, you’ll see a lot of code that looks like this:
+1
+func Unmarshal(data []byte, v interface{}) error {
+2
+// Check for well-formedness.
+3
+// Avoids filling out half a data structure
+4
+// before discovering a JSON syntax error.
+5
+var d decodeState
+6
+err := checkValid(data, &d.scan)
+7
+if err != nil {
+8
+return err
+9
+}
+10
+11
+d.init(data)
+12
+return d.unmarshal(v)
+13
+}
+You might be thinking, “why use such a short and useless variable name like d? It doesn’t tell me
+anything about what the variable is holding.” It’s a fair point, especially considering that for years
+we’ve been told that having descriptive variable names is very important. But the authors of Go had

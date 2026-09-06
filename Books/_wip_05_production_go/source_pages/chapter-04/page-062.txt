@@ -1,0 +1,54 @@
+Strings
+56
+12
+fmt.Println(c1, c2)
+13
+// Output: 3 1
+14
+}
+If we want to know whether a string contains, starts with, or ends with some substring, we can use
+the strings.Contains, strings.HasPrefix, and strings.HasSuffix functions, respectively. All of these
+functions return a boolean:
+Count occurrences in a string
+1
+package main
+2
+3
+import (
+4
+"fmt"
+5
+"strings"
+6
+)
+7
+8
+func ExampleContains() {
+9
+str := "two gophers on honeymoon"
+10
+if strings.Contains(str, "moon") {
+11
+fmt.Println("Contains moon")
+12
+}
+13
+if strings.HasPrefix(str, "moon") {
+14
+fmt.Println("Starts with moon")
+15
+}
+16
+if strings.HasSuffix(str, "moon") {
+17
+fmt.Println("Ends with moon")
+18
+}
+19
+// Output: Contains moon
+20
+// Ends with moon
+21
+}
+For finding the index of a substring in a string, we can use strings.Index. Index returns the index
+of the first instance of substr in s, or -1 if substr is not present in s:

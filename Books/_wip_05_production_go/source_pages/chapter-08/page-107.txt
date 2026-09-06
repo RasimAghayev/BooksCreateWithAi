@@ -1,0 +1,36 @@
+Benchmarks
+The Go testing package contains a benchmarking tool for examining the performance of our Go
+code. In this chapter, we will use the benchmark utility to progressively improve the performance
+of a piece of code. We will then discuss advanced benchmarking techniques to ensure that we are
+measuring the right thing.
+A simple benchmark
+Let’s suppose we have a simple function that computes the nʰ Fibonacci number. The sequence Fn
+of Fibonacci numbers is defined by the recurrence relation, Fn = Fn−1 + Fn−2, with F0 = 0, F1 = 1.
+That is, every number after the first two is the sum of the two preceding ones:
+0, 1, 1, 2, 3, 5, 8, 13, 21, 34, 55, ...
+Because the sequence is recursively defined, a function that calculates the nʰ Fibonacci number is
+often used to illustrate programming language recursion in computer science text books. Below is
+such a function that uses the definition to recursively calculate the nʰ Fibonacci number.
+A function that recursively obtains the nʰ Fibonacci number
+1
+package fibonacci
+2
+3
+// F returns the nth Fibonnaci number.
+4
+func F(n int) int {
+5
+if n <= 0 {
+6
+return 0
+7
+} else if n == 1 {
+8
+return 1
+9
+}
+10
+return F(n-1) + F(n-2)
+11
+}
+Let’s make sure it works by writing a quick test, as we saw in the chapter on Testing.

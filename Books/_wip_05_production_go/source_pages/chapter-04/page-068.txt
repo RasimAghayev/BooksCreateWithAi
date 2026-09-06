@@ -1,0 +1,29 @@
+Supporting Unicode
+Part of preparing production-ready code is making sure that it behaves as expected for supported
+languages and inputs. In the previous chapter, we showed how easy Go makes many common string
+manipulation tasks. Many of these examples were implicitly English-centric, with only some hints
+that there may be more brewing below the surface when it comes to handling international character
+sets. In this chapter we will examine strings in greater depth, and learn how to write bug-free,
+production-ready code that handles strings in any language supported by the Unicode standard.
+We will start by taking a detour through the history of string encodings. This will then inform the
+rest of our discussion on handling different character sets in Go.
+A very brief history of string encodings
+What are string encodings, and why do we need them? You can skip this section if you already know
+the difference between Unicode and UTF-8, and between a character and a Unicode code point.
+Consider how a computer might represent a string of text. Because computers operate on binary,
+human-readable text needs to be represented as binary numbers in some way. Early computer
+pioneers came up with one such scheme, which they called ASCII (pronounced ASS-kee). ASCII is
+one way of mapping characters to numbers. For example, A is 65 (binary 0100 0001, or hexadecimal
+0x41), B is 66, C is 67, and so on. We could represent the ASCII-encoded string “ABC” in hexadecimal
+notation, like so:
+0x41 0x42 0x43
+ASCII defines a mapping for 127 different characters, using exactly 7 bits. For the old 8-bit systems,
+this was perfect. The only problem is ASCII only covers unaccented English letters.
+As computers became more widespread, other countries also needed to represent their text in binary
+format, and unaccented English letters were not enough. So a plethora of new encodings were
+invented. Now when code encountered a string, it also needed to know which encoding the string
+is using in order to map the bytes to the correct human-readable characters.
+Identifying this as a problem, a group called the Unicode consortium undertook the herculean task
+of assigning a number to every letter used in any language. Such a magic number is called a Unicode
+code point, and is represented by a U+ followed by a hexadecimal number. For example, the string
+“ABC” corresponds to these three Unicode code points:

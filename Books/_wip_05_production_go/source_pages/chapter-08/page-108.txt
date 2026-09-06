@@ -1,0 +1,64 @@
+Benchmarks
+102
+A test for the function that recursively obtains the nʰ Fibonacci number
+1
+// fibonacci_test.go
+2
+package fibonacci
+3
+4
+import "testing"
+5
+6
+func TestF(t *testing.T) {
+7
+cases := []struct {
+8
+n
+int
+9
+want int
+10
+}{
+11
+{-1, 0},
+12
+{0, 0},
+13
+{1, 1},
+14
+{2, 1},
+15
+{3, 2},
+16
+{8, 21},
+17
+}
+18
+19
+for _, tt := range cases {
+20
+got := FastF(tt.n)
+21
+if got != tt.want {
+22
+t.Errorf("F(%d) = %d, want %d", tt.n, got, tt.want)
+23
+}
+24
+}
+25
+}
+Running the test, we see that indeed, our function works as promised:
+$ go test -v
+=== RUN
+TestF
+--- PASS: TestF (0.00s)
+PASS
+ok
+_/home/productiongo/benchmarks/fibonacci
+0.001s
+Now, this recursive Fibonacci function works, but we can do better. How much better? Before
+we rewrite this function, let’s establish a baseline to which we can compare our future efficiency
+improvements. Go provides a benchmark tool as part of the testing package. Anagalous to TestX(t
+*testing.T), benchmarks are created with BenchmarkX(b *testing.B):

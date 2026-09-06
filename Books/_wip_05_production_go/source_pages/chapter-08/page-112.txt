@@ -1,0 +1,51 @@
+Benchmarks
+106
+Fast F implementation
+1
+package fibbonaci
+2
+3
+// F returns the nth Fibonnaci number.
+4
+func F(n int) int {
+5
+var a, b int = 0, 1
+6
+for i := 0; i < n; i++ {
+7
+a, b = b, a+b
+8
+}
+9
+return a
+10
+}
+and re-run the benchmark, outputting to a file called new.txt:
+$ go test -bench . > new.txt
+new.txt should look like this:
+goos: darwin
+goarch: amd64
+BenchmarkF-4
+50000000
+25.0 ns/op
+PASS
+ok
+_/Users/productiongo/benchmarks/benchcmp
+1.289s
+Now let’s run benchcmp on the results:
+benchcmp old.txt new.txt
+benchmark
+old ns/op
+new ns/op
+delta
+BenchmarkF-4
+1965113
+25.0
+-100.00%
+We can see the old performance, new performance, and a delta. In this case, the new version of
+F performs so well that it reduced the runtime of the original by 99.9987%. Thus rounded to two
+decimals, we get a delta of -100.00%.
+Resetting benchmark timers
+We can reset the benchmark timer if we don’t want the execution time of our setup code to be
+included in the overall benchmark timing.
+A benchmark from the crypto/aes package in the Go source code provides an example of this:

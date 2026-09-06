@@ -1,0 +1,57 @@
+Testing
+94
+Test for username validation function
+1
+package validate
+2
+3
+import "testing"
+4
+5
+var usernameTests = []struct {
+6
+in
+string
+7
+wantValid bool
+8
+}{
+9
+{"gopher", true},
+10
+}
+11
+12
+func TestUsername(t *testing.T) {
+13
+for _, tt := range usernameTests {
+14
+valid, err := Username(tt.in)
+15
+if err != nil && tt.wantValid {
+16
+t.Fatal(err)
+17
+}
+18
+19
+if valid != tt.wantValid {
+20
+t.Errorf("Username(%q) = %t, want %t", tt.in, valid, tt.wantValid)
+21
+}
+22
+}
+23
+}
+As you can see, we’re not covering very many cases. Let’s see what exactly our test coverage is for
+this function:
+$ go test -cover
+PASS
+coverage: 62.5% of statements
+ok
+github.com/gopher/validate 0.008s
+62.5% is a bit too low. This function is simple enough that we can probably get 100% coverage. We’d
+like to know, however, exactly what parts of the function are not being covered. This is where the
+coverage profile and HTML report come in.
+To generate a test coverage profile, we run go test -coverprofile=coverage.out:

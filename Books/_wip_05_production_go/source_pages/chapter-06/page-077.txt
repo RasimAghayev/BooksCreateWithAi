@@ -1,0 +1,54 @@
+Concurrency
+71
+Channels
+Channels can be used to send and receive values. They’re often used in goroutines; a goroutine will
+do some work and then send the result to the channel that was passed in as an argument:
+Channel usage
+1
+package main
+2
+3
+import "fmt"
+4
+5
+func main() {
+6
+ch := make(chan string)
+7
+8
+go func(ch chan string) {
+9
+ch <- "hello, world 1"
+10
+}(ch)
+11
+12
+go func(ch chan string) {
+13
+ch <- "hello, world 2"
+14
+}(ch)
+15
+16
+go func(ch chan string) {
+17
+ch <- "hello, world 3"
+18
+}(ch)
+19
+20
+a, b, c := <-ch, <-ch, <-ch
+21
+22
+fmt.Println(a)
+23
+fmt.Println(b)
+24
+fmt.Println(c)
+25
+}
+This code is functionally equivalent to our sync.WaitGroup example in the previous section. Note
+that the channel must be declared before it’s used, as we see with ch := make(chan string). We create
+the channel, then each goroutine sends a string onto the channel. Finally we select 3 values from the
+channel and print them out at the end of the program.
+What would happen if we only sent 2 strings but tried to select 3?

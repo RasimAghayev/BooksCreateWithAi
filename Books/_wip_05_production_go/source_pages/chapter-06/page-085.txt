@@ -1,0 +1,69 @@
+Concurrency
+79
+sync.Map
+1
+package main
+2
+3
+import (
+4
+"log"
+5
+"sync"
+6
+"time"
+7
+)
+8
+9
+type safeMap struct {
+10
+sync.Mutex
+11
+m map[string]string
+12
+}
+13
+14
+func main() {
+15
+var sm = safeMap{
+16
+m: make(map[string]string),
+17
+}
+18
+19
+go func() {
+20
+sm.Lock()
+21
+defer sm.Unlock()
+22
+sm.m["test"] = "hello, world 1"
+23
+}()
+24
+25
+go func() {
+26
+sm.Lock()
+27
+defer sm.Unlock()
+28
+sm.m["test"] = "hello, world 2"
+29
+}()
+30
+31
+time.Sleep(time.Second)
+32
+33
+sm.Lock()
+34
+log.Println(sm.m["test"])
+35
+sm.Unlock()
+36
+}
+We can add Store, Load, Delete etc. methods to our safeMap type as well:

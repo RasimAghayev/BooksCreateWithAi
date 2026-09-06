@@ -1,0 +1,48 @@
+Supporting Unicode
+66
+1
++
+always print a sign for numeric values;
+2
+guarantee ASCII-only output for %q (%+q)
+3
+-
+pad with spaces on the right rather than the left (left-justify the field)
+4
+#
+alternate format: add leading 0 for octal (%#o), 0x for hex (%#x);
+5
+0X for hex (%#X); suppress 0x for %p (%#p);
+6
+for %q, print a raw (backquoted) string if strconv.CanBackquote
+7
+returns true;
+8
+always print a decimal point for %e, %E, %f, %F, %g and %G;
+9
+do not remove trailing zeros for %g and %G;
+10
+write e.g. U+0078 'x' if the character is printable for %U (%#U).
+11
+' ' (space) leave a space for elided sign in numbers (% d);
+12
+put spaces between bytes printing strings or slices in hex (% x, % X)
+13
+0
+pad with leading zeros rather than spaces;
+14
+for numbers, this moves the padding after the sign
+Flags are ignored by verbs that do not expect them.
+There are plenty more options for formatting with the fmt package, and we highly recommend
+reading the documentation for a full breakdown of all the available options. One aspect not covered
+so far is that it is possible to specify a width by an optional decimal number immediately preceding
+the verb. By default the width is whatever is necessary to represent the value, but when provided,
+width will pad with spaces until there are least that number of runes. This is not the same as in C,
+which uses bytes to count the width. So what exactly are runes?
+Runes and safely ranging over strings
+Previously we stated that Go makes no assumptions about the string encoding when it converts bytes
+to the string type. This is true. The string type carries with it no information about its encoding. But
+in certain instances, Go does need to make assumptions about the underlying encoding. One such
+case is when we range over a string.
+Let’s return to the last example from the previous chapter, and range over a string that contains
+some non-ASCII characters:
