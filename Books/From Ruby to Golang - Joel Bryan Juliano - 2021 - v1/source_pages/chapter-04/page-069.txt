@@ -1,0 +1,42 @@
+Arrays and Slices
+63
+Go Sliced Array
+1
+const MAX_ARRAY_SIZE = 2
+2
+3
+array := make([]string, MAX_ARRAY_SIZE)
+4
+5
+array[0] = "foo"
+6
+array[1] = "bar"
+7
+8
+fmt.Println(array[0])
+9
+fmt.Println(array[1])
+10
+fmt.Println(array)
+Questions
+1. What have we learned?
+Sliced array is a much cheaper and flexible type of array, which allows you to resize the array
+using append, a feature that is not possible in a Fixed Array.
+2. What is a Slice Array?
+A slice is a reference to an array. Slices are used to represent arrays, or subsets of arrays, or
+multi-dimensional arrays.
+3. Why is sliced array much cheaper?
+Because it is a pointer to an array, not the array itself.
+4. What is the syntax of a sliced array?
+The syntax of a sliced array is the same as a normal array, but with a colon (:) after the array
+name.
+5. How do we adjust the size of an sliced array?
+We can use the built-in function append() to append elements to the end of a sliced array.
+Sliced-Array Assignment Behaviour
+Sliced Array is reference types¹¹ which means that when you pass or assign a value from a sliced
+array, only it’s reference will be returned, not a new copy, so it is much cheaper and efficient.
+For example, we have four sliced array variables, then add strings to each variable, but upon printing
+all variable contents, we saw that all four variables contain the same value. This means that when
+we modify a sliced array variable, we are also modifying the original source of the sliced array it is
+assigned from.
+¹¹https://en.wikipedia.org/wiki/Reference_type

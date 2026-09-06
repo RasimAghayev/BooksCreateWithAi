@@ -1,0 +1,39 @@
+Navigating your Arrays
+In Ruby, there’s an each keyword that is used to iterate a list of items in an array, hash or sets,
+however how do you navigate your arrays in Go?
+In this Chapter, we are going to discuss what are the ways to navigate or iterate you’re arrays in Go.
+In Go, the equivalent functionality similar to Ruby’s each functionality is the for loop. To understand
+this further, let’s discuss how a basic array is iterated in Ruby.
+In this example, we create an array with 4 items, then using each, we create a block iterating over
+the fruits array, with a local variable fruit, then we print the value of fruit using puts.
+1
+fruits = ["Apple", "Mango", "Orange", "Banana"]
+2
+3
+fruits.each do |fruit|
+4
+puts fruit
+5
+end
+1
+$ ruby each_array.rb
+2
+3
+Apple
+4
+Mango
+5
+Orange
+6
+Banana
+Given this example, we will discuss the different ways to use Golang’s for loop to iterate an array.
+Questions
+1. What have we learned?
+We learn how to iterate an array using for loop.
+2. Why is this useful?
+There are many reasons why we iterate an array in Go, for example, to print the values of
+an array, to modify the values of an array, to remove the values of an array, to add values to
+an array, etc.
+3. Is there a different ways of iterating an array in Go?
+Yes, there are different ways of iterating an array in Go, for example, using the for loop and
+using the range keyword.

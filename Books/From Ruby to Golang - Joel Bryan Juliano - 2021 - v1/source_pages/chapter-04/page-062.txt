@@ -1,0 +1,41 @@
+Arrays and Slices
+56
+1
+$ ruby array.rb
+2
+3
+foo
+4
+bar
+In Go, there are two types of array classifications with a different type of initializations, namely the
+Fixed Arrays and Slices. Both Fixed Arrays and Slices do the same thing what an array does, they
+both store amounts of data that can be accessed by index. However, there are a number of differences
+between the two that we will discuss further.
+It is easy to be overwhelmed with unexpected behaviors of an array as experienced in high-
+level programming languages like Ruby. It’s better to recognize the difference and its usage
+between a fixed array and a slice in Go, which will be discussed in this article.
+Questions
+1. What have we learned?
+Arrays are a fast and efficient way to store a fixed amount of data that you can iterate over
+sequentially.
+2. What is an array?
+An array is a collection of data that can be accessed by index.
+3. What are the array classifications in Go?
+There are two types of array classifications in Go, namely the Fixed Arrays and Slices.
+4. Why is it important to know the difference between fixed array and a slice in Go?
+It is important to know the difference between a fixed array and a slice, because it will help
+you to choose the right data structure for the right job.
+5. What is the difference between fixed and slice array in Go?
+The difference between a fixed array and a slice array is that a fixed array is a constant size
+array, while a slice array is a variable size array.
+6. How to sequentially retrieve the values of an array in Go?
+Use the for loop.
+7. What is a Big O Notation?
+Big O Notation is a way to describe the complexity of a function or algorithm. It is a way
+to describe the uncertainty of things you have to do in n number of ways. Which means
+processing them and searching them will take a certain degree of steps to come up its value,
+also every step involves growing complexities, resource consumption, and time spending.
+8. What is the Big O Notation of an Array?
+The Big O Notation of an Array is O(n).
+9. What is the Big O Notation of a Map?
+The Big O Notation of a Map is O(1).

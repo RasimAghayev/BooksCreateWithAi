@@ -1,0 +1,48 @@
+Glossary
+115
+Application
+The act of applying or laying on, in a
+literal sense. In mathematics and
+computer science, apply is a function
+that applies functions to arguments. It is
+central to programming languages
+derived from lambda calculus, such as
+LISP and Scheme, and also in functional
+languages. It has a role in the study of
+the denotational semantics of computer
+programs, because it is a continuous
+function on complete partial orders.
+Apply
+To lay or place; to put (one thing to
+another)
+Apps
+plural of app
+App
+An application (program), especially a
+small one designed for a mobile device
+Architecture
+In computer engineering, computer
+architecture is a set of rules and methods
+that describe the functionality,
+organization, and implementation of
+computer systems. Some definitions of
+architecture define it as describing the
+capabilities and programming model of a
+computer but not a particular
+implementation.
+Argument (logic)
+In logic and philosophy, an argument is a
+series of statements (in a natural
+language), called the premises or
+premisses (both spellings are acceptable),
+intended to determine the degree of truth
+of another statement, the conclusion.
+The logical form of an argument in a
+natural language can be represented in a
+symbolic formal language, and
+independently of natural language
+formally defined “arguments” can be
+made in math and computer science.
+Argument
+A fact or statement used to support a
+proposition; a reason

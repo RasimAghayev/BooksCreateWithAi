@@ -1,0 +1,50 @@
+Hash and Maps
+43
+Reading a Non-Present Key from a Map
+You can safely read a non-present key from a map in Go, and it will just return a zero values. Zero
+values are not literaly a zero integer, but are default values corresponding to each type. Depending
+on the type, there are different default values, for example:
+- false for booleans
+- 0 for integers
+- 0.0 for floats
+- "" for strings
+- nil for functions, interfaces, slices, pointers, channels, and maps
+In this example, we are going to read a non-present key from a map with an int type, which will
+return the zero value (and the literal 0 value for int).
+1
+package main
+2
+3
+import (
+4
+"fmt"
+5
+)
+6
+7
+func main() {
+8
+var basket map[string]int
+9
+10
+basket = make(map[string]int)
+11
+12
+basket["apple"] = 1
+13
+basket["kale"] = 2
+14
+15
+if exists := basket["cabbage"] != 0; exists == false {
+16
+fmt.Println("Item does not exists")
+17
+}
+18
+}
+1
+$ go run map_read_non_present_key_1.go
+2
+3
+Item does not exists
+and we can rewrite this using the two form map assignment semantic

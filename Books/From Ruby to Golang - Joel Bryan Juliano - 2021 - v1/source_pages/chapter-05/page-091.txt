@@ -1,0 +1,35 @@
+Package Management
+85
+elements to public and make it available on other projects, how do we declare them in a package
+file similar to Gemfile and use a similar package manager tool like bundler?
+The default package manager for Go is Go Modules, however there are still many applications that
+uses dep, because dep for many years, was the most popular package manager before. We will focus
+on two ways to manage packages in Go, using built-in Go Modules and dep for legacy applications.
+Questions
+1. What do we learn about distributing Go package?
+We learned that Go uses GOPATH to store packages and that we can use import to load
+packages. We also learned that we can use package to declare public functions and structs
+and that we can use import to access them.
+2. What is GOPATH?
+GOPATH is the environment variable that Go uses to store packages, libraries, binaries and
+Golang compiler itself. Using GOPATH, Go will store remote packages to $GOPATH/src, i.e.
+$GOPATH/src/example.com/foo. It is also the path where Go will search for packages.
+3. How do we declare functions, structs and variables public in Go?
+In Go, any capitalized functions, structs and variables are public.
+4. How do you import packages in Go?
+You can use import to load packages in Go.
+5. What is Go dep?
+Go dep is a dependency management tool for Go. It is similar to Ruby’s bundler and Node’s
+npm. It is a tool that will help you manage your Go packages and their dependencies.
+6. What is Go Modules?
+Go Modules is the official package manager for Go. It is a built-in package manager that
+will be part of the Go language. It is developed by the Go team and was released in 1.11.
+Package Management using Go Modules
+Go has a built-in package manager that is available on Go version 1.11 and higher. Type go version
+to check if your Go environment supports it. To use Go Modules on Go 1.11, you need to export an
+environment variable GO111MODULE with a value of on.
+1
+export GO111MODULE=on
+You can either set the value of the variable to either on, off or auto. If the environment
+variable is unset, the default value to use is auto, but it must meet two conditions: 1. The
+project should not be on $GOPATH/src directory, 2. The project root contains a go.mod file.

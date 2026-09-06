@@ -1,0 +1,77 @@
+Hash and Maps
+50
+Double Splat Interface Example 2
+1
+package main
+2
+3
+import "fmt"
+4
+5
+type basket []map[string]string
+6
+7
+func main() {
+8
+basket := new(basket)
+9
+10
+basket.add_item(map[string]string{
+11
+"name": "apple",
+12
+"flavour": `It's a little sour and bitter, but mostly
+13
+sweet, not at all salty, very juicy in general.`,
+14
+}, "fruit")
+15
+16
+basket.print_items()
+17
+}
+18
+19
+func (items *basket) add_item(args ...interface{}) {
+20
+item := args[0].(map[string]string)
+21
+22
+item["kind"] = args[1].(string)
+23
+*items = append(*items, item)
+24
+25
+fmt.Printf("Entry %s created!\n", item["name"])
+26
+}
+27
+28
+func (items basket) print_items() {
+29
+fmt.Printf("There are %d item(s) in the basket.",
+30
+len(items))
+31
+32
+for _, item := range items {
+33
+fmt.Printf(
+34
+`Name: %s\n
+35
+Flavour: %s\n
+36
+Kind: %s\n`,
+37
+item["name"],
+38
+item["flavour"],
+39
+item["kind"],
+40
+)
+41
+}
+42
+}

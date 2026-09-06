@@ -1,0 +1,49 @@
+Organizing your Functions using Interface
+108
+56
+items = append(items, fruits)
+57
+items = append(items, veggies)
+58
+59
+for _, v := range items {
+60
+v.Items() // Apple
+61
+// Broccolli
+62
+}
+63
+}
+1
+$ go run produce_basket.go
+2
+3
+Apple Added
+4
+Mango Added
+5
+Broccolli Added
+6
+Mango Removed
+7
+Apple
+8
+Broccolli
+Questions
+1. What have we learned?
+We can use interface to define contracts for our types.
+2. Why is this useful?
+We can use interface to enforce coherence in the type definitions.
+Satisfying Return Values
+We can use Interface as a contract for your function return values.
+1
+type Produce interface {
+2
+Flavour() string
+3
+Kind() string
+4
+}
+And if we want to create an array of Produce that contains specific types defined in a struct, we can
+use interface to satisfy our return values.

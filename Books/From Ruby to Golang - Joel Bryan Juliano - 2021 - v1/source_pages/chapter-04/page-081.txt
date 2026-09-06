@@ -1,0 +1,12 @@
+Arrays and Slices
+75
+Chapter Questions
+1. What is an array?
+An array is a collection of variables of the same type.
+2. What is a fixed-array?
+A fixed-array is an array whose size is specified at compile time.
+3. What is a sliced-array?
+A slice is a reference to an array. A sliced-array is a slice that refers to a subset of an array.
+4. What is the difference between a fixed-array and sliced-array?
+A fixed-array is a contiguous block of memory that is allocated at the time of declaration. A
+sliced-array is a contiguous block of memory that is allocated at the time of slicing.

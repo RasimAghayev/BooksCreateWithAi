@@ -1,0 +1,59 @@
+Hash and Maps
+42
+21
+}
+22
+23
+basket["kale"] = produce{
+24
+flavour: `It boasts deep, earthy flavors that can range
+25
+from rich and meaty to herbaceous and slightly bitter.`,
+26
+kind:
+"veggies",
+27
+}
+28
+29
+fmt.Printf("Map before delete %+v\n", basket)
+30
+31
+delete(basket, "kale")
+32
+33
+fmt.Printf("Map after delete %+v\n", basket)
+34
+}
+1
+$ go run map_delete.go
+2
+3
+Map before delete map[apple:{flavour:It's a little sour and
+4
+bitter, but mostly sweet, not at all salty, very juicy in
+5
+general. kind:fruit}
+6
+kale:{flavour:It boasts deep, earthy flavors that can range
+7
+from rich and meaty to herbaceous and slightly bitter.
+8
+kind:veggies}]
+9
+10
+Map after delete map[apple:{flavour:It's a little sour and
+11
+bitter, but mostly sweet, not at all salty, very juicy in
+12
+general. kind:fruit}]
+Questions
+1. What have we learned?
+We learned that Go has a delete command that can be used to delete a value in a map.
+2. Why this is useful?
+This is useful because it is easy to use and it is not necessary to create a new map.
+3. Why do you want to use map’s delete command?
+You want to use map’s delete command when you want to delete a value from a map without
+creating a new map.
+4. How do you delete a map entry in Go?
+You use the delete command.

@@ -1,0 +1,43 @@
+Hash and Maps
+40
+14
+uuid := uuid.New()
+15
+variable[uuid] = "from a UUID key"
+16
+17
+fmt.Println(variable[1]) // from an integer key
+18
+fmt.Println(variable["a"]) // from string key
+19
+fmt.Println(variable[uuid]) // from a UUID key
+20
+}
+1
+$ go run empty-interface.go
+2
+3
+from an integer key
+4
+from string key
+5
+from a UUID key
+An empty interface{} can provide you the same Ruby’s duck-typing interface behavior. However,
+this convenience comes with a cost, and a cheap and fast alternative to this behaviour is using
+anonymous struct which is previously discussed in Chapter 1.
+Questions
+1. What have we learned?
+We learned that Go’s empty interface{} is a powerful tool to provide a dynamic typing
+behaviour.
+2. Why this is useful?
+This is useful when you want to accept a dynamic type of values as a key or value in your
+maps, variables or function arguments.
+3. What is an empty ‘interface{}’ in Go?
+An empty interface{} provides the ability to mix strings, integers or dynamic values through
+function returns as keys or values in your maps, variables or functions arguments.
+4. How do you use an empty ‘interface{}’ in Go?
+To initialize an empty interface{} for your maps, you need to set it as either your key or
+value type. You can also intialize it independently, by assigning it as your variable type or
+function return type.
+Deleting Map Values
+In Ruby, the easiest way to delete a value from a hash is by,
