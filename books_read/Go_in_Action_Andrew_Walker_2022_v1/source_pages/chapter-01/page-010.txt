@@ -1,0 +1,23 @@
+allowing you to minimize the time between writing your code and running it,
+Go provides much of the speed of writing dynamic languages.
+1.1.2 Type Safety
+If you’ve ever worked in a dynamic language before, you have likely seen an
+error message that looks something like this:
+Figure 1.2. A Common Dynamic Typing Exception
+If you’re lucky, you ran into it during testing, however many of us have also
+been surprised and confused by a message very much like this one in our logs
+after something goes wrong.
+Type errors like this occur when a weakly-typed variable is assigned a value
+that is incompabible with its usage elsewhere in the program. They can be
+notoriously difficult to debug, since they often sneak in as edge cases that
+crop up rarely or in unexpected circumstances, making it unclear where a
+problematic value came from. The addition of user input to the mix only
+serves to complicate this further, since you have less control over the values
+that are flowing through your program.
+With a strongly-typed language like Go, every value has a type assigned to it
+at its creation that is tracked by the compiler, making this sort of bug
+impossible. This is appealing to developers, and for this reason we have seen
+a push for at least some level of type safety in popular dynamic languages.
+Typscript, for example, brings type safety to Javascript by converting (or
+"transpiling") strongly-typed Typescript code into the weakly-typed
+Javascript code that actually runs in the browser, while Python’s type hinting

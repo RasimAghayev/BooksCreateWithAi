@@ -1,0 +1,5 @@
+Go has great documetation support, and once you know how to look
+things up, you can find information on types and methods as well as
+examples to help you get started.
+Go has an extensive standard library that can provide a variety of useful
+features and help you simplify your code.

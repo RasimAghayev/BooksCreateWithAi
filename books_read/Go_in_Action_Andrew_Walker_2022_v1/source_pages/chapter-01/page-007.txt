@@ -1,0 +1,33 @@
+software movement, allowing developers across the spectrum of technology
+to share in innovation, quality and collective oversight. Today’s programmers
+and companies believe more than ever in the power of open source software,
+and the desire to participate in this movement only continues to grow.
+Go has sought to meet all of these needs. As a language, it provides
+developers with refined abstractions around concurrency and a powerful
+runtime to make efficient use of it with the resources at hand. As a
+programming environment, it provides robust tooling to make inspection,
+observation, dependency resolution and code sharing sane and easy. As an
+enterprise language, it has adopted a simple, opinionated syntax and coding
+standards as first principles to enable efficient collaboraction across large
+teams. Finally, the project has embraced the open source ethos, with all work
+in the open for all to see, while also integrating with public open source
+repositories and revision control systems such as Github.
+In this book, you will explore these features and gain a sense of the many
+decisions that have shaped the language, so that you can undersdand not only
+how the language works, but a bit more about why it works the way it does.
+Go was not developed in isolation, but as a response to the perceived deficits
+in programming environments that existed at the time of its creation. Its
+design is practical, and informed by many collective decades of programming
+experience, in a variety of environments and languages.
+Much of what makes Go special is how it is deliberately different to that
+which came before it, and so, while the reader is not expected to have
+"decades" of programming experience, an intermediate-level developer with
+experience in at least one or two other languages will get the most from this
+text, and is our target audience.
+The decision to pick up a new programming language is an inportant one, so
+the goal of this book is to help developers and other technical roles get a feel
+for what working in Go is like, and what its strenghts are, so you can make a
+more informed decision about whether or not to adopt Go into your tech
+stack. To this end, we won’t dwell too much on introductory concepts,
+though we may revisit them from time to time where it makes sense to show
+how Go might do things differently to what you’re used to.

@@ -1,0 +1,28 @@
+follow the steps in the next section to install Go on your operating system of
+choice, just so you’re guaranteed to be able to access the tools you need.
+2.2.2 Git
+Git (https://git-scm.com/) is a free and open-source revision control system,
+which is a piece of software used for managing software projects. It is one of
+the most popular tools for this purpose, and it is integrated into the Go
+toolchain as the default option to fetch dependencies from popular open
+software repositories, such as Github. If it is not installed by your editor
+integration of choice, you will want to download it from https://git-
+scm.com/downloads for your system and install it so that you can easily fetch
+3rd-party libraries once you start to use dependencies beyond the Go
+Standard Library.
+2.2.3 The Go Toolchain
+Of course, you’ll also need Go itself. Go comes packaged for most major
+operating systems, so the best way to kick this process off is to visit
+https://go.dev/doc/install and follow the instructions there. This will install
+the latest Go distribution on your system, which includes the extensive
+standard library as well as the compiler and various command-line tools that
+you’ll be using to build and test your software.
+2.2.4 Terminal Access
+You will also want some interface to type these commands into, usually in
+the form of a terminal emulator application, sometimes also called a
+"command prompt" or simply a "terminal". If you are using an IDE, you may
+find that it has one built in, however every modern OS also has their own
+version of a built-in terminal. These can be a little bare-bones, however so
+you may want to try out something else. Check out
+https://goinaction.github.io/software/terminals/ for some possibilities!
+2.3 Creating Your Project Root

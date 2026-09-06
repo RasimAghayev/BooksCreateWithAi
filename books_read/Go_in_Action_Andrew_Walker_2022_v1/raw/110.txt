@@ -1,0 +1,10 @@
+Important
+While automatic array length is a useful feature in fixtures such as tests, it
+should be used with care, since you may end up with lengths you did not
+intend. It is better to be explicit.
+4.1.2 Array Type And Length
+In Go, the length of the array is part of its type, which is the reason you
+cannot change an array’s size, since that would make it something else!
+This also means that the type [5]int is completely different to [4]int, and
+so they are not interchangable, even if you attempt to assign a smaller array
+to a larger one.

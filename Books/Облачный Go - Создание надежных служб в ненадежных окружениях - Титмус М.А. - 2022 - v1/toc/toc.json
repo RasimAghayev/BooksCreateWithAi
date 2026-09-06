@@ -1,0 +1,90 @@
+{
+  "book": "Облачный Go / Создание надежных служб в ненадежных окружениях",
+  "page_offset": 0,
+  "chapters": [
+    {
+      "chapter": 0,
+      "title": "Предисловие",
+      "book_pages": "20-23",
+      "start_pdf_page": 20,
+      "end_pdf_page": 23
+    },
+    {
+      "chapter": 1,
+      "title": "Что такое «облачное» приложение?",
+      "book_pages": "25-35",
+      "start_pdf_page": 25,
+      "end_pdf_page": 35
+    },
+    {
+      "chapter": 2,
+      "title": "Почему Go правит облачным миром",
+      "book_pages": "36-46",
+      "start_pdf_page": 36,
+      "end_pdf_page": 46
+    },
+    {
+      "chapter": 3,
+      "title": "Основы языка Go",
+      "book_pages": "48-87",
+      "start_pdf_page": 48,
+      "end_pdf_page": 87
+    },
+    {
+      "chapter": 4,
+      "title": "Шаблоны программирования облачных приложений",
+      "book_pages": "88-124",
+      "start_pdf_page": 88,
+      "end_pdf_page": 124
+    },
+    {
+      "chapter": 5,
+      "title": "Конструирование облачной службы",
+      "book_pages": "125-180",
+      "start_pdf_page": 125,
+      "end_pdf_page": 180
+    },
+    {
+      "chapter": 6,
+      "title": "Все дело в надежности",
+      "book_pages": "183-205",
+      "start_pdf_page": 183,
+      "end_pdf_page": 205
+    },
+    {
+      "chapter": 7,
+      "title": "Масштабируемость",
+      "book_pages": "206-225",
+      "start_pdf_page": 206,
+      "end_pdf_page": 225
+    },
+    {
+      "chapter": 8,
+      "title": "Слабая связанность",
+      "book_pages": "234-277",
+      "start_pdf_page": 234,
+      "end_pdf_page": 277
+    },
+    {
+      "chapter": 9,
+      "title": "Устойчивость",
+      "book_pages": "279-314",
+      "start_pdf_page": 279,
+      "end_pdf_page": 314
+    },
+    {
+      "chapter": 10,
+      "title": "Управляемость",
+      "book_pages": "315-353",
+      "start_pdf_page": 315,
+      "end_pdf_page": 353
+    },
+    {
+      "chapter": 11,
+      "title": "Наблюдаемость",
+      "book_pages": "354-409",
+      "start_pdf_page": 354,
+      "end_pdf_page": 409
+    }
+  ]
+}

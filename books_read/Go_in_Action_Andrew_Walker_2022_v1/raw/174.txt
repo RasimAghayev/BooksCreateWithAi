@@ -1,0 +1,32 @@
+value assignment as you need.
+4.3.3 Removing Values From Maps.
+The built-in delete function is used to remove items from a map by key.
+Removing keys that do not exist is safe, and will not result in an error.
+Listing 4.73. Removing A Value From A Map With delete
+countryCodes := map[string]string{
+"FR": "France",
+"CN": "China",
+"ES": "Spain",
+"TX": "Texas",
+}
+fmt.Println(countryCodes)
+// output: map[CN:China ES:Spain FR:France TX:Texas]
+// Delete the value associated with key "TX" from the map
+delete(countryCodes, "TX")
+fmt.Println(countryCodes)
+// output: map[CN:China ES:Spain FR:France]
+// The "XX" key does not exist, so no changes will be made to the map, and
+// no error will result.
+delete(countryCodes, "XX") // Key "XX" does not exist, so no action will be
+fmt.Println(countryCodes)
+// output: map[CN:China ES:Spain FR:France]
+4.3.4 Getting The Number Of Values In A Map
+To get the number of values in a map, you can use the len built-in.
+Listing 4.74. Using len to get the number of keys/values In A Map
+petWeightsKG := map[string]float64 {
+"Baxter": 8.6,
+"Barry": 3.17,
+"Bobby": 9.07,
+"Benny": 1.08,
+}
+numberOfPets := len(petWeightsKG) // 4

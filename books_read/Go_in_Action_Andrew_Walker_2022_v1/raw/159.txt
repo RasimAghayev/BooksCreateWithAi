@@ -1,0 +1,37 @@
+fmt.Printf("Gold Medal: %s\n", contestant)
+case 1:
+fmt.Printf("Silver Medal: %s\n", contestant)
+case 2:
+fmt.Printf("Bronze Medal: %s\n", contestant)
+default:
+fmt.Printf("Finisher: %s\n", contestant)
+// or just return
+}
+}
+}
+func main() {
+race1 := []string{"Sally", "Steve", "Jo", "Adam"}
+race2 := []string{"Jon", "Jen"}
+race3 := []string{}
+printMedalists3("Race 1", race1)
+// Race 2 only has two contestants, but we still need to list them!
+printMedalists3("Race 2", race2)
+// Throw in a race with no contestants at all.
+printMedalists3("Race 3", race3)
+}
+Listing 4.63. Output From printMedalists3 With More Flexible Algorithm
+Results for Race 1:
+Gold Medal: Sally
+Silver Medal: Steve
+Bronze Medal: Jo
+Finisher: Adam
+Results for Race 2:
+Gold Medal: Jon
+Silver Medal: Jen
+Results for Race 3:
+By making the code more flexible, you can handle any number of
+constestants, and even add new features, like printing fourth-place and
+beyond, after all, sometimes just finishing is a victory! Because this code
+uses a range loop, it will repeat as few or as many times as it needs to, or, in
+the case of no items at all, it will simply just skip it altogether.
+Tip

@@ -1,0 +1,30 @@
+Welcome
+Thanks for purchasing the MEAP for Go In Action, Second Edition! Go has
+come a long way since the first edition was published back in 2015, and it has
+never been a better time to be a Go programmer. Since Go In Action was
+published, Go has seen widespread adoption in the cloud, establishing itself
+as one of the most popular languages for backend software. Meanwhile, the
+ecosystem has continued to improve, with the addition of thousands of new
+libraries, tens of thousands of new developers and new features such as
+context, built-in fuzzing and, of course, the much-awaited generic
+programming provided by type parameters.
+This new edition is more than just a couple new chapters to catch up the
+material. With the benefit of nearly 8 years of working with Go, we thought
+we would take the opportunity to not only introduce new language elements,
+but also to revisit the old material with the goal of laying better foundations
+for the new Go programmer, including answering some of the most important
+questions new users have, such as how to structure your Go projects and how
+to get the most out of Go's error handling paradigm. We have tried to keep
+the best practices that have evolved in the language since the last edition in
+mind, and have tried to make sure that potentially tricky concepts are
+explained thoroughly and intuitively, so that you can get the most out of
+starting your Go journey with us!
+You don't need to know Go to read this book, however a background in
+another programming language will help you get the most out of it. This will
+also help you get a better idea of what makes Go special, and how it does
+things differently, and why.
+We believe learning is done best by doing, and so we have tried to keep the
+dry, reference-style material to a minimum, with a greater focus on code
+examples, so that you can see how the concepts map to real Go, and almost
+every single line of code you see will be available in the book repository,
+ready for you to download, run and modify as you like.

@@ -1,0 +1,31 @@
+"filtering" a map by some criteria:
+Listing 4.77. Filtering A Map Using A range loop
+familyAges := map[string]int{
+"Grandpa": 83,
+"Homer": 36,
+"Marge": 34,
+"Bart": 10,
+"Lisa": 8,
+"Maggie": 1,
+}
+for person, age := range familyAges {
+if age < 18 {
+delete(familyAges, person)
+}
+}
+fmt.Println(familyAges)
+// output: map[Grandpa:83 Homer:36 Marge:34]
+In the example above, the list is filtered based on whether or not each person
+is over the age of 18. This is safe to do in Go, provided the map is not being
+accessed elsewhere at the same time.[13].
+4.3.6 Passing Maps To Functions
+Like slices, maps are fundamentally reference types, since they are
+4.3.7 Key And Value Types
+You can use any type you like for map elements, while key types are slightly
+more restricted. The only requirement for key types is that they must be able
+to be compared using the == operator. Types that are not comparable in this
+way cannot be key types, so you cannot use functions, slices or maps for your
+key type, or any structs that contain them. Everything else is fair game. This
+leads to some interesting possibilities, such as maps using a struct type as a
+key and slices as a value:
+Listing 4.78. Example Map With A Struct Type Key And A Slice Value

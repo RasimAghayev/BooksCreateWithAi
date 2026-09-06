@@ -1,0 +1,42 @@
+Итерация 2: долговременное хранение ресурса  161
+            if err != nil {
+                errors <- err
+            }
+        }
+    }()
+}
+Эта реализация метода Run делает почти то же самое, что и его эквивалент 
+в FileTransactionLogger : создает буферизованные каналы events  и errors  и за-
+пускает сопрограмму, которая извлекает события из канала events  и записы-
+вает их в журнал транзакций.
+В отличие от сопрограммы в  FileTransactionLogger , которая добавляет со-
+бытия в файл, эта сопрограмма с по мощью db.Exec  выполняет SQL-запрос, 
+добавляющий запись в таблицу transactions . Нумерованные аргументы ( $1, 
+$2, $3) в тексте запроса представляют параметры, которые должны переда-
+ваться функции db.Exec .
+Использование db.Query для воспроизведения транзакций 
+из журнала
+В разделе «Использование bufio.Scanner для воспроизведения транзакций 
+из журнала» выше мы использовали bufio.Scanner  для чтения из журнала 
+транзакций, записанных ранее.
+Реализация на основе Postgres не получится такой же простой, но суть та 
+же: вы переходите в начало источника данных и последовательно читаете 
+записи, пока не достигнете конца:
+func (l *PostgresTransactionLogger) ReadEvents() (<-chan Event, <-chan error) {
+    outEvent := make(chan Event)     // Небуферизованный канал событий
+    outError := make(chan error, 1)  // Буферизованный канал ошибок
+    go func() {
+        defer close(outEvent)        // Закрыть каналы
+        defer close(outError)        // по завершении сопрограммы
+        query := `SELECT sequence, event_type, key, value FROM transactions
+                  ORDER BY sequence`
+        rows, err := db.Query(query) // Выполнить запрос; получить набор результатов
+        if err != nil {
+            outError <- fmt.Errorf("sql query error: %w", err)
+            return
+        }
+        defer rows.Close()           // Это важно!
+        e := Event{}                 // Создать пустой экземпляр Event
+        for rows.Next() {            // Цикл по записям
+            err = rows.Scan(               // Прочитать значения 
+                &e.Sequence, &e.EventType, // из записи в Event.

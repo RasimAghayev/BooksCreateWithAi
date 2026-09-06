@@ -1,0 +1,30 @@
+The right thing to do in this case is to either append to slices before passing
+them on, or to return the appended slice from the function, similar to how
+append works:
+Listing 4.46. Returning An Appended Slice From addOneToAll
+func addOneToAll(s []int) []int {
+s = append(s, 0)
+for i := range s {
+s[i] += 1
+}
+return s
+}
+func main() {
+slice := []int{1, 2, 3}
+slice = addOneToAll(slice)
+fmt.Println(slice)
+// output: [2 3 4 1]
+}
+Listing 4.47. Output After addOneToAll With Returned Slice
+[2 3 4 1]
+4.2.6 Slice Expressions
+One of the other things that makes slices so flexible is that they can be
+created from sections of other slices or arrays while still sharing the same
+storage. This is done with slice expressions which allow you to specify a
+range of values from a slice, creating a window into the existing slice.
+Slice expressions take the form of a[low : high], where a is an existing
+slice or array, and low and high are indices representing the range of values
+you want in the new slice. You can leave out one or both of these values, and
+they will default to 0, and len(a), respectively, making it easy to specify
+ranges "starting from" or "up to" a particular index.
+Figure 4.27. Slice Expression Syntax Illustrated

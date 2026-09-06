@@ -1,0 +1,26 @@
+cmplxValue1 = 1.1 + 2.2i // equivalent to complex(1.1, 2.2)
+cmplxValue3 = 1 + 2i // equivalent to complex(1,2)
+cmplxValue4 = -3i // equivalent to complex(0, -3)
+cmplxValue5 = -3.3 - 4.4i // equivalent to complex(-3.3,-4.4)
+Go also has special built-in functions real and imag that can be used to
+extract the float components that make up the complex number. In essence,
+these are the inverse of the complex function, and will return float32 or
+float64 values, depending on the type.
+Listing 3.14. Using The real() And imag() Functions
+cmplxValue1 := complex(1.1, 2.2)
+fmt.Println(real(c1), imag(c1)) // "1.1 2.2"
+Complex types in Go are rarely used on their own, since most of the useful
+functions to manipulate them reside in the math and math/cmplx packages.
+Additionally, most uses of complex numbers are relatively niche and… well,
+honestly they’re pretty complex. Most programmers could go years without
+using them even once, but it’s important to know that they exist.[8]
+[8] And we would have felt bad if we left them out and then people went
+online and left bad book reviews because we didn’t mention them.
+3.4 Mathematical Operators
+Numeric types are kind of boring if you can’t do math and stuff with them, so
+Go defines all of the basic arithmetic opetations you’d expect, along with
+bitwise operations so you can manipulate the individual bits of integer values.
+Table 3.5. Binary Arithmetic Operators
+Operator Description For Types
++ sum integers, floating-point, complex, strings
+- difference integers, floating-point, complex

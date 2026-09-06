@@ -1,0 +1,20 @@
+u = u + uint64(i) // 2
+Bitwise operations only operate on integers, and will be familiar if you have
+worked with them in other languages. The exception is the bit clear operator
+&^, which is unique to Go, and can be thought of as the opposite of bitwise-
+OR (|), where all of the 1 bits in the second operand will be set to 0 in the
+result.
+Table 3.6. Bitwise Operators (Integers Only)
+Operator Description
+& AND
+| OR
+^ XOR
+&^ bit clear
+<< shift left
+>> shift right
+3.5 The bool Type
+Go has a dedicated bool type for representing boolean (true/false) values.
+Values of this type can have one of two predeclared values, true and false,
+and have a zero value of false. bool is also the default type for boolean
+expressions, so short variable declarations such as value := x ⇐ y will
+create variables of this type.

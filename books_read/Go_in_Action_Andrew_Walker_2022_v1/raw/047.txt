@@ -1,0 +1,30 @@
+import (
+"fmt"
+"log"
+"os"
+"strings"
+)
+func main() {
+filename := "words.txt"
+fileContents, err := os.ReadFile(filename)
+if err != nil {
+log.Println(err)
+os.Exit(1)
+}
+words := strings.Fields(string(fileContents))
+fmt.Printf("found %d words", len(words))
+}
+Let’s break it down:
+2.6.2 Multiple Return Values
+Listing 2.27. Getting Two Values From os.ReadFile
+fileContents, err := os.ReadFile(filename)
+os.ReadFile is a bit different from the functions you’ve seen so far, most
+notably in that it returns two values. If you look at the documentation, you
+can see what these are:
+Listing 2.28. Documentation For os.ReadFile
+func ReadFile(name string) ([]byte, error)
+ReadFile reads the named file and returns the contents.
+Looking at the function definition, you can see that it returns two values: a
+slice of bytes representing the contents of the file, and a value of type error,
+indicating whether or not there were any problems opening the file.
+Functions in Go can return any number of values, and a common pattern is to

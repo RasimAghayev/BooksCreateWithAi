@@ -1,0 +1,18 @@
+Complex numbers are a bit different to the other primitive types, since they
+need to be declared using either the special built-in complex() function, or
+with special complex expressions.
+The complex() function takes two arguments, which are taken to be float
+values, and will determine the type of the resulting complex value. If the
+values are float64 or literals, they will result in a value that has the type
+complex128. If the values are float32, the result will be a complex64. Types
+cannot be mixed.
+Listing 3.12. Creating Complex Values Using The Built-in complex() Function
+cmplxValue1 := complex(1.1, 2.2) // complex128
+cmplxValue2 := complex(float32(1.1), float32(2.2)) // complex64
+cmplxValue3 := complex(1, 2) // complex128, equivalent to 1+2i
+cmplxValue4 := complex(0, -3) // complex128, equivalent to 0-3i
+cmplxValue5 := complex(-3.3, -4.4) // complex128, equivalent to -3.3-4.4i
+Complex expression declarations take the form of an optional numeric value,
+which can be a float or an integer literal, followed by a + or -, and then an
+imaginary literal, which is a numeric value followed by the i character.
+Listing 3.13. Creating Complex Values Using Complex Expressions

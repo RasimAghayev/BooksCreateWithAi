@@ -1,0 +1,23 @@
+numbers meaning "unlimited" or "as many times as necessary". An example
+of this is strings.Replace, which uses negative numbers to mean "replace
+every occurrence":
+Listing 3.8. go doc for strings.Replace
+func Replace(s, old, new string, n int) string
+Replace returns a copy of the string s with the first n non-overlapping
+instances of old replaced by new. If old is empty, it matches at the
+beginning of the string and after each UTF-8 sequence, yielding up to
+k+1 replacements for a k-rune string. If n < 0, there is no limit on the
+number of replacements.
+Tip
+Do not use unsigned integers to mean "I don’t accept positive values".
+Instead, just use a signed integer and either return an error if it’s negative or,
+alternatively use negative numbers as a "special" value, if your use case
+supports it.
+This doesn’t mean you shouldn’t use unsigned integers, though! One place
+unsigned integers are actually very useful is in bitwise operations, since they
+are treated as large bit fields and you don’t have to worry about the sign bit.
+Unsigned integers are much more predictable when shifting bits around, since
+they will always shift in a 0, while signed integegers will have special
+behavior shifting from the right, and will use whatever their sign bit happens
+to be.[7]
+Figure 3.3. Right Shifting In Signed And Unsigned Integer

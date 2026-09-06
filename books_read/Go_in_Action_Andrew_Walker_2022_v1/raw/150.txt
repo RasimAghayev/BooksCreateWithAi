@@ -1,0 +1,8 @@
+When used with an array, a slice expression will create a new slice using the
+array for its storage:
+Listing 4.49. Creating A Slice From An Array.
+stringArray := [5]string{"A", "B", "C", "D", "E"}
+newStringSlice := stringArray[1:3] // [B C]
+Figure 4.29. New Slice Created From An Array
+Slice Expressions With Capacity
+By default, slices created with slice expressions will inherit the remaining

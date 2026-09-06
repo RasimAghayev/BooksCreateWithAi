@@ -1,0 +1,42 @@
+Шаблон обмена сообщениями запрос/ответ  253
+4.  Запускается цикл приема и обработки запросов. В заключение мы от -
+крываем порт для приема запросов 1 с  по мощью net.Listen , который 
+затем передаем фреймворку gRPC через вызов s.Serve .
+Можно утверждать, что gRPC предоставляет лучшее из обоих миров, давая 
+свободу реализации любой желаемой функциональности, без необходимости 
+писать множество тестов и проверок, как при создании служб RESTful.
+Реализация клиента gRPC
+Поскольку весь клиентский код генерируется автоматически, использовать 
+его очень просто.
+Сгенерированный интерфейс клиента получает имя XXXClient , то есть в на-
+шем случае KeyValueClient , как показано ниже:
+type KeyValueClient interface {
+    Get(ctx context.Context, in *GetRequest, opts ...grpc.CallOption)
+        (*GetResponse, error)
+    Put(ctx context.Context, in *PutRequest, opts ...grpc.CallOption)
+        (*PutResponse, error)
+    Delete(ctx context.Context, in *DeleteRequest, opts ...grpc.CallOption)
+        (*PutResponse, error)
+}
+Здесь присутствуют все методы, описанные в нашем исходном файле .pro-
+to, каждый из которых принимает указатель на запрос и возвращает указа-
+тель на ответ и ошибку.
+Кроме того, все методы принимают context.Context  (если вы запамятова-
+ли, что это такое или как используется, вернитесь к разделу «Пакет context» 
+в главе 4) и ноль или более экземпляров grpc.CallOption . Экземпляры CallOp-
+tion позволяют изменять поведение клиента. Более подробную информацию 
+можно найти в документации по gRPC API (https://oreil.ly/t8fEz).
+Следующий пример демонстрирует создание и  использование клиента 
+gRPC:
+package main
+import (
+    "context"
+    "log"
+    "os"
+    "strings"
+    "time"
+    pb "github.com/cloud-native-go/ch08/keyvalue"
+    "google.golang.org/grpc"
+)
+1 При желании можно использовать FileListener  (https://oreil.ly/mViL3) или даже по-
+ток stdio .

@@ -1,0 +1,15 @@
+4.1.5 Arrays As Values
+An array is a value in Go, which means you can assign array values of the
+same type to each other. The variable name denotes the entire array and,
+therefore, an array can be assigned to other arrays of the same type.
+Listing 4.19. Assigning One Array To Another Of The Same Type
+// Declare a string array of length five.
+var colors [5]string
+// Initialize another five element array with values.
+favoriteColors := [5]string{"Red", "Blue", "Green", "Yellow", "Pink"}
+// Assignment will copy the contents of the array.
+colors = favoriteColors
+It’s important to note that copying an array duplicates all of the contents and
+places them into the new array. After the line colors = favoriteColors you
+will have two separate arrays with two sets of identical values.
+Figure 4.8. Array Assignment

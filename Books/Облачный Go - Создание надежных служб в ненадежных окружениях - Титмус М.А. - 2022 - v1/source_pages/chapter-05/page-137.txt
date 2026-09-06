@@ -1,0 +1,42 @@
+Итерация 1: монолит  137
+// keyValuePutHandler ожидает получить PUT-запрос с 
+// ресурсом "/v1/key/{key}".
+func keyValuePutHandler(w http.ResponseWriter, r *http.Request) {
+    vars := mux.Vars(r)                // Получить ключ из запроса
+    key := vars["key"]
+    value, err := io.ReadAll(r.Body)   // Тело запроса хранит значение
+    defer r.Body.Close()
+    if err != nil {                    // Если возникла ошибка, сообщить о ней
+        http.Error(w,
+            err.Error(),
+            http.StatusInternalServerError)
+        return
+    }
+    err = Put(key, string(value))      // Сохранить значение как строку
+    if err != nil {                    // Если возникла ошибка, сообщить о ней
+        http.Error(w,
+            err.Error(),
+            http.StatusInternalServerError)
+        return
+    }
+    w.WriteHeader(http.StatusCreated)  // Все хорошо! Вернуть StatusCreated
+}
+Имея функцию-обработчик «создания пары ключ/значение», ее можно за-
+регистрировать с по мощью маршрутизатора Gorilla для обработки запросов 
+с конкретными характеристиками:
+func main() {
+    r := mux.NewRouter()
+    // Зарегистрировать keyValuePutHandler как обработчик HTTP-запросов PUT,
+    // в которых указан путь "/v1/{key}"
+    r.HandleFunc("/v1/{key}", keyValuePutHandler).Methods("PUT")
+    log.Fatal(http.ListenAndServe(":8080", r))
+}
+Теперь можно запустить службу командой go run . из корневого каталога 
+проекта. Сделайте это и отправьте службе несколько запросов, чтобы узнать, 
+как она отреагирует.
+Сначала с по мощью нашего старого знакомого curl  отправьте запрос PUT 
+с коротким фрагментом текста в конечную точку /v1/key-a , чтобы создать 
+ключ key-a  со значением Hello,  key-value  store! :
+$ curl -X PUT -d 'Hello, key-value store!' -v http://localhost:8080/v1/key-a
+Эта команда выведет строки, как показано ниже. Полный вывод получился 
+довольно объемным, поэтому я выбрал лишь интересующие нас строки:

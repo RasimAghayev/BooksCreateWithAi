@@ -1,0 +1,8 @@
+This applies to all arrays, regardless of the type. Even if the array contains
+pointer types like the one you saw earler, copies of those pointers will be
+created. Try adding an additional assignment to that example.
+Listing 4.20. Listing 4.x With An Additional Assignment
+ptrArray := [5]*int{0: new(int), 1: new(int)}
+*ptrArray[0] = 10
+*ptrArray[1] = 20
+ptrArray2 := ptrArray

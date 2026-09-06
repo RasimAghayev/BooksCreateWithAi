@@ -1,0 +1,5 @@
+sliceLenZero = nil
+fmt.Println(sliceLenZero == nil) // true
+This code illustrates several different slices which are effectively empty, yet
+are not equal to nil for different reasons.
+Figure 4.32. Different Zero-length Slices Illustrated

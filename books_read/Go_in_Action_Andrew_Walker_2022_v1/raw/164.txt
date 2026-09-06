@@ -1,0 +1,14 @@
+"apple" : 195,
+"watermelon": 10000,
+}
+// About how heavy are 10 apples and 30 oranges?
+fmt.Println(10*fruitWeight["apple"] + 30*fruitWeight["orange"])
+// output:
+//
+In this example, the fruitWeight map stores the average weight of different
+kinds of fruit. The key type is string, while the value type is int, since
+weights are generally specified in numeric form.
+You can think of a map as a bit like a dictionary where definitions (values)
+are found by looking up the word(key) they are associated with.
+Figure 4.33. Example Map Illustrated
+In the above example namedNumbers is a map that stores int values usint a

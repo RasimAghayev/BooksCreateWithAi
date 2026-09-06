@@ -1,0 +1,28 @@
+words := strings.Fields(string(fileContents))
+After loading the file, and checking for an error, the technique is pretty
+similar to the last version of the program, except that os.ReadFile returns a
+slice of bytes instead of a string. This is because not all files are text, and Go
+doesn’t want to assume anything about how you’re going to handle the file.
+Instead it just returns the raw contents of the file that you can use however
+you want.
+Luckily, strings are also just bytes, so if you’re loading a text file, you can
+simply use a type conversion to convert the bytes directly to a string like so:
+string(fileContents).[5]
+2.6.5 Running The Program On A File
+You can use go run to run this version as before, only this time you’ll need
+to create a words.txt in the same directory as main.go. You can use your
+editor or just create the file directly from the command line:
+Listing 2.31. Running The File On words.txt
+$ echo this is four words > words.txt
+$ go run main.go
+found 4 words
+You can also test your error handling by removing the file and seeing what
+happens:
+Listing 2.32. Running The File With Nothing To Read
+$ rm words.txt
+$ go run main.go
+2022/05/05 20:33:39 open words.txt: no such file or directory
+Try out different contents and see how well it works!
+[5] You can also use the bytes package which, among other things, provides
+many of the same methods as strings, but for slices of bytes instead: words
+:= bytes.Fields(fileContents)

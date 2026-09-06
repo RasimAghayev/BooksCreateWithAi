@@ -1,0 +1,33 @@
+4.3.5 Iterating Maps
+To iterate a map, you can use a range loop which will return a single map
+key for each iteration of the loop, along with an optional copy of the value.
+Listing 4.75. Iterating A Map Using for and range
+groupNouns := map[string]string{
+"eagle": "convocation",
+"cat": "clowder",
+"kangaroo": "mob",
+"dog": "pack",
+}
+// Iterate with keys only.
+for animal := range groupNouns {
+fmt.Printf("A group of %ss is called a %s.\n", k, groupNouns[animal])
+}
+// Iterate with keys and values.
+for animal, group := range groupNouns {
+fmt.Printf("A group of %ss is called a %s.\n", animal, group)
+}
+Because of the way maps are implented, they have no specific order, and the
+order you will receive keys from the range statement can be different each
+time.[12]. If you run the above code multiple times, you will likely see the
+order change:
+Listing 4.76. Map Iteration Output From Multiple Runs
+A group of cats is called a clowder.
+A group of kangaroos is called a mob.
+A group of dogs is called a pack.
+A group of eagles is called a convocation.
+A group of eagles is called a convocation.
+A group of cats is called a clowder.
+A group of kangaroos is called a mob.
+A group of dogs is called a pack.
+Map iteration can also be combined with the delete function, allowing you
+to examine each item of the map, removing it if necessary. This is useful for

@@ -1,0 +1,30 @@
+These values can be checked with the `math.IsInf` and `math.IsNaN` functions, respectively:
+Listing 3.11. Checking For Special Floating-point Values
+f := 2.0
+// Make an "infinitely huge" number.
+posInf := math.Pow(f, 10_000)
+fmt.Println(posInf) // output: +Inf
+// Make an "infinitely small" number.
+negInf := f - math.Pow(f, 10_000)
+fmt.Println(negInf) // output: -Inf
+// The second argument to math.IsInf lets you check for a specific infinity:
+// <0: negative infinity
+// >0: positive infinity
+// 0: either infinity
+fmt.Println(math.IsInf(posInf, 0)) // true
+fmt.Println(math.IsInf(negInf, 1)) // false
+fmt.Println(math.IsInf(negInf, -1)) // true
+// Make an invalid number.
+notANumber := math.Log(-f)
+fmt.Println(notANumber) // output: NaN
+fmt.Println(math.IsNaN(notANumber)) // true
+Tip
+Make sure to use use the checks in the math package if there’s a possibility
+you could generate floating-point numbers that are invalid or out of range.
+3.2.2 Choosing A Floating-point Type
+For floating-point operations, you should pick float64 unless you have a
+compelling performance reason to do otherwiwse. Most modern hardware,
+including 32-bit architectures, has special support for 64-bit floating-point
+numbers, so there little reason to sacrifice the greater precision by using
+float32.
+Similar to the advice we gave in choosing integer types, you should only use

@@ -1,0 +1,13 @@
+value without a reallocation.
+Figure 4.23. Append Without Allocation
+This approach makes appending much less expensive over time, since the
+extra capacity means that the slice won’t need to be copied again until the
+new storage is used up.
+How Much Will append Grow The Capacity?
+The append operation is clever when growing the capacity of the backing
+array. As of this printing, the algoritm will always double the existing
+capacity if the total number of elements less than 1,024. Past this number, the
+capacity is grown by a factor of .25, or 25%, though this could change in
+future versions of the language as more optimizations are added.
+Multiple values can be appended by simply adding more arguements or, if
+you are appending one slice to another, you can unpack the second slice with

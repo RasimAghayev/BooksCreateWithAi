@@ -1,0 +1,43 @@
+Шаблон обмена сообщениями запрос/ответ  243
+package main
+import (
+    "fmt"
+    "io"
+    "net/http"
+    "strings"
+)
+const json = `{ "name":"Matt", "age":44 }` // Данные в формате JSON
+func main() {
+    in := strings.NewReader(json)      // Заключить JSON в экземпляр io.Reader
+    // Отправить HTTP-запрос POST, передав в заголовке content-type 
+    // строку "text/json"
+    resp, err := http.Post("http://example.com/upload", "text/json", in)
+    if err != nil {
+        panic(err)
+    }
+    defer resp.Body.Close()            // Закрыть тело ответа!
+    message, err := io.ReadAll(resp.Body)
+    if err != nil {
+        panic(err)
+    }
+    fmt.Printf(string(message))
+}
+Ловушка вспомогательных функций
+Мы называем функции Get, Head, Post и  PostForm «вспомогательными», но что это 
+озна чает?
+Как оказывается, за кулисами каждая из них вызывает соответствующий метод эк-
+земпляра по умолчанию *http.Client потокобезопасного типа, который Go исполь-
+зует для управления внутренними механизмами взаимодействий по HTTP .
+Например, вспомогательная функция Get на самом деле просто вызывает метод 
+http.Client.Get клиента по умолчанию:
+func Get(url string) (resp *Response, err error) {
+    return DefaultClient.Get(url)
+}
+Как видите, вызывая http.Get, вы фактически используете http.DefaultClient. А по-
+скольку http.Client безопасен в  конкурентном окружении, существовать может 
+только один экземпляр в виде предопределенной переменной пакета.
+Исходный код инициализации переменной DefaultClient довольно прост, он создает 
+пустой экземпляр http.Client:
+var DefaultClient = &Client{}
+Это вполне нормальное решение. Однако здесь кроется потенциальная пробле-
+ма, связанная с тайм-аутами. Методы экземпляра http.Client могут устанавливать 

@@ -1,0 +1,34 @@
+Listing 3.16. Examples Of Boolean Values
+var boolVar bool // Defaults to false
+// Boolean variables can be used for conditionals, either
+// on their own, or as part of a boolean expression. In this case,
+// boolVar has not been explicitly set to anything yet, so its value is
+// false, and the if block will not run.
+if boolVar {
+fmt.Println("boolVal is true.")
+}
+// Once boolVar is set to true, the same if condition will pass and the
+// block will run.
+boolVar = true
+if boolVar {
+fmt.Println("NOW boolVal is true!")
+}
+// Short declaration variables assigned to boolean expressions will be
+// given the bool type.
+x := 0
+y := 1
+v := x < y // Type: bool, value: true.
+3.5.1 Boolean Functions
+Booleans are used primarily in conditional logic such as if statements, often
+as the return value for a helper function intended to give you a yes or no
+answer about a particular condition or a piece of data with some meaningful
+name. For example, if you wanted to print all of the even items from a list of
+integers, you might write a helper function called IsEven that would take an
+integer value and return a boolean indicating whether or not the number was
+evenly divisible by two.
+Listing 3.17. A Boolean Helper Function For Use In Conditional Logic
+func IsEven(i int) bool {
+return i%2 == 0
+}
+func main() {
+numbers := []int{1, 2, 3, 4}

@@ -7,9 +7,11 @@
       "year": 2022,
       "version": "MEAP V03",
       "pages": 178,
-      "status": "reading",
+      "status": "completed",
       "started_at": "2026-09-06",
-      "workspace": "Books/Go in Action Andrew Walker 2022 - v1"
+      "completed_at": "2026-09-06",
+      "workspace": "books_read/Go_in_Action_Andrew_Walker_2022_v1",
+      "telegram_upload": "pending"
     }
   ]
 }

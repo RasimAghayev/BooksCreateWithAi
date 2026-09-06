@@ -1,0 +1,4 @@
+However, once an append is added, a new backing array is allocated, and the
+two slice variables no longer point to the same memory. addOneToAll is
+making its changes to a slice that only exists within that function.
+Figure 4.25. addOneToAll Modifying A New Slice After Append

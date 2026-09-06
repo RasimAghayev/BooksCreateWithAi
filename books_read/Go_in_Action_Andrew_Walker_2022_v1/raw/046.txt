@@ -1,0 +1,24 @@
+The built-in len method is provided so that you can get the length of things
+like strings, slices and maps, and so you can print it out directly:
+Listing 2.25. Printing The Number Of Words Using len
+fmt.Println("Found", len(words), "words")
+Important
+len will always return the number of elements in a collection, however
+indices always start at 0, so remember to stop at len(yourVariable) -1 if
+you’re using a for loop.
+2.6 Reading From A File
+Now that you have a handy method to count words, it’s time to think bigger.
+You’re never going to grab market share from wc in the word-counting space
+if you have to edit your source code every time you need to check a new
+string!
+For that, you need to be able to load from a file, and to do that, it’s time to
+check out the os package.
+2.6.1 Using Package os To Interact With The Filesystem
+Package os exists to provide cross-platform access to things like environment
+variables, arguments, and filesystem access, which includes creating,
+removing and opening files on disk.
+The quickest way to get the contents of the file is to just read it into memory,
+and if you look through the os package documentation, you’ll find that
+there’s a function called os.ReadFile that will do just that.
+Listing 2.26. Altering main.go To Read The Contents Of A File Using os.ReadFile
+package main

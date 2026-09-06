@@ -1,0 +1,26 @@
+3 Primitive Types And Operators
+This chapter covers
+Numeric Types and numeric operations
+The bool type
+Structs
+Pointers
+Strings, runes and string manipulation
+Go comes with a number of types built in to the language for some of the
+most common computing tasks, such as working with numbers, strings and
+boolean types. In a statically-typed language like Go, these built-in types are
+often called primitive types, since they are the building blocks for all of the
+other types in the language.
+Primitive types are the most fundamental tools in your toolbelt when building
+software with Go, and you will use them in every single program you write.
+If you think of writing software like building a house, the types in this
+chapter are like the nails and the screws that hold everything together.
+In this chapter you’ll learn more about these fundamental types, as well as
+some tips on using them most effectively.
+3.1 Integer Types
+Integer types store whole numbers of a certain range, depending on their size.
+In Go we have two varieties of integer—signed and unsigned—along with
+several different size variations for each, along with a couple of alias types
+which declare alternate names for certain circumstances. Integer types are
+very common in Go, and are used for basic math, array and slice indices, and
+as configuration arguments to many of the standard library functions.
+Table 3.1. Predeclared Integer Types

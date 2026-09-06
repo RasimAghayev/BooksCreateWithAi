@@ -1,0 +1,27 @@
+2 Diving Into Go
+This chapter covers
+Building Your First Go Program
+Go Source Structure
+Go Language Fundamentals
+You paid money for a book called Go In Action, so let’s see some code
+already! Rather than just throw a bunch of reference material at you (there are
+plenty of other great books for that!), we thought we might try something a
+little more hands-on instead. This chapter will walk you through the creation
+of a single piece of software that mirrors a real-world utility, touching on
+various language features and fundamentals along the way.
+Go is more than just a language and a compiler, it’s an entire ecosystem of
+tools designed to help you format your code, manage dependencies, test and
+research documentation, and, rather than gloss over these tools until later, we
+believe you should get your hands dirty with them as soon as possible, so that
+you can have a more well-rounded foundation as a Go programmer.
+So let’s get to it!
+2.1 Goal: A Program To Count Words
+If there’s one thing computers are good at, it’s counting things really, really
+quickly, which makes these tasks ripe for automation with the sort of elegant
+code programmers thirst for. A very common things for programmers to
+count are lines and words in text files, mainly because this is the quickest
+way to show off how many lines of code (or "loc" if you’re cool) you’ve
+written, so that other programmers will be jealous of how productive you are.
+This is so common, in fact, that there is already a ubiquitous command-line
+called wc (short for "word count") which does this, and comes packaged with
+pretty much every Linux and macOS system. You could just use that, of

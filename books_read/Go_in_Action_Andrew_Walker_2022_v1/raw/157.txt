@@ -1,0 +1,31 @@
+values, it works fine, however a slice with less than three values will cause a
+runtime panic:
+Listing 4.58. Passing Different Lengths Of Slices to printMedalists
+func main() {
+race1 := []string{"Sally", "Steve", "Jo", "Adam"}
+printMedalists("Race 1", race1)
+race2 := []string{"Jon", "Jen"}
+printMedalists("Race 2", race2)
+}
+Listing 4.59. Output From printMedalists With A Runtime Panic
+Results for Race 1:
+Gold Medal: Sally
+Silver Medal: Steve
+Bronze Medal: Adam
+Results for Race 2:
+Gold Medal: Jon
+Silver Medal: Jen
+panic: runtime error: index out of range [3] with length 2
+The reason for the panic is that there’s really no graceful way for the Go
+runtime to handle a missing element that you explicitly asked for, so the only
+thing it can do is stop the program immediately and tell you what went
+wrong.
+Out-of-bounds errors on slices like this are one of the most common panic
+conditions you’ll encounter when starting out with Go, but fortunately they
+are pretty easy to handle with a little foresight.
+The first technique is to verify that you have at least the number of items you
+need by calling len on the incoming slice. In this case, you know that the
+function is expecting three entries, so you can just add a check for a length
+below that and return an error otherwise:
+Listing 4.60. Verifying Slice Size With len()
+func printMedalists2(raceName string, contestants []string) error {

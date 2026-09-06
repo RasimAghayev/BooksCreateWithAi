@@ -1,0 +1,27 @@
+interpreted literally, without any escape codes whatsoever. They also support
+raw unicode characters:
+Listing 3.34. Declaring A Raw String
+rawString := `Hello\n\u5730\u9F20`
+fmt.Println(rawString)
+rawStrWithNewlines := `I can
+span िविभ(cid:580) lines`
+fmt.Println(rawStrWithNewlines)
+Listing 3.35. Raw String Output
+Hello\n\u5730\u9F20
+I can
+span िविभ(cid:580) lines
+3.8.3 String Operations
+Strings can be compared using the standard comparison operators, with "less
+than" and "greater than" being calculated from the byte values of the string.
+Listing 3.36. String Operations
+fmt.Println("hello" == "hello") // true
+fmt.Println("地鼠" == "\u5730\u9F20") // true, these escape codes are the
+// same characters
+fmt.Println("地鼠" == `\u5730\u9F20`) // false, escape codes do not interpret
+// in raw strings
+fmt.Println("abc" < "cba") // true
+fmt.Println("andy" > "bill") // false
+Strings can also be concatenated to with the + operator:
+Listing 3.37. Basic String Contcatenation
+strHello := "hello"
+strGophers := " Gophers!"

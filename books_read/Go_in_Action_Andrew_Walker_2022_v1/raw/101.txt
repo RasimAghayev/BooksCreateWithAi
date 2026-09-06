@@ -1,0 +1,30 @@
+Listing 3.42. Attempting To Get Unicode Bytes As Strings With A For Loop
+unicodeCharStr := "地鼠"
+for i := 0; i < len(unicodeCharStr); i++ {
+fmt.Print(string(unicodeCharStr[i]) + " ")
+}
+fmt.Println()
+// output: å ° é ¼
+To get at the individual characters, another approach is called for.
+3.8.5 Iterating Unicode Strings Using A range Loop
+As a special case for strings, you can use a range loop instead, to get a list of
+characters one at a time:
+Listing 3.43. range loop On A string
+unicodeCharStr := "地鼠"
+for i, r := range unicodeCharStr {
+fmt.Printf("%d:%s ", i, string(r))
+}
+fmt.Println()
+//output: 0:地 3:鼠
+This breaks the string up into its consituent characters, regardless of their
+size. You still get the index where each character starts, but instead of
+individual bytes, you get one individual character at a time as a rune value.
+3.8.6 The rune Type
+Earlier in the chapter, we mentioned that the rune type was an alias for int32
+for string characters. This is so that you can have a type that is large enough
+to represent any single character that you might find in a string, and a way to
+compare them to each other.
+Runes also separate the characters from their encoding, since they represent
+the value of the unicode character itself, and, once you have a character’s
+rune, you can get more information about it, using the unicode and
+unicode/utf8 packages:

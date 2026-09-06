@@ -1,0 +1,25 @@
+it as a command:
+Listing 2.4. Running the wordcount Executable From The Command Line
+$ ./wordcount
+Found 4 words
+Congratulations! You are now a Go programmer! Welcome, fellow Gopher.
+2.4.3 Runing The Program With go run
+Alternatively, you can also type go run from inside the directory and run it
+without building first:
+Listing 2.5. Running The Program
+$ go run main.go
+Found 4 words
+go run is another handy command provided by the go tool for quick little
+tests like this (see Chapter 3 for more), and it will be helpful as you add to the
+program later in the chapter.
+Before you go running off to monetize word-counting-as-a-service (WCAAS
+is a thing, right?), let’s take a minute to check your your formatting.
+2.4.4 Formatting Your Code With gofmt
+If you’re using a code editor or IDE, you may have noticed some small
+formatting changes to your code when you saved it. This is gofmt at work.
+gofmt is another tool that comes bundled with the Go distrubution, and its job
+is simple: make all Go code look the same, everywhere.
+Once upon a time, this might have seemed like a strange thing to add to a
+programming toolchain, but it is quickly becoming the norm, especially as
+public, open-source communities have become more popular. There was a
+time not so long ago when you’d see lengthy newsgroup diatribes on

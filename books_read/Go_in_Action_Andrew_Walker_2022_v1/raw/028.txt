@@ -1,0 +1,29 @@
+The first step in every new Go project is creating a directory for your code to
+live. Whether this code is going to be a reusable library or a runnable
+program, this directory, called the project root is the home base for all of
+your code to live in so that Go knows where to find everything and how to
+build it. Each of the projects in this book will have their own root directory to
+keep them well contained. For this project, you’ll be creating a directory
+called wordcount for this purpose. It might also help to create a single
+directory to hold all of the project root code for this book as well. Througout
+this book, we’ll locate projects in the gobook directory, but feel free to omit
+the containing directory if you like.
+Table 2.1. Creating The Project Directory
+Command Description In Linux/macOS In Windows
+Default Terminal:
+cd %HOMEPATH%
+Change to your home directory cd
+PowerShell: cd~
+PowerShell 7 cd
+Create the book directory and mkdir -p mkdir
+wordcount project root gobook/wordcount gobook\wordcount
+cd cd
+Switch to the project root directory
+gobook/wordcount gobook\wordcount
+2.3.1 Initializing The Project Module
+Go uses a system called Go modules to give names to individual software
+projects and manage their dependencies so that anyone who has access to the
+source code can be sure that they are working on the same program, with the
+same set of dependencies, at the same versions as everyone else. Modules
+will be covered in greater detail in the Chapter on Modules, but for now just
+issue the following command in the wordcount directory to get your project

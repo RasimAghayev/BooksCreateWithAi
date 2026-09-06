@@ -1,0 +1,31 @@
+benefits of the Scanner type.
+The bufio package even provides a few of these for you, including one called
+ScanWords, which changes the tokens from individual lines, to individual
+words instead.
+Listing 2.46. go doc bufio ScanWords
+func ScanWords(data []byte, atEOF bool)
+(advance int, token []byte, err error)
+ScanWords is a split function for a Scanner that returns each
+space-separated word of text, with surrounding spaces deleted. It will
+never return an empty string. The definition of space is set by
+unicode.IsSpace.
+Now the task becomes almost trivially easy, since all you really need to do is
+add 1 to the running total each time through the loop.
+Listing 2.47. Using The ScanWords Function Instead Of Strings.Fields
+// Create a scanner to read from the file.
+scanner := bufio.NewScanner(file)
+// Change the split function to split on words instead of lines.
+scanner.Split(bufio.ScanWords)
+// Counter to track the running total.
+var wordCount int
+// Add 1 to the count for each word.
+for scanner.Scan() {
+wordCount++
+}
+This is a great example of why it pays to check out the documentation when
+working with new packages: often you will find something that can make the
+task at hand easier or more flexible. Sometimes, you’ll even learn a new trick,
+or another way to do things entirely, such as the Scanner loop technique.
+Documentation is a programmer’s best friend and, whether it is on your local
+machine with go doc or online at https://pkg.go.dev/, you should familiarize
+yourself with the tools to read Go documentation, and use them often.

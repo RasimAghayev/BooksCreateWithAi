@@ -1,0 +1,13 @@
+4.2.3 Nil Slices
+Slices declared with var are uninitialized, and are known as nil slices,
+because they point to nil instead of a backing array. They will still return
+values for len and cap (both 0), but are considered to be equal to nil, and
+attempts to access their values will cause a runtime panic, since they don’t
+point to anything yet:
+Listing 4.34. Slice Variable Declaration with var
+// Declare an integer slice variable.
+var sliceVar []int
+fmt.Println(len(sliceVar), cap(sliceVar)) // 0 0
+fmt.Println(sliceVar == nil) // output: true
+value := sliceVar[0] // panic: index out of range [0] with length 0
+Figure 4.19. A Nil-slice

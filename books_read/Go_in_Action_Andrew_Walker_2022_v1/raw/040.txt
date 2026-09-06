@@ -1,0 +1,28 @@
+// Use hard-coded text to start.
+text := "let's count some words!"
+Comments are one of the most important parts of any software, and Go uses
+the C-style of syntax where line comments start with // and block comments
+are surrounded with /* and */
+Listing 2.15. Go Comment Styles
+// A single line comment lasts until the end of the current line.
+/*
+A multi-line comment
+can span multiple lines for longer
+documentation.
+*/
+Tip
+Go documentation is done using comments, so it helps to get in the habit of
+using complete sentences with proper punctuation.
+2.4.10 Basic For Loops
+Listing 2.16. Looping Over String Characters With A for Loop
+for i := 0; i < len(text); i++ {
+if text[i] == ' ' {
+numSpaces++
+}
+}
+The next step in the process is to look at each character in the string to see if
+it’s a space or not. For this, you need a loop.
+While other languages provide multiple looping constructs such as while and
+do..while, Go unifies all of these into the for statement.
+The for loop in Go comes in three flavors, the first of which is the familiar
+three-part for loop, which begins on line #12 and ends on line #16. This will

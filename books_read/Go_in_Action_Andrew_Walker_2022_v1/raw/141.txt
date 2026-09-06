@@ -1,0 +1,28 @@
+addOneToAll(slice)
+fmt.Println(slice)
+}
+Listing 4.41. Output After addOneToAll
+[2 3 4]
+This function works as intended, but if an append is added the results are
+different:
+Listing 4.42. Adding An Append To addOneToAll
+// addOneToAll grows the slice and adds 1 to every slice
+// value.
+func addOneToAll(s []int) {
+s = append(s, 0)
+for i := range s {
+s[i] += 1
+}
+}
+func main(){
+slice := []int{1,2,3}
+addOneToAll(slice)
+fmt.Println(slice)
+}
+Listing 4.43. Output After addOneToAll With An Append
+[1 2 3]
+What happened to the changes? In fact they were made, only it was to a
+completely different slice! In the original, both slices pointed to the same
+memory, so after the function is complete, the slice in main points to the new
+values.
+Figure 4.24. addOneToAll Modifying The Same Values In Memory

@@ -1,0 +1,19 @@
+Figure 2.5. Looking Where You Shouldn’t
+If you don’t check the length of your arguments first and just blindly attempt
+to access the first argument, this will result in a panic, which is where the Go
+runtime will crash your program rather than trying to read a value that
+doesn’t exist:
+Listing 2.35. Panic Output On Missing Arguments
+panic: runtime error: index out of range [1] with length 1
+To avoid this, your best bet is to check the number of arguments first with
+len:
+Listing 2.36. Checking The Argument Length With len
+if len(os.Args) < 2 {
+log.Println("need to provide filename!")
+os.Exit(1)
+}
+This way, your program does the right thing if it’s not given a filename to
+read from.
+Important
+Always check the length of any slice with len before accessing an arbitrary
+element.

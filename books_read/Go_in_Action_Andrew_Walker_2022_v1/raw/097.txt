@@ -1,0 +1,25 @@
+langauges. Go supports this through a combination of robust unicode support
+and a dedicated string type.
+string a relatively simple data type in Go, which is essentially a read-only
+array of bytes designed for holding text. What makes it different to the other
+types you’ve learned about in this chapter is how those bytes are interpreted
+for display, and what happens when you modify these values.
+3.8.1 Interpreted Strings
+There are two different types of string literals in Go, both of which can be
+assigned to string variables. The first is the interpreted string, which uses
+the double quote ("") style common to most other languages:
+Listing 3.31. Declaring A String In Go
+basicStr := "Hello, Gophers!"
+Because Go source code supports UTF-8, this means that any printable
+character is valid in a string:
+Listing 3.32. Declaring A String With Unicode Characters
+unicodeStr := "你好，地鼠!"
+Interpreted strings also support a variety of escape codes, allowing you to
+represent non-printable characters such as tabs and newlines or to reference
+unicode characters by their codepoint number.
+Listing 3.33. Strings With Escape Sequences
+strWithEscapes := "Hello\n\u5730\u9F20"
+fmt.Println(strWithEscapes) // output: Hello<newline>地鼠
+3.8.2 Raw String Values
+The second type of string is enclosed with backtick characters (``), and is
+known as a raw string. Raw strings may span multiple lines, and are

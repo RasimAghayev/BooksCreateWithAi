@@ -1,0 +1,30 @@
+rune an alias for int32
+1either 32 or 64 bits, depending on your architecture
+The types that start with int are the signed integers, which are stored in
+two’s complement format, allowing them to represent positive and negative
+values. The types that start with uint are unsigned integers, and these types
+can only store positive values starting from 0. You might notice that the
+range of positive values for unsigned integers is higher than in the
+corresponding signed equivalent. This is because signed integers reserve one
+of their bits for indicating whether the value is negative or not. Unsigned
+integers have a few quirks that make them useful for a more narrow range of
+purposes, which we will discuss later in the chapter.
+Types with a numeric suffix such as int64 or uint8 are constant-sized or
+architecture-independent types, and the number indicates the size of each
+type in bits. These types will always consume the same amount of memory,
+and have the same range of values whether they are being run on a 32-bit or
+64-bit system.
+By contrast, the int, and uint types are architecture-dependent, which
+means they will be either 32 or 64 bits in size, depending on the architecture
+of the system they are compiled for. These types are provided to give you
+general-purpose default integer types that will perform optimally, no matter
+which architecuture they are compiled for.
+Rounding out the list, byte and rune are aliases that exist to give more
+meaningful names to integer values in certain contexts. byte is an alias for
+uint8, because it is extremely common to refer to data in terms of 8-bit
+chunks, or "bytes." The alias was created to distinguish between when code is
+dealing with data and when it is dealing with a numeric value. This
+convention is ubiquitous in the Go ecosystem, and you’ll run across many
+functions in the standard library and elsewhere that either accept or return
+data as a sequence of bytes ([]byte). Similarly, rune is exactly the same as
+int32, except that it is used when talking about unicode characters in a string.

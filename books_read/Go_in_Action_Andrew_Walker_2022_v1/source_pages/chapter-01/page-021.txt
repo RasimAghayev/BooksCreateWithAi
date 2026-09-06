@@ -1,0 +1,33 @@
+inheriting it from somewhere else.
+Interfaces Unify Behavior
+Interfaces, in turn, allow related types to be used interchangably, provided
+they have the same behavior (as defined by their methors).[2] For example,
+you could make an interface, Describer, which represents anything that has a
+description.
+Listing 1.10. An Interface And A Function That Uses It
+type Describer interface {
+Describe() string
+}
+func PrintDescription(d Describer) {
+fmt.Println(d.Describe())
+}
+type Person struct {
+FirstName string
+LastName string
+Age int
+}
+func (p Person) Name() string {
+return p.FirstName + " " + p.LastName
+}
+func (p Person) Describe() string {
+return fmt.Sprintf("%s is a %d year-old human", p.Name(), p.Age)
+}
+type Cat struct {
+Name string
+Attitude string
+Color string
+}
+func (c Cat) Describe() string {
+return fmt.Sprintf("%s is a %s cat (%s)", c.Name, c.Color, c.Attitude)
+}
+func main() {

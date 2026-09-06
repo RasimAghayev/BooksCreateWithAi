@@ -1,0 +1,20 @@
+Listing 4.1. An Example Array
+var intArray [5]int
+intArray[1] = 20
+intArray[2] = 30
+intArray[3] = 40
+intArray[4] = 50
+Figure 4.1. Illustation Of intArray In Listing 4.1 After Declaration And Assignment
+The fiture above illustrates the data structure intArray as it exists in memory
+after its declaration. The elements of the array are marked a grey boxes and
+are connected in series to each other. Each element contains the same type
+and can be accessed through a unique index position.
+Note
+Indexes start at 0.
+Arrays are valuable data structures because the memory is allocated
+sequentially. Having memory in a contiguous form can help keep data loaded
+within CPU caches longer. Using index arithmetic, you can iterate through all
+the elements of an array quickly.[9]
+4.1.1 Declaring Arrays
+Arrays in Go require a size, which defines the number of elements they can
+hold, as well as the type of elements. Together, the size and the element type

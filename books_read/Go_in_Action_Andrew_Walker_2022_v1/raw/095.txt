@@ -1,0 +1,4 @@
+REMEMBER: To refer to the actual value that’s being pointed to, use
+*variableName (with a *). To get the pointer address value, use
+variableName.
+3.7.2 Creating Pointers With new And Literals

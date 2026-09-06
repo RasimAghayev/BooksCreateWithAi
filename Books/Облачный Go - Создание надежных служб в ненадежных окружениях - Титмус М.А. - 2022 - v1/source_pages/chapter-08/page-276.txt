@@ -1,0 +1,41 @@
+276  Слабая связанность
+// Start включает логику настройки и запуска службы,
+// которая прежде находилась в функции main.
+func (f *restFrontEnd) Start(store *core.KeyValueStore) error {
+    // Запомнить ссылку на основное приложение.
+    f.store = store
+    r := mux.NewRouter()
+    r.HandleFunc("/v1/{key}", f.keyValueGetHandler).Methods("GET")
+    r.HandleFunc("/v1/{key}", f.keyValuePutHandler).Methods("PUT")
+    r.HandleFunc("/v1/{key}", f.keyValueDeleteHandler).Methods("DELETE")
+    return http.ListenAndServe(":8080", r)
+}
+Сравнив предыдущий код с кодом из раздела «Итерация 1: монолит» гла-
+вы 5, можно выделить некоторые отличия:
+  все функции теперь являются методами, прикрепленными к структуре 
+restFrontEnd ;
+  все вызовы основного приложения пересекают экземпляр store , на -
+ходящийся в структуре restFrontEnd ;
+  настройка маршрутизатора, определение функций-обработчиков и за-
+пуск сервера теперь выполняются в методе Start .
+Аналогичные изменения нужно внести в реализацию внешнего интерфей -
+са gRPC, чтобы сделать его совместимым с портом FrontEnd .
+Эта новая организация упрощает выбор и подключение «внешнего адап-
+тера», как показано ниже.
+Все вместе
+Вот функция main , в которой мы подключаем все компоненты к нашему при-
+ложению:
+package main
+import (
+    "log"
+    "github.com/cloud-native-go/examples/ch08/hexarch/core"
+    "github.com/cloud-native-go/examples/ch08/hexarch/frontend"
+    "github.com/cloud-native-go/examples/ch08/hexarch/transact"
+)
+func main() {
+    // Создать экземпляр TransactionLogger. Этот адаптер будет включен
+    // в порт TransactionLogger основного приложения.
+    tl, err := transact.NewTransactionLogger(os.Getenv("TLOG_TYPE"))
+    if err != nil {
+        log.Fatal(err)
+    }

@@ -1,0 +1,33 @@
+Listing 1.12. Generic Sums
+func SumNumbers[N int | float64](numberSlice ...N) N {
+var total N
+for i := range numberSlice {
+total += numberSlice[i]
+}
+return total
+}
+func main() {
+fmt.Println(SumNumbers(1, 2, 3))
+fmt.Println(SumNumbers(1.1, 2.2, 3.3))
+}
+//output:
+// 6
+// 6.6
+This is just the tip of this iceberg! Generics are among the newest features to
+the Go language, and entire chapter of this book is dedicated to helping you
+get the most of them.
+1.1.5 Garbage Collection
+Like many of its peers, Go is a garbage-collected language, which means that
+you do not need to manage allocation of memory, since the runtime will take
+care of that for you.
+Like the rest of the language, Go’s memory managent is fully-concurrent,
+meaning it does not need to stop the entire program periodically to clean up
+memory, which is often a side-effect of this feature in languages that provide
+it.
+Instead, Go’s automatic memory management is highly optimized for
+intensive workloads common to the sorts of applications where it shines, and
+the performance and efficacy of Go memory management improves with
+each new release. Sub-millisecond pauses are now the norm, and soft
+memory limits and profile-guided optimizations can help ensure that your
+application is performing as well as it can, with in the bounds of its situation.
+[1] "Runtime" here refers to the code that is part of every compiled Go

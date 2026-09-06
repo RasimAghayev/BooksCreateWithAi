@@ -1,0 +1,31 @@
+When retrieving values from a map, you can access values by their key. If the
+key does not exist, Go will return the zero value for your element type
+instead. If you need to test whether a particular key exists, you can use two-
+variable assignment form, which will return a second boolean value
+representing whether or not the key was found in the map.
+Listing 4.70. Retrieving Values From A Map
+userIDs := map[string]int{
+"Andy": 1,
+"Sarah": 2,
+}
+AndyID := userIDs["Andy"] // 1
+JenID := userIDs["Jen"] // 0 (key is not in the map)
+JeffID, found := userIDs["Jeff"] // 0, false
+// You can also omit the value variable if you are just checking for
+// membership. Using if with a simple-statement if is a common idiom.
+if _, found := userIDs["Carmen"]; !found {
+fmt.Println("Didn't find user Carmen")
+}
+Nonexistent Keys And Zero Values
+It might seem odd at first that maps will return values for keys that don’t
+exist, but this actually enables some handy behavior in cases where the
+existence of the key isn’t important.
+One example might be a membership list, using string as the key type
+(representing a member’s name) and bool for the element type, representing
+whether they are a member of the club or not.
+Listing 4.71. Using Zero Values For Membership Queries
+clubMembers := map[string]bool{
+"Susan": true,
+"Aditya": true,
+}
+for _, name := range []string{"Aditya", "Andy", "Susan"} {

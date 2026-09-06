@@ -1,0 +1,29 @@
+ready for the code:
+Listing 2.1. Initializing The wordcount Module
+$ go mod init gobook/wordcount #1
+go: creating new go.mod: module gobook/wordcount
+You can use the module name gobook/wordcount whether or not you put
+your new project in a gobook directory. The only relevant portion of the name
+for now is the final path segment which must match the directory name you
+run the command in. You could, of course, simply have given it the name
+wordcount, and this will work fine, but for the purposes of convention, you
+might want to get used to prefixing the module name with something, since
+eventually this will be where repository information will go.
+The go Command
+This is the first of many appearances of your new best friend and constant
+companion throughout your journey as a Go programmer: the go command.
+You will be using it a lot.
+This little Swiss Army Knife does everything from building your code to
+testing it, installing its dependencies, and everything in between. It is broken
+down into a series of subcommands, such as mod (which handles
+dependencies) being one. You’ll only be touching on it briefly in this chapter,
+but, rest assured, there will be plenty to learn about this tool and more in the
+Chapter 3.
+Once this command is run, you will be left with a directory containing one
+file: go.mod.This directory is now the main module for your project, and the
+Go toolchain will reference this go.mod when building any code in this
+directory (or in any directories beneath it). If you take a look inside this file,
+you will see something very similar to the following:
+Listing 2.2. Your New go.mod File
+module gobook/wordcount
+go 1.18

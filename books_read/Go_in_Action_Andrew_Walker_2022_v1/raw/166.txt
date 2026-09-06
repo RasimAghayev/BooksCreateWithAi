@@ -1,0 +1,10 @@
+This is performed by passing the key specified in your map operation to the
+map’s hash function. The purpose of the hash function is to generate an index
+that evenly distributes key/value pairs across all available buckets.
+The better the distribution, the quicker you can find your key/value pairs as
+the map grows. If you store 10,000 items in your map, you don’t want to ever
+look at 10,000 key/value pairs to find the one you want. You want to look at
+the least number of key/value pairs possible. Looking at only 8 key/value
+pairs in a map of 10,000 items is a good and balanced map. A balanced list of
+key/value pairs across the right number of buckets makes this possible.
+Figure 4.36. Simple Representation Of The Internal Structure Of A Map

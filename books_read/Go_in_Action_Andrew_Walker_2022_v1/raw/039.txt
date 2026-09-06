@@ -1,0 +1,31 @@
+new variable from the value you are attempting to assign to it. This a very
+useful feature, since it saves you from needing to perform separate
+declaration and assignment steps every time. Instead, you can just create
+variables the first time you use them, and the type is taken care of for you.
+Short Declaration Considerations
+Short declaration is very useful, however it can have surprising behavior
+when changing scope. Consider the following example:
+Listing 2.13. Short Declaration Shadowing A Variable
+func main() {
+const defaultServer = "localhost"
+// getConfigValue returns false if the named value does not exist
+serverAddress, found := getConfigValue("server")
+if !found {
+serverAddress := defaultServer
+fmt.Println("default server set:", serverAddress)
+}
+fmt.Println("connecting to server:", serverAddress)
+}
+// Output:
+// default server set: localhost
+// connecting to server:
+Inside of the if block, everything looks great, however once you exit, the
+value is empty again, what gives? This happens because the second
+assignment to serverAddress is actually not an assignment at all. Because it
+occurs within the if block, it’s now happening inside of a new scope, and
+actually creates a new variable with the same name that only exists inside of
+the if block, meaning the value of the outer serverAddress never changes at
+all. This is called shadowing, and it can be easy to miss, but fortunately many
+editors will warn you about shadowing so that you can fix it.
+2.4.9 Comments
+Listing 2.14. Adding A Comment About The text variable

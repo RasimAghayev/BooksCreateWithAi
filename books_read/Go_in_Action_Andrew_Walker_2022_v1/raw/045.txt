@@ -1,0 +1,20 @@
+Listing 2.23. Multiple Import Directive For Both fmt and strings
+import (
+"fmt"
+"strings"
+)
+This is the way most Go code you run into will do it, though some authors
+will split it up. Usually you will see imports grouped with the standard library
+imports first, followed by a blank line and then other dependencies.
+2.5.4 Slices And len
+Once the strings package is imported, you can call Fields using dot-
+notation:
+Listing 2.24. Calling strings.Fields And Getting The List Of Words
+words := strings.Fields(text)
+Looking at the documentation, you can see that strings.Fields takes a
+single string as an argument and returns a []string, which is a slice of string
+values. You’ll explore slices in the next chapter in more detail, but for now
+you can think of them as lists or arrays that can shrink and grow as you need
+them. Like arrays, they are indexed by number, and you can use the familiar
+bracket syntax to access individual elements in them.
+Figure 2.3. The Slice Of Words

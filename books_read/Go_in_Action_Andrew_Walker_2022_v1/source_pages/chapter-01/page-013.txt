@@ -1,0 +1,9 @@
+bit like threads, only they are much more lightweight, and less expensive to
+create. In fact, many Goroutines can share a single OS thread, and can be
+started and stopped as needed to allow other goroutines to run.
+Figure 1.3. Many Goroutines Execute On a Single OS Thread
+Because they are so cheap, you don’t need to worry about using them
+whenever you need them, and it is not uncommon for a single Go program to
+have many hundreds or even thousands of them active at one time.
+If you want to execute some code that might be slow while you move on to
+accomplish other things, a goroutine is the perfect tool for the job. Creating

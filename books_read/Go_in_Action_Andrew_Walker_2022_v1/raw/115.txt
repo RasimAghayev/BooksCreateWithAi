@@ -1,0 +1,35 @@
+// do something with items[i]
+}
+range loops are the easiest and most flexible way to loop through items in
+Go, since they take care of providing sequential indices and items for you,
+and will and will stop at the end of the list automatically. In the case of arrays
+(and slices, which we will explore shortly), range loops can be used with
+either 1 or 2 values. When used with a single value, you will get an integer
+value starting at 0, representing the starting index, and this value will increase
+by one for each iteration of the loop, until it has returned the final index.
+Listing 4.12. Iterating An Array Using range To Get Indices
+array := [...]int{1, 2, 3, 4}
+// Use a range statement to provide indices in order.
+fmt.Println("Starting range loop:")
+for i := range array {
+fmt.Printf("index %d is: %d\n", i, array[i])
+}
+fmt.Println("Range loop complete!")
+// output:
+// Starting range loop:
+// index 0 is: 1
+// index 1 is: 2
+// index 2 is: 3
+// index 3 is: 4
+// Range loop complete!
+If you add a second value to the range expression, you will receive both the
+current index as well as a copy of the value at that index:
+Listing 4.13. Iterating An Array Using range To Get Indices And Values
+array := [...]int{1, 2, 3, 4}
+// Use a range statement to provide indices and copies of each value.
+for i, item := range array {
+fmt.Printf("index %d is: %d\n", i, item)
+}
+// output:
+// index 0 is: 1
+// index 1 is: 2

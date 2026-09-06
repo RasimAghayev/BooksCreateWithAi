@@ -1,0 +1,21 @@
+be familiar if you have worked with c-like languages such as Javascript, C++
+and Java.
+It is comprised of three sections, followed by the block of code to execute:
+Figure 2.2. Anatomy Of A for Statement
+The init statement is run once at the start of the loop and usually initializes
+some important variable. It is optional.
+The condition is a boolean expression evaluated before each loop iteration to
+see if the loop should run. Unlike C and Java, go requires a condition.
+The post statement is run at the end of each loop iteration, including the last
+one. Usually it increments some kind of counter. It is optional.
+In this code, the init statement creates a variable i used to track the character
+position in the string, this is then compared to a literal space character ' '. If
+it matches, numSpaces++ increments the counter, and the loop continues to
+the end.
+2.4.11 Calling Functions In Other Packages
+Listing 2.17. Using fmt.Println To Output The Results
+fmt.Println("Found", numSpaces+1, "words")
+Finally, after all of that counting and looping, it’s time to return your results!
+This is a great job for the fmt package, which provides methods for printing
+and formatting messages.
+Go uses the familiar <package>.<function> syntax to call functions in other

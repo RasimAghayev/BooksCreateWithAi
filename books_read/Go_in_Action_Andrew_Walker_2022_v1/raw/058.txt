@@ -1,0 +1,31 @@
+using go doc -ex to look for example code.
+Adapthing the example to the word-counting code you have so far, you can
+just replace the code in the loop with the code you want to call for each line,
+and just check Err when you’re done. This means you can use the same
+strings.Fields approach as before, only this time you’re only using it on
+one line at a time and keeping a running total outside of the loop:
+Listing 2.42. Using strings.Fields Inside Of The Scan Loop
+// Counter to track the running total.
+var wordCount int
+for scanner.Scan() {
+// This is done for each line of the file.
+words := strings.Fields(scanner.Text())
+wordCount += len(words)
+}
+This is clean and simple, and, thanks to the buffering provided by the
+Scanner type, it is much more efficient. The only outstanding task is to open
+the file in such a way that it can be read by the scanner as needed, instead of
+all at once with os.ReadFile.
+2.8.2 Files And io Interfaces
+Earlier, you learned that NewScanner takes something called an io.Reader as
+its only input, and you need some way connect a file to this type. If you
+check out the documentation, you’ll find out that Reader is acually an
+interface, with just a single method, Read.
+Listing 2.43. Excerpt from go doc io.Reader
+type Reader interface {
+Read(p []byte) (n int, err error)
+}
+Reader is the interface that wraps the basic Read method.
+Read reads up to len(p) bytes into p. It returns the number of bytes
+read (0 <= n <= len(p)) and any error encountered. Even if Read returns
+n < len(p), it may use all of p as scratch space during the call. If

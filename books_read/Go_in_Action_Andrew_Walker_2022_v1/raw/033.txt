@@ -1,0 +1,32 @@
+syntactic style that could span weeks. It was all very fraught and dramatic
+and a lot of good development time was burnt debating the merits of variable
+grouping and cuddled else statements. Ain’t no one got time for that.
+With standard formatting, it doesn’t matter what your preference might be.
+What style of bracketing should you use? Doesn’t matter, it’s gofmt’s way.
+It’s actually rather freeing, since now you just write your code and you don’t
+worry about it. Moreover, standard formatting lowers the cognitive load for
+reading unfamiliar code since at the very least the shape of it will be the
+same. It’s great.
+If you’re unsure about whether your editor is calling gofmt for you, just try
+the following command on your shiny new main.go:
+Listing 2.6. Testing Your Formatting With gofmt
+$ gofmt -d main.go
+The -d ("for diff") flag tells gofmt that you want to see any differences your
+code has from the standard. If you’re lucky, it will output nothing, meaning
+your editor has probably already taken care of that for you. If, on the other
+hand, you see something like this:
+Listing 2.7. Output Of gofmt -d When Your Formatting Isn’t Standard
+--- main.go.orig
++++ main.go
+@@ -3,13 +3,13 @@
+import "fmt"
+func main() {
+- // Use hard-coded text to start.
+- text := "let's count some words!"
++ // Use hard-coded text to start.
++ text := "let's count some words!"
+var numSpaces int
+// Look at the text one byte at a time.
+- for i := 0; i < len(text); i++{
++ for i := 0; i < len(text); i++ {
+if text[i] == ' ' {

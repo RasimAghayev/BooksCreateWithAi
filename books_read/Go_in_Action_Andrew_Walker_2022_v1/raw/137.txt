@@ -1,0 +1,3 @@
+Finally, the new slice header is returned, and the assignment overwrites the
+old one, releasing the memory held by the old array.
+Figure 4.22. Append With Allocation Step 3: Return The New Slice To Overwrite The Old One

@@ -1,0 +1,28 @@
+You can also declare map variables using the var keyword, however this
+comes with a caveat: values cannot be added to or retrieved from a map until
+it has been intialized, and attempts to do so will result in a runtime panic:
+Listing 4.67. Declaring A Map With var
+// Declare a map variable using var
+var intToString map[int]string
+// Attempt to set a value in the map
+intToString[1] = "one" // panic: assignment to entry in nil map
+The reason for this is that maps declared without a literal are uninitialized,
+which means they do not have any memory allocated for their internal data
+structures, and so they aren’t set up to store values yet. This is known as a nil
+map. Like nil slices, nil maps are equal to nil, which you can check for.
+However, unlike nil slices, there is nothing like append that can add values to
+a nil map, so it is easier to forget to initialize them and end up with a panic.
+For this reason, you should prefer using make or map literal initialization
+when you can. If a map value is optional, you need to remember to check for
+nil first.
+Important
+Nil maps must be initialized before they can be used. When in doubt, check
+to see if the map is nil first.
+Nil map panics can be avoided by checking to see if a map value is == nil,
+and initializing it if so:
+Listing 4.68. Initializing A Map If It Is A Nil Map
+// Declare a map variable using var
+var intToString map[int]string
+if intToString == nil {
+intToString = map[int]string{}
+}

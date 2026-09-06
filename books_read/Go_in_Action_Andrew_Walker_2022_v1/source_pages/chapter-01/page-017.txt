@@ -1,0 +1,31 @@
+mechanisms beyond the send and receive operations themselves. In code, that
+might look something like this, with the second goroutine sending the final
+message back to main on another channel.
+Listing 1.5. Exchanging Data With A Channel
+func main() {
+channel := make(chan string)
+output := make(chan string)
+go func() {
+// First goroutine waits for a message.
+s := <-channel
+s = s + "World!"
+output <- s
+}()
+go func(){
+// Second goroutine sends the initial message.
+s := "Hello, "
+channel <- s
+}()
+// Main goroutine waits for the final output.
+finalString := <- output
+fmt.Println("This string was built concurrently:", finalString)
+}
+Listing 1.6. The Final Result On The output Channel
+This string was built concurrently: Hello, World!
+This is a simple and powerful abstraction, and, because the data is copied, it
+is generally a much safer way to share data between concurrent processes.
+Note
+Special care must be taken if the data contains pointers, since only the pointer
+itself is copied (not the underlying data). This will be covered more in
+Chapter 8, but a good rule of thumb to remember for now is that when you
+pass data on a channel, you should be done with it.

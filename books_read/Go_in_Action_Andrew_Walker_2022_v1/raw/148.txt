@@ -1,0 +1,9 @@
+When used with a slice, a slice expression will create a new slice, pointing to
+the low index in the backing array with a length value set based on the high
+value.
+Listing 4.48. Creating Slices From An Existing Slice
+stringSlice := []string{"A", "B", "C", "D", "E", "F", "G", "H", "I"}
+newSliceA := stringSlice[3:6] // [D E F]
+newSliceB := stringSlice[:2] // [A B] - "up to" index 2
+newSliceC := stringSlice[7:] // [H I] - "starting from" index 7
+Figure 4.28. New Slices Created With Slice Expressions

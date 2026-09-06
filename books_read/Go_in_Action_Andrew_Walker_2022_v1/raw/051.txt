@@ -1,0 +1,12 @@
+list will start with the command itself, so it will always have a length of at
+least 1:
+Figure 2.4. os.Args Illustrated
+This allows your program to access the first argument at os.Args[1] and
+treat it as the filename to be loaded:
+Listing 2.34. Opening The First Argument As A File
+fileContents, err := os.ReadFile(os.Args[1])
+2.7.2 Avoiding A Panic By Using len
+Because os.Args will always contain the name of your program first, you
+need to look at os.Args[1] and above if you want to get at any of the
+arguments, but there’s a catch: if your program isn’t run with any arguments
+you could end up trying to access a value which doesn’t exist!

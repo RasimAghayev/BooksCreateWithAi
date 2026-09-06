@@ -1,0 +1,42 @@
+Гексагональная архитектура  275
+Обе эти реализации включают функцию main , которая настраивает и за-
+пускает цикл приема запросов к службе.
+Поскольку они являются «управляющими» портами, мы должны передать 
+им основное приложение, поэтому давайте преобразуем оба интерфейса 
+в структуры, соответствующие следующему интерфейсу:
+package frontend
+type FrontEnd interface {
+    Start(kv *core.KeyValueStore) error
+}
+Интерфейс FrontEnd  служит нашим «портом внешнего интерфейса», кото-
+рому должны удовлетворять все реализации внешнего интерфейса. Метод 
+Start  принимает API основного приложения в  форме *core.KeyValueStore , 
+а также включает логику настройки, которая раньше находилась в функции 
+main .
+Теперь можно выполнить реорганизацию обоих интерфейсов, чтобы они 
+соответствовали интерфейсу FrontEnd . Начнем с  интерфейса RESTful. Как 
+обычно, полный исходный код этого интерфейса и интерфейса gRPC досту -
+пен в репозитории GitHub для данной книги (https://oreil.ly/9jRyU):
+package frontend
+import (
+    "net/http"
+    "github.com/cloud-native-go/examples/ch08/hexarch/core"
+    "github.com/gorilla/mux"
+)
+// restFrontEnd содержит ссылку на логику основного приложения
+// и соответствует контракту интерфейса FrontEnd.
+type restFrontEnd struct {
+    store *core.KeyValueStore
+}
+// keyValueDeleteHandler реализует логику HTTP-метода DELETE.
+func (f *restFrontEnd) keyValueDeleteHandler(w http.ResponseWriter,
+        r *http.Request) {
+    vars := mux.Vars(r)
+    key := vars["key"]
+    err := f.store.Delete(key)
+    if err != nil {
+        http.Error(w, err.Error(), http.StatusInternalServerError)
+        return
+    }
+}
+// ...другие функции-обработчики опущены для краткости.

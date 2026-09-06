@@ -1,0 +1,31 @@
+Copy can be useful if you want to create a separate copy of a slice
+expression, or you want to get a copy of a slice before or after calls to append
+that might modify it. You just need to ensure that you allocate a destination
+slice of the correct length to hold the copy. This is where make can be
+particularly helpful, since you can use it to create a new slice of exactly the
+right length to hold the copied elements:
+Listing 4.56. Using copy To Create A Separate Copy Of A Slice Expression
+intSlice := []int{1, 2, 3, 4, 5, 6}
+subSlice := intSlice[2:4] //[3 4]
+subSliceCopy := make([]int, len(subSlice))
+copy(subSliceCopy, subSlice)
+// Change a value in the original slice.
+intSlice[2] = 10
+// Change is visible in subSlice, but not in subSliceCopy
+fmt.Println(subSlice) //output: [10 4]
+fmt.Println(subSliceCopy) //output: [3 4]
+4.2.8 Avoiding Runtime Panics When Accessing Slice Values
+Because the size of a slice isn’t set until the program is running, you can
+sometimes run into a situation where a value you’re expecting to find isn’t
+there.
+As an example, let’s say you have a function to print the top three finishers in
+a race:
+Listing 4.57. Function To Print The Top Three Items
+func printMedalists(raceName string, contestants []string) {
+fmt.Printf("Results for %s:\n", raceName)
+fmt.Printf("Gold Medal: %s\n", contestants[0])
+fmt.Printf("Silver Medal: %s\n", contestants[1])
+fmt.Printf("Bronze Medal: %s\n", contestants[3])
+}
+This function expects a sorted list with at least three entries, which it gets
+directly from the slice by index. If you pass a slice with more than three

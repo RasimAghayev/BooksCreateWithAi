@@ -1,0 +1,16 @@
+var array1 [2][2]int
+var array2 [2][2]int
+// Add integer values to each individual element.
+array2[0][0] = 10
+array2[0][1] = 20
+array2[1][0] = 30
+array2[1][1] = 40
+// Copy the values from array2 into array1.
+array1 = array2
+Because each array is a value, you extract individual sub-arrays or values,
+depending on how many levels you access:
+Listing 4.24. Copying A Sub-array And Value
+array2D := [2][2]int{{10, 11}, {20, 21}}
+array1D := array2D[1] // [20 21]
+intValue := array1D[0] // 20
+Figure 4.12. Values At Different Levels

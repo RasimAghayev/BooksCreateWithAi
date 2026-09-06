@@ -1,0 +1,19 @@
+Map declarations take the form of map[K]E where K is the key type used for
+looking up values, and E is the element type, which is the type of value stored
+in the map. Just like slices, maps can be created using make, or they can be
+created and initialized at the same time, using map literals, which specify a
+starting list of key/value pairs.
+Listing 4.66. Declaring Maps With make And Literals
+// Declare and initialize a map with make
+intToString := make(map[int]string)
+// Declare an empty map with a literal.
+// (this is identical to using make)
+intToString := map[int]string{}
+// Declare and populate a map with a literal.
+// Keys are separated from values with a colon, and commas separate
+// key-value pairs.
+intToString := map[int]string{
+1: "one",
+2: "two",
+}
+Figure 4.37. Map Declarations Visualized

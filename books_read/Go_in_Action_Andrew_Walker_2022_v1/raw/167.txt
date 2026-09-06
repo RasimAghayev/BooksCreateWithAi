@@ -1,0 +1,21 @@
+The hash key that’s generated for a Go map is a bit longer than what it
+appears in this illustration, but it works the same way. In this example, the
+keys are strings that represents a color. Those strings are converted into a
+numeric value within the scope of the number of buckets we have available
+for storage. The numeric value is then used to select a bucket for storing or
+finding the specific key/value pair. In the case of a Go map, a portion of the
+generated hash key, specifically the low order bits (LOB), is used to select
+the bucket.
+There are two data structures that contain the data for the map. First, there’s
+an array with the top eight high order bits (HOB) from the same hash key that
+was used to select the bucket. This array distinguishes each individual
+key/value pair stored in the respective bucket. Second, there’s an array of
+bytes that stores the key/value pairs. The byte array packs all the keys and
+then all the values together for the respective bucket. The packing of the
+key/value pairs is implemented to minimize the memory required for each
+bucket.
+There are a lot of other low-level implementation details about maps that are
+outside the scope of this chapter. You don’t need to understand all the
+internals to learn how to create and use maps. Just remember one thing: a
+map is an unordered collection of key/value pairs.
+4.3.1 Declaring Maps

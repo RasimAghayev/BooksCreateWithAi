@@ -1,0 +1,31 @@
+specified in the source, as opposed to coming from somewhere else, like a
+variable or function call. When you make an assignment such as myInt := 5
+or myString = "hello", the 5 and the "hello" are literals.
+3.1.1 Choosing An Integer Type
+With so many integer types to choose from, it helps to know which types you
+might want to use, and for what purpose. For most tasks, you will probably
+want to reach for int first, since it can represent both positive and negative
+values, and because it will be the most efficient integer type for your
+architecture. It will also be less work for you in terms of conversions because
+it is:
+1. The default type for integer literals
+2. The most common integer type in standard library functions and most
+3rd party packages
+3. The type returned by built-in functions such as len() and cap()
+4. The type used in indices in for-range loops
+int64 is the largest native integer type in the language, and you’ll find it used
+in the standard library for values that need the greatest range, such as
+timestamps, file offsets and size limites. If you need the full range of values
+provided by int64, or if you will be making a lot of calls to functions that
+take an int64 as an argument, it can sometimes be helpful to have a value of
+this type for compatibility. Otherwise, you can just convert from int as
+needed.
+As for the rest of the signed types (int32, int16, and int8), consider them on
+an as-needed basis if required for compatibility or if there are measurable
+performance reasons for using them. If you don’t know you need them, you
+probably don’t. Try to avoid using another type just because it "takes less
+memory", since this is a form a premature optimization, and will come with
+extra overhead in type conversions in order to interoperate with more
+common types. When in doubt, run benchmarks and profile your programs to
+ensure that your choice in types is really the problem (usually it’s not).
+Unsigned integers can be a bit trickier to use correctly since they can easily

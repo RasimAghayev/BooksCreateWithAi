@@ -1,0 +1,8 @@
+Optionally, you can specify only certain indices allowing you to set specific
+values or start from another location.
+Listing 4.4. Initializing Only Some Elements Of An Array
+// Declare and initialize an array with only certain values.
+intArraySparse := [5]int{1: 2, 3: 4}
+// Declare and initialize an array starting from index 2.
+intArrayLast3 := [5]int{2: 3, 4, 5}
+Figure 4.4. Array Declared With Only Certain Values
