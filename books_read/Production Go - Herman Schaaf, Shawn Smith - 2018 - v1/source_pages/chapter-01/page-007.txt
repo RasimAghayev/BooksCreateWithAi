@@ -1,2 +1,0 @@
-Getting Started
-“Clear is better than clever” - Rob Pike

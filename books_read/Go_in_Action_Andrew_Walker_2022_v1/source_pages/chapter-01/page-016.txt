@@ -1,9 +1,0 @@
-Figure 1.3 shows two goroutines and a shared channel. The first goroutine
-passes a data value through the channel to the second goroutine, which
-receives a copy of it. This exchange is synchronized, so both goroutines
-know the exchange took place, and can do other work before exchanging data
-again. After the second goroutine performs its tasks with the data, it then
-sends the data back to the first, waiting for acknowledgement. If the first
-goroutine is already ready to receive, the exchange will take place
-immediately, otherwise the second goroutine will wait patiently until the data
-is exchanged. This process requires no other locks or synchronization

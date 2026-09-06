@@ -1,3 +1,0 @@
-284
-APPENDIX
-Installing and setting up Go

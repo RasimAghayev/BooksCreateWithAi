@@ -1,5 +1,0 @@
-The consequence of not recovering from an application panic could be very
-embarrassing, as the consumers of your service will get a full stack trace of your
-application as the response. I would strongly recommend always wrapping your
-application in the Recover middleware just in case you have any kind of
-application panic within your service.

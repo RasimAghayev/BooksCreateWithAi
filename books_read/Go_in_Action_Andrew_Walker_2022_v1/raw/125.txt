@@ -1,4 +1,0 @@
-What Is The Type Of A Collection?
-Every variable in Go has one --and only one-- type. This is easy to see with
-simple variables like var count int, since it reads naturally as "variable
-count is an integer", but it can be harder to intuit with collections like var

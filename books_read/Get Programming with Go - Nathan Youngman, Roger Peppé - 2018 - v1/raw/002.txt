@@ -1,2 +1,0 @@
-Get Programming with Go
- 

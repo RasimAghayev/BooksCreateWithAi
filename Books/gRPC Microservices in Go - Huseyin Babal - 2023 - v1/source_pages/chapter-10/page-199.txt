@@ -1,6 +1,0 @@
-INDEX
-182
-Y
-Y-axis scaling 17
-Z
-Z-axis scaling 17

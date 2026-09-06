@@ -1,6 +1,0 @@
-return c.JSON(http.StatusOK, resp)
-By calling the JSON method and specifying a response status code, and our
-renderings.LoginResponse structure as parameters, Echo will serialize our
-renderings.LoginResponse to JSON and write the response directly to the
-http.ResponseWriter, which means that the developer does not have to worry about
-encoding:

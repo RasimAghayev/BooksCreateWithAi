@@ -1,8 +1,0 @@
-By using the binding and validation capabilities within Echo, we save time and
-effort in our application development process. There is no need to worry about
-the deserialization of the wire format of the request payload, and we can create
-structure in our code for following best practices for the validation of inputs.
-Within the preceding handler code, we used the Context.Bind method to read our
-inputs into the request structure. Afterward, we immediately called
-Context.Validate and passed in the structure we just bound to perform validation on
-the structure.

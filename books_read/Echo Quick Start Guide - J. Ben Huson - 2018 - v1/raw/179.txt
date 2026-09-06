@@ -1,6 +1,0 @@
-Explore record in a MySQL and MongoDB database
-Write and consume RESTful web service in Go
-Invent microservices in Go using Micro – a microservice toolkit
-Create and Deploy the Beego application with Nginx
-Deploy Go web application and Docker containers on an AWS EC2
-instance

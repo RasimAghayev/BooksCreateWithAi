@@ -1,4 +1,0 @@
-Many external services impose limits on how often you can call them to
-prevent abuse. These can be rate limits (number of calls per time period) or
-quotas (total number of calls allowed). Using Go's time.Ticker or a library
-like golang.org/x/time/rate can help in managing these limits effectively.

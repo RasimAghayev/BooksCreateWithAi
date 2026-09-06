@@ -1,3 +1,0 @@
-Next, the old values are copied into the new array, along with any new values
-to be appended:
-Figure 4.21. Append With Allocation Step 2: Copy Old Values And Assigne New Ones

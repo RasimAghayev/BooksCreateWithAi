@@ -1,3 +1,0 @@
-In the case of sliceLenZero and sliceEmptyLit, they become initialized
-even if the backing array they point to is empty, since there are valid
-conditions in which this can occur, such as explicit reallocation. In the case of

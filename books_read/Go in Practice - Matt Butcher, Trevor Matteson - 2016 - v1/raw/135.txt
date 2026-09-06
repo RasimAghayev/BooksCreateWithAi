@@ -1,9 +1,0 @@
-112
-CHAPTER 4
-Handling errors and panics
-Adding custom error types
-Properly using and handling panics
-Using error handling on goroutines
-As you move into the next chapters, you’ll visit other code-quality topics such as log-
-ging and writing tests. Taken together, we believe that these tools equip you to be a
-highly successful (dare we say, great) Go developer.

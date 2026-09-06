@@ -1,5 +1,0 @@
-e.Use(middleware.Logger())
-{"time":"2018-03-27T22:09:44.084450941-
-04:00","id":"","remote_ip":"::1","host":"localhost:8080","method":"GET","uri":"
-check","status":200,
-"latency":424727,"latency_human":"424.727µs","bytes_in":0,"bytes_out":33}

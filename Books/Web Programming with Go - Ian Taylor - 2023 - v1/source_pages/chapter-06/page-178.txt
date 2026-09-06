@@ -1,8 +1,0 @@
-Let us say a user is interested in purchasing a book. First, the application
-examines the cache. In the event that the book details are stored in the
-cache, they are returned without delay. If this is not the case, the application
-will retrieve the information from the database, save it in the cache for use
-in response to subsequent requests, and then send it back to the user.
-Because of this configuration, popular books, which are books that are
-accessed frequently, will soon be stored in the cache, which will result in
-faster response times.

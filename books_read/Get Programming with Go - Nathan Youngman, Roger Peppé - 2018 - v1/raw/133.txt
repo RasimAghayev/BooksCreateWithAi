@@ -1,6 +1,0 @@
-118
-Lesson 15  Capstone: Temperature tables
-Implement a drawTable function that takes a first-class function as a parameter and calls it 
-to get data for each row drawn. Passing a different function to drawTable should result in 
-different data being displayed.
- 

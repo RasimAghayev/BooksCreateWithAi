@@ -1,8 +1,0 @@
-About the author
-J. Ben Huson is a senior engineer for a metrics and data analytics company.
-Ben's experience with web development began over 12 years ago and has
-constantly evolved with the technical landscape of the industry over that time.
-Ben enjoys working with and contributing to open source software, including the
-Echo web framework. Ben has contributed to and developed open source
-software solutions that are currently used in production services. Ben is currently
-finishing his MS in Computer Science.

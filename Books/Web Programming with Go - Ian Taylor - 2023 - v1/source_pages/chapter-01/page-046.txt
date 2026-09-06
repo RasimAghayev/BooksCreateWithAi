@@ -1,7 +1,0 @@
-Throughout the entirety of this chapter, the primary focus was placed on the
-construction of a fundamental server; however, the goal was to acquire an
-understanding of the fundamental principles of web development using Go.
-During the practice of the development of the project, the skills and
-concepts that have been presented will be reviewed, elaborated upon, and
-incorporated into more intricate functionalities. This will ensure that the
-learning experience is both comprehensive and engaging.

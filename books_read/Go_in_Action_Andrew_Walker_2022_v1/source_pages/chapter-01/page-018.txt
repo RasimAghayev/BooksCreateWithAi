@@ -1,8 +1,0 @@
-1.1.4 Go’s Type System
-Go provides a flexible type system that is similar to that of object-oriented
-langauges such as C++ in that it defines new types out of existing types, but
-where it differs is that it has no concept of a class hierarchy. There are no
-classes or inheritance in Go. Instead, Go types are composed of simpler types,
-which allows you, the programmer, to focus on your data first, rather than
-requiring you to come up with a class hierarchy first:
-Figure 1.5. Inheritance Vs. Composition

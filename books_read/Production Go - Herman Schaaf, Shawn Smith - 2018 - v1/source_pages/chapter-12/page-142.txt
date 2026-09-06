@@ -1,9 +1,0 @@
-Monitoring
-(Note: This chapter is a work in progress)
-Prometheus
-Prometheus is an open source system (written in Go) which, at the time of writing this book, is very
-common and popular.
-Grafana
-Grafana is a platform for analytics and monitoring. We can use Grafana to graph various data
-exposed by Prometheus on our Go server.
-Alerts

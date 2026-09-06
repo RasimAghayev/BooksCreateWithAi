@@ -1,6 +1,0 @@
-Behavior testing
-Behavior testing can be summed up as Does this code/system perform and
-function the way I see my customers using it? Behavior testing creates a bridge
-between product owners, customers, and developers, as behavior tests should be
-understood by all parties so there is no dependency of opinions in how
-something is supposed to work.

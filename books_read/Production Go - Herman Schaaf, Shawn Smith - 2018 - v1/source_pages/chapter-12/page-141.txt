@@ -1,3 +1,0 @@
-Deployment
-Deployment of a Go application will be highly dependent on existing infrastructure; if there is no
-infrastructure in place already,

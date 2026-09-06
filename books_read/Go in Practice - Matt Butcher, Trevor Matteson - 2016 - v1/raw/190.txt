@@ -1,9 +1,0 @@
-167
-Summary
-Mapping templates to objects, such as a user template for a user object, and
-rolling the templates up into a page-level output.
-Generating email output with templates.
-In the next chapter, you’ll explore serving static content and handling user input
-from HTML forms. This includes serving files such as JavaScript files, stylesheets, and
-images in several ways. You’ll cover HTML form-handling patterns that can take the
-pain out of working with user input, especially when it comes to files.

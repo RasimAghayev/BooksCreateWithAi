@@ -1,6 +1,0 @@
-}
-Despite best efforts, connections can occasionally fail. The GitforGits
-Bookstore should have mechanisms to gracefully handle these failures.
-Retrying a failed connection, implementing exponential backoffs, or
-diverting traffic to a backup database are strategies to ensure uninterrupted
-service.

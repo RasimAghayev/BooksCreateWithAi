@@ -1,8 +1,0 @@
-ALTER queries, you simply update your Go models, and the ORM adjusts
-the underlying database structure accordingly.
-Advanced ORMs provide middleware and hooks, allowing developers to
-tap into the lifecycle of data operations. For GitforGits, it could mean
-validating a new user's data before it's saved or modifying a book's details
-before an update operation. These hooks ensure data integrity and allow for
-advanced functionalities without the added complexity of manual SQL
-triggers or procedures.

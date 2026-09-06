@@ -1,7 +1,0 @@
-there is also a single scope shared by each package, called the "package
-block" which includes all of the functions defined in that package as well as
-identifieres declared outside of functions, such as variables. Anything
-declared at this level is visible throughout the package. Above this is the
-"universe block", which contains built-in functions such as append, as well as
-all of the built-in Go types and constants:
-Figure 2.1. Scopes And Visibility

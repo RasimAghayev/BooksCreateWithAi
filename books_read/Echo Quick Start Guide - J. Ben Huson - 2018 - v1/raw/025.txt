@@ -1,4 +1,0 @@
-Download the color images
-We also provide a PDF file that has color images of the screenshots/diagrams
-used in this book. You can download it here: http://www.packtpub.com/sites/default/fi
-les/downloads/EchoQuickStartGuide_ColorImages.pdf.

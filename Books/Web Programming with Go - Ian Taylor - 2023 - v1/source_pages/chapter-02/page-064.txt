@@ -1,4 +1,0 @@
-Fig 2.4 Application Flow
-By compartmentalizing responsibilities, MVC provides a logical roadmap
-for development and also ensures the application remains scalable,
-maintainable, and robust.

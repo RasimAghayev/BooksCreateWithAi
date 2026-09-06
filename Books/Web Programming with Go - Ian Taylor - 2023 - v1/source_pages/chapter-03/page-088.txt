@@ -1,2 +1,0 @@
-functionalities that a request passes through. For instance, besides logging,
-you might want authentication.

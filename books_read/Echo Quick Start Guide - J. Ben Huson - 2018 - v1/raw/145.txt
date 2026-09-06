@@ -1,7 +1,0 @@
-Types of testing
-Testing in general can be broken into five primary categories:
-Unit testing
-Benchmark testing
-Behavior testing
-Integration testing
-Security testing

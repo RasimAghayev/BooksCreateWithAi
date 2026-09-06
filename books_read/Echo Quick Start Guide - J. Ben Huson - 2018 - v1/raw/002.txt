@@ -1,3 +1,0 @@
-Echo Quick Start Guide
-Build lightweight and high-performance web apps with Echo
-J. Ben Huson

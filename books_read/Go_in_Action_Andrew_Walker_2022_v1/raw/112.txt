@@ -1,8 +1,0 @@
-integerValue = intArray[index32] // 2
-integerValue = intArray[index64] // 3
-integerValue = intArray[indexUint] // 4
-Changing the value of an array value is done in the same way:
-Listing 4.9. Changing An Array Element
-intArray := [5]int{1, 2, 3, 4, 5}
-intArray[3] = 6
-Figure 4.6. Retrieving And Setting Array Values

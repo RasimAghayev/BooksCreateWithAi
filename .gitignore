@@ -1,21 +1,26 @@
-Books/*.pdf
-Books/*.epub
-Books/*.djvu
-Books/**/source/
-Books/**/raw/
-Books/**/external/source-code/
+# ── Müəllif hüququ: orijinal kitab məzmunu repo boyu qadağandır ──
+*.pdf
+*.epub
+*.djvu
+**/raw/
+**/source_pages/
+**/source/
+**/external/source-code/
+
+# ── Keçici / yerli ──
 _wip_*/
 archive/
 logs/
 telegram_upload/*
 telegram/channels/*/.env
+telegram/uploader/uploads.json
+uploads.json
 *.exe
 *.db
 *.sqlite
 *.sqlite3
-telegram/uploader/uploads.json
 
-uploads.json
+# ── Yerli alət skriptləri ──
 extract_pdf.py
 copy_source_pages.ps1
 create_chapters.py

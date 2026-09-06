@@ -1,8 +1,0 @@
-String: Render a string as the response
-NoContent: Do not render a response body
-Redirect: Render a redirect response pointing the result to another location
-All of the preceding methods provided in Echo allow you flexibility in rendering
-your application. Within a typical API, you will likely use a structured response
-rendering mechanism such as JSON or XML. If you are working on a server-
-side rendered web application, the HTML response mechanisms with built-in
-template rendering may make more sense for your use case.

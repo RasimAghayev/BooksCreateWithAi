@@ -1,8 +1,0 @@
-126
-CHAPTER 7
-Testing microservices
-The test pyramid is used to explain the distribution of test percentages for each
-test type. Unit testing has a bigger percentage of the pyramid since it is pre-
-ferred, mostly to get faster feedback and reduce the cost of the testing infra-
-structure.
-Test outputs and test coverage can be used in the CI pipeline to verify PRs.

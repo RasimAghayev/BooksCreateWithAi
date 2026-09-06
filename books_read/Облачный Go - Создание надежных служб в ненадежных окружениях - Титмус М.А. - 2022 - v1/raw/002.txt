@@ -1,5 +1,0 @@
-Cloud Native Go
-Building Reliable Services  
-in Unreliable Environments
-Matthew A. Titmus
-Beijing • Boston • Farnham • Sebastopol • T okyo

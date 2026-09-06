@@ -1,9 +1,0 @@
-   })
-}
-With subtests, you can group related tests under a parent test, ensuring
-shared setup and teardown run appropriately.
-Adopting patterns like table-driven tests and utilizing features like helper
-functions, parallel testing, and subtests make the testing process, both
-rigorous and streamlined. As a result, when scaling or modifying the
-"GitforGits Bookstore" app, these practices offer confidence that the app
-not only functions as expected but also maintains performance standards.

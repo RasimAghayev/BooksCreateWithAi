@@ -1,9 +1,0 @@
-By convention, we say that the pointer variable, "points to" the variable it
-references, and we will represent this with an arrow throughout the book for
-simplicity (and to avoid drawing a bunch of variables with random addresses
-in them):
-Figure 3.8. intPtr "Points To" intVar.
-The address operator is used whenever you need to get the location of a value
-in memory somewhere, and, with a few exceptions, you can get a pointer to
-almost anything. We’ll cover these exceptions in the section on addressability
-in Chapter 5.

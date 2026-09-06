@@ -1,9 +1,0 @@
-As a further convenience, you can also replace the length with …, and the
-compiler will automatically create an array type of the approproate length.
-Listing 4.5. Initializing An Array With Automatic Length
-// Declare and initialize an array with automatic length.
-intArrayAuto := [...]int{5, 4, 3, 2, 1}
-// If only using certain values, the largest value will be taken as the
-// size.
-intArrayAutoSparse := [...]int{0: 5, 3: 2}
-Figure 4.5. Arrays Declared With Lengths Automatically Calculated

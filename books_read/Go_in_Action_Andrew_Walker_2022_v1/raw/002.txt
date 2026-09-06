@@ -1,7 +1,0 @@
-Go in Action, Second Edition MEAP V03
-1. MEAP_VERSION_3
-2. Welcome
-3. 1_Introducing_Go
-4. 2_Diving_Into_Go
-5. 3_Primitive_Types_And_Operators
-6. 4_Collection_Types
