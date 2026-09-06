@@ -1,5 +1,10 @@
-Books/
-_wip_*/
+Books/*.pdf
+Books/*.epub
+Books/*.djvu
+Books/**/source/
+Books/**/raw/
+Books/**/external/source-code/
+Books_*/
 archive/
 logs/
 telegram_upload/*
