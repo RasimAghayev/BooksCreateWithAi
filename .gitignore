@@ -4,7 +4,7 @@ Books/*.djvu
 Books/**/source/
 Books/**/raw/
 Books/**/external/source-code/
-Books_*/
+_wip_*/
 archive/
 logs/
 telegram_upload/*

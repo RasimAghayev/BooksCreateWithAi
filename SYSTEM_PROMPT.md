@@ -29,9 +29,11 @@ level, classification, knowledge) verirsən.
    belə, `metadata.json`-da əsl ad saxlanılır.
 5. Books/ qovluğundakı **binary fayllar** (pdf/epub/djvu) Git-ə düşmür,
    yalnız strukturlaşdırılmış nəticələr (`.md`, `.json`) düşür.
-6. Kitab tam emal edildikdən sonra `Books/` qovluğundan **arxivə** köçürülür —
-   adı `metadata.json`-dakı `filename_safe` ilə eyni olan qovluq olur.
-7. Telegram-a upload uğurlu olmayana qədər heç bir yerli fayl silinmir.
+6. Kitab tam emal edildikdən sonra `Books/` qovluğundan **books_read** qovluğuna
+   köçürülür — adı `metadata.json`-dakı `filename_safe` ilə eyni olan qovluq olur.
+7. Kitab Telegram-a upload uğurlu olmayana qədər heç bir yerli fayl silinmir.
+   Upload uğurlu olduqdan sonra kitab `Books/` qovluğundan tamamilə
+   silinir (`books_read/` qovluğuna köçürülüb, orijinal `Books/` qovluğu təmizlənir).
 8. Proses istənilən anda kəsilə bilər (next-next-next) — hər addımdan sonra
    progress saxlanılır ki, sonradan eynilə davam etsin.
 
@@ -86,7 +88,7 @@ project/
 │       │   └── cheatsheet.az.md
 │       └── progress.json
 │
-├── archive/                            ← Tamamlanmış kitablar (tarixçə)
+├── books_read/                          ← Tamamlanmış kitablar (tarixçə)
 │   └── {filename_safe}/
 │       ├── metadata.json
 │       ├── toc/
@@ -130,7 +132,7 @@ project/
 ```
 Books/
 Books_*/
-archive/
+books_read/
 logs/
 ```
 
@@ -171,13 +173,13 @@ GIT_COMMIT_PUSH (hər chapterdan sonra)
    ↓
 TELEGRAM_PACKAGE (book.json + fayl)
    ↓
-   TELEGRAM_ROUTE_AND_UPLOAD
-   ↓
-   OBSERVER_LOG (hər kanal üçün nəticə: uğurlu/xəta)
-   ↓
-   ARCHIVE (yalnız tam uğurlu olduqda: Books/ → archive/)
-   ↓
-   CLEANUP (yalnız hamisi ugurlu olduqda)
+    TELEGRAM_ROUTE_AND_UPLOAD
+    ↓
+    OBSERVER_LOG (hər kanal üçün nəticə: uğurlu/xəta)
+    ↓
+    BOOKS_READ (yalnız tam uğurlu olduqda: Books/ → books_read/ və Books/ təmizlənmə)
+    ↓
+    CLEANUP (yalnız hamisi ugurlu olduqda)
 ```
 
 ### 3.1 Kitab secimi ve eynilik yoxlaması
@@ -581,23 +583,23 @@ Qaydalar:
 - Log faylları Git-ə düşmür (`logs/` `.gitignore`-dadır), lakin dəyişikliklər
   izlənilsin deyə yerli olaraq saxlanılır.
 
-### 10.7 Archive (tamamlanmış kitablar)
+### 10.7 Books Read (tamamlanmış kitablar)
 
 Kitabın bütün chapter-ləri emal edildikdən, Telegram upload tamamlandıqdan
-və Git commit edildikdən sonra kitab `Books/` qovluğundan `archive/` qovluğuna
-köçürülür.
+və Git commit edildikdən sonra kitab `Books/` qovluğundan `books_read/` qovluğuna
+köçürülür və `Books/`-dakı orijinal qovluq tamamilə silinir.
 
 ```
-archive/{filename_safe}/
+books_read/{filename_safe}/
 ```
 
 Burada `{filename_safe}` `metadata.json`-dakı `filename_safe` sahəsinin dəyəridir.
 
-Archive qaydaları:
+Books Read qaydaları:
 - Köçürmə **yalnız** bütün kanallara uğurlu upload baş verdikdən sonra edilir.
-- `Books/`-da kitab qalmır — `archive/`-dəki versiya tarixçəsindən asılı olaraq
-  ne vaxtsa oxunduğunu, hansı kanallara göndərildiyini analiz etmək olar.
-- `archive/` Git-ə düşmür (`.gitignore`), lakin yerlində saxlanılır.
+- `Books/`-da kitab qalmır — köçürmə baş verdikdən sonra orijinal qovluq
+  tamamilə silinir.
+- `books_read/` Git-ə düşmür (`.gitignore`), lakin yerlində saxlanılır.
 - `reader/books.json`-da status `completed` olaraq yenilənir.
 
 ---

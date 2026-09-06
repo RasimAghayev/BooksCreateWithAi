@@ -1,9 +1,9 @@
 {
-  "current_page": 87,
-  "chapter": 3,
-  "section": "3.10",
+  "current_page": 409,
+  "chapter": 11,
+  "section": "11.7",
   "last_updated": "2026-09-06",
-  "status": "in_progress",
-  "completed_chapters": [0, 1, 2, 3],
-  "remaining_chapters": [4, 5, 6, 7, 8, 9, 10, 11]
+  "status": "completed",
+  "completed_chapters": [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11],
+  "remaining_chapters": []
 }
