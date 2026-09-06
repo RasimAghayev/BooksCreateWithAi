@@ -1,0 +1,11 @@
+a common model. This structure will make this easier.
+ 
+renderings
+The renderings package will contain all of the data structures and types
+that will be serialized back to the caller through the http.ResponseWriter
+static
+The static directory will contain all static assets and content that is
+required for the application. In some cases, you may want to render
+HTML templates to the caller. In other cases, you may need to serve
+JavaScript or images back to the caller. Within our Echo project, all of
+the static content we will reference will live in this "package".

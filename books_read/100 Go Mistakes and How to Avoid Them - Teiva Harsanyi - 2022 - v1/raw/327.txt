@@ -1,0 +1,49 @@
+307
+12.1
+#91: Not understanding CPU caches
+Non-unit stride—A stride the CPU can’t predict: for example, a linked list or a
+slice of pointers. Because the CPU doesn’t know whether data is allocated con-
+tiguously, it won’t fetch any cache lines.
+For sum2, we face a constant stride. However, for the linked list, we face a non-unit
+stride. Even though we know the data is allocated contiguously, the CPU doesn’t know
+that. Therefore, it can’t predict how to walk through the linked list.
+ Because of the different stride and similar spatial locality, iterating over a linked
+list is significantly slower than a slice of values. We should generally favor unit strides
+over constant strides because of the better spatial locality. But a non-unit stride cannot
+be predicted by the CPU regardless of how the data is allocated, leading to negative
+performance impacts.
+ So far, we have discussed that CPU caches are fast but significantly smaller than
+the main memory. Therefore, a CPU needs a strategy to fetch a memory block to a
+cache line. This policy is called cache placement policy and can significantly impact
+performance. 
+12.1.5 Cache placement policy
+In mistake #89, “Writing inaccurate benchmarks,” we discussed an example with a
+matrix in which we had to compute the total sum of the first eight columns. At that
+point, we didn’t explain why changing the overall number of columns impacted the
+benchmark results. It might sound counterintuitive: because we need to read only the
+first eight columns, why does changing the total number of columns affect the execu-
+tion time? Let’s take a look in this section.
+ As a reminder, the implementation is the following:
+func calculateSum512(s [][512]int64) int64 {
+var sum int64
+for i := 0; i < len(s); i++ {
+for j := 0; j < 8; j++ {
+sum += s[i][j]
+}
+}
+return sum
+}
+func calculateSum513(s [][513]int64) int64 {
+// Same implementation as calculateSum512
+}
+We iterate over each row, summing the first eight columns each time. When these two
+functions are benchmarked each time with a new matrix, we don’t observe any differ-
+ence. However, if we keep reusing the same matrix, calculateSum513 is about 50%
+faster on my machine. The reason lies in CPU caches and how a memory block is cop-
+ied to a cache line. Let’s examine this to understand this difference.
+ When a CPU decides to copy a memory block and place it into the cache, it must fol-
+low a particular strategy. Assuming an L1D cache of 32 KB and a cache line of 64 bytes,
+Receives a matrix 
+of 512 columns
+Receives a matrix 
+of 513 columns

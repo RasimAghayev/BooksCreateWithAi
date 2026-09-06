@@ -1,0 +1,30 @@
+46
+Lesson 6  Real numbers
+6.1
+Declaring floating-point variables
+Every variable has a type. When you declare and initialize a variable with a real num-
+ber, you’re using a floating-point type. The following three lines of code are equivalent, 
+because the Go compiler will infer that days is a float64, even if you don’t specify it:
+days := 365.2425
+var days = 365.2425
+var days float64 = 365.2425
+It’s valuable to know that days has a float64 type, but it’s superfluous to specify float64. 
+You, me, and the Go compiler can all infer the type of days by looking at the value to the 
+right. Whenever the value is a number with a decimal point, the type will be float64.
+TIP The golint tool provides hints for coding style. It discourages the clutter with the fol-
+lowing message:
+"should omit type float64 from declaration of var days; 
+it will be inferred from the right-hand side"
+If you initialize a variable with a whole number, Go won’t know you want floating-point 
+unless you explicitly specify a floating-point type:
+var answer float64 = 42   
+(continued)
+One cup may represent very tiny numbers, and another represent huge numbers.
+Though every cup fits the same number of coins, some cups represent a smaller range
+of numbers more precisely than others, which represent a larger range of numbers
+with less precision.
+Short declaration 
+(covered in lesson 4)
+Quick check 6.1 What type is inferred for answer := 42.0?
+QC 6.1 answer Real numbers are inferred as float64.
+ 

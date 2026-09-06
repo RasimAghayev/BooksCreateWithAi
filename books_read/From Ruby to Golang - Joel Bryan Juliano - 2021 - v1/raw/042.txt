@@ -1,0 +1,83 @@
+Hash and Maps
+36
+Struct Maps by Declaration
+In
+this
+example,
+we
+first
+declare
+the
+struct
+produce,
+which
+we
+initialize
+via
+make(map[string]produce). Then we assign a struct produce into a map key named apple
+and kale.
+Map by Declaration using Struct Value Type
+1
+package main
+2
+3
+import "fmt"
+4
+5
+type produce struct {
+6
+flavour string
+7
+kind
+string
+8
+}
+9
+10
+func main() {
+11
+var basket map[string]produce
+12
+13
+basket = make(map[string]produce)
+14
+15
+basket["apple"] = produce{
+16
+flavour: `It's a little sour and bitter, but mostly
+17
+sweet, not at all salty, very juicy in general.`,
+18
+kind: "fruit",
+19
+}
+20
+21
+basket["kale"] = produce{
+22
+flavour: `It boasts deep, earthy flavors that can range
+23
+from rich and meaty to herbaceous and slightly bitter.`,
+24
+kind: "veggies",
+25
+}
+26
+27
+for key, value := range basket {
+28
+fmt.Printf(`Name: %s\n
+29
+Kind: %s\n
+30
+Flavour: %s\n\n`,
+31
+key,
+32
+value.kind,
+33
+value.flavour)
+34
+}
+35
+}

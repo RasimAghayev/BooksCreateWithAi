@@ -1,0 +1,47 @@
+232
+CHAPTER 9
+Using the cloud
+ Besides compiling for different environments, differences between operating systems
+need to be handled within an application. Go has two useful parts to help with that.
+ First, packages provide a single interface that handles differences behind the
+scenes. For example, one of the most well-known is the difference between path and
+path list separators. On Linux and other POSIX-based systems, these are / and :,
+respectively. On Windows, they’re \ and ;. Instead of assuming these, use the
+path/filepath package to make sure any paths are handled safely. This package pro-
+vides features such as the following:
+
+filepath.Separator and filepath.ListSeparator—Represent the appropri-
+ate path and list separator values on any operating system the application is
+compiled to. You can use these when you need direct access to the separators.
+
+filepath.ToSlash—Take a string representing a path and convert the separa-
+tors to the correct value.
+
+filepath.Split and filepath.SplitList—Split a path into its parts or split a
+list of paths into individual paths. Again, the correct separators will be used.
+
+filepath.Join—Join a list of parts into a path, using the correct separator for
+the operating system.
+The go toolchain also has build tags that allow code files to be filtered, based on
+details such as operating system and architecture when being compiled. A build tag is
+at the start of a file and looks like this:
+// +build !windows
+This special comment tells the compiler to skip this file on Windows. Build tags can
+have multiple values. The following example skips building a file on Linux or OS X
+(darwin):
+// +build !linux,!darwin
+These values are linked to GOOS and GOARCH options.
+ Go also provides the ability to name files in such a way that they’re picked up for
+the different environments. For example, foo_windows.go would be compiled and
+used for a Windows build, and foo_386.go would be used when compiling for the 386
+(sometimes called x86) hardware architecture.
+ These features enable applications to be written for multiple platforms while work-
+ing around their differences and tapping into what makes them unique.
+9.3.3
+Performing runtime monitoring
+Monitoring is an important part of operating applications. It’s typical to monitor run-
+ning systems to find issues, to detect when the load has reached levels that require scal-
+ing up or down, or to understand what’s going on within an application to speed it up.
+ The easiest way to monitor an application is to write issues and other details to a
+log. The log subsystem can write to disk and another application can read it or the log
+subsystem can push it out to a monitoring application.

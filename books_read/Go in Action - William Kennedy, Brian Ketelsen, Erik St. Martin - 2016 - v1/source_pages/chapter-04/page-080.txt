@@ -1,0 +1,63 @@
+59
+Array internals and fundamentals
+  
+A fast and easy way to create and initialize arrays is to use an array literal. Array liter-
+als allow you to declare the number of elements you need and specify values for those
+elements.
+// Declare an integer array of five elements.
+// Initialize each element with a specific value.
+array := [5]int{10, 20, 30, 40, 50}
+If the length is given as ..., Go will identify the length of the array based on the num-
+ber of elements that are initialized.
+// Declare an integer array.
+// Initialize each element with a specific value.
+// Capacity is determined based on the number of values initialized.
+array := [...]int{10, 20, 30, 40, 50}
+If you know the length of the array you need, but are only ready to initialize specific
+elements, you can use this syntax.
+// Declare an integer array of five elements.
+// Initialize index 1 and 2 with specific values.
+// The rest of the elements contain their zero value.
+array := [5]int{1: 10, 2: 20}
+The values for the array declared in listing 4.4 will look like figure 4.3 after the array is
+declared and initialized.   
+Listing 4.2
+Declaring an array using an array literal
+Listing 4.3
+Declaring an array with Go calculating size
+Listing 4.4
+Declaring an array initializing specific elements
+0
+Integer
+[ 0 ]
+0
+Integer
+[ 1 ]
+0
+Integer
+[ 2 ]
+0
+Integer
+[ 3 ]
+0
+Integer
+[ 4 ]
+Figure 4.2
+Values of the array after the declaration of the array variable
+[ 0 ]
+[ 1 ]
+[ 2 ]
+[ 3 ]
+[ 4 ]
+0
+Integer
+10
+Integer
+20
+Integer
+0
+Integer
+0
+Integer
+Figure 4.3
+Values of the array after the declaration of the array variable

@@ -1,0 +1,43 @@
+24
+CHAPTER 2
+Code and project organization
+ In this section, we saw three potential use cases where interfaces are generally con-
+sidered as bringing value: factoring out a common behavior, creating some decou-
+pling, and restricting a type to a certain behavior. Again, this list isn’t exhaustive, but it
+should give us a general understanding of when interfaces are helpful in Go.
+ Now, let’s finish this section and discuss the problems with interface pollution. 
+2.5.3
+Interface pollution
+It’s fairly common to see interfaces being overused in Go projects. Perhaps the devel-
+oper’s background was C# or Java, and they found it natural to create interfaces
+before concrete types. However, this isn’t how things should work in Go.
+ As we discussed, interfaces are made to create abstractions. And the main caveat
+when programming meets abstractions is remembering that abstractions should be dis-
+covered, not created. What does this mean? It means we shouldn’t start creating abstrac-
+tions in our code if there is no immediate reason to do so. We shouldn’t design with
+interfaces but wait for a concrete need. Said differently, we should create an interface
+when we need it, not when we foresee that we could need it.
+ What’s the main problem if we overuse interfaces? The answer is that they make
+the code flow more complex. Adding a useless level of indirection doesn’t bring any
+value; it creates a worthless abstraction making the code more difficult to read, under-
+stand, and reason about. If we don’t have a strong reason for adding an interface and
+it’s unclear how an interface makes a code better, we should challenge this interface’s
+purpose. Why not call the implementation directly?
+NOTE
+We may also experience performance overhead when calling a
+method through an interface. It requires a lookup in a hash table’s data struc-
+ture to find the concrete type an interface points to. But this isn’t an issue in
+many contexts as the overhead is minimal.
+In summary, we should be cautious when creating abstractions in our code—abstrac-
+tions should be discovered, not created. It’s common for us, software developers, to
+overengineer our code by trying to guess what the perfect level of abstraction is, based
+on what we think we might need later. This process should be avoided because, in
+most cases, it pollutes our code with unnecessary abstractions, making it more com-
+plex to read.
+Don’t design with interfaces, discover them.
+                                                                 —Rob Pike
+Let’s not try to solve a problem abstractly but solve what has to be solved now. Last, but
+not least, if it’s unclear how an interface makes the code better, we should probably
+consider removing it to make our code simpler.
+ The following section continues with this thread and discusses a common interface
+mistake: creating interfaces on the producer side. 

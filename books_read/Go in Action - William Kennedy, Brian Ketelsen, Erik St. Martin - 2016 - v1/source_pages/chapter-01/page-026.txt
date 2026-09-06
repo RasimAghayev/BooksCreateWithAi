@@ -1,0 +1,43 @@
+5
+Solving modern programming challenges with Go
+Channels help to solve this problem by providing a pattern that makes data safe from
+concurrent modification. Channels help to enforce the pattern that only one gorou-
+tine should modify the data at any time. You can see an example of this flow in
+figure 1.3, where channels are used to send data between several running goroutines.
+Imagine an application where many different processes need to know about or modify
+data sequentially. Using goroutines and channels, you can model this process safely. 
+ In figure 1.3 you see three goroutines and two unbuffered channels. The first gor-
+outine passes a data value through the channel to a second goroutine that’s already
+waiting. The exchange of the data between both goroutines is synchronized, and once
+the hand-off occurs, both goroutines know the exchange took place. After the second
+goroutine performs its tasks with the data, it then sends the data to a third goroutine
+that’s waiting. That exchange is also synchronized, and both goroutines can have
+guarantees the exchange has been made. This safe exchange of data between gorou-
+tines requires no other locks or synchronization mechanisms.
+ It’s important to note that channels don’t provide data access protection between
+goroutines. If copies of data are exchanged through a channel, then each goroutine
+has its own copy and can make any changes to that data safely. When pointers to the
+data are being exchanged, each goroutine still needs to be synchronized if reads and
+writes will be performed by the different goroutines. 
+1.1.3
+Go’s type system
+Go provides a flexible hierarchy-free type system that enables code reuse with minimal
+refactoring overhead. It’s still object-oriented development, but without the tradi-
+tional headaches. If you’ve ever spent a week planning your abstract classes and inter-
+faces in a complex Java or C++ program, you’ll appreciate the simplicity of Go’s type
+system. Go developers simply embed types to reuse functionality in a design pattern
+called composition. Other languages use composition, but it’s often deeply tied to
+inheritance, which can make it complicated and difficult to use. In Go, types are com-
+posed of smaller types, which is in contrast to traditional inheritance-based models. 
+ In addition Go has a unique interface implementation that allows you to model
+behavior, rather than model types. You don’t need to declare that you’re implementing
+Channel
+Data
+Channel
+Data
+Goroutine
+Goroutine
+Goroutine
+Figure 1.3
+Using channels to safely 
+pass data between goroutines

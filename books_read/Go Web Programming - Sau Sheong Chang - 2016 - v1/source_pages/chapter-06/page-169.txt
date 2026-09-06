@@ -1,0 +1,47 @@
+148
+CHAPTER 6
+Storing data
+found in many other programming languages, too; for example, Scala has the Activate
+framework and Haskell has Groundhog.
+ In Go, there are a number of such relational mappers (ORMs doesn’t sound as
+accurate to me). In this section, we’ll discuss a couple of them.
+6.5.1
+Sqlx
+Sqlx is a third-party library that provides a set of useful extensions to the database/
+sql package. Sqlx plays well with the database/sql package because it uses the same
+interfaces and provides additional capabilities such as:
+■
+Marshaling database records (rows) into structs, maps, and slices using struct
+tags
+■
+Providing named parameter support for prepared statements
+The following listing shows how Sqlx makes life easier using the StructScan method.
+Remember to get the library before starting on the code by issuing the following com-
+mand on the console:
+go get "github.com/jmoiron/sqlx"
+package main
+import (
+    "fmt"
+    "github.com/jmoiron/sqlx"
+    _ "github.com/lib/pq"
+)
+type Post struct {
+    Id     int
+    Content string
+    AuthorName string `db: author`
+}
+var Db *sqlx.DB
+func init() {
+    var err error
+    Db, err = sqlx.Open("postgres", "user=gwp dbname=gwp password=gwp 
+    ➥ sslmode=disable")
+    if err != nil {
+        panic(err)
+    }
+}
+func GetPost(id int) (post Post, err error) {
+    post = Post{}
+    err = Db.QueryRowx("select id, content, author from posts where id = 
+    ➥ $1", id).StructScan(&post)
+Listing 6.17
+Using Sqlx

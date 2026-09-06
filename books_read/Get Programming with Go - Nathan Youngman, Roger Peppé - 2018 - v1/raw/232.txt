@@ -1,0 +1,35 @@
+217
+Pointers and interfaces
+type talker interface {
+    talk() string
+}
+func shout(t talker) {
+    louder := strings.ToUpper(t.talk())
+    fmt.Println(louder)
+}
+type martian struct{}
+func (m martian) talk() string {
+    return "nack nack"
+}
+func main() {
+    shout(martian{})
+    shout(&martian{})
+}
+It’s different when methods use pointer receivers, as shown in the following listing.
+type laser int
+func (l *laser) talk() string {
+    return strings.Repeat("pew ", int(*l))
+}
+func main() {
+    pew := laser(2)
+    shout(&pew)
+}
+In the preceding listing, &pew is of type *laser, which satisfies the talker interface that shout 
+requires. But shout(pew) doesn’t work because laser doesn’t satisfy the interface in this 
+case.
+Listing 26.19 Pointers and interfaces: martian.go
+Listing 26.20 Pointers and interfaces: interface.go
+Prints 
+NACK NACK
+Prints PEW PEW
+ 

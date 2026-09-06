@@ -1,0 +1,75 @@
+74
+CHAPTER 3
+Concurrency in Go
+package main
+import (
+     "fmt"
+     "os"
+     "time"
+)
+func main() {
+     done := time.After(30 * time.Second)
+     echo := make(chan []byte)
+     go readStdin(echo) 
+     for {
+            select {
+            case buf := <-echo:
+                   os.Stdout.Write(buf)
+            case <-done:
+                   fmt.Println("Timed out")
+                   os.Exit(0)
+            }
+     }
+}
+func readStdin(out chan<- []byte) {
+     for {
+            data := make([]byte, 1024)
+            l, _ := os.Stdin.Read(data)
+            if l > 0 {
+                   out <- data
+            }
+     }
+}
+Running the preceding code results in the following:
+$ go run echoredux.go
+test 1
+test 1
+test 2
+test 2
+test 3
+test 3
+Timed out
+As you saw with the previous implementation, if you type test 1, that text is echoed
+back. After 30 seconds, the program halts itself.
+ Rewriting the echo example has introduced new concepts regarding channels. The
+first channel in the preceding code is created by the time package. The time.After
+function builds a channel that will send a message (a time.Time) when the given dura-
+tion has elapsed. Calling time.After(30 * time.Second) returns a <-chan time.Time
+Listing 3.7
+Using multiple channels
+Creates a channel that will 
+receive a message when 30 
+seconds have elapsed
+Makes a new channel for passing 
+bytes from Stdin to Stdout. 
+Because you haven’t specified a 
+size, this channel can hold only 
+one message at a time.
+Starts a
+goroutine to
+read Stdin,
+passes it our
+new channel for
+communicating
+Uses a select statement to 
+pass data from Stdin to 
+Stdout when received, or to 
+shut down when the time-out 
+event occurs
+Takes a write-only channel (chan<-) and 
+sends any received input to that channel
+Copies some data from Stdin 
+into data. Note that File.Read 
+blocks until it receives data.
+Sends the buffered data 
+over the channel

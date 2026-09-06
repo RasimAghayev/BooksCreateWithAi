@@ -1,0 +1,40 @@
+15
+URI
+contain optional user information that ends with an @, followed by the hierarchical
+path. Otherwise, it’s just the path. The path is a sequence of segments, separated by a
+forward slash (/).
+ Only the scheme name and the hierarchical parts are mandatory. The query, which
+starts with a question mark (?), is optional and contains other information that’s not
+hierarchical in nature. The query is often organized as a sequence of key-value pairs,
+separated by an ampersand (&).
+ Another optional part is the fragment, which is an identifier to a secondary resource
+that’s part of the URI that’s defined. The fragment starts after the hash (#). If a URI
+has a query, the fragment will follow the query. The fragment is meant to be processed
+by the client, so web browsers normally strip the fragment out before sending the URI
+to the server. But it doesn’t mean that as a programmer you won’t get the fragment;
+you can always include it in a GET request through JavaScript or some HTTP client
+libraries.
+ Let’s look at an example of an HTTP scheme URI: http://sausheong:password
+@www.example.com/docs/file?name=sausheong&location=singapore#summary
+ The scheme is http, followed by the colon. The segment sausheong:password fol-
+lowed by the at sign (@) is the user and password information. This is followed by the
+rest of the hierarchical part, www.example.com/docs/file. The top level of the hierarchi-
+cal part is the domain name of the server, www.example.com, followed on by docs and
+then file, each separated by a forward slash. Next is the query, which begins after the
+question mark (?). The query consists of two name-value pairs: name=sausheong and
+location=singapore, joined by a single ampersand (&). Finally, the fragment follows
+after the query, starting after the hash (#).
+ The URL is a single string, so spaces within the URL aren’t permitted. Also, certain
+characters like the question mark (?) and the hash (#) have special meaning within
+the URL and so can’t be permitted for other purposes. To get over this limitation, we
+use URL encoding (also called percent encoding) to convert those special characters
+into something else.
+ RFC 3986 defines a set of characters that are reserved or not reserved. Everything
+in the reserved list needs to be URL encoded. URL encoding encodes a character by
+converting the character to its corresponding byte value in ASCII, then representing
+that as a pair of hexadecimal digits and prepending it with a percent sign (%).
+ For example, a blank space’s byte value in ASCII is 32, which is 20 in hexadecimal.
+Therefore, the URL encoding of a space is %20, and this is used in a URL instead of a
+space. This example shows the URL if I’d used my name with the space between sau
+and sheong: http://www.example.com/docs/file?name=sau%20sheong&location=
+singapore. 

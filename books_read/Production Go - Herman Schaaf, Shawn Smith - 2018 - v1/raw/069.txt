@@ -1,0 +1,44 @@
+Supporting Unicode
+63
+U+0041 U+0042 U+0043
+Notice how for the string “ABC”, the hexadecimal numbers are the same as for ASCII.
+So Unicode assigns each character with a number, but it does not specify how this number should
+be represented in binary. This is left to the encoding. The most popular encoding of the Unicode
+standard is called UTF-8. UTF-8 is popular because it has some nice properties.
+One nice property of UTF-8 is that every code point between 0-127 is stored in a single byte. Only
+code points 128 and above are stored using 2, 3, or up to 6 bytes. Because the first 128 Unicode code
+points were chosen to match ASCII, this has the side effect that English text looks exactly the same
+in UTF-8 as it did in ASCII. (Notice how the hexadecimally-encoded ASCII of “ABC” from earlier
+is the same as the Unicode code points for the same letters.)
+In this chapter we will keep things simple by focusing on only these two encodings: ASCII and
+UTF-8. UTF-8 has become the universal standard, and supports every language your application
+might need, from Chinese to Klingon. But the same principles apply for any encoding, and should
+your application need to handle the conversion from other encodings, most common encodings are
+available in the golang.org/x/text/encoding package.
+For a more complete history of string encoding, we recommend Joel Spolsky’s excellent blog post
+from 2003, titled The Absolute Minimum Every Software Developer Absolutely, Positively Must
+Know About Unicode and Character Sets (No Excuses!)²⁴.
+With an understanding of what string encodings are and why they exist, let’s now turn to how they
+are handled in Go.
+Strings are byte slices
+In Go, strings are read-only (or immutable) byte slices. The byte slice representing the string is not
+required to hold Unicode text, UTF-8 text, or any other specific encoding. In other words, strings
+can hold arbitrary bytes. For example, we can take a slice of bytes, and convert it to a string:
+1
+package main
+2
+3
+import (
+4
+"fmt"
+5
+)
+6
+7
+func main() {
+8
+b := []byte{65, 66, 67}
+9
+s := string(b)
+²⁴https://www.joelonsoftware.com/2003/10/08/the-absolute-minimum-every-software-developer-absolutely-positively-must-know-
+about-unicode-and-character-sets-no-excuses/

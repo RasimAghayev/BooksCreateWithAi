@@ -1,0 +1,21 @@
+Security
+131
+HSTS curl
+$ curl -i localhost:8000
+HTTP/1.1 200 OK
+Strict-Transport-Security: max-age=31536000; includeSubDomains
+Date: Thu, 20 Dec 2018 12:35:52 GMT
+Content-Length: 12
+Content-Type: text/plain; charset=utf-8
+Hello, world%
+We would wrap all of our handlers with headerWrap to ensure they all have the proper headers set.
+Another option would be to set the header in the web server configuration, such as in /etc/nginx/sites-
+available/[config].
+Content Security Policy (CSP)
+A Content-Security-Policy header helps prevent attacks such as cross-site scripting (XSS). The CSP
+header value allows us to specify the origins of our content.
+Setting the Content-Security-Policy header on our Go server is
+See Also
+• https://github.com/microcosm-cc/bluemonday
+• https://github.com/unrolled/secure
+• https://infosec.mozilla.org/guidelines/web_security

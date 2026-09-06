@@ -1,0 +1,50 @@
+Basics
+31
+For loop over slice with index
+1
+package main
+2
+3
+import "fmt"
+4
+5
+func main() {
+6
+nums := []int{1, 2, 3}
+7
+for i, x := range nums {
+8
+fmt.Printf("nums[%d] => %d\n", i, x)
+9
+}
+10
+}
+The above code will output:
+nums[0] => 1
+nums[1] => 2
+nums[2] => 3
+If we don’t need the index, we can leave it out with _:
+For loop over slice without index
+1
+package main
+2
+3
+import "fmt"
+4
+5
+func main() {
+6
+nums := []int{1, 2, 3}
+7
+for _, x := range nums {
+8
+fmt.Println(x)
+9
+}
+10
+}
+and this will output:
+1
+2
+3
+We can also range over the keys and values of a map like so:

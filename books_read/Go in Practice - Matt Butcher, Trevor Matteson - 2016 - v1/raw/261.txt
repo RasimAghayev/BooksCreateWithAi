@@ -1,0 +1,51 @@
+238
+CHAPTER 10
+Communication between cloud services
+TECHNIQUE 62
+Reusing connections
+It’s not unusual for each HTTP request to be made over its own connection. Negotiat-
+ing each connection takes time, including the time to negotiate TLS for secure com-
+munications. Next, TCP slow-start ramps up as the message is communicated. Slow-start
+is a congestion-control strategy designed to prevent network congestion. As a slow-
+start ramps up, a single message may take multiple round-trips between the client and
+server to communicate.
+PROBLEM
+When each request is over its own connection, a significant amount of time is lost to
+network communication. How can an application avoid as much of this lost time as
+possible?
+SOLUTION
+Reuse connections. Multiple HTTP requests can be made over a single connection.
+That connection needs to be negotiated and ramped up for slow-start only once. After
+passing the first message, others happen more quickly.
+DISCUSSION
+Whether your application is using HTTP/2 (first available in Go 1.6) or HTTP/1 and
+HTTP/1.1 for your communications, you can reuse connections. Go tries to reuse con-
+nections out of the box, and it’s the patterns in an application’s code that can cause
+this to not happen.
+ When connections are reused, as shown in figure 10.2, the time spent opening and
+closing connections is reduced. Because TCP slow-start has already happened, the
+time to communicate future messages is faster as well. This is why the second, third,
+and fourth messages take less time when the connection is reused.
+ The server included in the net/http package provides HTTP keep-alive support.
+Most systems support TCP keep-alive needed to reuse connections out of the box. As
+of Go 1.6, the net/http package includes transparent support for HTTP/2, which has
+other communication advantages that can make communication even faster.
+Open
+Open
+Open
+Open
+Open
+Close
+Close
+Close
+Close
+Close
+Each request using a different connection
+All requests sharing the same connection
+Time
+Server
+Server
+Client
+Client
+Figure 10.2
+Messages being passed with and without connection reuse

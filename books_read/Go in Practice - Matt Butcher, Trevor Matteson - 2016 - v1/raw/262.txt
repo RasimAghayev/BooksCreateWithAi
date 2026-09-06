@@ -1,0 +1,55 @@
+239
+TECHNIQUE 62
+Reusing connections
+NOTE
+HTTP keep-alive and TCP keep-alive are different. HTTP keep-alive is a
+feature of the HTTP protocol a web server needs to implement. The web
+server needs to periodically check the connection for incoming HTTP
+requests within the keep-alive time span. When no HTTP request is received
+within that time span, it closes the connection. Alternately, TCP keep-alive is
+handled by the operating system in TCP communications. Disabling keep-
+alive with DisableKeepAlives disables both forms of keep-alive.
+Most of the problems preventing connection reuse are in the clients used to commu-
+nicate with HTTP servers. The first and possibly most widespread problem happens
+when custom transport instances are used and keep-alive is turned off.
+ When the basic functions in the net/http package are used, such as http.Get()
+or http.Post(), they use http.DefaultClient, which is configured with keep-alive
+enabled and set up for 30 seconds. When an application creates a custom client but
+doesn’t specify a transport, http.DefaultTransport is used. http.DefaultTransport
+is used by http.DefaultClient and is configured with keep-alive enabled.
+ Transporting without keep-alive can be seen in open source applications, examples
+online, and even in the Go documentation. For instance, the Go documentation has
+an example that reads as follows:
+tr := &http.Transport{
+     TLSClientConfig:    &tls.Config{RootCAs: pool},
+     DisableCompression: true,
+}
+client := &http.Client{Transport: tr}
+resp, err := client.Get("https://example.com")
+In this example, a custom Transport instance is used with altered certificate authori-
+ties and compression disabled. In this case, keep-alive isn’t enabled. The following list-
+ing provides a similar example, with the difference being that keep-alive is enabled.
+ 
+ 
+ 
+ 
+ 
+ 
+tr := &http.Transport{
+     TLSClientConfig:    &tls.Config{RootCAs: pool},
+     DisableCompression: true,
+     Dial: (&net.Dialer{
+            Timeout:   30 * time.Second,
+            KeepAlive: 30 * time.Second,
+     }).Dial,
+}
+client := &http.Client{Transport: tr}
+resp, err := client.Get("https://example.com")
+One part of working with http.Transport can be confusing. Setting its DisableKeep-
+Alives property to true disables connection reuse. Setting DisableKeepAlives to
+false doesn’t mean that connections are explicitly reused. It means you can opt in to
+either HTTP or TCP keep-alive.
+The Dial function is configured 
+with a keep-alive and timeout. 
+This is the same configuration 
+as the http.DefaultTransport.

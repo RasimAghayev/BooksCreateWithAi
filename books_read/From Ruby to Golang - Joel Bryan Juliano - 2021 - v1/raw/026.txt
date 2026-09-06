@@ -1,0 +1,51 @@
+Setter/Getters, Attribute Accessors and Structs
+20
+Value Receiver in Go
+1
+func (receiverName receiverType)
+2
+funcName(paramName paramType) {
+3
+// we can set the value of an
+4
+// _already initialised_ receiver type
+5
+// but we cannot modify the receiver
+6
+// type directly
+7
+receiverName = parameterName
+8
+9
+// we can access the value of the
+10
+// _already initialised_
+11
+// receiver type (getters)
+12
+fmt.Println(receiverName)
+13
+}
+Questions
+1. What have we learned?
+Value receivers are a way to pass a value to a function, and creates a new copy of the original
+value
+2. Why is it useful?
+They are used when you want to pass a value to a function and not a reference to the value.
+3. What is a value-receiver in Ruby?
+A value-receiver is a class that has a method that accepts a value of another class as a
+parameter.
+4. What is a value-receiver in Golang?
+A value-receiver is a function that receives a value as an argument.
+5. Are value receiver the same with pointer receiver?
+No, value receivers are not the same with pointer receivers. Value receivers are pass-by-value,
+which means that we pass the actual value or a resulting value to a variable. Value receivers
+will create a new independent variable copying the original value per each assignment.
+6. In value receivers, will any modifications to the variable reflect on new struct records?
+No, any modifications to the variable will not reflect on new struct records. We still need to
+create the struct first, initialize it separately, before we can pass values to the new struct
+record.
+7. Are value receivers thread-safe?
+Yes, value receivers are ideal for concurrent applications because it does not modify the
+original reference, but creates a new copy of the reference, making value receivers thread-
+safe.

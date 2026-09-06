@@ -1,0 +1,38 @@
+82
+Lesson 10  Converting between types
+You can convert from a floating-point type to an integer as well, though the digits after 
+the decimal point will be truncated without any rounding:
+fmt.Println(int(earthDays))
+Type conversions are required between unsigned and signed integer types, and 
+between types of different sizes. It’s always safe to convert to a type with a larger range, 
+such as from an int8 to an int32. Other integer conversions come with some risks. A 
+uint32 could contain a value of 4 billion, but an int32 only supports numbers to just over 
+2 billion. Likewise, an int may contain a negative number, but a uint can’t.
+There’s a reason why Go requires type conversions to be explicitly stated in the code. 
+Every time you use a type conversion, consider the possible consequences.   
+10.3 Convert types with caution
+In 1996, the unmanned Arianne 5 rocket veered 
+off its flight path, broke up, and exploded just 40 
+seconds after launch. The reported cause was a 
+type conversion error from a float64 to an int16 
+with a value that exceeded 32,767—the maxi-
+mum value an int16 can hold. The unhandled 
+failure left the flight control system without ori-
+entation data, causing it to veer off course, break 
+apart, and ultimately self-destruct.
+We haven’t seen the Arianne 5 code, nor are we 
+rocket scientists, but let’s look at how Go handles 
+the same type conversion. If the value is in 
+range, as in the following listing, no problem.
+Prints 365
+Quick check 10.2 
+1
+What code would convert the variable red to an unsigned 8-bit integer?
+2
+What is the result of the comparison age > marsAge?
+QC 10.2 answer 
+1
+The type conversion would be uint8(red).
+2
+Mismatched types int and float64
+ 

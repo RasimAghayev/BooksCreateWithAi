@@ -1,0 +1,47 @@
+41
+2.11
+#11: Not using the functional options pattern
+How can we implement this function in an API-friendly way? Let’s look at the different
+options.
+2.11.1 Config struct
+Because Go doesn’t support optional parameters in function signatures, the first pos-
+sible approach is to use a configuration struct to convey what’s mandatory and what’s
+optional. For example, the mandatory parameters could live as function parameters,
+whereas the optional parameters could be handled in the Config struct:
+type Config struct {
+Port
+int
+}
+func NewServer(addr string, cfg Config) {
+}
+This solution fixes the compatibility issue. Indeed, if we add new options, it will not
+break on the client side. However, this approach doesn’t solve our requirement
+related to port management. Indeed, we should bear in mind that if a struct field isn’t
+provided, it’s initialized to its zero value:
+0 for an integer
+0.0 for a floating-point type
+
+"" for a string
+Nil for slices, maps, channels, pointers, interfaces, and functions
+Therefore, in the following example, both structs are equal:
+c1 := httplib.Config{
+Port: 0,
+}
+c2 := httplib.Config{
+}
+In our case, we need to find a way to distinguish between a port purposely set to 0 and
+a missing port. Perhaps one option might be to handle all the parameters of the con-
+figuration struct as pointers in this way:
+type Config struct {
+Port
+*int
+}
+Using an integer pointer, semantically, we can highlight the difference between the
+value 0 and a missing value (a nil pointer).
+ This option would work, but it has a couple of downsides. First, it’s not handy for
+clients to provide an integer pointer. Clients have to create a variable and then pass a
+pointer this way:
+Initializes 
+Port to 0
+Port is missing, so 
+it’s initialized to 0.

@@ -1,0 +1,56 @@
+269
+11.3
+#84: Not using test execution modes
+11.3.1 The parallel flag
+Parallel execution mode allows us to run specific tests in parallel, which can be very
+useful: for example, to speed up long-running tests. We can mark that a test has to be
+run in parallel by calling t.Parallel:
+func TestFoo(t *testing.T) {
+t.Parallel()
+// ...
+}
+When we mark a test using t.Parallel, it is executed in parallel alongside all the
+other parallel tests. In terms of execution, though, Go first runs all the sequential tests
+one by one. Once the sequential tests are completed, it executes the parallel tests.
+ For example, the following code contains three tests, but only two of them are
+marked to be run in parallel:
+func TestA(t *testing.T) {
+t.Parallel()
+// ...
+}
+func TestB(t *testing.T) {
+t.Parallel()
+// ...
+}
+func TestC(t *testing.T) {
+// ...
+}
+Running the tests for this file gives the following logs:
+=== RUN
+TestA
+=== PAUSE TestA
+=== RUN
+TestB
+=== PAUSE TestB
+=== RUN
+TestC
+--- PASS: TestC (0.00s)
+=== CONT
+TestA
+--- PASS: TestA (0.00s)
+=== CONT
+TestB
+--- PASS: TestB (0.00s)
+PASS
+TestC is the first to be executed. TestA and TestB are logged first, but they are paused,
+waiting for TestC to complete. Then both are resumed and executed in parallel.
+ By default, the maximum number of tests that can run simultaneously equals
+the GOMAXPROCS value. To serialize tests or, for example, increase this number in the
+context of long-running tests doing a lot of I/O, we can change this value using the
+-parallel flag:
+$ go test -parallel 16 .
+Pauses TestA
+Pauses TestB
+Runs TestC
+Resumes TestA 
+and TestB

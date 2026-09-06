@@ -1,0 +1,52 @@
+239
+10.3
+#77: Common JSON-handling mistakes
+Instead, it prints this:
+"2021-05-18T21:15:08.381652+02:00"
+How can we explain this output? What happened to the ID field and the 1234 value?
+Because this field is exported, it should have been marshaled. To understand this
+problem, we have to highlight two points.
+ First, as discussed in mistake #10, if an embedded field type implements an inter-
+face, the struct containing the embedded field will also implement this interface. Sec-
+ond, we can change the default marshaling behavior by making a type implement the
+json.Marshaler interface. This interface contains a single MarshalJSON function:
+type Marshaler interface {
+MarshalJSON() ([]byte, error)
+}
+Here is an example with custom marshaling:
+type foo struct{}
+func (foo) MarshalJSON() ([]byte, error) {
+return []byte(`"foo"`), nil
+}
+func main() {
+b, err := json.Marshal(foo{})
+if err != nil {
+panic(err)
+}
+fmt.Println(string(b))
+}
+Because we have changed the default JSON marshaling behavior by implementing the
+Marshaler interface, this code prints "foo".
+ Having clarified these two points, let’s get back to the initial problem with the
+Event struct:
+type Event struct {
+ID int
+time.Time
+}
+We have to know that time.Time implements the json.Marshaler interface. Because
+time.Time is an embedded field of Event, the compiler promotes its methods. There-
+fore, Event also implements json.Marshaler.
+ Consequently, passing an Event to json.Marshal uses the marshaling behavior
+provided by time.Time instead of the default behavior. This is why marshaling an
+Event leads to ignoring the ID field.
+NOTE
+We would also face the issue the other way around if we were unmar-
+shaling an Event using json.Unmarshal.
+Defines the struct
+Implements the 
+MarshalJSON method
+Returns a static 
+response
+json.Marshal then relies 
+on the custom MarshalJSON 
+implementation.

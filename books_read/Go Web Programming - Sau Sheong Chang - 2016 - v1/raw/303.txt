@@ -1,0 +1,29 @@
+282
+APPENDIX
+Installing and setting up Go
+ Once you’ve downloaded the archive, extract it to /usr/local. Add /usr/local/go/
+bin to the PATH environment variable. You can do this by adding this line to your /
+etc/profile (for a systemwide installation) or $HOME/.profile:
+export PATH=$PATH:/usr/local/go/bin
+Windows
+You can use either the MSI installer (download the MSI file) or the zip archive. Install-
+ing from the MSI is easier—open the MSI installer and follow the instructions to install
+Go. By default the installer will place Go in c:\Go and set up c:\Go\bin in your
+PATH environment variable. 
+ Using the zip archive is easy as well. Extract the files into a directory (for example,
+c:\Go) and add the bin subdirectory to your PATH variable. 
+Mac OS X
+For Mac OS X you can download the appropriate PKG file (same format as earlier) and
+run through the installation. The package will install the distribution to /usr/local/go
+and place the /usr/local/go/bin directory in your PATH environment variable. You’ll
+need to restart your Terminal, or run this in your Terminal:
+$ source ~/.profile
+Alternatively you can use Homebrew to install Go. This can be as simple as
+$ brew install go
+Setting up Go
+Now that you’ve installed Go, you need to set it up properly. Go development tools are
+designed to work with code maintained in public repositories, and the model is the
+same regardless if you’re developing an open source program or something else.
+Figure 1
+Directory structure 
+of a Go workspace

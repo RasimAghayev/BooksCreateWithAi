@@ -1,0 +1,6 @@
+xvii
+about the author
+TEIVA HARSANYI is a senior software engineer at Docker. He has worked in various
+domains, including insurance, transportation, and safety-critical industries like air
+traffic management. He is very passionate about Go and how to design and imple-
+ment reliable applications.

@@ -1,0 +1,51 @@
+7
+Noteworthy aspects of Go
+of the returned values, use _ instead of a variable name E. (Don’t worry too much
+about the details of this example. You’ll come back to these concepts, libraries, and
+tools in the coming chapters.)
+ Building on the idea of multiple returned values, you can name them and work
+with these names the same way you do variables. To illustrate, let’s rework the previous
+example to use named return values in the next listing.
+package main
+import (
+    "fmt"
+)
+func Names() (first string, second string) {
+    first = "Foo"
+    second = "Bar"
+    return
+}
+func main() {
+    n1, n2 := Names()
+    fmt.Println(n1, n2)
+As the Names function executes, the named return variables B are available to have
+values assigned to them C. When return is called D with no values, the current val-
+ues for the return names are returned. For code calling the function, getting the
+response E and using it works the same as without using names.
+1.2.2
+A modern standard library
+Modern applications have common themes, such as being networked and dealing
+with encryption. Instead of burdening you, the developer, with the task of hunting for
+commonly needed libraries, the Go standard library provides useful modern function-
+ality out of the box. Let’s take a look at a few elements in the standard library so you
+can get an idea of what’s included.
+NOTE
+The entire standard library is documented, with examples, at
+http://golang.org/pkg/.
+NETWORKING AND HTTP
+Building applications in a networked world means applications need to work as both a
+client that can connect to other networked devices, and as a server that other applica-
+tions can connect to (see listing 1.3). The Go standard library makes this easy,
+whether you’re working with HTTP or dealing directly with Transmission Control Pro-
+tocol (TCP), User Datagram Protocol (UDP), or other common setups.
+Listing 1.2
+Named return values: returns2.go
+Returned values have names.
+B
+Values assigned to named 
+return variables
+C
+return is called with no values.
+D
+Variables are filled with values.
+E

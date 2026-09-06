@@ -1,0 +1,46 @@
+190
+CHAPTER 8
+Concurrency: Foundations
+deadline, a cancellation signal, and/or values. We can use this context and pass it to
+context-aware libraries, meaning libraries exposing functions accepting a context. But
+now, suppose we have to create a library, and we want external clients to provide a
+context that could be canceled. 
+8.6.4
+Catching a context cancellation
+The context.Context type exports a Done method that returns a receive-only notifica-
+tion channel: <-chan struct{}. This channel is closed when the work associated with
+the context should be canceled. For example,
+The Done channel related to a context created with context.WithCancel is
+closed when the cancel function is called.
+The Done channel related to a context created with context.WithDeadline is
+closed when the deadline has expired.
+One thing to note is that the internal channel should be closed when a context is can-
+celed or has met a deadline, instead of when it receives a specific value, because the
+closure of a channel is the only channel action that all the consumer goroutines will
+receive. This way, all the consumers will be notified once a context is canceled or a
+deadline is reached.
+ Furthermore, context.Context exports an Err method that returns nil if the
+Done channel isn’t yet closed. Otherwise, it returns a non-nil error explaining why the
+Done channel was closed: for example,
+A context.Canceled error if the channel was canceled
+A context.DeadlineExceeded error if the context’s deadline passed
+Let’s see a concrete example in which we want to keep receiving messages from a
+channel. Meanwhile, our implementation should be context aware and return if the
+provided context is done:
+func handler(ctx context.Context, ch chan Message) error {
+for {
+select {
+case msg := <-ch:
+// Do something with msg
+case <-ctx.Done():
+return ctx.Err()
+}
+}
+}
+We create a for loop and use select with two cases: receiving messages from ch or
+receiving a signal that the context is done and we have to stop our job. While dealing
+with channels, this is an example of how to make a function context aware.
+Keeps receiving 
+messages from ch
+If the context is done, returns 
+the error associated with it

@@ -1,0 +1,55 @@
+329
+12.5
+#95: Not understanding stack vs. heap
+B/op: how many bytes per operation allocated
+allocs/op: how many allocations per operation
+Next, let’s discuss the conditions for a variable to escape to the heap.
+12.5.2 Escape analysis
+Escape analysis refers to the work performed by the compiler to decide whether a vari-
+able should be allocated on the stack or the heap. Let’s look at the main rules.
+ When an allocation cannot be done on the stack, it is done on the heap. Even
+though this sounds like a simplistic rule, it’s important to remember. For example, if
+the compiler cannot prove that a variable isn’t referenced after a function returns,
+this variable is allocated on the heap. In the previous section, this was the case with the
+sumPtr function returning a pointer to a variable created in the function’s scope. In
+general, sharing up escapes to the heap.
+ But what about the opposite situation? What if we accept a pointer, as in the follow-
+ing example?
+func main() {
+a := 3
+b := 2
+c := sum(&a, &b)
+println(c)
+}
+//go:noinline
+func sum(x, y *int) int {
+return *x + *y
+}
+sum accepts two pointers on variables created in the parent. If we move to the return
+statement in the sum function, figure 12.31 shows the current stack.
+Despite being part of another stack frame, the x and y variables reference valid
+addresses. Therefore, a and b won’t have to be escaped; they can stay on the stack. In
+general, sharing down stays on the stack.
+Accepts 
+pointers
+func main() {
+   a := 3
+   b := 2
+   c := sum(&a, &b)
+   println(c)
+}
+func sum(x, y *int) int {
+   return *x + *y
+}
+Stack 
+main
+a = 3
+b = 2
+Valid
+sum
+x = 0xc0000bc018
+y = 0xc0000bc020
+Figure 12.31
+The x and 
+y variables reference 
+valid addresses.

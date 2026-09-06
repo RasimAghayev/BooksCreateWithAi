@@ -1,0 +1,47 @@
+92
+CHAPTER 4
+Processing requests
+first_cookie=Go Web Programming
+[first_cookie=Go Web Programming second_cookie=Manning Publications Co]
+We didn’t set the Expires or the MaxAge fields when we set the cookie, so what was
+returned are session cookies. To prove the point, quit your browser (don’t just close
+the tab or window; completely quit your browser). Then go to http://127.0.0.1:8080/
+get_cookie again and you’ll see that the cookies are gone.
+4.4.4
+Using cookies for flash messages
+In chapter 2 we looked at using cookies for managing sessions, so let’s try out our new-
+found cookie skills on something else. 
+ Sometimes it’s necessary to show users a short informational message telling them
+whether or not they’ve successfully completed an action. If the user submits a post to a
+forum and his posting fails, you’ll want to show him a message that tells him that the
+post didn’t go through. Following the Principle of Least Surprise from the previous
+chapter, you want to show the message on the same page. But this page doesn’t nor-
+mally show any messages, so you want the message to show on certain conditions and
+it must be transient (which means it doesn’t show again when the page is refreshed).
+These transient messages are commonly known as flash messages.
+ There are many ways to implement flash messages, but one of the most common is
+to store them in session cookies that are removed when the page is refreshed. This list-
+ing shows how you can do this in Go. 
+package main
+import (
+    "encoding/base64"
+    "fmt"
+    "net/http"
+    "time"
+)
+func setMessage(w http.ResponseWriter, r *http.Request) {
+    msg := []byte("Hello World!")
+    c := http.Cookie{
+        Name:  "flash",
+        Value: base64.URLEncoding.EncodeToString(msg),
+    }
+    http.SetCookie(w, &c)
+}
+func showMessage(w http.ResponseWriter, r *http.Request) {
+    c, err := r.Cookie("flash")
+    if err != nil {
+        if err == http.ErrNoCookie {
+            fmt.Fprintln(w, "No message found")
+        }
+Listing 4.17
+Implementing flash messaging using Go cookies

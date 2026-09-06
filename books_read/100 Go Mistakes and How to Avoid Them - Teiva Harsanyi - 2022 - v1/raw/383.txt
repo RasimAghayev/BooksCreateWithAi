@@ -1,0 +1,108 @@
+INDEX
+363
+map of any 243–244
+unexpected behavior due to type 
+embedding 238–240
+providing a wrong time duration 235
+return statement after replying to HTTP 
+request 255–256
+SQL mistakes 244–249
+forgetting about connections pooling
+245–246
+forgetting sql.Open doesn't necessarily estab-
+lish connections to database 244–245
+mishandling null values 247–248
+not handling row iteration errors 248–249
+not using prepared statements 246–247
+time.After and memory leaks 235–238
+transient resources 249–255
+HTTP body 250–252
+os.File 253–255
+sql.Rows 252–253
+Stop() method 237
+String method 33, 215–216
+Stringer interface 214
+strings
+concatenation 119–121
+conversions 121–123
+formatting, side effects with 213–216
+deadlock 214–216
+etcd data race 213–214
+iteration 115–118
+package 20, 118, 120–123
+runes 114–115
+substrings and memory leaks 123–125
+trim functions 118–119
+type 32–33, 128
+strings.Builder struct 120–121
+struct{} type 48
+structural hazards 318
+sumValue function 325
+superscalar processors 316
+switch statement 109–110, 201
+sync element 233
+sync package 128, 176, 223, 231, 233
+sync type, copying 231–233
+sync.Cond package 223–228
+sync.Mutex type 37, 336
+sync.Pool 332–334
+sync.WaitGroup 221–223
+Sync() method 254
+sync/atomic package 176–177, 221
+T
+task functions 182
+testify library 62
+testing
+categorizing 262–266
+build tags 263–264
+environment variables 264–265
+short mode 265–266
+enabling race flag 266–268
+exploring all Go testing features 294–297
+code coverage 294
+setup and teardown 296–297
+testing from different package 295
+utility functions 295–296
+sleeping in unit tests 274–277
+table-driven tests 271–274
+test execution modes 268–270
+-parallell flag 269–270
+-shuffle flag 270
+time API 278–281
+utility packages 281–285
+httptest package 281–283
+iotest package 283–285
+writing inaccurate benchmarks 285–294
+being fooled by observer effect 291–294
+making wrong assumptions about micro-
+benchmarks 287–289
+not being careful about compiler 
+optimizations 289–291
+not resetting or pausing the timer 286–287
+threadcreate profile 344
+threads 166, 300
+time API 281
+time package 235
+time.After and memory leaks 235–238
+time.After resources 236
+time.Duration API 235
+time.Now function 279
+time.Time methods 238
+time.Time type 240
+time.Timer struct 17, 237
+-trace flag 344
+transient resources 249–255
+HTTP body 250–252
+os.File 253–255
+sql.Rows 252–253
+trim functions 118–119
+TrimRight function 118
+TrimSpace function 123
+TrimSuffix function 118
+Truncate method 242
+type embedding 36–39
+U
+uint type 58–59
+under-optimized code 6
+unexpected errors 153
+unicode/utf8 package 116

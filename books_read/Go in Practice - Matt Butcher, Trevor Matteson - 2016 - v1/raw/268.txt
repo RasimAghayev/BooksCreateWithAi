@@ -1,0 +1,55 @@
+245
+TECHNIQUE 64
+Using protocol buffers
+TIP
+For more details regarding what can be passed in messages, including mes-
+sages inside messages, see the protocol buffer documentation at https://
+developers .google.com/protocol-buffers/docs/overview.  
+Because the protocol buffer is used to generate Go code, it’s recommended that it
+have its own package. In this Go package, the protocol buffer file and generated code
+can reside. As you’ll see in listing 10.8, the directory in this case is userpb.
+ To compile the protocol buffer to code, you first need to install the compiler:
+1
+Download and install the compiler. You can get it at https://developers.google
+.com/protocol-buffers/docs/downloads.html.
+2
+Install the Go protocol buffer plugin. This can be done using go get:
+$ go get -u github.com/golang/protobuf/protoc-gen-go
+To generate the code, run the following command from the same directory as the
+.proto file:
+$ protoc -I=. --go_out=. ./user.proto
+The command does a few things:
+
+-I specifies the input source directory.
+
+--go_out indicates where the generated Go source files will go.
+
+./user.proto is the name of the file to generate the source from.
+After the generated code has been created, it can be used to pass messages between a
+client and server. The following listing provides the setup for a server to respond with
+protocol buffer messages.
+import (
+     "net/http"
+     pb "github.com/Masterminds/go-in-practice/chapter10/userpb"
+     "github.com/golang/protobuf/proto"
+)
+func main() {
+     http.HandleFunc("/", handler)
+     http.ListenAndServe(":8080", nil)
+}
+WARNING
+Although this example communicates user information over HTTP
+for simplicity, in production applications, user information should be trans-
+ported over encrypted communications for security.
+Listing 10.8
+Protocol buffer server setup
+The messages are passed 
+using a normal http server.
+The import for the generated
+code and the custom messages
+The protobuf package 
+needs to be imported to 
+know how to work with 
+the generated code.
+A simple server with 
+a single handler

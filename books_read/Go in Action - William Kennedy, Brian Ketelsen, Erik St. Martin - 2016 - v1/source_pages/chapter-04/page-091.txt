@@ -1,0 +1,61 @@
+70
+CHAPTER 4
+Arrays, slices, and maps
+Another way to look at this is that the first value represents the starting index position
+of the element the new slice will start with—in this case, 1. The second value repre-
+sents the starting index position (1) plus the number of elements you want to include
+(2); 1 plus 2 is 3, so the second value is 3. Capacity will be the total number of ele-
+ments associated with the slice.
+ You need to remember that you now have two slices sharing the same underlying
+array. Changes made to the shared section of the underlying array by one slice can be
+seen by the other slice.
+// Create a slice of integers.
+// Contains a length and capacity of 5 elements.
+slice := []int{10, 20, 30, 40, 50}
+// Create a new slice.
+// Contains a length of 2 and capacity of 4 elements.
+newSlice := slice[1:3]
+// Change index 1 of newSlice.
+// Change index 2 of the original slice.
+newSlice[1] = 35
+After the number 35 is assigned to the second element of newSlice, that change can
+also be seen by the original slice in element 3 (see figure 4.13). 
+ A slice can only access indexes up to its length. Trying to access an element outside
+of its length will cause a runtime exception. The elements associated with a slice’s
+capacity are only available for growth. They must be incorporated into the slice’s
+length before they can be used.
+Listing 4.28
+Potential consequence of making changes to a slice
+10
+[ 0 ]
+20
+[ 1 ]
+30
+[ 2 ]
+40
+[ 3 ]
+50
+[ 4 ]
+[ 0 ]
+[ 1 ]
+[ 2 ]
+[ 3 ]
+slice := []int{10, 20, 30, 40, 50}
+newSlice := slice[1:3]
+After the assignment
+operation using newSlice
+newSlice[1] = 35
+addr
+Pointer
+5
+Length
+5
+Capacity
+addr
+Pointer
+2
+Length
+4
+Capacity
+Figure 4.13
+The underlying array after the assignment operation

@@ -1,0 +1,5 @@
+error type, so long as you return an echo.HTTPError that is fully populated with a
+status code and message, the echo.DefaultHTTPErrorHandler will take care of your
+response to the caller appropriately. It will check the error's type in the
+DefaultHTTPErrorHandler, and if it is of the echo.HTTPError type, Echo will apply the
+status code and message that was specified within the error definition.

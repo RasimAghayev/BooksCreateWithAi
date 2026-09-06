@@ -1,0 +1,104 @@
+CONTENTS
+x
+9.9
+#69: Creating data races with append
+216
+9.10
+#70: Using mutexes inaccurately with slices and 
+maps
+218
+9.11
+#71: Misusing sync.WaitGroup
+221
+9.12
+#72: Forgetting about sync.Cond
+223
+9.13
+#73: Not using errgroup
+228
+9.14
+#74: Copying a sync type
+231
+10 The standard library
+234
+10.1
+#75: Providing a wrong time duration
+235
+10.2
+#76: time.After and memory leaks
+235
+10.3
+#77: Common JSON-handling mistakes
+238
+Unexpected behavior due to type embedding
+238
+■JSON and the 
+monotonic clock
+240
+■Map of any
+243
+10.4
+#78: Common SQL mistakes
+244
+Forgetting that sql.Open doesn’t necessarily establish connections to a 
+database
+244
+■Forgetting about connections pooling
+245
+Not using prepared statements
+246
+■Mishandling null 
+values
+247
+■Not handling row iteration errors
+248
+10.5
+#79: Not closing transient resources
+249
+HTTP body
+250
+■sql.Rows
+252
+■os.File
+253
+10.6
+#80: Forgetting the return statement after replying to an 
+HTTP request
+255
+10.7
+#81: Using the default HTTP client and server
+256
+HTTP client
+256
+■HTTP server
+259
+11 Testing
+262
+11.1
+#82: Not categorizing tests
+262
+Build tags
+263
+■Environment variables
+264
+Short mode
+265
+11.2
+#83: Not enabling the -race flag
+266
+11.3
+#84: Not using test execution modes
+268
+The parallel flag
+269
+■The -shuffle flag
+270
+11.4
+#85: Not using table-driven tests
+271
+11.5
+#86: Sleeping in unit tests
+274
+11.6
+#87: Not dealing with the time API efficiently
+278

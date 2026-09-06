@@ -1,0 +1,54 @@
+242
+CHAPTER 9
+Leveraging Go concurrency
+The tilesDB function creates a database of the tile picture by scanning the directory
+where the tile pictures are located, shown in this listing. 
+func tilesDB() map[string][3]float64 {     
+  fmt.Println("Start populating tiles db ...")
+  db := make(map[string][3]float64)
+  files, _ := ioutil.ReadDir("tiles")
+  for _, f := range files {
+    name := "tiles/" + f.Name()
+    file, err := os.Open(name)
+    if err == nil {
+      img, _, err := image.Decode(file)
+      if err == nil {
+        db[name] = averageColor(img)
+      } else {
+        fmt.Println("error in populating TILEDB:", err, name)
+      }
+    } else {
+      fmt.Println("cannot open file", name, err)
+    }
+    file.Close()
+  }
+  fmt.Println("Finished populating tiles db.")
+  return db
+}
+The tile database is a map with a string as the key a 3-tuple (in this case, a 3-element
+array) as the value. You open each image file in the directory and then get the average
+color of the image to create an entry in the map. The tile database is used to find the
+correct tile picture in the tile picture director and it is passed into the nearest func-
+tion, along with the target color 3-tuple.
+func nearest(target [3]float64, db *map[string][3]float64) string {   
+  var filename string
+  smallest := 1000000.0
+  for k, v := range *db {
+    dist := distance(target, v)
+    if dist < smallest {
+      filename, smallest = k, dist
+    }
+  }
+  delete(*db, filename)
+  return filename
+}
+Each entry in the tile database is compared with the target color and the entry with
+the smallest distance is returned as the nearest tile, and also removed from the tile
+database. The distance function, shown in the next listing, calculates the Euclidean
+distance between two 3-tuples.
+Listing 9.13
+The tilesDB function
+Populates a tiles 
+database in memory
+Finds the nearest
+matching image

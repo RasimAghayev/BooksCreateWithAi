@@ -1,0 +1,53 @@
+65
+Slice internals and fundamentals
+This time the function foo takes a pointer to an array of one million elements of type
+integer. The function call now passes the address of the array, which only requires
+eight bytes of memory to be allocated on the stack for the pointer variable. 
+ This operation is much more efficient with memory and could yield better perfor-
+mance. You just need to be aware that because you’re now using a pointer, changing
+the value that the pointer points to will change the memory being shared. What is
+really awesome is that slices inherently take care of dealing with these types of issues,
+as you’ll see. 
+4.2
+Slice internals and fundamentals
+A slice is a data structure that provides a way for you to work with and manage collec-
+tions of data. Slices are built around the concept of dynamic arrays that can grow and
+shrink as you see fit. They’re flexible in terms of growth because they have their own
+built-in function called append, which can grow a slice quickly with efficiency. You can
+also reduce the size of a slice by slicing out a part of the underlying memory. Slices
+give you all the benefits of indexing, iteration, and garbage collection optimizations
+because the underlying memory is allocated in contiguous blocks. 
+4.2.1
+Internals
+Slices are tiny objects that abstract and manipulate an underlying array. They’re three-
+field data structures that contain the metadata Go needs to manipulate the underly-
+ing arrays (see figure 4.9).
+The three fields are a pointer to the underlying array, the length or the number of ele-
+ments the slice has access to, and the capacity or the number of elements the slice has
+available for growth. The difference between length and capacity will make more
+sense in a bit. 
+4.2.2
+Creating and initializing
+There are several ways to create and initialize slices in Go. Knowing the capacity you
+need ahead of time will usually determine how you go about creating your slice. 
+addr
+Pointer
+3
+Length
+5
+Capacity
+Slice of integers:
+Length of three integers
+Capacity for five integers
+10
+[ 0 ]
+20
+[ 1 ]
+30
+[ 2 ]
+0
+[ 3 ]
+0
+[ 4 ]
+Figure 4.9
+Slice internals with underlying array

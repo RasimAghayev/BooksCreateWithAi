@@ -1,0 +1,42 @@
+48
+Lesson 6  Real numbers
+To the programmer, the difference is subtle. When you declare price := 0.0, it’s like say-
+ing the price is free. Not specifying a value for price, as in listing 6.2, hints that the real 
+value is yet to come.   
+6.2
+Displaying floating-point types
+When using Print or Println with floating-point types, the default behavior is to display 
+as many digits as possible. If that’s not what you want, you can use Printf with the %f for-
+matting verb to specify the number of digits, as the following listing shows.
+third := 1.0 / 3
+fmt.Println(third)
+fmt.Printf("%v\n", third)
+fmt.Printf("%f\n", third)
+fmt.Printf("%.3f\n", third)
+fmt.Printf("%4.2f\n", third)
+The %f verb formats the value of third with a 
+width and with precision, as shown in figure 6.1.
+Precision  specifies how many digits should 
+appear after the decimal point; two digits for 
+%.2f, for example, as shown in figure 6.2.
+Width specifies the minimum number of characters to display, including the decimal 
+point and the digits before and after the decimal (for example, 0.33 has a width of 4). If 
+the width is larger than the number of characters needed, Printf will pad the left with 
+Listing 6.3 Formatted print for floating-point: third.go
+Quick check 6.3 What is the zero value for a float32?
+QC 6.3 answer The default value is zero (0.0).
+Prints 0.3333333333333333
+Prints 0.333333
+Prints 0.333
+Prints 0.33
+"%4.2f"
+precision
+width
+Figure 6.1 
+The %f format verb
+0.33
+precision
+width
+Figure 6.2 Output formatted 
+with a width of 4, precision of 2
+ 

@@ -1,0 +1,32 @@
+133
+Composite literals for slices
+You can probably guess what omitting both indices does. The allPlanets variable is a 
+slice containing all eight planets:
+allPlanets := planets[:]
+   
+17.2 Composite literals for slices
+Many functions in Go operate on slices rather than arrays. If you need a slice that 
+reveals every element of the underlying array, one option is to declare an array and then 
+slice it with [:], like this:
+dwarfArray := [...]string{"Ceres", "Pluto", "Haumea", "Makemake", "Eris"}
+dwarfSlice := dwarfArray[:]
+Slicing strings
+The slicing syntax for arrays also works on strings:
+neptune := "Neptune"
+tune := neptune[3:]
+fmt.Println(tune) 
+The result of slicing a string is another string. However, assigning a new value to neptune
+won’t change the value of tune or vice versa:
+neptune = "Poseidon"
+fmt.Println(tune)
+Be aware that the indices indicate the number of bytes, not runes:
+question := "¿Cómo estás?"
+fmt.Println(question[:6])
+Prints tune
+Prints tune
+Prints ¿Cóm
+Quick check 17.2 If Earth and Mars were the only colonized planets, how could you derive
+the slice colonized from terrestrial?
+QC 17.2 answer 
+colonized := terrestrial[2:]
+ 

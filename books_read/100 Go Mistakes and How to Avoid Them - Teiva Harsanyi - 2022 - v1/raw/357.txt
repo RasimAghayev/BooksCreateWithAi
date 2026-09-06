@@ -1,0 +1,46 @@
+337
+12.8
+#98: Not using Go diagnostics tooling
+awoke := false
+iter := 0
+old := m.state
+for {
+// ...
+}
+if race.Enabled {
+race.Acquire(unsafe.Pointer(m))
+}
+}
+Thanks to this change, the Lock method can be inlined. The benefit is that a mutex
+that isn’t already locked is now locked without paying the overhead of calling a func-
+tion (speed improves around 5%). The slow path, when the mutex is already locked,
+didn’t change. Previously it required one function call to execute this logic; it remains
+one function call, this time to lockSlow.
+ This optimization technique is about distinguishing between fast and slow paths. If
+a fast path can be inlined but not a slow one, we can extract the slow path inside a ded-
+icated function. Hence, if the inlining budget isn’t exceeded, our function is a candi-
+date for inlining.
+ Inlining isn’t just an invisible compiler optimization that we shouldn’t care about.
+As seen in this section, understanding how inlining works and how to access the com-
+piler’s decision can be a road to optimization using the fast-path inlining technique.
+Extracting the slow path in a dedicated function prevents a function call if the fast
+path is executed.
+ The next section discusses common diagnostics tooling that can help us under-
+stand what should be optimized in our Go applications. 
+12.8
+#98: Not using Go diagnostics tooling
+Go offers a few excellent diagnostics tools to help us get insights into how an applica-
+tion performs. This section focuses on the most important ones: profiling and the
+execution tracer. Both tools are so important that they should be part of the core tool-
+set of any Go developer who is interested in optimization. We’ll discuss profiling first.
+12.8.1 Profiling
+Profiling provides insights into the execution of an application. It allows us to resolve
+performance issues, detect contention, locate memory leaks, and more. These
+insights can be collected via several profiles:
+
+CPU—Determines where an application spends its time
+
+Goroutine—Reports the stack traces of the ongoing goroutines
+
+Heap—Reports heap memory allocation to monitor current memory usage and
+check for possible memory leaks

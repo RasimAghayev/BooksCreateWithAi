@@ -1,0 +1,37 @@
+313
+Unit 5
+        DD  float64 `json:"decimal"`
+        DMS string  `json:"dms"`
+        D   float64 `json:"degrees"`
+        M   float64 `json:"minutes"`
+        S   float64 `json:"seconds"`
+        H   string  `json:"hemisphere"`
+    }{
+        DD:  c.decimal(),
+        DMS: c.String(),
+        D:   c.d,
+        M:   c.m,
+        S:   c.s,
+        H:   string(c.h),
+    })
+}
+// location with a latitude, longitude in decimal degrees.
+type location struct {
+    Name string     `json:"name"`
+    Lat  coordinate `json:"latitude"`
+    Long coordinate `json:"longitude"`
+}
+func main() {
+    elysium := location{
+        Name: "Elysium Planitia",
+        Lat:  coordinate{4, 30, 0.0, 'N'},
+        Long: coordinate{135, 54, 0.0, 'E'},
+    }
+    bytes, err := json.MarshalIndent(elysium, "", "  ")
+    if err != nil {
+        fmt.Println(err)
+        os.Exit(1)
+    }
+    fmt.Println(string(bytes))
+}
+ 

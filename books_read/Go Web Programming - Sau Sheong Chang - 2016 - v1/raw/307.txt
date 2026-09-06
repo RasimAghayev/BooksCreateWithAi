@@ -1,0 +1,165 @@
+INDEX
+286
+carriage return. See CR
+Caught statement 235
+certificate authority. See CA
+Certificate struct 54
+CGI (Common Gateway 
+Interface) 9
+chaining handlers and handler 
+functions 59, 62
+channels 232–240
+buffered 235–236
+message passing with 234–235
+selecting 237–240
+synchronization with 233–234
+Check function 212
+check package 190, 211–213, 
+216, 221
+chitchat database 39
+ChitChat internet forum 22–44
+application design 24
+data model 26
+generating HTML responses 
+with templates 32–37
+installing PostgreSQL 37–38
+Linux/FreeBSD 37–38
+Mac OS X 38
+Windows 38
+interfacing with database
+38–42
+overview 23–24
+receiving and processing 
+requests 27–32
+access control using 
+cookies 30–32
+creating handler 
+function 28–30
+multiplexer 27–28
+serving static files 28
+starting server 43
+Client Error status code 13
+client-server computing 
+model 8
+cloneTilesDB function 243
+close function 238–239
+Closer interface 73
+closing channels 239
+Cloud SQL 258
+cloudsql package 267
+colon character 165
+combine function 248, 251–253
+Comments struct field 144, 
+146–147, 150, 168, 170–171
+comments variable 152
+Common Gateway Interface. See 
+CGI
+Compute Engine 258
+concurrency 223–255
+channels 232–240
+buffered 235–236
+message passing with
+234–235
+selecting 237–240
+synchronization with
+233–234
+difference from 
+parallelism 223–225
+goroutines 225–232
+performance and 228–231
+using 225–228
+waiting for 231–232
+photo mosaic web application 
+example 240–255
+conditional actions 102–103
+ConfigureServer method 67
+CONNECT method 10
+containers 126
+Content field 139
+Content struct 165
+content template 122
+Content-Length header field 12
+Content-Length response 
+header 14
+Content-Type header 12, 14, 
+158, 185–186
+content. See displaying content
+context awareness 113–119
+defending against XSS 
+attacks 116–118
+unescaping HTML 118–119
+Context function 221
+Cookie header field 12
+Cookie method 91
+cookies 87–95
+access control using 30–32
+getting from browser 90–92
+overview 87–88
+sending to browser 88–89
+using for flash messages
+92–95
+copy function 252
+CR (carriage return) 11
+Create method 130, 139, 141, 
+146, 149, 152
+CreateCertificate function 55
+CreatedAt field 151
+createuser program 135
+cross-cutting concern 60
+cross-site scripting. See XSS
+CRUD functions 181
+CSV files, reading and 
+writing 130–132
+csvFile variable 131
+cURL command 185
+cut function 248, 250–252
+D
+data model, ChitChat internet 
+forum 26
+Data Security Standard 51
+data.Encrypt 30–31
+data.go file 181, 204, 258
+data.Session function 32
+data.UserbyEmail 30
+database management systems. 
+See DBMSs
+database servers 134
+database, interfacing with 38–42
+Date response header 14
+DB struct 249
+Db variable 40, 137, 141
+DBMSs (database management 
+systems) 134
+Debian image 274–275
+decode function 192, 194, 
+198–199
+Decoder struct 169–170
+DefaultServeMux 50, 55–57, 59, 
+63–64, 66, 68, 84
+defer statement 130
+delete function 142, 250
+DELETE method 10, 161
+Delete method 142
+dependency injection 205–210
+deploying Go 256–280
+methods of, comparing
+279–280
+to Docker 271–279
+concepts and 
+components 273–274
+dockerizing Go web 
+application 274–276
+installing Docker 272–273
+overview 271–272
+pushing Docker container 
+to internet 276–279
+to Google App Engine
+266–271
+to Heroku 263–266
+to servers 257–263
+Describe function 219
+Digital Ocean 257, 278
+displaying content 96–124
+actions 102–109
+conditional actions 102–103
+include actions 107–109

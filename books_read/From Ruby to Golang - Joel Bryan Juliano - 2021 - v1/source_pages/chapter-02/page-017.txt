@@ -1,0 +1,56 @@
+Setter/Getters, Attribute Accessors and Structs
+11
+Attaching a Struct to a Function
+Supposed we like to perform a method on a declared variable.
+In Ruby, this is an OOP call, since Ruby can create methods in a class. This allows you to call those
+methods when you initialized the class using dot notation.
+However, Go’s first-class citizens are functions, and not an OOP language by design. Since, there’s
+no concept of class, how do we attach a method from within a declared variable in a similar manner
+in Ruby?
+In Go, we can associate a struct to a function, by specifying the type of that function as one of the
+declared structs. This will provide the capability to create methods from within functions.
+In the following example in Ruby, an instance variable produce
+declares as a receiver. There are also three methods to operate on the variable, namely add_item,
+change_item and items.
+In the add_item method, using a double-splat¹ parameter operator, we generate a hash from the
+method appending the values to produce.
+The change_item method deletes the entry from the
+hash and then appends to produce as a new entry.
+Operating On A Reciever Instance Variable in Ruby
+1
+class Basket
+2
+def initialize
+3
+@produce = []
+4
+end
+5
+6
+def add_item(**entry)
+7
+# Raise an error if name, flavour and
+8
+# kind keys are not passed
+9
+items = %w[name flavour kind]
+10
+11
+unless items.any? { |key| entry.key? key.to_sym }
+12
+raise "Usage: add_item(name:
+'..',
+13
+flavour: '..',
+14
+kind:
+'..')"
+15
+end
+16
+17
+@produce << entry
+18
+19
+puts "Entry #{entry[:name]} created!"
+¹https://ruby-doc.org/core-2.3.0/doc/syntax/calling_methods_rdoc.html#label-Hash+to+Keyword+Arguments+Conversion

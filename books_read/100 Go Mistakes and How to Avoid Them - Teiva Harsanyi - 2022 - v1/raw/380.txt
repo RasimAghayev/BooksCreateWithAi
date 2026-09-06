@@ -1,0 +1,101 @@
+INDEX
+360
+goroutines (continued)
+profiling 342–343
+race problems and 174–178, 217–219, 267
+starting without knowing when to stop it
+196–198
+synchronization and 211
+worker-pooling pattern and 182–186
+goto statement 109
+Grow method 120–121
+H
+hazards 317
+heap
+profiling 340–342
+vs. stack 324–330
+Heap profile 337
+HTTP body 250–252
+HTTP client 256–258
+http package 256
+http.Client struct 256
+http.Client.Timeout 257
+http.Get function 257
+http.ListenAndServe 259
+http.Serve 259
+http.Server.ReadHeaderTimeout 259
+http.Server.ReadTimeout 259
+http.TimeoutHandler timeout 259
+http.TimeoutHandler wrapper function 260
+http.Transport.ResponseHeaderTimeout 
+timeout 257
+http.Transport.TLSHandshakeTimeout 
+timeout 257
+HTTP server 259–260
+httptest package 262, 281–283
+I
+I/O-bound workload 181
+if/else statements 9, 11, 318
+ILP (instruction-level parallelism) 316
+InDelta function 62
+init functions 12, 15–17, 145
+inlining 290, 334–337
+inlining budget 335
+instantiation 32
+instruction-level parallelism 315–321
+instrumentation 266
+int types 32–33, 58–59, 65, 128, 334
+int64 types 235, 311, 323
+integer overflows 57–61
+concepts 58–59
+detecting an integer overflow during 
+multiplication 60–61
+detecting integer overflow when 
+incrementing 59–60
+detecting integer overflows during 
+addition 60
+-integration flag 264
+interface{} 28
+interfaces
+concepts 18–20
+interface pollution 24
+on producer side 25–27
+returning 27–28
+when to use 21–24
+common behavior 21–22
+decoupling 22
+restricting behavior 23–24
+inuse_objects type 341
+inuse_space type 341
+io package 18, 28
+io.Closer interface 249, 252–253
+io.EOF error 153
+io.LimitedReader exported struct 28
+io.Reader abstraction 19–20, 137
+io.Reader input 182
+io.Reader interface 19, 28, 331
+io.ReadFull function 131
+io.StringWriter interface 120
+io.WriteCloser interface 38
+io.Writer abstraction 19–20
+io.Writer implementation 251
+iotest package 262, 283–285
+J
+JSON-handling mistakes 238–244
+JSON and monotonic clock 240–243
+map of any 243–244
+unexpected behavior due to type 
+embedding 238–240
+json.Marshaler interface 239–240
+L
+len function 99, 115, 121
+linters 53–54
+load factor 86
+locality of reference 301
+Lock method 37, 336–337
+loop label 109
+loops, using defer inside 110–112
+M
+main function 13–14, 325–326
+main package 12–14
+make function 86, 211

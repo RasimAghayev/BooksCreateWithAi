@@ -1,0 +1,78 @@
+133
+Goroutines
+23
+// Declare an anonymous function and create a goroutine.
+24
+go func() {
+25
+// Schedule the call to Done to tell main we are done.
+26
+defer wg.Done()
+27
+28
+// Display the alphabet three times
+29
+for count := 0; count < 3; count++ {
+30
+for char := 'a'; char < 'a'+26; char++ {
+31
+fmt.Printf("%c ", char)
+32
+}
+33
+}
+34
+}()
+35
+36
+// Declare an anonymous function and create a goroutine.
+37
+go func() {
+38
+// Schedule the call to Done to tell main we are done.
+39
+defer wg.Done()
+40
+41
+// Display the alphabet three times
+42
+for count := 0; count < 3; count++ {
+43
+for char := 'A'; char < 'A'+26; char++ {
+44
+fmt.Printf("%c ", char)
+45
+}
+46
+}
+47
+}()
+48
+49
+// Wait for the goroutines to finish.
+50
+fmt.Println("Waiting To Finish")
+51
+wg.Wait()
+52
+53
+fmt.Println("\nTerminating Program")
+54 }
+In listing 6.1 on line 14, you see a call to the GOMAXPROCS function from the runtime
+package. This is the function that allows the program to change the number of logical
+processors to be used by the scheduler. There’s also an environmental variable that
+can be set with the same name if we don't want to make this call specifically in our
+code. By passing the value of 1, we tell the scheduler to use a single logical processor
+for this program.
+ On lines 24 and 37, we declare two anonymous functions that display the English
+alphabet. The function on line 24 displays the alphabet with lowercase letters and the
+function on line 37 displays the alphabet with uppercase letters. Both of these func-
+tions are created as goroutines by using the keyword go. You can see by the output in
+listing 6.2 that the code inside each goroutine is running concurrently within a single
+logical processor.
+Create Goroutines
+Waiting To Finish
+A B C D E F G H I J K L M N O P Q R S T U V W X Y Z A B C D E F G H I J K L M
+N O P Q R S T U V W X Y Z A B C D E F G H I J K L M N O P Q R S T U V W X Y Z
+Listing 6.2
+Output for listing01.go

@@ -1,0 +1,32 @@
+288
+Appendix Solutions
+    fmt.Println("὇⥤̫̹͇ͫ̓
+3дравствуйте hola")
+}
+Unit 1
+Lesson 2
+package main
+import "fmt"
+func main() {
+    const hoursPerDay = 24
+    var days = 28
+    var distance = 56000000 // km
+    fmt.Println(distance/(days*hoursPerDay), "km/h")
+}
+Lesson 3
+package main
+import (
+    "fmt"
+    "math/rand"
+)
+func main() {
+    var number = 42
+    for {
+        var n = rand.Intn(100) + 1
+        if n < number {
+            fmt.Printf("%v is too small.\n", n)
+        } else if n > number {
+            fmt.Printf("%v is too big.\n", n)
+Experiment: malacandra.go
+Experiment: guess.go
+ 

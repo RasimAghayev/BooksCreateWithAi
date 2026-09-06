@@ -1,0 +1,50 @@
+85
+Map internals and fundamentals
+ 
+// Retrieve the value for the key "Blue".
+value, exists := colors["Blue"]
+// Did this key exist?
+if exists {
+fmt.Println(value)
+}
+The other option is to just return the value and test for the zero value to determine if
+the key exists. This will only work if the zero value is not a valid value for the map.
+// Retrieve the value for the key "Blue".
+value := colors["Blue"]
+// Did this key exist?
+if value != "" {
+fmt.Println(value)
+}
+When you index a map in Go, it will always return a value, even when the key doesn’t
+exist. In this case, the zero value for the value’s type is returned. 
+ Iterating over a map is identical to iterating over an array or slice. You use the key-
+word range; but when it comes to maps, you don’t get back the index/value, you get
+back the key/value pairs.
+// Create a map of colors and color hex codes.
+colors := map[string]string{
+"AliceBlue":
+"#f0f8ff",
+"Coral":
+"#ff7F50",
+"DarkGray":
+"#a9a9a9",
+"ForestGreen": "#228b22",
+}
+// Display all the colors in the map.
+for key, value := range colors {
+fmt.Printf("Key: %s
+Value: %s\n", key, value)
+}
+If you want to remove a key/value pair from the map, you use the built-in function
+delete.
+// Remove the key/value pair for the key "Coral".
+delete(colors, "Coral")
+// Display all the colors in the map.
+Listing 4.50
+Retrieving a value from a map and testing existence.
+Listing 4.51
+Retrieving a value from a map testing the value for existence
+Listing 4.52
+Iterating over a map using for range
+Listing 4.53
+Removing an item from a map

@@ -1,0 +1,39 @@
+262
+Lesson 30  Goroutines and concurrency
+   
+30.5 Blocking and deadlock
+When a goroutine is waiting to send or receive on a channel, we say that it’s blocked. This 
+might sound the same as if we’d written some code with a loop that spins around for-
+ever doing nothing, and on the face of it they look exactly the same. But if you run an 
+infinite loop in a program on your laptop, you may find that the fan starts to whir and 
+the computer gets hot because it’s doing a lot of work. By contrast, a blocked goroutine 
+takes no resources (other than a small amount of memory used by the goroutine itself). 
+It’s parked itself quietly, waiting for whatever is blocking it to stop blocking it.
+When one or more goroutines end up blocked for something that can never happen, it’s 
+called deadlock, and your program will generally crash or hang up. Deadlocks can be 
+caused by something as simple as this:
+func main() {
+    c := make(chan int)
+    <-c
+}
+In large programs, deadlocks can involve an intricate series of dependencies between 
+goroutines.
+Although theoretically hard to guard against, in practice, by sticking to a few simple 
+guidelines (covered soon), it’s not hard to make deadlock-free programs. When you do 
+find a deadlock, Go can show you the state of all the goroutines, so it’s often easy to find 
+out what’s going on.
+Quick check 30.4 
+1
+What kind of value does time.After return?
+2
+What happens if you send or receive on a nil channel?
+3
+What does each case in a select statement have in it?
+QC 30.4 answer 
+1
+A channel.
+2
+It will block forever.
+3
+A channel operation.
+ 

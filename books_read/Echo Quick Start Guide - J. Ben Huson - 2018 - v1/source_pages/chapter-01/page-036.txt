@@ -1,0 +1,30 @@
+HTTP response
+Very similar to the request structure, responses also contain a start-line that is
+designated as the response status-line. The response may include a message body
+and header fields, just as the request message is capable of doing. The following
+data is included within the response line:
+HTTP-Version (RFC-7230 2.6): Similar to the request HTTP-Version field
+in the request-line, the HTTP-Version is the protocol major and minor
+version in which the server is responding.
+Status-Code (RFC-7231 6): The response status-code is a three-digit
+integer code that explains the response of the server. There are five different
+classes of status codes, namely informational (1xx), successful (2xx),
+redirection (3xx), client Error (4xx) and server error (5xx).
+Reason-Phrase: The reason-phrase of the response status-line should be
+ignored by the client, as it is a textual explanation concerning the status of
+the request.
+Within Go, there is an http.Response type which contains all of the previously
+enumerated elements within the status-line as well as a response header structure
+and a message body. Typically, if you are developing a web application in Go,
+you will generally only interface with the response type through the
+http.ResponseWriter type defined (https://golang.org/pkg/net/http/#ResponseWriter),
+which is an interface. This interface allows the developer to populate the
+message header fields with the Header method, and write the status-line in the
+message with the WriteHeader method. If the response requires a message body in
+the response message, the http.ResponseWriter interface has a Write method which
+will send the raw data as the response message body.
+When looking at web application frameworks, it is important to keep in mind the
+bare essentials of the protocol. The HTTP protocol is a very simple text-based
+protocol, consisting of request and response messages that were designed to be
+stateless. However, some very interesting and complex systems and services
+have been built on top of this simple protocol. When we talk about web

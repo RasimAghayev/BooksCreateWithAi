@@ -1,0 +1,48 @@
+Testing
+83
+Many books and blog posts have been written about good testing practice. There are even movements
+that promote writing tests first²⁷, before writing the code. We don’t think it’s necessary to be quite
+that extreme, but if it helps you write good tests, then more power to you. No production system is
+complete without a test suite that makes sensible assertions on the code to prove it correct.
+Now that we have discussed the importance of testing in general, let’s see how tests are written in
+Go. As we’ll see, testing was designed with simplicity in mind.
+Writing Tests
+Test files in Go are located in the same package as the code being tested, and end with the suffix
+_test.go. Usually, this means having one _test.go to match each code file in the package. Below is
+the layout of a simple package for testing prime numbers.
+• prime
+– prime.go
+– prime_test.go
+– sieve.go
+– sieve_test.go
+This is a very typical Go package layout. Go packages contain all files in the same directory, including
+the tests. Now, let’s look at what the test code might look like in prime_test.go.
+A simple test in prime_test.go that tests a function called IsPrime
+1
+package main
+2
+3
+import "testing"
+4
+5
+// TestIsPrime tests that the IsPrime function
+6
+// returns true when the input is prime, and false
+7
+// otherwise.
+8
+func TestIsPrime(t *testing.T) {
+9
+// check a prime number
+10
+got := IsPrime(19)
+11
+if got != true {
+12
+t.Errorf("IsPrime(%d) = %t, want %t", 19, got, true)
+13
+}
+14
+15
+// check a non-prime number
+²⁷https://en.wikipedia.org/wiki/Test-driven_development

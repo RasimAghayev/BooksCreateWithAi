@@ -1,0 +1,62 @@
+233
+TECHNIQUE 61
+Monitoring the Go runtime
+TECHNIQUE 61
+Monitoring the Go runtime
+Go applications include more than application code or code from libraries. The Go
+runtime sits in the background, handling the concurrency, garbage collection,
+threads, and other aspects of the application.
+ The runtime has access to a wealth of information. That includes the number of
+processors seen by the application, current number of goroutines, details on memory
+allocation and usage, details on garbage collection, and more. This information can
+be useful for identifying problems within the application or for triggering events such
+as horizontal scaling.
+PROBLEM
+How can your application log or otherwise monitor the Go runtime? 
+SOLUTION
+The runtime and runtime/debug packages provide access to the information within
+the runtime. Retrieve information from the runtime by using these packages and
+write it to the logs or other monitoring service at regular intervals.
+DISCUSSION
+Imagine that an imported library update includes a serious bug that causes the gorou-
+tines it created to stop going away. The goroutines slowly accumulate so that millions
+of them are being handled by the runtime when it should have been hundreds. (We,
+the authors, don’t need to imagine this situation, because we’ve encountered it.)
+Monitoring the runtime enables you to see when something like this happens.
+ When an application starts up, it can start a goroutine to monitor the runtime and
+write details to a log. Running in a goroutine allows you to run the monitoring and
+write to the logs concurrently, alongside the rest of the application, as the following
+listing shows. 
+func monitorRuntime() {
+     log.Println("Number of CPUs:", runtime.NumCPU())
+     m := &runtime.MemStats{}
+     for {
+            r := runtime.NumGoroutine()
+            log.Println("Number of goroutines", r)
+            runtime.ReadMemStats(m)
+            log.Println("Allocated memory", m.Alloc)
+            time.Sleep(10 * time.Second)
+     }
+}
+func main() {
+     go monitorRuntime()
+Listing 9.9
+Monitor an application’s runtime
+A function to monitor the runtime
+When monitoring starts, 
+reports the number of 
+processors available
+Loops 
+continuously, 
+pausing 
+for 10
+seconds 
+between 
+each iteration
+Logs the number 
+of goroutines 
+and amount of 
+allocated 
+memory
+When the application starts, begins monitoring 
+the application 

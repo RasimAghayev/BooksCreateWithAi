@@ -1,0 +1,35 @@
+239
+New errors
+    g[row][column] = digit
+    return nil
+}
+The inBounds function in the next listing ensures that row and column are inside the grid 
+boundaries. It keeps the Set method from becoming weighed down in details.
+func inBounds(row, column int) bool {
+    if row < 0 || row >= rows {
+        return false
+    }
+    if column < 0 || column >= columns {
+        return false
+    }
+    return true
+}
+Finally, the main function in the next listing creates a grid and displays any error result-
+ing from an invalid placement.
+func main() {
+    var g Grid
+    err := g.Set(10, 0, 5)
+    if err != nil {
+        fmt.Printf("An error occurred: %v.\n", err)
+        os.Exit(1)
+    }
+}
+TIP It’s common to use partial sentences for error messages so that the message can be
+augmented with additional text before it’s displayed.
+Always take the time to write informative error messages. Think of error messages as 
+part of the user interface for your program, whether for end users or other software 
+developers. The phrase “out of bounds” is okay, but “outside of grid boundaries” may 
+be better. A message like “error 37” isn’t very helpful at all.
+Listing 28.9 Helper function: sudoku1.go
+Listing 28.10 Set a digit: sudoku1.go
+ 

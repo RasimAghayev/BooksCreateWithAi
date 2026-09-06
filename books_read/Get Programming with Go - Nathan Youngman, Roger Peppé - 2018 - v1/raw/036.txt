@@ -1,0 +1,33 @@
+21
+Summary
+The import path  for the rand package is math/rand. The Intn function is prefixed with the 
+package name rand, but the import path is longer.
+TIP To use a new package, it must be listed as an import. The Go Playground can add
+import paths for you. First ensure the Imports checkbox is checked and then click the For-
+mat button. The Go Playground will determine which packages are being used and update
+your import paths.
+NOTE Every time you run listing 2.6, the same two pseudorandom numbers are displayed.
+It’s rigged! In the Go Playground, time stands still and results are cached, but these num-
+bers are good enough for our purposes.   
+Summary
+The Print, Println, and Printf functions display text and numbers on the screen.
+With Printf and the %v format verb, values can be placed anywhere in the dis-
+played text.
+Constants are declared with the const keyword and can’t be changed.
+Variables are declared with var and can be assigned new values while a program 
+is running.
+The math/rand import path refers to the rand package.
+The Intn function in the rand package generates pseudorandom numbers.
+You used 5 of the 25 Go keywords: package, import, func, const, and var.
+Let’s see if you got this...
+Experiment: malacandra.go
+Malacandra is much nearer than that: we shall make it in about twenty-eight days.
+—C.S. Lewis, Out of the Silent Planet
+Quick check 2.6 The distance between Earth and Mars varies from nearby to opposite sides
+of the sun. Write a program that generates a random distance from 56,000,000 to
+401,000,000 km.
+QC 2.6 answer
+// a random distance to Mars (km)
+var distance = rand.Intn(345000001) + 56000000
+fmt.Println(distance)
+ 

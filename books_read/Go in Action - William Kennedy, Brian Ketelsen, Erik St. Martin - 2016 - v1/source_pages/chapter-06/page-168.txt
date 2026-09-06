@@ -1,0 +1,42 @@
+147
+Channels
+running. After the program completes, we get the correct value of 4 and the race con-
+dition no longer exists. 
+6.5
+Channels
+Atomic functions and mutexes work, but they don’t make writing concurrent pro-
+grams easier, less error-prone, or fun. In Go you don’t have only atomic functions and
+mutexes to keep shared resources safe and eliminate race conditions. You also have
+channels that synchronize goroutines as they send and receive the resources they
+need to share between each other. 
+ When a resource needs to be shared between goroutines, channels act as a conduit
+between the goroutines and provide a mechanism that guarantees a synchronous
+exchange. When declaring a channel, the type of data that will be shared needs to be
+specified. Values and pointers of built-in, named, struct, and reference types can be
+shared through a channel. 
+ Creating a channel in Go requires the use of the built-in function make.
+// Unbuffered channel of integers.
+unbuffered := make(chan int)
+// Buffered channel of strings.
+buffered := make(chan string, 10)
+In listing 6.17 you see the use of the built-in function make to create both an unbuf-
+fered and buffered channel. The first argument to make requires the keyword chan and
+then the type of data the channel will allow to be exchanged. If you’re creating a buff-
+ered channel, then you specify the size of the channel’s buffer as the second argument. 
+ Sending a value or pointer into a channel requires the use of the <- operator.
+// Buffered channel of strings.
+buffered := make(chan string, 10)
+// Send a string through the channel.
+buffered <- "Gopher"
+In listing 6.18 we create a buffered channel of type string that contains a buffer of 10
+values. Then we send the string “Gopher” through the channel. For another gorou-
+tine to receive that string from the channel, we use the same <- operator, but this time
+as a unary operator.
+// Receive a string from the channel.
+value := <-buffered
+Listing 6.17
+Using make to create a channel
+Listing 6.18
+Sending values into a channel
+Listing 6.19
+Receiving values from a channel

@@ -1,0 +1,110 @@
+INDEX
+358
+concurrency (continued)
+concurrency impacts of workload type 181–186
+context type 186–192
+cancellation signals 187–188
+catching context cancellation 190–192
+context values 188–190
+deadline 186–187
+data races, creating with append 216–218
+errgroup 228–231
+goroutines
+not being careful with loop variables 
+and 198–200
+starting without knowing when to stop it
+196–198
+mixing up with parallelism 163–166
+mutexes, using inaccurately with slices and 
+maps 218–221
+nil channels 205–210
+notification channels 204–205
+parallelism enabled by 165
+propagating inappropriate context 193–196
+race problems 174–181
+data races vs. race conditions 174–179
+Go memory model 179–181
+select and channels, expecting deterministic 
+behavior using 200–204
+string formatting, side effects with 213–216
+deadlock 214–216
+etcd data race 213–214
+sync type, copying 231–233
+sync.Cond 223–228
+sync.WaitGroup 221–223
+thinking concurrency is always faster 166–172
+parallel merge sort 169–172
+scheduling 166–169
+concurrent mark-and-sweep 348
+concurrent threads 166
+conflict misses 311
+constraints 32
+consumer side interface 25
+context switching 166
+context type 186–192
+cancellation signals 187–188
+catching context cancellation 190–192
+context values 188–190
+deadline 186–187
+context.Canceled error 190
+context.Context interface 195
+context.Context type 186, 190
+context.DeadlineExceeded error 190
+context.WithTimeout function 187
+control hazards 317
+control structures
+break statement 108–110
+defer, using inside loops 110–112
+map iterations 105–108
+Map insert during iteration 107–108
+ordering 105–107
+range loops
+arguments evaluated in 98–102
+elements copied in 95–98
+pointer elements in 102–105
+copy function 51, 76–77
+-coverpkg flag 294
+-coverprofile flag 294
+CPU caches 300–312
+cache line 301–304
+cache placement policy 307–312
+CPU architecture 300–301
+predictability 305–307
+slice of structs vs. struct of slices 304–305
+CPU profiling 338–340
+CPU-bound workload 181, 184, 186
+cpu.cfs_period_us parameter 352
+cpu.cfs_quota_us parameter 352
+-cpuprofile flag 339
+critical stride 311
+D
+data alignment 321–324
+data hazards 317
+data races, creating with append 216–218
+data structures 34
+data types
+floating-points 61–64
+integer overflows 57–61
+concepts 58–59
+detecting during addition 60
+detecting during multiplication 60–61
+detecting when incrementing 59–60
+map
+initialization 84–87
+memory leaks and 87–89
+octal literals 56–57
+slices
+copies of 76–77
+empty 74–76
+initialization of 68–71
+length and capacity of 64–68
+memory leaks and 80–84
+slice append 77–79
+vs. nil 71–74
+values 90–93
+database/sql package 30, 145, 244
+Deadline method 195
+deadlock 214–216
+defer arguments and receivers 138–142
+argument evaluation 138–141
+pointer and value receivers 141–142

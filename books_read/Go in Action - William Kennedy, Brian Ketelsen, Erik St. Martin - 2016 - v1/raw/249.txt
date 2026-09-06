@@ -1,0 +1,50 @@
+228
+CHAPTER 9
+Testing and benchmarking
+On line 41 in listing 9.24, an anonymous struct type is declared, and a variable named
+u is created and initialized to its zero value. On line 46 the json package is used to
+decode the JSON document from the response into the u variable. If the decode fails,
+the unit test is ended; otherwise, we validate the values that were decoded.
+51
+if u.Name == "Bill" {
+52
+t.Log("\tShould have a Name.", checkMark)
+53
+} else {
+54
+t.Error("\tShould have a Name.", ballotX, u.Name)
+55
+}
+56
+57
+if u.Email == "bill@ardanstudios.com" {
+58
+t.Log("\tShould have an Email.", checkMark)
+59
+} else {
+60
+t.Error("\tShould have an Email.", ballotX, u.Email)
+61
+}
+62
+}
+63 }
+Listing 9.25 shows both checks for each value we expect to receive. On line 51 we
+check that the value of the Name field is "Bill", and then on line 57 the value of the
+Email field is checked for "bill@ardanstudios.com". If these values match, then the
+unit test passes; otherwise, the unit test fails. These two checks use the Error method
+to report failure, so all the fields are checked. 
+9.2
+Examples
+Go is very focused on having proper documentation for the code you write. The godoc
+tool was built to produce documentation directly from your code. In chapter 3 we
+talked about the use of the godoc tool to produce package documentation. Another
+feature of the godoc tool is example code. Example code adds another dimension to
+both testing and documentation. 
+ If you use your browser to navigate to the Go documentation for the json package,
+you’ll see something like figure 9.8. 
+Listing 9.25
+handlers/handlers_test.go: lines 51–63
+Figure 9.8
+Listing of examples 
+for the json package

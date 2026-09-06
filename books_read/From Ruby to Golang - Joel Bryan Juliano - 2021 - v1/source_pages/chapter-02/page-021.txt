@@ -1,0 +1,63 @@
+Setter/Getters, Attribute Accessors and Structs
+15
+43
+44
+func main() {
+45
+basket := new(basket)
+46
+47
+basket.add_item(
+48
+produce{
+49
+name: "apple",
+50
+flavour: `It's a little sour and bitter, but mostly
+51
+sweet, not at all salty, very juicy in general.`,
+52
+kind: "fruit",
+53
+},
+54
+)
+55
+56
+basket.add_item(
+57
+produce{
+58
+name:
+"carrot",
+59
+flavour: "",
+60
+kind:
+"veggies",
+61
+},
+62
+)
+63
+64
+basket.change_item("carrot",
+65
+produce{
+66
+name: "cucumber",
+67
+flavour: `Slightly bitter with a mild melon aroma
+68
+and planty flavor.`,
+69
+kind: "veggies",
+70
+},
+71
+)
+72
+73
+basket.items()
+74
+}

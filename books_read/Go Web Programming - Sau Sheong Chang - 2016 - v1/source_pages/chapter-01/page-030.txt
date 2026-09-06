@@ -1,0 +1,48 @@
+9
+HTTP request
+served was dynamically created. One of the early attempts to do this was the Common
+Gateway Interface (CGI). 
+ In 1993, the National Center for Supercomputing Applications (NCSA) wrote a
+specification for calling command-line executable programs called the CGI. The NCSA
+included it in its popular NCSA httpd. Despite its name, it never became an internet
+standard.
+CGI is a simple interface that allows a web server to interface with a program that’s
+running separately and externally to the web server process. This program, usually
+called a CGI program, can be written in any language (hence, common), and in the ear-
+lier years that was mostly Perl. Input to the CGI program is done through environment
+variables, and anything the CGI program produces into standard output is returned to
+the client through the server.
+ Another technology from the same period is server-side includes (SSI), which are direc-
+tives you can include in an HTML file. These directives are executed when the HTML file
+is requested and the contents from the execution of these directives are included in the
+spot where the directive was, before the final content is delivered to the client. One of
+the most popular uses of SSI is to include a frequently used file in another, or to embed
+header and footer snippets that are common throughout the site.
+ As an example, the following code includes the contents of the navbar.shtml file in
+the location you placed the directive: 
+<html>
+  <head><title>Example SSI</title></head>
+  <body>
+    <!--#include file="navbar.shtml" -->
+  </body>
+</html>
+The eventual evolution of SSI was to include more complex code in the HTML and use
+more powerful interpreters. This pattern grew into highly successful engines for
+building sophisticated web applications such as PHP, ASP, JSP, and ColdFusion. This
+also became the basis for web template engines like Mustache, ERB, Velocity, and
+many others.
+ As you can see, web applications originated as delivery of customized, dynamic
+content to the user through HTTP. To figure out how web applications operate, you
+need to know how HTTP works and understand HTTP requests and responses.
+1.5
+HTTP request
+HTTP is a request-response protocol, so everything starts with a request. The HTTP
+request, like any HTTP message, consists of a few lines of text in the following order:
+1
+Request-line 
+2
+Zero or more request headers
+3
+An empty line
+4
+The message body (optional)

@@ -1,0 +1,55 @@
+24
+CHAPTER 1
+Getting into Go
+If you’d like to install binaries to an alternative location, the GOBIN environment vari-
+able can be set to that path. This is an optional environment variable.
+1.5
+Hello, Go
+In an obvious twist on the standard Hello World program, the next listing shows a sim-
+ple application that prints Hello, my name is Inigo Montoya through a web server. 
+package main
+import (
+     "fmt"
+     "net/http"
+) 
+func hello(res http.ResponseWriter, req *http.Request) {
+     fmt.Fprint(res, "Hello, my name is Inigo Montoya")
+} 
+func main() {
+     http.HandleFunc("/", hello)
+     http.ListenAndServe("localhost:4000", nil)
+}
+This simple application has three parts. It opens with a package declaration B. Where
+libraries are declared with a short name describing what they do—for example, net or
+crypto—applications have the package main. To write strings and operate as a web
+server, the fmt and http packages are imported C. Importing these packages makes
+them available in the code and in the compiled application.
+ The application execution begins with the main function D that has no arguments
+or returned values. Following the first line of main, the http.HandleFunc function is
+called, telling the web server to execute the function hello when the path / is
+matched. The hello function follows an interface for handlers. It receives an object
+for the HTTP request and response. This is followed by a call to http.ListenAnd-
+Serve, telling the web server to start up and listen on port 4000 of the domain local-
+host.
+ You can execute this application in two ways. In the next listing you use go run,
+which compiles the application into a temp directory and executes it.
+$ go run inigo.go
+The temporary file is cleaned up when the application is done running. This is useful
+in development of new versions of applications that are regularly tested.
+ After the application has started, you can open a web browser and visit
+http://localhost:4000 to view the response, as shown in figure 1.7.
+Listing 1.16
+Hello World web server: inigo.go
+Listing 1.17
+Running inigo.go
+The main package is used for applications.
+B
+C Import 
+needed 
+packages.
+Handler for 
+an HTTP 
+request
+D Main 
+application 
+execution

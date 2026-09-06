@@ -1,0 +1,52 @@
+228
+CHAPTER 9
+Using the cloud
+DISCUSSION
+The os package has the capability to detect a wide range of details about the environ-
+ment. The following list highlights several examples:
+
+os.Hostname() returns the kernel’s value for the hostname.
+The process ID for the application can be retrieved with os.Getpid().
+Operating systems can and do have different path and path list separators.
+Using os.PathSeparator or os.PathListSeparator instead of characters
+allows applications to work with the system they’re running on.
+To find the current working directory, use os.Getwd().
+Information from the os package can be used in combination with other information
+to know more about a host. For example, if you try to look up the IP addresses for the
+machine an application is running on by looking at all the addresses associated with
+all the interfaces to the machine, you can end up with a long list. That list would
+include the localhost loop-back and IPv4 and IPv6 addresses, even when one case may
+not be routable to the machine. To find the IP address to use, an application can look
+up the hostname, known by the system, and find the associated IP address. The follow-
+ing listing shows this method.
+func main() {
+     name, err := os.Hostname()
+     if err != nil {
+            fmt.Println(err)
+            return
+     }
+     addrs, err := net.LookupHost(name)
+     if err != nil {
+            fmt.Println(err)
+            return
+     }
+     for _, a := range addrs {
+            fmt.Println(a)
+     }
+The system knows its own hostname, and looking up the address for that hostname
+will return the local one. This is useful for an application that can be run in a variety
+of environments or scaled horizontally. The hostname and address information could
+change or have a high rate of variability.
+ Go applications can be compiled for a variety of operating systems and run in vari-
+ous environments. Applications can detect information about their environment
+rather that assuming it. This removes the opportunity for bugs or other unexpected
+situations.
+Listing 9.6
+Look up the host’s IP addresses via the hostname
+Retrieves the hostname 
+as the kernel knows it
+Looks up the IP 
+addresses associated 
+with the hostname
+Prints each of the IP addresses, as 
+there can be more than one

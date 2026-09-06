@@ -1,0 +1,68 @@
+81
+Map internals and fundamentals
+Passing the 24 bytes between functions is fast and easy. This is the beauty of slices. You
+don’t need to pass pointers around and deal with complicated syntax. You just create
+copies of your slices, make the changes you need, and then pass a new copy back. 
+4.3
+Map internals and fundamentals
+A map is a data structure that provides you with an unordered collection of key/value
+pairs. 
+ You store values into the map based on a key. Figure 4.23 shows an example of a
+key/value pair you may store in your maps. The strength of a map is its ability to
+retrieve data quickly based on the key. A key works like an index, pointing to the value
+you associate with that key.   
+4.3.1
+Internals
+Maps are collections, and you can iterate over them just like you do with arrays and
+slices. But maps are unordered collections, and there’s no way to predict the order in
+which the key/value pairs will be returned. Even if you store your key/value pairs in
+the same order, every iteration over a map could return a different order. This is
+because a map is implemented using a hash table, as shown in figure 4.24. 
+addr
+Pointer
+Main function
+Foo function
+Copy slice on
+function call
+Copy slice on
+function return
+1000000
+Length
+1000000
+Capacity
+addr
+Pointer
+1000000
+Length
+1000000
+Capacity
+slice := make([]int , 1000000)
+[ 0 ]
+0
+[ 1 ]
+0
+[ 2 ]
+0
+[ 3 ]
+0
+[ 4 ]
+0
+........
+slice = foo(slice)
+func foo(slice []int) []int
+Figure 4.22
+Both slices pointing to the underlying array after the function call
+Red
+Key
+#da1337
+Value
+Orange
+Key
+#e95a22
+Value
+Green
+Key
+#a3ff47
+Value
+Figure 4.23
+Relationship of key/value pairs

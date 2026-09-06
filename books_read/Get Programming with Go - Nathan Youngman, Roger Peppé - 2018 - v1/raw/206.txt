@@ -1,0 +1,39 @@
+191
+Discovering the interface
+The following listing derives a fictional stardate from the day of the year and hour of the 
+day.
+package main
+import (
+    "fmt"
+    "time"
+)
+// stardate returns a fictional measure of time for a given date.
+func stardate(t time.Time) float64 {
+    doy := float64(t.YearDay())
+    h := float64(t.Hour()) / 24.0
+    return 1000 + doy + h
+}
+func main() {
+    day := time.Date(2012, 8, 6, 5, 17, 0, 0, time.UTC)
+    fmt.Printf("%.1f Curiosity has landed\n", stardate(day))
+}
+The stardate function in listing 24.8 is limited to Earth dates. To remedy this, the follow-
+ing listing declares an interface for stardate to use.
+type stardater interface {
+    YearDay() int
+    Hour() int
+}
+// stardate returns a fictional measure of time.
+func stardate(t stardater) float64 {
+    doy := float64(t.YearDay())
+    h := float64(t.Hour()) / 24.0
+    return 1000 + doy + h
+}
+The new stardate function in listing 24.9 continues to operate on Earth dates because the 
+time.Time type in the standard library satisfies the stardater interface. Interfaces in Go are 
+Listing 24.8 Stardate calculation: stardate.go
+Listing 24.9 Stardate interface: stardater.go
+Prints 1219.2 
+Curiosity has 
+landed
+ 

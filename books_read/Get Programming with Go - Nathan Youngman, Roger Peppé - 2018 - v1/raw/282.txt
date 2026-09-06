@@ -1,0 +1,36 @@
+267
+Summary
+downstream <- item
+}
+    }
+    close(downstream)
+}
+The final gopher on the assembly line reads all the messages and prints one after 
+another, as shown in the next listing.
+func printGopher(upstream chan string) {
+    for v := range upstream {
+fmt.Println(v)
+    }
+}
+Summary
+The go statement starts a new goroutine, running concurrently.
+Channels are used to send values between goroutines.
+A channel is created with make(chan string).
+The <- operator receives from a channel (when used before a channel value).
+The <- operator sends to a channel (when placed between the channel value and 
+the value to be sent).
+The close function closes a channel.
+The range statement reads all the values from a channel until it’s closed.
+Listing 30.14 Assembly: pipeline2.go
+Quick check 30.6 
+1
+What value do you see when you read from a closed channel?
+2
+How do you check whether a channel has been closed?
+QC 30.6 answer 
+1
+The zero value for the channel’s type.
+2
+Use a two-valued assignment statement:
+v, ok := <-c
+ 

@@ -1,0 +1,41 @@
+ABOUT THIS BOOK
+xviii
+ Chapter 4 continues with the details of handling HTTP requests—specifically, how
+Go allows you to process the requests and respond accordingly. You’ll also learn how
+to get data from HTML forms and how to use cookies.
+ Chapter 5 delves into the Go template engine provided in the text/template and
+html/template packages. You’ll learn about the various mechanisms provided by Go
+and about using layouts in Go.
+ Chapter 6 discusses storage strategies using Go. You’ll learn about storing data in
+memory using structs, in the filesystem using CSV and the gob binary format as well as
+using SQL and SQL mappers to access relational databases.
+ Chapter 7 shows you how to create web services using Go. You’ll learn how to cre-
+ate and parse XML as well as JSON with Go, and how a simple web service can be writ-
+ten using Go. 
+ Chapter 8 gives insight into the ways you can test your Go web application at vari-
+ous levels, including unit testing, benchmark testing, and HTTP testing. This chapter
+also briefly discusses third-party testing libraries.
+ Chapter 9 talks about how you can leverage Go concurrency in your web applica-
+tion. You’ll learn about Go concurrency and how you can improve the performance of
+a photo-mosaic web application using Go concurrency.
+ Chapter 10 wraps up the book by showing how you can deploy your web applica-
+tion. You’ll learn how to deploy to standalone servers and to the cloud (Heroku and
+Google App Engine), as well as in Docker containers.
+ The appendix provides instructions for installing and setting up Go on different
+platforms.
+Code conventions and downloads
+This book contains many examples of source code both in numbered listings and
+inline with normal text. In both cases, source code is formatted in a fixed-width
+font like this to separate it from ordinary text. Sometimes code is in bold to high-
+light code that has changed from previous steps in the chapter or code that is
+discussed in surrounding text. 
+ Also, colors are used to highlight code commands and code output:
+curl -i 127.0.0.1:8080/write
+HTTP/1.1 200 OK
+Date: Tue, 13 Jan 2015 16:16:13 GMT
+Content-Length: 95
+Content-Type: text/html; charset=utf-8
+<html>
+<head><title>Go Web Programming</title></head>
+<body><h1>Hello World</h1></body>
+</html>

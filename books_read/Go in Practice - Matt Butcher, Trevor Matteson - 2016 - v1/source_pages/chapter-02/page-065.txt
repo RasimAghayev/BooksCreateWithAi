@@ -1,0 +1,59 @@
+42
+CHAPTER 2
+A solid foundation
+DISCUSSION
+Consider the following INI file:
+; A comment line
+[Section]
+enabled = true
+path = /usr/local # another comment
+In the following listing, this file is parsed, and you can see how to use the internal
+data.
+package main
+import (
+     "fmt"
+     "gopkg.in/gcfg.v1"
+)
+func main() {
+     config := struct {
+            Section struct {
+                   Enabled bool
+                   Path    string
+            }
+     }{}
+     err := gcfg.ReadFileInto(&config, "conf.ini")
+     if err != nil {
+            fmt.Println("Failed to parse config file: %s", err)
+     }
+     fmt.Println(config.Section.Enabled)
+     fmt.Println(config.Section.Path)
+}
+In this case, the third-party package gopkg.in/gcfg.v1 handles parsing the INI file
+into a data structure B. This package provides a means to parse INI files and strings
+similar to JSON handling in the standard library.
+ Before the INI file can be parsed, a variable needs to exist to receive the values
+from the file. As in the JSON technique, the structure of this variable needs to map to
+the structure in the INI file. In this case, a struct is created, though a new type similar
+to the JSON example could be used instead, with an internal struct for a section C.
+This struct is where the configuration values will reside after parsing.
+ The function ReadFileInto reads the file into the struct that was created D. If an
+error occurs, it will be available. After this has passed, the configuration from the INI
+file is available to be used E.
+ The gopkg.in/gcfg.v1 package has several useful features such as tags and read-
+ing strings, files, or anything implementing the io.Reader interface. For more infor-
+mation, see the package documentation. 
+Listing 2.11
+Parsing an INI configuration file: ini_config.go
+Includes third-party 
+package to parse INI files
+B
+Creates a structure to 
+hold the config values
+C
+Parses the INI 
+file into the 
+struct handling 
+errors
+D
+Uses the INI values
+E

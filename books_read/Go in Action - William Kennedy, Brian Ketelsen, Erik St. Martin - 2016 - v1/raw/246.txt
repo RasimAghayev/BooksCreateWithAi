@@ -1,0 +1,74 @@
+225
+Unit testing
+  
+Now that we have a functioning web service with an endpoint, we can write a unit test
+to test the endpoint.
+01 // Sample test to show how to test the execution of an
+02 // internal endpoint.
+03 package handlers_test
+04
+05 import (
+06
+"encoding/json"
+07
+"net/http"
+08
+"net/http/httptest"
+09
+"testing"
+10
+11
+"github.com/goinaction/code/chapter9/listing17/handlers"
+12 )
+13
+14 const checkMark = "\u2713"
+15 const ballotX = "\u2717"
+16
+17 func init() {
+18
+handlers.Routes()
+19 }
+20
+21 // TestSendJSON testing the sendjson internal endpoint.
+22 func TestSendJSON(t *testing.T) {
+23
+t.Log("Given the need to test the SendJSON endpoint.")
+24
+{
+25
+req, err := http.NewRequest("GET", "/sendjson", nil)
+26
+if err != nil {
+27
+t.Fatal("\tShould be able to create a request.",
+28
+ballotX, err)
+29
+}
+30
+t.Log("\tShould be able to create a request.",
+31
+checkMark)
+32
+33
+rw := httptest.NewRecorder()
+34
+http.DefaultServeMux.ServeHTTP(rw, req)
+35
+36
+if rw.Code != 200 {
+37
+t.Fatal("\tShould receive \"200\"", ballotX, rw.Code)
+38
+}
+39
+t.Log("\tShould receive \"200\"", checkMark)
+40
+Listing 9.19
+handlers/handlers_test.go
+Figure 9.6
+Running the 
+web service
+Figure 9.7
+Web service serving 
+up the JSON document

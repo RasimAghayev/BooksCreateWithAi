@@ -1,0 +1,39 @@
+280
+Lesson 31  Concurrent state
+func main() {
+    r := NewRoverDriver()
+    time.Sleep(3 * time.Second)
+    r.Left()
+    time.Sleep(3 * time.Second)
+    r.Right()
+    time.Sleep(3 * time.Second)
+}
+Try experimenting with the RoverDriver type by using different timings and sending dif-
+ferent commands to it.
+Although we’ve focused on one specific example here, this worker pattern can be useful 
+in many different situations where you need to have some long-lived goroutine con-
+trolling something while remaining responsive to external control itself.   
+Listing 31.11 Let it go!: rover.go
+Quick check 31.3 
+1
+What is used instead of an event loop in Go?
+2
+What Go standard library package provides a Point data type?
+3
+What Go statements might you use to implement a long-lived worker goroutine?
+4
+How are internal details of channel use hidden?
+5
+What Go values can be sent down a channel?
+QC 31.3 answer 
+1
+A loop in a goroutine.
+2
+The image package.
+3
+The for statement and the select statement.
+4
+Behind method calls.
+5
+Any value can be sent down a channel.
+ 

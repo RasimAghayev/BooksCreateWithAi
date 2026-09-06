@@ -1,0 +1,36 @@
+45
+Using Go tools
+   
+01 package main
+02
+03 import (
+04
+"database/sql"
+05
+06
+_ "github.com/goinaction/code/chapter3/dbdriver/postgres"
+07 )
+08
+09 func main() {
+10
+sql.Open("postgres", "mydb")
+11 }
+3.4
+Using Go tools
+We’ve been working with the go tool for a few chapters now, but we haven’t explored
+all it can do. Let’s dive a little deeper into this diminutively named powerhouse and
+explore more of its capabilities. From a shell prompt, type the go command with no
+arguments: 
+$ go
+As you can see in figure 3.1, there are a lot of features buried in the go tooling.
+Listing 3.6
+Blank identifier import aliasing
+Import driver anonymously
+to prevent compile error.
+We call the Open method provided by 
+the sql package; this works because 
+the driver registered itself with the sql 
+package in its init function.
+Figure 3.1
+Output of go 
+command help text

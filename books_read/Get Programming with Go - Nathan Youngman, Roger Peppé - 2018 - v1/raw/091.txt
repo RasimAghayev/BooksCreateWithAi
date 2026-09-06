@@ -1,0 +1,39 @@
+76
+Lesson 9  Multilingual text
+NOTE UTF-8 is the dominant character encoding for the World Wide Web. It was
+invented in 1992 by Ken Thompson, one of the designers of Go.
+The ROT13 program in listing 9.7 accessed the individual bytes (8-bit) of the message 
+string without accounting for characters that are multiple bytes long (16-bit or 32-bit). 
+This is why it works fine for English characters (ASCII), but produces garbled results for 
+Russian and Spanish. You can do better, amigo.
+The first step to supporting other languages is to decode characters to the rune type 
+before manipulating them. Fortunately, Go has functions and language features for 
+decoding UTF-8 encoded strings.
+The utf8 package provides functions to determine the length of a string in runes rather 
+than bytes and to decode the first character of a string. The DecodeRuneInString function 
+returns the first character and the number of bytes the character consumed, as shown in 
+listing 9.8.
+NOTE Unlike many programming languages, functions in Go can return multiple values.
+Multiple return values are discussed in lesson 12.
+package main
+import (
+    "fmt"
+    "unicode/utf8"
+)
+func main() {
+    question := "¿Cómo estás?"
+    fmt.Println(len(question), "bytes")
+    fmt.Println(utf8.RuneCountInString(question), "runes")
+    c, size := utf8.DecodeRuneInString(question)
+    fmt.Printf("First rune: %c %v bytes", c, size)
+}
+The Go language provides the range keyword to iterate over a variety of collections 
+(covered in unit 4). It can also decode UTF-8 encoded strings, as shown in the following 
+listing.
+Listing 9.8 The utf8 package: spanish.go
+Prints 15 bytes
+Prints 12 
+runes
+Prints First 
+rune: ¿ 2 bytes
+ 

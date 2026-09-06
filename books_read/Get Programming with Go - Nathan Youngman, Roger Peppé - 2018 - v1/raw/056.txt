@@ -1,0 +1,24 @@
+41
+5
+LESSON
+CAPSTONE: TICKET TO MARS
+Welcome to the first challenge. It’s time to take everything covered in unit 1 and write 
+a program on your own. Your challenge is to write a ticket generator in the Go Play-
+ground that makes use of variables, constants, switch, if, and for. It should also draw 
+on the fmt and math/rand packages to display and align text and to generate random 
+numbers.
+When planning a trip to Mars, it would be handy to 
+have ticket pricing from multiple spacelines in one 
+place. Websites exist that aggregate ticket prices for 
+airlines, but so far nothing exists for spacelines. 
+That’s not a problem for you, though. You can use 
+Go to teach your computer to solve problems like 
+this.
+Start by building a prototype that generates 10 ran-
+dom tickets and displays them in a tabular format 
+with a nice header, as follows:
+Spaceline        Days Trip type  Price
+======================================
+Virgin Galactic    23 Round-trip $  96
+Virgin Galactic    39 One-way    $  37
+ 

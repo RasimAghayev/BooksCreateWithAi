@@ -1,0 +1,59 @@
+90
+CHAPTER 5
+Go’s type system
+value would be 0; for strings it would be empty; and for Booleans it would be false. In
+the case of a struct, the zero value would apply to all the different fields in the struct. 
+ Any time a variable is created and initialized to its zero value, it’s idiomatic to use
+the keyword var. Reserve the use of the keyword var as a way to indicate that a variable
+is being set to its zero value. If the variable will be initialized to something other than
+its zero value, then use the short variable declaration operator with a struct literal.
+12 // Declare a variable of type user and initialize all the fields.
+13 lisa := user{
+14
+name:
+"Lisa",
+15
+email:
+"lisa@email.com",
+16
+ext:
+123,
+17
+privileged: true,
+18 }
+Listing 5.3 shows how to declare a variable of type user and initialize the value to
+something other than its zero value. On line 13, we provide a variable name followed
+by the short variable declaration operator. This operator is the colon with the equals
+sign (:=). The short variable declaration operator serves two purposes in one opera-
+tion: it both declares and initializes a variable. Based on the type information on the
+right side of the operator, the short variable declaration operator can determine the
+type for the variable. 
+ Since we’re creating and initializing a struct type, we use a struct literal to perform
+the initialization. The struct literal takes the form of curly brackets with the initiali-
+zation declared within them.
+13 user{
+14
+name:
+"Lisa",
+15
+email:
+"lisa@email.com",
+16
+ext:
+123,
+17
+privileged: true,
+18 }
+The struct literal can take on two forms for a struct type. Listing 5.4 shows the first
+form, which is to declare each field and value from the struct to be initialized on a
+separate line. A colon is used to separate the two, and it requires a trailing comma.
+The order of the fields doesn’t matter. The second form is without the field names
+and just declares the values.
+12 // Declare a variable of type user.
+13 lisa := user{"Lisa", "lisa@email.com", 123, true}
+Listing 5.3
+Declaration of a variable of the struct type using a struct literal
+Listing 5.4
+Creating a struct type value using a struct literal
+Listing 5.5
+Creating a struct type value without declaring the field names

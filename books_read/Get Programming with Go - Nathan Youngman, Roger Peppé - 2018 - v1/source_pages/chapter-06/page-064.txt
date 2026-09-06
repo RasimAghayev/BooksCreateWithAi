@@ -1,0 +1,42 @@
+49
+Floating-point accuracy
+spaces. If the width is unspecified, Printf will use the number of characters necessary to 
+display the value.
+To left-pad with zeros instead of spaces, prefix the width with a zero, as in the following 
+listing.
+fmt.Printf("%05.2f\n", third)
+   
+6.3
+Floating-point accuracy
+In mathematics, some rational numbers can’t 
+be accurately represented in decimal form. 
+The number 0.33 is only an approximation of 
+⅓. Unsurprisingly, a calculation on approxi-
+mate values has an approximate result:
+⅓ + ⅓ + ⅓ = 1
+0.33 + 0.33 + 0.33 = 0.99
+Floating-point numbers suffer from rounding 
+errors too, except floating-point hardware uses 
+a binary representation (using only 0s and 1s) 
+Listing 6.4 Zero padding: third.go
+Prints 00.33
+Quick check 6.4 
+1
+Type listing 6.3 into the body of a main function in the Go playground. Try different values 
+for the width and precision in the Printf statement.
+2
+What is the width and precision of 0015.1021?
+QC 6.4 answer  
+1
+third := 1.0 / 3
+fmt.Printf("%f\n", third)
+fmt.Printf("%7.4f\n", third)
+fmt.Printf("%06.2f\n", third)
+2
+The width is 9 and the precision is 4, with zero padding "%09.4f".
+Prints 0.333333
+Prints  0.3333
+Prints 000.33
+.
+.
+ 

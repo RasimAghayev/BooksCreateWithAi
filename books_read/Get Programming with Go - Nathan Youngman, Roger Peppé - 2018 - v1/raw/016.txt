@@ -1,0 +1,13 @@
+1
+UNIT
+0
+Getting started
+Traditionally, the first step to learning a new pro-
+gramming language is to set up the tools and envi-
+ronment to run a simple “Hello, world” application. 
+With the Go Playground, this age-old endeavor is 
+reduced to a single click.
+With that out of the way, you can begin learning the 
+syntax and concepts needed to write and modify a 
+simple program.
+ 

@@ -1,0 +1,44 @@
+98
+CHAPTER 4
+Handling errors and panics
+When you run this program, Go captures your panic just fine:
+$ go run proper_panic.go
+panic: nil
+goroutine 1 [running]:
+main.main()
+     /Users/mbutcher/Code/go-in-practice/chapter4/proper_panic.go:4 +0x32
+This error isn’t particularly useful. You could instead panic with a string:
+panic("Oops, I did it again."). Now when you run the code, you’d get this:
+$ go run proper_panic.go
+panic: Oops, I did it again.
+goroutine 1 [running]:
+main.main()
+     /Users/mbutcher/Code/go-in-practice/chapter4/proper_panic.go:4 +0x64
+This seems better. At least you have some helpful information. But is this the right
+thing to do?
+PROBLEM
+When you raise a panic, what should you pass into the function? Are there ways of
+panicking that are useful or idiomatic?
+SOLUTION
+The best thing to pass to a panic is an error. Use the error type to make it easy for the
+recovery function (if there is one).
+DISCUSSION
+With a signature that accepts interface{}, it’s not obvious what you’re supposed to
+pass into a panic. You could give it the object that caused the panic. As you’ve seen,
+you could give it a string, or a nil, or an error.
+ The best thing to pass a panic (under normal circumstances, at least) is something
+that fulfills the error interface. There are two good reasons for this. The first is that it’s
+intuitive. What sort of thing would cause a panic? An error. It’s reasonable to assume
+that developers will expect this. The second reason is that it eases handling of a panic.
+In a moment, you’ll look at recovering from panics. There you’ll see how to take a
+panic, handle the dire part, and then use the panic’s content as a plain old error.
+ Given this, the next listing shows the idiomatic way to issue a panic.
+package main
+import "errors"
+func main() {
+     panic(errors.New("Something bad happened."))
+}
+Listing 4.11
+A proper panic
+Calls panic and passes 
+it an error

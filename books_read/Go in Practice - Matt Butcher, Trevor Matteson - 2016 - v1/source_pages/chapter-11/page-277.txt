@@ -1,0 +1,43 @@
+254
+CHAPTER 11
+Reflection and code generation
+11.1
+Three features of reflection
+Software developers use reflection to examine objects during runtime. In a strongly
+typed language like Go, you may want to find out whether a particular object satisfies
+an interface. Or discover what its underlying kind is. Or walk over its fields and modify
+the data.
+ Go’s reflection tools are located inside the reflect package. To understand those
+tools, we need to define a few terms. You need to understand three critical features
+when working with Go’s reflection mechanism: values, types, and kinds.
+ You might approach the first term, value, by thinking of a variable. A variable is a
+name that points to a piece of data, as illustrated in figure 11.1. (The figure labels this
+Variable name.) The piece of data that it points to is called a value. Depending on the
+type, the value may be nil. It may be a pointer, which in turn points to a value some-
+where else. Or it may be a nonempty piece of data. For example, with x := 5, the value
+of x is 5. For var b bytes.Buffer, the value of b is an empty buffer. And with myFunc
+:= strings.Split, the value of myFunc is a function. In the reflect package, the type
+reflect.Value represents a value.
+Go is a typed language. Each value in Go has a particular type associated with it. For
+example, with var b bytes.Buffer, the type is bytes.Buffer. For any reflect.Value
+in Go, you can discover its type. Type information is accessible through the reflect
+.Type interface.
+ Finally, Go defines numerous primitive kinds, such as struct, ptr (pointer), int,
+float64, string, slice, func (function), and so on. The reflect package enumer-
+ates all of the possible kinds with the type reflect.Kind. (Note that in figure 11.1, the
+value of type string also has the kind string.)
+ The typical tasks you perform when working with reflection use these three con-
+cepts. Usually, reflection begins by taking a value and then inspecting it to learn about
+its contents, its type, and its kind.
+TECHNIQUE 66
+Switching based on type and kind
+One of the most frequent uses of Go’s reflection system is identifying either the type
+or kind of a value. Go has various tools for learning about the type and kind of a par-
+ticular value.
+ﬁrstName : "Inigo"
+var lastName string  "Montoya"
+Variable name
+Type
+Value
+Figure 11.1
+Variables and values

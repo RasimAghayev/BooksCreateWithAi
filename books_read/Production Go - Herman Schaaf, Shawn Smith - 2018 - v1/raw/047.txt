@@ -1,0 +1,36 @@
+Basics
+41
+The empty interface
+We define an empty interface as interface{}, and it can hold a value of any type:
+1
+var i interface{}
+2
+i = "こんにちは"
+3
+fmt.Println(i)
+1
+こんにちは
+If we want to test whether an interface is a certain type, we use a type assertion:
+1
+var i interface{}
+2
+i = "こんにちは"
+3
+s, ok := i.(string)
+4
+if !ok {
+5
+fmt.Println("s is not type string")
+6
+}
+7
+fmt.Println(s)
+1
+こんにちは
+In our example above, i is a type string, so the second return value from our type assertion is true,
+and s contains the underlying value. If i had been another type, such as an int, then our ok would
+have been false and our s would have been the zero value of the type we were trying to assert, or
+in other words 0.
+Nil interfaces
+An interface in Go is essentially a tuple containing the underlying type and value. For an interface
+to be considered nil, both the type and value must be nil. Here is an example:

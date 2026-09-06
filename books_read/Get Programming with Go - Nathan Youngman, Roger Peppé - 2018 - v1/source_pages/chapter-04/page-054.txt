@@ -1,0 +1,36 @@
+39
+Narrow scope, wide scope
+The era variable is declared outside of the main function in the package scope. If there were 
+multiple functions in the main package, era would be visible from all of them.
+NOTE Short declaration is not available for variables declared in the package scope, so
+era can’t be declared with era := "AD" at its current location.
+The year variable is only visible within the main function. If there were other functions, 
+they could see era but not year. The function scope is narrower than the package scope. It 
+begins at the func keyword and ends with the terminating brace.
+The month variable is visible anywhere within the switch statement, but once the switch 
+statement ends, month is no longer in scope. The scope begins at the switch keyword and 
+ends with the terminating brace for switch.
+Each case has its own scope, so there are three independent day variables. As each case 
+ends, the day variable declared within that case goes out of a scope. This is the only situa-
+tion where there are no braces to indicate scope.
+The code in listing 4.6 is far from perfect. The narrow scope of month and day results in 
+code duplication (Println, Println, Println). When code is duplicated, someone may revise 
+the code in one place, but not the other (such as deciding not to print the era, but forget-
+ting to change one case). Sometimes code duplication is justified, but it’s considered a 
+code smell, and should be looked at.
+To remove the duplication and simplify the code, the variables in listing 4.6 should be 
+declared in the wider function scope, making them available after the switch statement 
+for later work. It’s time to refactor! Refactoring means modifying the code without modi-
+fying the code’s behavior. The code in the following listing still displays a random date.
+package main
+import (
+    "fmt"
+    "math/rand"
+)
+var era = "AD"
+func main() {
+    year := 2018
+    month := rand.Intn(12) + 1
+    daysInMonth := 31
+Listing 4.7 Random date refactored: random-date.go
+ 

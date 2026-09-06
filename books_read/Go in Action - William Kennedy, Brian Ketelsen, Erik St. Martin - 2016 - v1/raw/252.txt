@@ -1,0 +1,16 @@
+231
+Examples
+from stdout against this output comment. If everything matches, the test passes, and
+you have an example that works inside the Go documentation for the package. If the
+output doesn’t match, the test fails. 
+ If you start a local godoc server (godoc -http=":3000") and navigate to the
+handlers package, you can see this all come together, as in figure 9.10. 
+ You can see in figure 9.10 that the documentation for the handlers package shows
+the example for the SendJSON function. If you select the SendJSON link, the documen-
+tation will show the code, as in figure 9.11.
+Figure 9.10
+godoc view of the 
+handlers package
+Figure 9.11
+A full view of 
+the example in godoc

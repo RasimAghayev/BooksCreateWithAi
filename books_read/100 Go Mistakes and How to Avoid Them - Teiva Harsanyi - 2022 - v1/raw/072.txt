@@ -1,0 +1,39 @@
+52
+CHAPTER 2
+Code and project organization
+When it comes to documenting a variable or a constant, we might be interested in
+conveying two aspects: its purpose and its content. The former should live as code
+documentation to be useful for external clients. The latter, though, shouldn’t neces-
+sarily be public. For example,
+// DefaultPermission is the default permission used by the store engine.
+const DefaultPermission = 0o644 // Need read and write accesses.
+This constant represents the default permission. The code documentation conveys its
+purpose, whereas the comment alongside the constant describes its actual content
+(read and write accesses).
+ To help clients and maintainers understand a package’s scope, we should also doc-
+ument each package. The convention is to start the comment with // Package fol-
+lowed by the package name:
+// Package math provides basic constants and mathematical functions.
+//
+// This package does not guarantee bit-identical results
+// across architectures.
+package math
+The first line of a package comment should be concise. That’s because it will appear
+in the package (figure 2.11 provides an example). Then, we can provide all the infor-
+mation we need in the following lines.
+Figure 2.11
+An example of the generated Go standard library
+Documenting a package can be done in any of the Go files; there is no rule. In gen-
+eral, we should put package documentation in a relevant file with the same name as
+the package or in a specific file such as doc.go.
+ One last thing to mention regarding package documentation is that comments not
+adjacent to the declaration are omitted. For example, the following copyright com-
+ment will not be visible in the produced documentation:
+// Copyright 2009 The Go Authors. All rights reserved.
+// Use of this source code is governed by a BSD-style
+// license that can be found in the LICENSE file.
+// Package math provides basic constants and mathematical functions.
+//
+Empty line. The previous
+comments will not be included
+in the documentation.

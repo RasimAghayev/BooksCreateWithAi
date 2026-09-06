@@ -1,0 +1,15 @@
+Acknowledgments
+First of all, I give all my thanks to my God, Jehovah, who have given me all this knowledge and who
+have been my close friend and father throughout my life.
+I thought writing a book is simple and easy, but really, it’s not. However, now that I have completed
+the book, it gives me a sense of reward. I thank my wife, Herald Jane, who believed in me, and
+comforted me in times of difficulties, and my son who gives me great joy, love and happiness. In
+2018, I was hired by a company that uses Go. The first thing I did to learn it, is to relate to what I
+know in Ruby. And I thought it would be a good idea to document my learning process. And what
+started as a series of online articles, with just a slight possibility of having those online articles be
+published one day as a book, just happened.
+Looking back, I really thank all those people who helped me in all those articles.
+To my friend Bas Van Essen, who have helped me proof-read all those articles and make necessary
+corrections.
+To my family. To my little brother, Jan Carlo, who provided me the initial book cover artwork.
+Finally, all those people who have been part of this process of creating a book: I thank you all.

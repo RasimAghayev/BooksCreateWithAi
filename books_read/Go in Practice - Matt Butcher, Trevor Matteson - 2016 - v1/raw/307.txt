@@ -1,0 +1,154 @@
+284
+INDEX
+HTTP client
+overview 7–9
+passing and handling errors 
+over 200–205
+generating custom errors
+201–203
+reading and using custom 
+errors 203–205
+REST APIs 195–196
+http function 153–154, 190
+HTTP methods 49
+http package 8, 44, 47–48, 51–
+52, 170–171, 177, 180, 
+184, 188, 201
+http.DefaultClient 239
+http.DefaultTransport 239
+http.Dir object 173, 177
+http.FileServer function 173
+http.Get() function 195, 205, 
+239
+http.HandleFunc function 24
+http.Head function 195
+http.Post() function 195, 239
+http.PostForm function 195
+http.Request.Method 51
+http.Request.Path 51
+http.ResponseWriter 155
+http.Transport 239
+hypervisors 221
+I
+IaaS (infrastructure as service)
+219
+if statement 89–91
+if/else statement 89
+If-Modified-Since header 170, 
+175
+ignoring fields 272
+implements() function 261–
+262
+import statement 14
+index.html file 157, 163
+Info log level 123
+informational messages 123
+insert method 276
+installing Go 22
+interface{} 207–208
+io.EOF error 93, 192
+io.ErrNoProgress error 93
+io.Reader interface 42, 176
+io.Seeker interface 176
+io.Writer interface 118, 130, 
+133
+J
+JavaScript, Node.js 21–22
+JIT (just-in-time) compiler 19
+JSON (JavaScript Object Nota-
+tion)
+marshaling 241
+overview 9, 39
+parsing and mapping
+206–209
+unmarshaling 241
+json package 242
+JSON schemas 206
+K
+Keyed-Hash Message Authenti-
+cation Code. See HMAC
+Kind switch 257
+kinds (reflection) 262–266
+Kubernetes 280
+L
+launchpad.net/gnuflag 
+package 31
+Ldate 117
+libmagic 189
+libraries 7–9
+lightweight threads 10, 13
+Line property 93
+listen function 8, 105, 108
+ListenAndServe 47–48
+listener function 105
+listenForShutdown function 48
+Llongfile 117
+Lmicrosends 117
+Load method 225–226
+locating bugs 114
+locking with channels 81
+locks 67
+log levels 123
+log package 115–116, 119–122
+log.Fatal function 119
+log.Fatalln function 115
+log.Logger function 116
+log.Lshortfile 117
+log.LstdFlags 117
+log.Panic function 115
+log.Printf method 115
+Logf() function 140
+logging 114–126
+log package 115–122
+overview 114
+system loggers 123–126
+LOG_NOTICE setting 125
+long flags 32
+ls -la command 28
+Lshortifle 117
+LstdFlags 117
+Ltime 117
+M
+main function 11, 24, 33, 40, 
+53, 61, 63, 69, 80, 99, 
+103, 164
+manners package 47–48
+mapping JSON 206–209
+marshal() method 269, 
+271–272
+marshaling 241
+memory-caching service 176
+Mercurial version-control 
+system 22
+message function 111
+Message property 93, 131
+metaprogramming 274
+microservices 221, 236–237
+mime package 188
+mixing templates 155–164
+MockMessage type 132
+multipart submissions, file han-
+dling and 183–189
+multipart.File object 184
+multipart.FileHeader 
+object 184, 187–188
+MultipartForm property 185, 
+187
+MultipartReader method 189, 
+192
+multiple attribute 185
+multiple cloud providers 222
+multiple return values 6–7
+multiple-letter flags 32
+mutex.RLock 175
+mutex.RUnlock 175
+MyInt value 264
+N
+name key 243
+Name property 35, 243
+named return variables 7
+Names function 6–7
+net package 8, 197
+net.Conn type 130
+net.Dial 119, 122
+net.DialTimeout 122

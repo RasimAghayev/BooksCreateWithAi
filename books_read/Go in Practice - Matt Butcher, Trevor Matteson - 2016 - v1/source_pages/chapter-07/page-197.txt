@@ -1,0 +1,56 @@
+174
+CHAPTER 7
+Serving and receiving assets and forms
+TECHNIQUE 41
+Caching file server
+In some cases, it’s too time-consuming to read a file from the filesystem or other file
+source each time you want to serve it. Instead, it would be faster to cache and serve
+some files from memory, skipping calls to disk altogether.
+ Speedy file serving can eliminate slowdowns on high-traffic websites. Web caches
+such as Varnish have become popular and are used on many of the most popular web-
+sites and applications. You could put a web cache in front of a Go application to cache
+files such as images, CSS, and JavaScript to serve them from memory. In some cases, a
+useful alternative to an external application is to store files in memory in your Go
+application and serve the files yourself.
+PROBLEM
+Instead of serving static files from the filesystem each time they’re requested, you want
+to cache files in memory in order to quickly serve responses to requests.
+SOLUTION
+Store files in memory when they’re first requested and serve responses using Serve-
+Content rather than a file server.
+DISCUSSION
+Most of the time, it’s appropriate to use a reverse proxy, such as the popular open
+source project Varnish, to handle caching and serving of files quickly. For those occa-
+sions, it’s appropriate to cache commonly used files in memory. The following listing
+shows how to load a file from disk and serve it from memory.
+package main
+import (
+     "bytes"
+     "io"
+     "net/http"
+     "os"
+     "sync"
+     "time"
+)
+type cacheFile struct {
+     content io.ReadSeeker
+     modTime time.Time
+}
+var cache map[string]*cacheFile
+var mutex = new(sync.RWMutex)
+func main() {
+     cache = make(map[string]*cacheFile)
+     http.HandleFunc("/", serveFiles)
+     http.ListenAndServe(":8080", nil)
+}
+Listing 7.6
+Load and serve static files from memory: cache_serving.go
+Data structure to store 
+a file in memory
+Map to
+store files
+in memory
+Mutex to handle race 
+conditions while handling 
+parallel cache changes
+Makes the map usable

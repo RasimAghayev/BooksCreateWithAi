@@ -1,0 +1,58 @@
+10
+CHAPTER 1
+Getting into Go
+Some programming languages even have a runtime with a global thread lock hamper-
+ing the ability to easily run routines in parallel. Go was designed with parallel and con-
+current processing in mind.
+ Go has a feature called a goroutine, a function that can be run concurrently to the
+main program or other goroutines. Sometimes dubbed lightweight threads, goroutines
+are managed by the Go runtime, where they’re mapped and moved to the appropri-
+ate operating system thread and garbage-collected when no longer needed. When
+multiple processor cores are available, the goroutines can be run in parallel because
+various threads are running on different processing cores. But from the developer’s
+point of view, creating a goroutine is as easy as writing a function. Figure 1.2 illustrates
+how goroutines work.
+To further illustrate how this works, let’s look at a goroutine that counts from 0 to 4
+while the main program prints Hello World concurrently, as shown in the following
+listing.
+0
+1
+Hello World
+2
+3
+4
+This printed output is a mix of two functions printing concurrently. The code to make
+this happen is similar to normal procedural programming, but with a small twist, as
+shown next.
+Listing 1.5
+Concurrent output
+A goroutine, a function executing
+concurrently to other functions,
+runs on a thread managed by the
+Go scheduler.
+Goroutines can be moved
+between operating system
+threads by the Go scheduler.
+If a thread is blocked—say, by an
+I/O bound task—other goroutines
+can be moved to other threads.
+Modern computing systems
+have processors with multiple
+cores, and in some cases
+multiple processors with
+multiple cores. Threads take
+advantage of this.
+Goroutine
+Goroutine
+Goroutine
+Goroutine
+Goroutine
+Goroutine
+Goroutine
+Goroutine
+Thread
+Thread
+Processing Core
+Processing Core
+Figure 1.2
+Goroutines running in threads distributed on the available processing cores

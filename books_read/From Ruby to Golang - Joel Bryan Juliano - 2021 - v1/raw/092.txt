@@ -1,0 +1,39 @@
+Package Management
+86
+Go modules requires your public package to be available remotely as a remote resource since turning
+on the environment variable means we will not rely on GOPATH. When using Go Modules, the API
+would need to be public and must be available online. In our previous example, we have our public
+package coffee, that we put in $GOHOME/src/local/coffee.go. We will create a repo with this file
+in Github as github.com/foo/coffee, then tag the release as version v0.0.1 and change the import
+declaration to point to the remote path.
+Going back to our menu.go example we put it in the ∼/code/menu folder. Then we need to create the
+go.mod file at the root of your project folder. There are two ways of creating this file, manually and
+automatically generate by source.
+Questions
+1. What have we learned?
+We learned how to create a Go modules and how to use it in a Go application.
+2. Why is Go Modules important?
+Go Modules is important because it allows us to create a public API for our package.
+3. How do we enable Go Modules?
+We enable Go Modules by setting the environment variable GO111MODULE to on.
+4. Do we need GOPATH when using Go Modules?
+No, we don’t need GOPATH when using Go Modules.
+5. What files do we need to create when using Go Modules?
+We need to create a go.mod file at the root of our project.
+Manual go.mod Generation
+We will first discuss how to manually create the go.mod file. In the terminal, we will be creating the
+go.mod file on the root of our ∼/code/menu directory.
+1
+$ cd ~/code/menu
+2
+3
+$ cat >go.mod <<EOF
+4
+module menu
+5
+6
+require github.com/foo/coffee v0.0.1
+7
+EOF
+Inside the go.mod we need to specify the required package with the version number. For multiple
+requires, you can use the require(...) statement. Versions can support pattern matching via

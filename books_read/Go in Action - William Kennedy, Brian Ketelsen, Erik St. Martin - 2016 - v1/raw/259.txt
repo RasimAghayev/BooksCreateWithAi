@@ -1,0 +1,100 @@
+238
+INDEX
+concurrency, patterns for (continued)
+runner package 158–166
+work package 177–183
+race conditions 139–142
+constants 23
+cookiejar package 40
+CSP (communicating sequential processes) 129
+curl program 102, 208–209
+D
+data feeds example program
+main package 11–13
+program architecture
+10–11
+RSS matcher 32–38
+search package
+default.go file 26–32
+feed.go file 22–26
+match.go file 26–32
+search.go file 14–22
+Decode method 25, 36
+decoding JSON 196–201
+default case 164
+defer keyword 25, 134, 151, 209
+delete function 85
+dependencies
+gb build tool and 54–56
+general discussion 52
+using godep tool 52–53
+distributed version control systems. See DVCS
+doc command 49
+documentation
+of code 50
+for standard library 185–186
+test examples in 228–232
+Done method 31
+duck typing 6
+Duration type 91
+DVCS (distributed version control systems) 42
+dynamic languages 3
+E
+empty slices 67–68
+encoding JSON 201–202
+endpoints, testing 223–228
+env package 97
+EOF (end of file) 204
+Errorf method 36, 216
+exporting identifiers 119–127
+F
+Fatal method 17, 215
+Fatalf method 215
+Fatalln method 190
+File type 100
+float32 type 88
+fmt package 36, 48, 103, 206
+for range statements 19, 31, 76, 219
+Fprintf function 103, 206
+func keyword 16, 92–93
+functions
+anonymous 20
+documenting 51
+passing arrays between 64–65
+passing maps between 86–87
+passing slices between 80–81
+G
+gb build tool 54–56
+get command 43
+Get function 102
+Go
+concurrency support
+channels 4–5
+goroutines 3–4
+overview 3
+development speed 3
+Hello, World! example 7–8
+memory management 7
+overview 1–2
+type system
+interface system 6–7
+overview 5–6
+simplicity of 6
+go command
+doc command 49
+fmt command 48
+godoc command 49–51
+overview 45–47
+running goroutines using 4
+vet command 47–48
+Go Playground 8
+godep tool 52–53
+godoc command
+example code from 228–232
+overview 49–51
+GOMAXPROCS function 137
+GOPATH environment variable 14, 42
+GOROOT environment variable 14
+$GOROOT variable 186
+goroutines
+concurrency using 132–139

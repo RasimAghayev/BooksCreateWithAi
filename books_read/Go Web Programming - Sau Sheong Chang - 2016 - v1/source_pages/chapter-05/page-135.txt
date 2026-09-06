@@ -1,0 +1,47 @@
+114
+CHAPTER 5
+Displaying content
+escaped; and so on. The Go template engine also recognizes content that’s part of a
+URL or is a CSS style. This listing demonstrates how this works.
+package main
+import (
+    "net/http"
+  "html/template"
+)
+func process(w http.ResponseWriter, r *http.Request) {  
+    t, _ := template.ParseFiles("tmpl.html")
+    content := `I asked: <i>"What's up?"</i>`
+    t.Execute(w, content)
+}
+func main() {
+    server := http.Server{
+        Addr: "127.0.0.1:8080",
+    }
+    http.HandleFunc("/process", process)
+    server.ListenAndServe()
+}
+For the handler, we’re going to send a text string I asked: <i>"What's up?"</i>.
+This string has a number of special characters that normally should be escaped
+beforehand. This listing contains the template file tmpl.html.
+<html>
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <title>Go Web Programming</title>
+  </head>
+  <body>
+    <div>{{ . }}</div>
+    <div><a href="/{{ . }}">Path</a></div>
+    <div><a href="/?q={{ . }}">Query</a></div>
+    <div><a onclick="f('{{ . }}')">Onclick</a></div>
+  </body>
+</html>
+As you can see, we’re placing it in various places within the HTML. The “control” text
+is within a normal <div> tag. When we run cURL to get the raw HTML (please refer to
+section 4.1.4), we get this:
+curl –i 127.0.0.1:8080/process
+HTTP/1.1 200 OK
+Date: Sat, 07 Feb 2015 05:42:41 GMT
+Listing 5.17
+Handler for context awareness in templates
+Listing 5.18
+Context-aware template

@@ -1,0 +1,33 @@
+40
+Lesson 4  Variable scope
+    switch month {
+    case 2:
+        daysInMonth = 28
+    case 4, 6, 9, 11:
+        daysInMonth = 30
+    }
+    day := rand.Intn(daysInMonth) + 1
+    fmt.Println(era, year, month, day)
+}
+Though a narrower scope often reduces the mental overhead, listing 4.6 demonstrates 
+that constraining variables too tightly can result in less readable code. Take it on a case-
+by-case basis, refactoring until you can’t improve the readability any further.   
+Summary
+An opening curly brace { introduces a new scope that ends with a closing brace }.
+The case  and default keywords also introduce a new scope even though no curly 
+braces are involved.
+The location where a variable is declared determines which scope it’s in.
+Not only is shortcut declaration shorter, you can take it places where var can’t go.
+Variables declared on the same line as a for, if, or switch are in scope until the end 
+of that statement.
+A wide scope is better than a narrow scope in some situations—and vice versa.
+Let’s see if you got this...
+Experiment: random-dates.go
+Modify listing 4.7 to handle leap years:
+Generate a random year instead of always using 2018.
+For February, assign daysInMonth to 29 for leap years and 28 for other years.
+Hint: you can put an if statement inside of a case block.
+Use a for loop to generate and display 10 random dates. 
+Quick check 4.3 What’s one way to recognize that variables are scoped too tightly?
+QC 4.3 answer If code is being duplicated due to where variables are declared.
+ 

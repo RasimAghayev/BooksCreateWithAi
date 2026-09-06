@@ -1,0 +1,45 @@
+105
+TECHNIQUE 21
+Trapping panics on goroutines
+To illustrate this idea, imagine that you have a simple server. The server functions as
+follows:
+The main function runs start to start a new server.
+The start function processes configuration data and then runs the listen
+function.
+The listen function opens a network port and listens for new requests. When
+it gets a request, instead of handling the request itself, it calls go handle, pass-
+ing on any necessary information to the handle function.
+The handle function processes the request and then calls response.
+The response function sends data back to the client and terminates the
+connection.
+The listener function uses goroutines to handle multiple client connections at once.
+As it receives requests, it can push the workload onto a number of handle functions,
+each running in its own space. Variations of this powerful pattern are used frequently
+in Go server applications. Figure 4.2 illustrates this application and its function stacks
+when you use goroutines.
+Each row represents a function stack, and each call to go starts a new function stack.
+Each time listen receives a new request, a new function stack is created for the ensu-
+ing handle instance. And whenever handle finishes (for example, when response
+returns), that spawned goroutine is cleaned up.
+ Goroutines are powerful and elegant. Because they’re both simple to write and
+cheap to use (they incur little overhead on your program), Go developers use them
+frequently. But in one specific (and unfortunately common) situation, the combina-
+tion of goroutines and panics can result in a program crash.
+TECHNIQUE 21
+Trapping panics on goroutines
+When handling a panic, the Go runtime unwinds the function stack until a recover
+occurs. But if it gets to the top of a function stack and recover is never called, the pro-
+gram dies. Recall figure 4.2, which showed how a goroutine gets its own function call
+stack. What happens when a panic occurs on that goroutine? Take a look at figure 4.3.
+Imagine that during a request, the response function encounters an unforeseen fatal
+error and panics. As a good server developer, you’ve added all kinds of error-handling
+logic to listen. But if you haven’t added anything to handle, the program will crash.
+Why? Because when a panic is unhandled at the top of a function stack, it causes Go to
+main()
+start()
+listen()
+handle()
+response()
+go handle()
+Figure 4.2
+A simple server

@@ -1,0 +1,53 @@
+70
+CHAPTER 4
+Processing requests
+ Both requests and responses have basically the same structure:
+1
+Request or response line
+2
+Zero or more headers
+3
+An empty line, followed by …
+4
+… an optional message body 
+Here’s an example of a GET request:
+GET /Protocols/rfc2616/rfc2616.html HTTP/1.1
+Host: www.w3.org
+User-Agent: Mozilla/5.0 
+(empty line)
+The net/http library provides structures for HTTP messages, and you need to know
+these structures to understand how to process requests and send responses. Let’s start
+with the request.
+4.1.1
+Request
+The Request struct represents an HTTP request message sent from the client. The rep-
+resentation isn’t literal because HTTP requests are only lines of text. The struct con-
+tains the parsed information that’s considered to be important, as well as a number of
+useful methods. Some important parts of Request are
+■
+URL
+■
+Header
+■
+Body
+■
+Form, PostForm, and MultipartForm 
+You can also get access to the cookies in the request and the referring URL and the user
+agent from methods in Request. Request can either be requests sent to the server, or
+requests sent from the client, when the net/http library is used as an HTTP client. 
+4.1.2
+Request URL
+The URL field of a Request is a representation of the URL that’s sent as part of the
+request line (the first line of the HTTP request). The URL field is a pointer to the
+url.URL type, which is a struct with a number of fields, as shown here. 
+type URL struct {
+    Scheme   string
+    Opaque   string    
+    User     *Userinfo 
+    Host     string    
+    Path     string
+    RawQuery string 
+    Fragment string 
+}
+Listing 4.1
+The URL struct

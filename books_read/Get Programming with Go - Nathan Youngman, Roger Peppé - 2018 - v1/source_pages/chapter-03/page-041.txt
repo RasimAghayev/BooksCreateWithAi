@@ -1,0 +1,40 @@
+26
+Lesson 3  Loops and branches
+The previous listing will produce this output:
+There is a sign near the entrance that reads 'No Minors'.
+At age 41, am I a minor? false
+NOTE JavaScript and PHP have a special threequals operator for strict equality. In those
+languages "1" == 1 is true (lax), but "1" === 1 is false (strict). Go only has a single equality
+operator, which doesn’t allow direct comparison of text with numbers. Lesson 10 demon-
+strates how to convert numbers to text and vice versa.   
+3.3
+Branching with if
+A computer can use Boolean values or comparisons to choose between different paths 
+with an if statement, as shown in the following listing.
+package main
+import "fmt"
+func main() {
+    var command = "go east"
+    if command == "go east" {
+         fmt.Println("You head further up the mountain.")
+    } else if command == "go inside" {
+         fmt.Println("You enter the cave where you live out the rest of your
+ ➥life.")
+    } else {
+         fmt.Println("Didn't quite get that.")
+    }
+}
+Listing 3.3 Branching: if.go
+Quick check 3.2 Which is greater, an “apple” or a “banana”?
+QC 3.2 answer The banana is clearly greater.
+fmt.Println("apple" > "banana")
+Prints false
+If command 
+is equal to 
+“go east”
+Otherwise, if 
+command is 
+equal to “go 
+inside”
+Or, if anything else
+ 

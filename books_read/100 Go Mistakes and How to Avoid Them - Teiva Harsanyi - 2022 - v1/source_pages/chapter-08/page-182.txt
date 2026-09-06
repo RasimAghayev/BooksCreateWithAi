@@ -1,0 +1,19 @@
+162
+Concurrency:
+Foundations
+In recent decades, CPU vendors have stopped focusing only on clock speed.
+Instead, modern CPUs are designed with multiple cores and hyperthreading (mul-
+tiple logical cores on the same physical core). Therefore, to leverage these architec-
+tures, concurrency has become critical for software developers. Even though Go
+provides simple primitives, this doesn’t necessarily mean that writing concurrent
+code has become easy. This chapter discusses fundamental concepts related to con-
+currency; chapter 9 will then focus on practice.
+This chapter covers
+Understanding concurrency and parallelism
+Why concurrency isn’t always faster
+The impacts of CPU-bound and I/O-bound 
+workloads
+Using channels vs. mutexes
+Understanding the differences between data 
+races and race conditions
+Working with Go contexts

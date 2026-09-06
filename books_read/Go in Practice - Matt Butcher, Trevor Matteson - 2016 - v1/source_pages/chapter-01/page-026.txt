@@ -1,0 +1,20 @@
+3
+Getting into Go
+The way we build and run software is changing. Innovation has swept in, disrupting
+long-standing assumptions about the computing environments that software runs
+in. To fully take advantage of these innovations, you need languages and tools that
+support them at their core.
+ When most mainstream programming languages and supporting toolchains
+were developed, they were designed for single-core processing. That’s what we had.
+Now desktop computers, servers, and even our phones have processors with multi-
+ple cores. Running software with operations taking place concurrently can happen
+anywhere.
+ Toolchains around building applications have changed. Increased functionality
+and complexity in software requires environments that can build and execute the
+code rapidly and efficiently. Testing larger and more complicated codebases needs
+to happen quickly so it doesn’t become a development blocker. Many applications
+This chapter covers
+Introducing Go
+Understanding where Go fits into the language 
+landscape
+Getting up and running in Go

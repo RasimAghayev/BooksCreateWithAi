@@ -1,0 +1,64 @@
+30
+CHAPTER 2
+Go quick-start
+first parameter. Only values or pointers that implement the Matcher interface will be
+accepted for this parameter. Since the defaultMatcher type now implements the
+interface declared with a value receiver, values or pointers of type defaultMatcher
+can be passed into this function. 
+ On line 23, the Search method is called from the Matcher type value that was
+passed into the function. Here the specific implementation of the Search method for
+the value assigned to the Matcher variable is executed. Once the Search method
+returns, the error value on line 24 is checked for an error. If there’s an error, the func-
+tion writes the error to the log and returns. If the search doesn’t return an error and
+there are results, the results are written to the channel so that they can be picked up
+by the main function that’s listening on that channel. 
+ The final piece of code in match.go is the Display function that’s called by the
+main function on line 56. This is the function preventing the program from terminat-
+ing until all the results from the search goroutines are received and logged.
+35 // Display writes results to the terminal window as they
+36 // are received by the individual goroutines.
+37 func Display(results chan *Result) {
+38
+// The channel blocks until a result is written to the channel.
+39
+// Once the channel is closed the for loop terminates.
+40
+for result := range results {
+41
+fmt.Printf("%s:\n%s\n\n", result.Field, result.Content)
+42
+}
+43 }
+A bit of channel magic allows this function to process all of the results before return-
+ing. It’s based on how channels and the keyword range behaves when a channel is
+closed. Let’s briefly look at the code in the Run function again that closes the results
+channel and calls the Display function.
+44
+// Launch a goroutine to monitor when all the work is done.
+45
+go func() {
+46
+// Wait for everything to be processed.
+47
+waitGroup.Wait()
+48
+49
+// Close the channel to signal to the Display
+50
+// function that we can exit the program.
+51
+close(results)
+52
+}()
+53
+54
+// Start displaying results as they are available and
+55
+// return after the final result is displayed.
+56
+Display(results)
+57 }
+Listing 2.40
+search/match.go: lines 35–43
+Listing 2.41
+search/search.go: lines 44–57

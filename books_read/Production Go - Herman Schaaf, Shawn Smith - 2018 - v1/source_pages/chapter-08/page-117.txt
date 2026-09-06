@@ -1,0 +1,84 @@
+Benchmarks
+111
+0x0087 00135 (fibonacci_bench_test.go:14)
+XORL
+DX, DX
+0x0089 00137 (fibonacci_bench_test.go:14)
+CMPQ
+DX, SI
+0x008c 00140 (fibonacci_bench_test.go:14)
+JCS 49
+0x008e 00142 (fibonacci_bench_test.go:14)
+JMP 154
+0x009a 00154 (fibonacci_bench_test.go:14)
+PCDATA
+$0, $1
+0x009a 00154 (fibonacci_bench_test.go:14)
+CALL
+runtime.panicindex(SB)
+0x009f 00159 (fibonacci_bench_test.go:14)
+UNDEF
+0x00a1 00161 (fibonacci_bench_test.go:14)
+PCDATA
+$0, $1
+0x00a1 00161 (fibonacci_bench_test.go:14)
+CALL
+runtime.panicdivide(S\
+B)
+0x00a6 00166 (fibonacci_bench_test.go:14)
+UNDEF
+0x00a8 00168 (fibonacci_bench_test.go:14)
+NOP
+The details of this output are not as important as it is to notice how many instructions there are.
+Now, let’s rewrite the code to use bitwise-and (&) instead of modulo %:
+12
+m := len(nums)-1
+13
+for n := 0; n < b.N; n++ {
+14
+FastF(nums[n&m])
+15
+}
+Now, the ASM code becomes:
+$ go tool compile -S fibonacci.go fibonacci_bench_test.go | grep "fibonacci_b\
+ench_test.go:14"
+0x0032 00050 (fibonacci_bench_test.go:14)
+MOVQ
+(BX)(DI*8), AX
+0x0036 00054 (fibonacci_bench_test.go:14)
+MOVQ
+AX, (SP)
+0x003a 00058 (fibonacci_bench_test.go:14)
+PCDATA
+$0, $0
+0x003a 00058 (fibonacci_bench_test.go:14)
+CALL
+"".F(SB)
+0x003f 00063 (fibonacci_bench_test.go:14)
+MOVQ
+"".n+16(SP), AX
+0x005e 00094 (fibonacci_bench_test.go:14)
+MOVQ
+"".numbers(SB), BX
+0x0065 00101 (fibonacci_bench_test.go:14)
+MOVQ
+"".numbers+8(SB), SI
+0x006c 00108 (fibonacci_bench_test.go:14)
+LEAQ
+-1(AX), DI
+0x0070 00112 (fibonacci_bench_test.go:14)
+ANDQ
+CX, DI
+0x0073 00115 (fibonacci_bench_test.go:14)
+CMPQ
+DI, SI
+0x0076 00118 (fibonacci_bench_test.go:14)
+JCS 45
+0x0078 00120 (fibonacci_bench_test.go:14)
+JMP 132
+0x0084 00132 (fibonacci_bench_test.go:14)
+PCDATA
+$0, $1
+0x0084 00132 (fibonacci_bench_test.go:14)
+CALL
+runtime.panicindex(SB)

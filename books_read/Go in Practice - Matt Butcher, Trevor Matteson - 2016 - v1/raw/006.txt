@@ -1,0 +1,54 @@
+v
+brief contents
+PART 1
+BACKGROUND AND FUNDAMENTALS ...............................1
+1
+■
+Getting into Go
+3
+2
+■
+A solid foundation
+27
+3
+■
+Concurrency in Go
+59
+PART 2
+WELL-ROUNDED APPLICATIONS....................................85
+4
+■
+Handling errors and panic
+87
+5
+■
+Debugging and testing
+113
+PART 3
+AN INTERFACE FOR YOUR APPLICATIONS ....................145
+6
+■
+HTML and email template patterns
+147
+7
+■
+Serving and receiving assets and forms
+168
+8
+■
+Working with web services
+194
+PART 4
+TAKING YOUR APPLICATIONS TO THE CLOUD .............215
+9
+■
+Using the cloud
+217
+10
+■
+Communication between cloud services
+235
+11
+■
+Reflection and code generation
+253

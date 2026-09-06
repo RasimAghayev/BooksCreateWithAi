@@ -1,0 +1,44 @@
+Метрики  393
+из трех режимов накопления. Все шесть методов имеют похожие сигнатуры. 
+Вот типичный пример:
+func (m Meter) NewInt64UpDownSumObserver(name string,
+    callback Int64ObserverFunc, opts ...InstrumentOption)
+    (Int64UpDownSumObserver, error)
+Как видите, NewInt64UpDownSumObserver  принимает имя метрики в виде стро-
+ки, нечто типа Int64ObserverFunc  и ноль или более параметров инструмента 
+(например, описание метрики). Этот метод возвращает экземпляр наблюда-
+теля, но на самом деле он используется довольно редко, хотя может вернуть 
+ошибку, отличную от nil, если передать пустое, уже зарегистрированное или 
+недействительное по иным причинам имя.
+Второй параметр – функция обратного вызова – является сердцем любого 
+асинхронного инструмента. Функции обратного вызова асинхронно вызы-
+ваются из SDK в процессе сбора данных. Есть два типа асинхронных функ -
+ций, по одному для int64  и float64 , но они выглядят и работают практически 
+одинаково:
+type Int64ObserverFunc func(context.Context, metric.Int64ObserverResult)
+При вызове из SDK функции обратного вызова получают текущий кон-
+текст context.Context  и metric.Float64ObserverResult  (для наблюдателей типа 
+float64 ) или metric.Int64ObserverResult  (для наблюдателей типа int64 ). Оба 
+типа результатов имеют метод Observe , который можно использовать для 
+вывода результатов.
+Здесь много мелких деталей, но они довольно легко сочетаются друг с дру -
+гом. Следующая функция делает именно это, определяя двух наблюдателей:
+func buildRuntimeObservers() {
+    meter := otel.GetMeterProvider().Meter(serviceName)
+    m := runtime.MemStats{}
+    meter.NewInt64UpDownSumObserver("memory_usage_bytes",
+        func(_ context.Context, result metric.Int64ObserverResult) {
+            runtime.ReadMemStats(&m)
+            result.Observe(int64(m.Sys), labels...)
+        },
+        metric.WithDescription("Amount of memory used."),
+    )
+    meter.NewInt64UpDownSumObserver("num_goroutines",
+        func(_ context.Context, result metric.Int64ObserverResult) {
+            result.Observe(int64(runtime.NumGoroutine()), labels...)
+        },
+        metric.WithDescription("Number of running goroutines."),
+    )
+}
+При вызове из main  функция buildRuntimeObservers  определяет два асин-
+хронных инструмента – memory_usage_bytes  и num_goroutines , – каждый с функ-

@@ -1,0 +1,59 @@
+52
+CHAPTER 2
+A solid foundation
+Wildcard or named sections to a path, a common feature or feature request for
+mapping systems, aren’t available.
+Virtually every handler function needs to check for paths outside their bounds
+and handle returning a Page Not Found message. For example, in listing 2.16
+the handler /goodbye/ will receive paths prepended with /goodbye. Anything
+returned by any path is handled here, so if you want to return a Page Not
+Found message for the path /goodbye/foo/bar/baz, that would need to be
+handled here.
+Using multiple handlers is useful for simple cases. Because it doesn’t require packages
+outside the http package, the external dependencies are kept to a minimum. If an
+application is going to move beyond simple use cases, one of the following techniques
+is likely to be a better fit.
+TECHNIQUE 7
+Handling complex paths with wildcards
+The previous technique is straightforward, but as you saw, it’s decidedly inflexible
+when it comes to path naming. You must list every single path that you expect to see.
+For larger applications or for applications that follow the REST recommendations, you
+need a more flexible solution.
+PROBLEM
+Instead of specifying exact paths for each callback, an application may need to sup-
+port wildcards or other simple patterns.
+SOLUTION
+Go provides the path package with functionality to work with slash-separated paths.
+This package isn’t directly designed to work with URL paths. Instead, it’s a generic
+package intended to work with paths of all sorts. In fact, it works well when coupled
+with an HTTP handler.
+DISCUSSION
+The following listing builds a router that uses path matching to map URL paths and
+HTTP methods to a handler function.
+package main
+import (
+     "fmt"
+     "net/http"
+     "path"
+     "strings"
+)
+func main() {
+     pr := newPathResolver()
+     pr.Add("GET /hello", hello)
+     pr.Add("* /goodbye/*", goodbye)
+     http.ListenAndServe(":8080", pr)
+}
+Listing 2.17
+Resolve URLs using path package: path_handlers.go
+Imports the path package 
+to handle URL matches
+Gets an instance of a 
+path-based router
+B
+Sets the HTTP server 
+to use your router
+D
+C
+Maps
+functions
+to paths

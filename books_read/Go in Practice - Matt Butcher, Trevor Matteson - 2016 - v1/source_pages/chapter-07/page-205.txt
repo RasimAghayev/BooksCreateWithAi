@@ -1,0 +1,52 @@
+182
+CHAPTER 7
+Serving and receiving assets and forms
+TECHNIQUE 44
+Accessing multiple values for a form field
+Form fields can have more than one value for a name. A common example is check
+boxes on a form. You can have a multiple select list using check boxes that, in the
+HTML, all have the same name.
+PROBLEM
+FormValue and PostFormValue each return the first value for a form field. When you
+have multiple values, how can you access all of them?
+SOLUTION
+Instead of using FormValue and PostFormValue to retrieve a field value, look up the
+field on the Form or PostForm properties on the Request object. Then iterate over all
+the values.
+DISCUSSION
+When a form field has more than one value, you’ll need to do a little more work to
+access it. The following listing shows how to parse a form and retrieve multiple values
+for a field.
+func exampleHandler(w http.ResponseWriter, r *http.Request) {
+     maxMemory := 16 << 20
+     err := r.ParseMultipartForm(maxMemory)
+     if err != nil {
+            fmt.Println(err)
+     }
+     for k, v := range r.PostForm["names"] {
+            fmt.Println(v)
+     }
+}
+The HTTP handler function opens by defining a number for the maximum amount of
+memory to use when parsing a multipart form. In this case, the number is 16 mega-
+bytes. When ParseMultipartForm is called, the maximum amount of memory for stor-
+ing file parts needs to be specified. Parts of files larger than this number will be stored
+to disk. The default number used when FormValue or PostFormValue needs to call
+ParseMultipartForm is 32 megabytes.
+ Instead of using FormValue or PostFormValue to obtain the first value for a form
+field, all the values of the names form field are iterated over. The names field on the
+PostForm property is used, limiting the values to just those submitted in the POST or
+PUT body.
+TIP
+When presenting forms to users and processing forms, use security ele-
+ments such as a cross-site request forgery (CSRF) token. For more informa-
+tion, see https://en.wikipedia.org/wiki/Cross-site_request_forgery.
+Listing 7.11
+Parsing a form with multiple values for a field
+The maximum memory to store file
+parts, where rest is stored to disk
+Parses a multipart form
+Handles any error 
+parsing the form
+Iterates over all the POST 
+values of the names form field

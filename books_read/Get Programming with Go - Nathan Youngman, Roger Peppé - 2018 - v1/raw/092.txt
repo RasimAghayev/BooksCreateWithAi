@@ -1,0 +1,34 @@
+77
+Summary
+question := "¿Cómo estás?"
+for i, c := range question {
+    fmt.Printf("%v %c\n", i, c)
+}
+On each iteration, the variables i and c are assigned to an index into the string and the 
+code point (rune) at that position.
+If you don’t need the index, the blank identifier (an underscore ) allows you to ignore it:
+for _, c := range question {
+    fmt.Printf("%c ", c)
+}   
+Summary
+Escape sequences like \n are ignored in raw string literals (`).
+Strings are immutable. Individual characters can be accessed but not altered.
+Strings use a variable length encoding called UTF-8, where each character con-
+sumes 1–4 bytes.
+A byte is an alias for the uint8 type, and rune is an alias for the int32 type.
+The range keyword can decode a UTF-8 encoded string into runes.
+Let’s see if you got this...
+Listing 9.9 Decoding runes: spanish-range.go
+Prints ¿ C ó m o   e s t á s ?
+Quick check 9.6 
+1
+How many runes are in the English alphabet "abcdefghijklmnopqrstuvwxyz"? How many 
+bytes?
+2
+How many bytes are in the rune '¿'?
+QC 9.6 answer 
+1
+There are 26 runes and 26 bytes in the English alphabet.
+2
+There are 2 bytes in the rune '¿'.
+ 

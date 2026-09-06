@@ -1,0 +1,10 @@
+xiii
+About the authors
+NATHAN YOUNGMAN is a self-taught web developer and lifelong 
+learner. He serves as organizer for the Edmonton Go meetup, 
+mentor with Canada Learning Code, and paparazzi of VIP gopher 
+plushies.
+ROGER PEPPÉ is a Go contributor, maintains a number of open 
+source Go projects, runs the Newcastle upon Tyne Go meetup, and 
+currently works on Go cloud infrastructure software.
+ 

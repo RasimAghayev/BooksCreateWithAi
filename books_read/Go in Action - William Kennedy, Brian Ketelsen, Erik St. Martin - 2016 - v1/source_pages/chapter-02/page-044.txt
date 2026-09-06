@@ -1,0 +1,50 @@
+23
+Search package
+ You may have noticed that to import the json package, we needed to specify a path
+that includes the encoding folder. Regardless of the path we specify, the name of the
+package is json. The physical location of the package from within the standard library
+doesn’t change this fact. As we access functionality from the json package, we’ll use
+just the name json. 
+ On line 08 we declare a constant named dataFile, which is assigned a string that
+specifies the relative path to the data file on disk. Since the Go compiler can deduce
+the type from the value on the right side of the assignment operator, specifying the
+type when declaring the constant is unnecessary. We also use a lowercase letter for the
+name of the constant, which means this constant is unexported and can only be
+directly accessed by code within the search package. 
+ Next let’s look at a portion of the data.json data file.
+[
+{
+"site" : "npr",
+"link" : "http://www.npr.org/rss/rss.php?id=1001",
+"type" : "rss"
+},
+{
+"site" : "cnn",
+"link" : "http://rss.cnn.com/rss/cnn_world.rss",
+"type" : "rss"
+},
+{
+"site" : "foxnews",
+"link" : "http://feeds.foxnews.com/foxnews/world?format=xml",
+"type" : "rss"
+},
+{
+"site" : "nbcnews",
+"link" : "http://feeds.nbcnews.com/feeds/topstories",
+"type" : "rss"
+}
+]
+The actual data file contains more than four data feeds, but listing 2.27 shows a valid
+version of the data file. The data file contains an array of JSON documents. Each docu-
+ment in the data file provides a name of the site we’re getting the data from, a link to
+the data, and the type of data we expect to receive. 
+ These documents need to be decoded into a slice of struct types so we can use this
+data in our program. Let’s look at the struct type that will be used to decode this data file.
+10 // Feed contains information we need to process a feed.
+11 type Feed struct {
+12
+Name string `json:"site"`
+Listing 2.27
+data.json
+Listing 2.28
+feed.go: lines 10–15

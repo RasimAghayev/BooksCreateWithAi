@@ -1,0 +1,44 @@
+Basics
+45
+Writing output
+1
+package main
+2
+3
+import (
+4
+"log"
+5
+"os"
+6
+)
+7
+8
+func main() {
+9
+langs := []string{"python", "php", "go"}
+10
+f, err := os.Create("langs.txt")
+11
+if err != nil {
+12
+log.Fatal(err)
+13
+}
+14
+defer f.Close()
+15
+for _, lang := range langs {
+16
+f.WriteString(lang + "\n")
+17
+}
+18
+}
+Running this code will give us the following content in a file called langs.txt:
+python
+php
+go
+Another utility function we could use is ioutil.WriteFile¹³ which will open the file and write our
+data in one function call.
+¹³https://golang.org/pkg/io/ioutil/#WriteFile

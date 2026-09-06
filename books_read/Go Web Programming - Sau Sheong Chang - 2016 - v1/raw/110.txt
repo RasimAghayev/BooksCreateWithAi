@@ -1,0 +1,30 @@
+89
+Cookies 
+    http.HandleFunc("/set_cookie", setCookie)
+    server.ListenAndServe()
+}
+You use the Set method to add the first cookie and then the Add method to add a sec-
+ond cookie. Go to http://127.0.0.1:8080/set_cookie in your browser, and then inspect
+the list of cookies set on the browser. (In figure 4.3 I’m using Web Inspector in Safari,
+but any corresponding tool on other browsers should show the same thing.)
+ Go provides a simpler shortcut to setting the cookie: using the SetCookie function
+in the net/http library. Taking the example from listing 4.13, let’s make a change
+(shown in bold in the following listing) to the response header.
+func setCookie(w http.ResponseWriter, r *http.Request) {
+    c1 := http.Cookie{
+        Name:     "first_cookie",
+        Value:    "Go Web Programming",
+        HttpOnly: true,
+    }
+    c2 := http.Cookie{
+        Name:     "second_cookie",
+        Value:    "Manning Publications Co",
+        HttpOnly: true,
+    }
+    http.SetCookie(w, &c1)
+    http.SetCookie(w, &c2)
+}
+Listing 4.14
+Sending cookies to the browser using SetCookie
+Figure 4.3
+Viewing cookies on Web Inspector (Safari)

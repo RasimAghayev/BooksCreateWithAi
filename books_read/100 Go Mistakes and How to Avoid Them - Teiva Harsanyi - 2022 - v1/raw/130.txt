@@ -1,0 +1,55 @@
+110
+CHAPTER 4
+Control structures
+Breaking the wrong statement can also occur with a select inside a loop. In the fol-
+lowing code, we want to use select with two cases and break the loop if the context
+cancels:
+for {
+select {
+case <-ch:
+// Do something
+case <-ctx.Done():
+break
+}
+}
+Here the innermost for, switch, or select statement is the select statement, not the
+for loop. So, the loop repeats. Again, to break the loop itself, we can use a label:
+loop:
+for {
+select {
+case <-ch:
+// Do something
+case <-ctx.Done():
+break loop
+}
+}
+Now, as expected, the break statement breaks the loop, not select.
+NOTE
+We can also use continue with a label to go to the next iteration of the
+labeled loop.
+We should remain cautious while using a switch or select statement inside a loop.
+When using break, we should always make sure we know which statement it will affect.
+As we have seen, using labels is the idiomatic solution to enforce breaking a specific
+statement.
+ In the last section of this chapter, we keep discussing loops, but this time in con-
+junction with the defer keyword. 
+4.6
+#35: Using defer inside a loop
+The defer statement delays a call’s execution until the surrounding function returns.
+It’s mainly used to reduce boilerplate code. For example, if a resource has to be closed
+eventually, we can use defer to avoid repeating the closure calls before every single
+return. However, one common mistake is to be unaware of the consequences of using
+defer inside a loop. Let’s look into this problem.
+ We will implement a function that opens a set of files where the file paths are
+received via a channel. Hence, we have to iterate over this channel, open the files, and
+handle the closure. Here’s our first version:
+func readFiles(ch <-chan string) error {
+for path := range ch {
+Breaks if the 
+context cancels
+Defines a 
+loop label
+Terminates the loop attached to 
+the loop label, not the select
+Iterates over 
+the channel

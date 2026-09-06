@@ -1,0 +1,80 @@
+77
+Slice internals and fundamentals
+Output:
+Index: 0
+Value: 10
+Index: 1
+Value: 20
+Index: 2
+Value: 30
+Index: 3
+Value: 40
+The keyword range, when iterating over a slice, will return two values. The first value
+is the index position and the second value is a copy of the value in that index position
+(see figure 4.19). 
+It’s important to know that range is making a copy of the value, not returning a refer-
+ence. If you use the address of the value variable as a pointer to each element, you’ll
+be making a mistake. Let’s see why.
+// Create a slice of integers.
+// Contains a length and capacity of 4 elements.
+slice := []int{10, 20, 30, 40}
+// Iterate over each element and display the value and addresses.
+for index, value := range slice {
+fmt.Printf("Value: %d
+Value-Addr: %X
+ElemAddr: %X\n",
+value, &value, &slice[index])
+}
+Output:
+Value: 10
+Value-Addr: 10500168
+ElemAddr: 1052E100
+Value: 20
+Value-Addr: 10500168
+ElemAddr: 1052E104
+Value: 30
+Value-Addr: 10500168
+ElemAddr: 1052E108
+Value: 40
+Value-Addr: 10500168
+ElemAddr: 1052E10C
+Listing 4.39
+range provides a copy of each element
+10
+[ 0 ]
+20
+[ 1 ]
+30
+[ 2 ]
+40
+[ 3 ]
+Copy
+Copy
+Copy
+Copy
+slice := []int{10, 20, 30, 40}
+for index, value := range slice {
+0
+Index
+10
+Value
+1
+Index
+20
+Value
+2
+Index
+30
+Value
+3
+Index
+40
+Value
+addr
+Pointer
+4
+Length
+4
+Capacity
+Figure 4.19
+Using range to iterate over a slice creates a copy of each element.

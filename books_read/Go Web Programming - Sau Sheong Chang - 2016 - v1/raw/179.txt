@@ -1,0 +1,48 @@
+158
+CHAPTER 7
+Go web services
+ In this chapter we’ll focus more on REST-based web services, but you should under-
+stand how SOAP-based web services work for comparison purposes.
+SOAP places its message content into an envelope, like a shipping container, and
+it’s independent of the actual means of transporting the data from one place to
+another. In this book, we’re only looking at SOAP web services, so we’re referring to
+SOAP messages being moved around using HTTP.
+ Here’s a simplified example of a SOAP request message:
+POST /GetComment HTTP/1.1
+Host: www.chitchat.com
+Content-Type: application/soap+xml; charset=utf-8
+<?xml version="1.0"?>
+<soap:Envelope
+xmlns:soap="http://www.w3.org/2001/12/soap-envelope"
+soap:encodingStyle="http://www.w3.org/2001/12/soap-encoding">
+<soap:Body xmlns:m="http://www.chitchat.com/forum">
+  <m:GetCommentRequest>
+    <m:CommentId>123</m:CommentId>
+  </m:GetCommentRequest >
+</soap:Body>
+</soap:Envelope>
+The HTTP headers should be familiar by now. Note Content-Type is set to
+application/soap+xml. The request body is the SOAP message. The SOAP body con-
+tains the request message. In the example, this is a request for a comment with the ID 123.
+<m:GetCommentRequest>
+  <m:CommentId>123</m:CommentId>
+</m:GetCommentRequest >
+This example is simplified—the actual SOAP requests are often a lot more complex.
+Here’s a simplified example of a SOAP response message:
+HTTP/1.1 200 OK
+Content-Type: application/soap+xml; charset=utf-8
+<?xml version="1.0"?>
+<soap:Envelope
+xmlns:soap="http://www.w3.org/2001/12/soap-envelope"
+soap:encodingStyle="http://www.w3.org/2001/12/soap-encoding">
+<soap:Body xmlns:m="http://www.example.org/stock">
+  <m:GetCommentResponse>
+    <m:Text>Hello World!</m:Text>
+  </m:GetCommentResponse>
+</soap:Body>
+</soap:Envelope>
+As before, the response message is within the SOAP body and is a response with the
+text “Hello World!”
+<m:GetCommentResponse>
+  <m:Text>Hello World!</m:Text>
+</m:GetCommentResponse>

@@ -1,0 +1,50 @@
+32
+CHAPTER 2
+Code and project organization
+of Go as a typed language. Indeed, checking whether a type is supported is done at
+run time instead of compile time. Hence, we also need to return an error if the pro-
+vided type is unknown. Finally, because the key type can be either int or string, we
+are obliged to return a slice of any type to factor out key types. This approach
+increases the effort on the caller side because the client may also need to perform a
+type check of the keys or an extra conversion. Thanks to generics, we can now refactor
+this code using type parameters.
+ Type parameters are generic types that we can use with functions and types. For
+example, the following function accepts a type parameter:
+func foo[T any](t T) {
+// ...
+}
+When calling foo, we pass a type argument of any type. Supplying a type argument is
+called instantiation, and the work is done at compile time. This keeps type safety as
+part of the core language features and avoids run-time overhead.
+ Let’s get back to the getKeys function and use type parameters to write a generic
+version that would accept any kind of map:
+func getKeys[K comparable, V any](m map[K]V) []K {
+var keys []K
+for k := range m {
+keys = append(keys, k)
+}
+return keys
+}
+To handle the map, we define two kinds of type parameters. First, the values can be of
+the any type: V any. However, in Go, the map keys can’t be of the any type. For exam-
+ple, we cannot use slices:
+var m map[[]byte]int
+This code leads to a compilation error: invalid map key type []byte. Therefore,
+instead of accepting any key type, we are obliged to restrict type arguments so that the
+key type meets specific requirements. Here, the requirement is that the key type must
+be comparable (we can use == or !=). Hence, we defined K as comparable instead
+of any.
+ Restricting type arguments to match specific requirements is called a constraint. A
+constraint is an interface type that can contain
+A set of behaviors (methods)
+Arbitrary types
+Let’s check out a concrete example for the latter. Imagine we don’t want to accept any
+comparable type for the map key type. For instance, we want to restrict it to either int
+or string types. We can define a custom constraint this way:
+T is a type 
+parameter.
+The keys are comparable, 
+whereas values are of the 
+any type.
+Creates the 
+keys slice

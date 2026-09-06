@@ -1,0 +1,47 @@
+238
+CHAPTER 9
+Leveraging Go concurrency
+and it blocks. At this point you have received from both goroutines, so all goroutines are
+blocked and asleep, and therefore deadlocked, and the runtime will panic.
+ So how can you prevent a deadlock? select can have a default case that will be
+called when all channels in the select are blocked (the code is shown in bold):
+select {
+case msg := <-a:
+fmt.Printf("%s from A\n", msg)
+case msg := <-b:
+  fmt.Printf("%s from B\n", msg)
+default:
+  fmt.Println("Default")      
+}
+If neither channel is available when the select is executed, Go will run the default
+block. In the preceding code, both channels will be blocked once the messages are
+received, so the default will be executed until the loop ends. If you run this now,
+though, it’ll show only the defaults, because the select is called too quickly and the
+loop ends before any channels can be received properly. You’ll have to add a one-
+microsecond delay just before each time select is called (the code appears in bold):
+for i := 0; i < 5; i++ {
+  time.Sleep(1 * time.Microsecond)
+  select {
+  case msg := <-a:
+    fmt.Printf("%s from A\n", msg)
+  case msg := <-b:
+    fmt.Printf("%s from B\n", msg)
+  default:
+    fmt.Println("Default")
+  }
+}
+If you run this program now, the deadlock is now gone:
+Hello World! from A
+Hola Mundo! from B
+Default
+Default
+Default
+As you can see, after both channels are received, they’re blocked and the default
+block is run. 
+ It might seem odd that I’m asking you to add in a time delay. This is because I want
+to show you how select is used—in most cases you’ll want to loop indefinitely. In that
+case, there’s a different problem. After both channels block, the program will call
+default indefinitely. You could escape by breaking out of the for loop by counting
+the number of times the default is called. But there’s a better way of doing this.
+ Channels can be closed using the close built-in function. Closing a channel indi-
+cates to the receiver that no more values will be sent to the channel. You can’t close a

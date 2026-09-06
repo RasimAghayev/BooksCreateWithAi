@@ -1,0 +1,10 @@
+Summary
+As with any fully rounded web application framework, the developer should
+have the ability to serve static and dynamic assets. With Echo, you have the
+ability to serve static content with the Static Echo instance method, as well as the
+ability to serve individual files with the File Echo instance method.
+Often, it is not enough merely to serve static content. Echo also provides the
+ability to serve dynamic templates, which can be populated with dynamic data,
+as shown in this chapter. Within this chapter, we have shown not only how to
+render dynamic data from templates, but also how to call back into Echo from
+within the templates themselves.

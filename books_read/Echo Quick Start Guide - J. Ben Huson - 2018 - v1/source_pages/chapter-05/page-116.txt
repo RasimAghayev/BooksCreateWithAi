@@ -1,0 +1,35 @@
+Request binding
+Within the context interface in the Echo framework, there is a method called
+Bind, which will perform request payload binding. The following is the definition
+of the function:
+// Bind binds the request body into provided type `i`. The default binder
+    // does it based on Content-Type header.
+    Bind(i interface{}) error
+In essence, the Context.Bind function takes the payload and Content-Type header
+from the HTTP request, and converts it into any structure defined by the passed
+in i interface{} function parameter. This is a very handy feature of the web
+application framework as it removes a lot of the coding required by the
+developer to interpret the request payload themselves. Instead of having to
+perform deserialization of the HTTP request body yourself, Echo will perform
+this for you. The following is an example handler that uses the Bind function call,
+which is located at $GOPATH/src/github.com/PacktPublishing/Echo-
+Essentials/chapter5/handlers/login.go:
+func Login(c echo.Context) error {
+        resp := renderings.LoginResponse{}
+        lr := new(bindings.LoginRequest)
+        if err := c.Bind(lr); err != nil {
+                resp.Success = false
+                resp.Message = "Unable to bind request for login"
+                return c.JSON(http.StatusBadRequest, resp)
+        }
+        // ...
+As you can see in the preceding example, we are creating a new
+*bindings.LoginRequest in our project's $GOPATH/src/github.com/PacktPublishing/Echo-
+Essentials/chapter5/handlers/login.go file, which is the object we want to deserialize
+from the request payload. The following is the structure of
+$GOPATH/src/github.com/PacktPublishing/Echo-Essentials/chapter5/bindings/login.go:
+type LoginRequest struct {
+        Username string `json:"username"`
+        Password string `json:"password"`
+}
+The bindings.LoginRequest structure is comprised of two attributes, a Username and a

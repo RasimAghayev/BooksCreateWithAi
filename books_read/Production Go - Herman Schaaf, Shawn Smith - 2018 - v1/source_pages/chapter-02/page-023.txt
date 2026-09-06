@@ -1,0 +1,53 @@
+Basics
+17
+1
+x := complex(1.0, 2.0)
+2
+fmt.Println(x)
+1
+(1+2i)
+There are built-in functions to extract the real and imaginary parts of a complex number:
+1
+x := complex(1.0, 2.0)
+2
+fmt.Println(real(x))
+3
+fmt.Println(imag(x))
+1
+1
+2
+2
+You can express an imaginary literal by appending i to a decimal of float literal:
+1
+fmt.Println(1.3i)
+1
+(0+1.3i)
+Structs
+A struct is a collection of fields, which can be declared with the type keyword:
+Struct example
+1
+package main
+2
+3
+import "fmt"
+4
+5
+type Person struct {
+6
+Name
+string
+7
+Email string
+8
+}
+9
+10
+func main() {
+11
+p := Person{"Robert", "robert@example.com"}
+12
+13
+fmt.Println(p.Name)
+14
+}
+Struct fields are accessed with a dot, so our above example should print:

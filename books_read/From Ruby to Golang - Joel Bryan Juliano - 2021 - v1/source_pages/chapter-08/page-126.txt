@@ -1,0 +1,49 @@
+Glossary
+120
+Common
+Mutual; shared by more than one
+Community
+A group sharing a common
+understanding, and often the same
+language, law, manners, and/or tradition
+Comparable
+Able to be compared (to). Comparative,
+in grammar, a word that denotes the
+degree by which an entity has a property
+greater or less in extent than another
+Comparison (computing)
+The act of comparing or the state or
+process of being compared
+Compiler
+A compiler is a computer program that
+translates computer code written in one
+programming language (the source
+language) into another language (the
+target language).
+Complete
+To finish; to make done; to reach the end
+Complexities
+plural of complexity
+Complexity
+The state of being complex; intricacy;
+entanglement
+Complex
+Made up of multiple parts; composite;
+not simple
+Component
+A smaller, self-contained part of a larger
+entity. Often refers to a manufactured
+object that is part of a larger device
+Concept (generic)
+abstract and general idea; an abstraction
+Concepts
+Concepts are defined as abstract ideas or
+general notions that occur in the mind,
+in speech, or in thought.
+Concurrency (computer science)
+the property of program, algorithm, or
+problem decomposition into
+order-independent or partially-ordered
+units. In concurrent computing, the
+overlapping execution of multiple
+interacting computational task

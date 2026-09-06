@@ -1,0 +1,71 @@
+172
+CHAPTER 7
+Concurrency patterns
+100
+// Close the resources
+101
+for r := range p.resources {
+102
+r.Close()
+103
+}
+104 }
+Once the program is finished with the pool, it should call the Close method. The code
+for the Close method is shown in listing 7.19. The method closes and flushes the buff-
+ered channel on lines 98 and 101, closing any resources that exist until the channel is
+empty. All the code in this method must be executed by only one goroutine at a time.
+In fact, when this code is being executed, goroutines must also be prevented from exe-
+cuting code in the Release method. You’ll understand why this is important soon. 
+ On lines 85 and 86, the mutex is locked and then scheduled to be unlocked when
+the function returns. On line 89 the closed flag is checked to see if the pool is already
+closed. If it is, the method returns immediately, which releases the lock. If this is the
+first time the method is called, then the flag is set to true and the resources channel
+is closed and flushed. 
+ Now we can look at the Release method and see how it works in coordination with
+the Close method.
+58 // Release places a new resource onto the pool.
+59 func (p *Pool) Release(r io.Closer) {
+60
+// Secure this operation with the Close operation.
+61
+p.m.Lock()
+62
+defer p.m.Unlock()
+63
+64
+// If the pool is closed, discard the resource.
+65
+if p.closed {
+66
+r.Close()
+67
+return
+68
+}
+69
+70
+select {
+71
+// Attempt to place the new resource on the queue.
+72
+case p.resources <- r:
+73
+log.Println("Release:", "In Queue")
+74
+75
+// If the queue is already at capacity we close the resource.
+76
+default:
+77
+log.Println("Release:", "Closing")
+78
+r.Close()
+79
+}
+80 }
+The implementation of the Release method can be found in listing 7.20. The method
+starts out with the locking and unlocking of a mutex on lines 61 and 62. This is the
+same mutex as in the Close method. This is how both methods are prevented from
+being run at the same time by different goroutines. The use of the mutex serves two
+Listing 7.20
+pool/pool.go: lines 58–80

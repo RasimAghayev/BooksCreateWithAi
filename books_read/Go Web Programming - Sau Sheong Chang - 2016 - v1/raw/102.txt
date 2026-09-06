@@ -1,0 +1,47 @@
+81
+HTML forms and Go
+    fileHeader := r.MultipartForm.File["uploaded"][0]
+    file, err := fileHeader.Open()
+    if err == nil {
+        data, err := ioutil.ReadAll(file)
+        if err == nil {
+            fmt.Fprintln(w, string(data))
+        }
+    }
+}
+func main() {
+    server := http.Server{
+        Addr: "127.0.0.1:8080",
+    }
+    http.HandleFunc("/process", process)
+    server.ListenAndServe()
+}
+As mentioned earlier, you need to call the ParseMultipartForm method first. After that
+you get a FileHeader from the File field of the MultipartForm field and call its Open
+method to get the file. If you upload a text file and send it across to the server, the han-
+dler will get the file, read it into a byte array, and then print it out to the browser.
+ As with the FormValue and PostFormValue methods, there’s a shorter way of get-
+ting an uploaded file using the FormFile method, shown in the following listing. The
+FormFile method returns the first value given the key, so this approach is normally
+faster if you have only one file to be uploaded.
+func process(w http.ResponseWriter, r *http.Request) {
+    file, _, err := r.FormFile("uploaded")
+    if err == nil {
+        data, err := ioutil.ReadAll(file)
+        if err == nil {
+            fmt.Fprintln(w, string(data))
+        }
+    }
+}
+As you can see, you no longer have to call the ParseMultipartForm method, and the
+FormFile method returns both the file and the file header at the same time. You sim-
+ply need to process the file that’s returned.
+4.2.5
+Processing POST requests with JSON body
+So far in our discussion we’ve focused on name-value pairs in the request body. This is
+because we’ve been focusing on HTML forms only. But not all POST requests will come
+from HTML forms. Sending POST requests is increasingly common with client libraries
+such as JQuery as well as client-side frameworks such as Angular or Ember, or even the
+older Adobe Flash or Microsoft Silverlight technologies.
+Listing 4.7
+Retrieving uploaded files using FormFile

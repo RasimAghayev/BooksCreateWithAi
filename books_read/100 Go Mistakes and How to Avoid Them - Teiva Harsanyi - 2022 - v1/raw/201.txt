@@ -1,0 +1,59 @@
+181
+8.5
+#59: Not understanding the concurrency impacts of a workload type
+Now, let’s change the channel to an unbuffered one to illustrate the memory
+model guarantee:
+i := 0
+ch := make(chan struct{})
+go func() {
+i = 1
+<-ch
+}()
+ch <- struct{}{}
+fmt.Println(i)
+Changing the channel type makes this example
+data-race-free (see figure 8.10). Here we can
+see the main difference: the write is guaranteed
+to happen before the read. Note that the
+arrows don’t represent causality (of course, a
+receive is caused by a send); they represent the
+ordering guarantees of the Go memory model.
+Because a receive from an unbuffered channel
+happens before a send, the write to i will always
+occur before the read.
+Throughout this section, we have covered the main guarantees of the Go memory
+model. Understanding these guarantees should be part of our core knowledge when
+writing concurrent code and can prevent us from making wrong assumptions that can
+lead to data races and/or race conditions.
+ The following section discusses why it’s important to understand a workload type. 
+8.5
+#59: Not understanding the concurrency impacts of a 
+workload type
+This section looks at the impacts of a workload type in a concurrent implementation.
+Depending on whether a workload is CPU- or I/O-bound, we may need to tackle the
+problem differently. Let’s first define these concepts and then discuss the impacts.
+ In programming, the execution time of a workload is limited by one of the
+following:
+The speed of the CPU—For example, running a merge sort algorithm. The work-
+load is called CPU-bound.
+The speed of I/O—For example, making a REST call or a database query. The
+workload is called I/O-bound.
+The amount of available memory—The workload is called memory-bound.
+NOTE
+The last is the rarest nowadays, given that memory has become very
+cheap in recent decades. Hence, this section focuses on the two first workload
+types: CPU- and I/O-bound.
+Makes the channel 
+unbuffered
+Send
+Goroutine 1
+Read i 
+go
+Receive
+Goroutine 2
+Write i 
+Goroutine created
+Figure 8.10
+If the channel is 
+unbuffered, it doesn’t lead to a 
+data race.

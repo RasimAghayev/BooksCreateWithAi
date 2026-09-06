@@ -1,0 +1,47 @@
+207
+9.6
+#66: Not using nil channels
+case v := <-ch1:
+ch <- v
+case v := <-ch2:
+ch <- v
+}
+}
+close(ch)
+}()
+return ch
+}
+The select statement lets a goroutine wait on multiple operations at the same time.
+Because we wrap it inside a for loop, we should repeatedly receive messages from one
+or the other channel, correct? But does this code even work?
+ One problem is that the close(ch) statement is unreachable. Looping over a
+channel using the range operator breaks when the channel is closed. However, the
+way we implemented a for/select doesn’t catch when either ch1 or ch2 is closed.
+Even worse, if at some point ch1 or ch2 is closed, here’s what a receiver of the merged
+channel will receive when logging the value:
+received: 0
+received: 0
+received: 0
+received: 0
+received: 0
+...
+So a receiver will repeatedly receive an integer equal to zero. Why? Receiving from a
+closed channel is a non-blocking operation:
+ch1 := make(chan int)
+close(ch1)
+fmt.Print(<-ch1, <-ch1)
+Whereas we may expect this code to either panic or block, instead it runs and prints
+0 0. What we catch here is the closure event, not an actual message. To check whether
+we receive a message or a closure signal, we must do it this way:
+ch1 := make(chan int)
+close(ch1)
+v, open := <-ch1
+fmt.Print(v, open)
+Using the open Boolean, we can now see whether ch1 is still open:
+0 false
+Meanwhile, we also assign 0 to v because it’s the zero value of an integer.
+ Let’s get back to our second solution. We said that it doesn’t work very well if ch1 is
+closed; for example, because the select case is case v := <-ch1, we will keep enter-
+ing this case and publishing a zero integer to the merged channel.
+Assigns to open whether 
+or not the channel is open

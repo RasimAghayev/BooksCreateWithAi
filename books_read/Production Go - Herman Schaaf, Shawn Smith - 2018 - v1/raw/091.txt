@@ -1,0 +1,59 @@
+Testing
+85
+A table-driven test in prime_test.go that tests a function called IsPrime
+1
+package main
+2
+3
+import "testing"
+4
+5
+// TestIsPrime tests that the IsPrime function
+6
+// returns true when the input is prime, and false
+7
+// otherwise.
+8
+func TestIsPrimeTD(t *testing.T) {
+9
+cases := []struct {
+10
+give int
+11
+want bool
+12
+}{
+13
+{19, true},
+14
+{21, false},
+15
+{10007, true},
+16
+{1, false},
+17
+{0, false},
+18
+{-1, false},
+19
+}
+20
+21
+for _, c := range cases {
+22
+got := IsPrime(c.give)
+23
+if got != c.want {
+24
+t.Errorf("IsPrime(%d) = %t, want %t", c.give, got, c.want)
+25
+}
+26
+}
+27
+}
+In the refactored test, we use a slice of an anomymous struct to define all the inputs we want to test.
+We then loop over each test case, and check that the output matches what we want. This is much
+cleaner than before, and it only took a few keystrokes to add more test cases into the mix. We now
+also check some edge cases: inputs of 0, 1, 10007, and negative inputs. Let’s run the test again and
+check that it still passes:

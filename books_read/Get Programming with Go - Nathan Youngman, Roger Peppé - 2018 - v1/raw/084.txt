@@ -1,0 +1,32 @@
+69
+Declaring string variables
+9.1
+Declaring string variables
+Literal values wrapped in quotes are inferred to be of the type string, so the following 
+three lines are equivalent:
+peace := "peace"
+var peace = "peace"
+var peace string = "peace"
+If you declare a variable without providing a value, it will be initialized with the zero 
+value for its type. The zero value  for the string type is an empty string (""):
+var blank string
+9.1.1
+Raw string literals
+String literals may contain escape sequences, such as the \n mentioned in lesson 2. To 
+avoid substituting \n for a new line, you can wrap text in backticks (`) instead of quotes 
+("), as shown in the following listing. Backticks indicate a raw string literal.
+fmt.Println("peace be upon you\nupon you be peace")
+fmt.Println(`strings can span multiple lines with the \n escape sequence`)
+The previous listing displays this output:
+peace be upon you
+upon you be peace
+strings can span multiple lines with the \n escape sequence
+Listing 9.1 Raw string literals: raw.go
+Consider this You know computers represent numbers with 1s and 0s. If you were a
+computer, how would you represent the alphabet and human language?
+If you said with numbers, you’re right. Characters of the alphabet have numeric values,
+which means you can manipulate them like numbers.
+It’s not entirely straightforward, though. The characters from every written language
+and countless emoji add up to thousands of characters. There are some tricks to rep-
+resenting text in a space-efficient and flexible manner.
+ 

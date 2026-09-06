@@ -1,0 +1,72 @@
+125
+Exporting and unexporting identifiers
+ 
+01 // Sample program to show how unexported fields from an exported
+02 // struct type can't be accessed directly.
+03 package main
+04
+05 import (
+06
+"fmt"
+07
+08
+"github.com/goinaction/code/chapter5/listing71/entities"
+09 )
+10
+11 // main is the entry point for the application.
+12 func main() {
+13
+// Create a value of type User from the entities package.
+14
+u := entities.User{
+15
+Name:
+"Bill",
+16
+email: "bill@email.com",
+17
+}
+18
+19
+// ./example71.go:16: unknown entities.User field 'email' in
+20
+//
+struct literal
+21
+22
+fmt.Printf("User: %v\n", u)
+23 }
+The entities package is imported on line 08 in listing 5.73. On line 14 a variable
+named u of the exported type User from the entities package is declared and its
+fields initialized. But there’s a problem. On line 16 the code attempts to initialize the
+unexported field email, and the compiler complains the field is unknown. That iden-
+tifier can’t be accessed outside the entities package, since it has been unexported. 
+ Let’s look at one final example to show how the exporting and unexporting of
+embedded types work.
+entities/entities.go
+-----------------------------------------------------------------------
+01 // Package entities contains support for types of
+02 // people in the system.
+03 package entities
+04
+05 // user defines a user in the program.
+06 type user struct {
+07
+Name
+string
+08
+Email string
+09 }
+10
+11 // Admin defines an admin in the program.
+12 type Admin struct {
+13
+user
+// The embedded type is unexported.
+14
+Rights int
+15 }
+Listing 5.73
+listing71.go
+Listing 5.74
+listing74/

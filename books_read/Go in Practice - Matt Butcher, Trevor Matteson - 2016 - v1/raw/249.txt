@@ -1,0 +1,59 @@
+226
+CHAPTER 9
+Using the cloud
+DISCUSSION
+Continuing the examples from technique 56, the following listing defines several
+common errors to go along with the interface.
+var (
+     ErrFileNotFound   = errors.New("File not found")
+     ErrCannotLoadFile = errors.New("Unable to load file")
+     ErrCannotSaveFile = errors.New("Unable to save file")
+)
+By defining the errors as variables that are exported by the package, they can be used
+in comparisons. For example:
+if err == ErrFileNotFound {
+fmt.Println("Cannot find the file")
+}
+To illustrate using these errors in implementations of an interface, the following list-
+ing rewrites the Load method from listing 9.2 to use these errors.
+func (l LocalFile) Load(path string) (io.ReadCloser, error) {
+     p := filepath.Join(l.Base, path)
+     var oerr error
+     o, err := os.Open(p)
+     if err != nil && os.IsNotExist(err) {
+            log.Printf("Unable to find %s", path)
+            oerr = ErrFileNotFound
+     } else if err != nil {
+            log.Printf("Error loading file %s, err: %s", path, err)
+            oerr = ErrCannotLoadFile
+     }
+     return o, oerr
+}
+Logging the original error is important. If a problem occurs when connecting to the
+remote system, that problem needs to be logged. A monitoring system can catch
+errors communicating with external systems and raise alerts so you have an opportu-
+nity to remediate the problems.
+ By logging the original error and returning a common error, the implementation
+error can be caught and handled, if necessary. The code calling this method can know
+how to act on returned errors without knowing about the implementation.
+Listing 9.4
+Errors to go with cloud functionality interface
+Listing 9.5
+Adding errors to file load method
+Three package-
+exported errors 
+to go along with 
+the interface in 
+listing 9.1
+A variable to store the returned 
+error. It defaults to nil.
+When a file isn’t found, handles the
+error to return the File Not Found error
+Logs the original error 
+so it’s not lost
+Handles errors other
+than files not being found
+with a similar pattern
+Returns the package 
+error, if there is one, 
+along with the file

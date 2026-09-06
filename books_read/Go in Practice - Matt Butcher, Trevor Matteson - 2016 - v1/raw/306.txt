@@ -1,0 +1,160 @@
+283
+INDEX
+exampledata directory 65
+ExecuteTemplate 158, 164
+Extensible Markup Language. 
+See XML
+external packages 14
+F
+FastCGI server 169
+faults, REST APIs 196–200
+fieldName() function 271
+fields, ignoring 272
+file handling, multipart submis-
+sions and 183–189
+File interface 223–225
+file storage 223
+file string 67
+File struct 41
+file variable 104
+FileName method 192
+filepath.Join 232
+filepath.ListSeparator 232
+filepath.Separator 232
+filepath.Split 232
+filepath.SplitList 232
+filepath.ToSlash 232
+FileServer handler 170–171
+fileStore function 225
+flag package 29–32
+flag.Parse() method 30
+Flags property 36
+float64 function 255
+fmt command 17
+fmt package 91, 259
+fmt.Errorf function 91
+fmt.Fprintf() function 271
+fmt.Sprintf function 150
+for loop 12, 67
+for/select loop 79
+form handling 180–193
+files and multipart 
+submissions 183–189
+form requests 180–182
+raw multipart data 189–193
+Form property 181
+format package 13
+formatting 17
+FormFile method 183–184
+FormName method 192
+FormValue function 181–182
+fs.FileServer function 173
+functionality, adding to HTML 
+templates 150–152
+G
+GDB (GNU Debugger) plugin
+114
+generating code 275
+generative testing 134–136
+GET HTTP request 192
+GET request 8–9, 54, 184, 186, 
+190, 212
+GetBool method 41
+getName 15
+git add command 36
+git commit command 36
+git push command 36
+Git version-control system 22
+github.com/Masterminds/
+go-fileserver package
+172–173
+glide executable 23
+global flags 38
+GNU Debugger plugin 114
+gnuflag package 31–32
+go build command 178
+Go flag system 28
+go fmt command 17
+go generate command 275, 
+278
+go get command 14
+go install command 23
+go keyword 104
+Go programming language
+3–26
+compared with other 
+languages 17–22
+C language 17–18
+JavaScript 21–22
+Node.js 21–22
+PHP language 19–21
+Python language 19–21
+concurrency with goroutines 
+and channels 9–13
+environment variables 23–24
+go executable as toolchain
+13–17
+code coverage 16
+formatting 17
+package management
+13–14
+testing 14–15
+Hello application 24–26
+installing 22
+multiple return values 6–7
+overview 3–6
+standard library of 7–9
+cryptography 9
+data encoding 9
+HTML 9
+networking and HTTP
+7–9
+version control 22
+workspace 23
+go test command 16, 138
+go tool 4
+go toolchain 230, 232
+go-flags 32–33
+go.rice package 177–178
+go/ast package 279
+GOARCH variable 230
+godeb tool 22
+GoDoer type 110–111
+golang. See Go programming 
+language
+goodbye function 51
+GOOS variable 230
+$GOPACKAGE variable 278
+$GOPATH variable 23
+Gorilla web toolkit 57
+goroutines 60–72
+overview 9–13
+panics and 104–112
+gox 230–231
+groupcache 176
+gRPC plugin 248
+H
+handle function 105, 107–108
+handler function 48
+HandlerFunc interface 54
+<head> section 157
+head.html 157
+Hello application 24–26
+hello function 24
+hello_test.go file 129
+HMAC (Keyed-Hash Message 
+Authentication Code)
+9
+homePage function 51
+host information 227
+host IP addresses 228
+html package 148
+HTML templates 148–164
+mixing templates 155–164
+parsing templates 152–154
+standard library 148–152
+template execution 
+failure 154–155
+HTML type 150
+html/template packages 9, 
+148–150, 155, 164, 166

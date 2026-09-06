@@ -1,0 +1,76 @@
+154
+CHAPTER 6
+Concurrency
+into the channel. In step 3 the goroutine on the left is sending a new value into the
+channel while the goroutine on the right is receiving a different value. Neither of
+these two operations in step 3 are in sync with each other or blocking. Finally, in step 4
+all the sends and receives are complete and we have a channel with several values and
+room for more. 
+ Let’s look at an example using a buffered channel to manage a set of goroutines to
+receive and process work. Buffered channels provide a clean and intuitive way to
+implement this code.
+01 // This sample program demonstrates how to use a buffered
+02 // channel to work on multiple tasks with a predefined number
+03 // of goroutines.
+04 package main
+05
+06 import (
+07
+"fmt"
+08
+"math/rand"
+09
+"sync"
+10
+"time"
+11 )
+12
+13 const (
+14
+numberGoroutines = 4
+// Number of goroutines to use.
+15
+taskLoad
+= 10 // Amount of work to process.
+16 )
+17
+18 // wg is used to wait for the program to finish.
+19 var wg sync.WaitGroup
+20
+21 // init is called to initialize the package by the
+22 // Go runtime prior to any other code being executed.
+23 func init() {
+24
+// Seed the random number generator.
+25
+rand.Seed(time.Now().Unix())
+26 }
+27
+28 // main is the entry point for all Go programs.
+29 func main() {
+30
+// Create a buffered channel to manage the task load.
+31
+tasks := make(chan string, taskLoad)
+32
+33
+// Launch goroutines to handle the work.
+34
+wg.Add(numberGoroutines)
+35
+for gr := 1; gr <= numberGoroutines; gr++ {
+36
+go worker(tasks, gr)
+37
+}
+38
+39
+// Add a bunch of work to get done.
+40
+for post := 1; post <= taskLoad; post++ {
+41
+tasks <- fmt.Sprintf("Task : %d", post)
+42
+}
+Listing 6.24
+listing24.go

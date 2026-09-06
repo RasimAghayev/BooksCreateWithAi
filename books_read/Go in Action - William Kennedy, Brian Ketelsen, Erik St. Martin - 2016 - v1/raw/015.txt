@@ -1,0 +1,26 @@
+xiv
+acknowledgments
+We have spent over 18 months writing this book, but none of our efforts would have
+been possible without the support of many people—our families, friends, colleagues,
+and mentors; the entire Go community; and our publisher, Manning. 
+ When you’re writing a book like this, you need an editor who will not only share
+the good but help you through the bad and be there for you at all cost. Jennifer Stout,
+you’re a brilliant, nurturing, and amazing friend. Thank you for everything and for
+being there when we needed you the most. Thank you for making this book a reality.
+Thanks also to all the other folks at Manning who worked with us during the develop-
+ment and production of our book.
+ You can’t know everything, so it requires a community of people to give their time
+and knowledge. We thank the Go community and everyone who participated in
+reviews and provided feedback on the manuscript at various stages of its development,
+especially Adam McKay, Alex Basile, Alex Jacinto, Alex Vidal, Anjan Bacchu, Benoît
+Benedetti, Bill Katz, Brian Hetro, Colin Kennedy, Doug Sparling, Jeffrey Lim, Jesse
+Evans, Kevin Jackson, Mark Fisher, Matt Zulak, Paulo Pires, Peter Krey, Philipp K.
+Janert, Sam Zaydel, and Thomas O’Rourke. Thanks also to Jimmy Frasché for his care-
+ful technical review of the final manuscript shortly before it went into production.
+ There are a few other people who need to be acknowledged in particular.
+ Kim Shrier was there from the very beginning, providing reviews, and giving of his
+time to teach. We learned so many things from you and we are grateful. The book is
+better technically because of you.
+ Bill Hathaway got involved heavily in the last year of writing the book, shaping
+each chapter; his thoughts and opinions were invaluable. We must give Bill credit as a
+coauthor of chapter 9. It would not exist without Bill’s time, talent, and effort. 

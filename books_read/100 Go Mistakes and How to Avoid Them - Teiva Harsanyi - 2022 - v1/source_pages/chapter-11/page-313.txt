@@ -1,0 +1,56 @@
+293
+11.8
+#89: Writing inaccurate benchmarks
+cpu: Intel(R) Core(TM) i5-7360U CPU @ 2.30GHz
+BenchmarkCalculateSum512-4
+81854
+15073 ns/op
+BenchmarkCalculateSum513-4
+161479
+7358 ns/op
+The second benchmark with 513 columns is about 50% faster. Again, because we iter-
+ate only over the first eight columns, this result is quite surprising.
+ To understand this difference, we need to understand the basics of CPU caches. In
+a nutshell, a CPU is composed of different caches (usually L1, L2, and L3). These
+caches reduce the average cost of accessing data from the main memory. In some con-
+ditions, the CPU can fetch data from the main memory and copy it to L1. In this case,
+the CPU tries to fetch into L1 the matrix’s subset that calculateSum is interested in
+(the first eight columns of each row). However, the matrix fits in memory in one case
+(513 columns) but not in the other case (512 columns).
+NOTE
+It isn’t in the scope of this chapter to explain why, but we look at this
+problem in mistake #91, “Not understanding CPU caches.”
+Coming back to the benchmark, the main issue is that we keep reusing the same
+matrix in both cases. Because the function is repeated thousands of times, we don’t
+measure the function’s execution when it receives a plain new matrix. Instead, we
+measure a function that gets a matrix that already has a subset of the cells present in
+the cache. Therefore, because calculateSum513 leads to fewer cache misses, it has a
+better execution time.
+ This is an example of the observer effect. Because we keep observing a repeatedly
+called CPU-bound function, CPU caching may come into play and significantly affect
+the results. In this example, to prevent this effect, we should create a matrix during
+each test instead of reusing one:
+func BenchmarkCalculateSum512(b *testing.B) {
+var sum int64
+for i := 0; i < b.N; i++ {
+b.StopTimer()
+s := createMatrix512(rows)
+b.StartTimer()
+sum = calculateSum512(s)
+}
+res = sum
+}
+A new matrix is now created during each loop iteration. If we run the benchmark
+again (and adjust benchtime—otherwise, it takes too long to execute), the results are
+closer to each other:
+cpu: Intel(R) Core(TM) i5-7360U CPU @ 2.30GHz
+BenchmarkCalculateSum512-4
+1116
+33547 ns/op
+BenchmarkCalculateSum513-4
+998
+35507 ns/op
+Instead of making the incorrect assumption that calculateSum513 is faster, we see
+that both benchmarks lead to similar results when receiving a new matrix.
+Creates a new matrix during 
+each loop iteration

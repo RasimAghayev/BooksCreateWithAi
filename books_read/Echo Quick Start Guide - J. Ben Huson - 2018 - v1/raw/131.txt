@@ -1,0 +1,37 @@
+type Logger interface {
+Output() <a href="https://godoc.org/io">io</a>.<a
+href="https://godoc.org/io#Writer">Writer</a> SetOutput(w <a
+href="https://godoc.org/io">io</a>.<a
+href="https://godoc.org/io#Writer">Writer</a>) Prefix() <a
+href="https://godoc.org/builtin#string">string</a> SetPrefix(p <a
+href="https://godoc.org/builtin#string">string</a>) Level() <a
+href="https://godoc.org/github.com/labstack/gommon/log">log</a>.<a
+href="https://godoc.org/github.com/labstack/gommon/log#Lvl">Lvl</a>
+SetLevel(v <a
+href="https://godoc.org/github.com/labstack/gommon/log">log</a>.<a
+href="https://godoc.org/github.com/labstack/gommon/log#Lvl">Lvl</a>) Print(i
+...interface{}) Printf(format <a
+href="https://godoc.org/builtin#string">string</a>, args ...interface{}) Printj(j <a
+href="https://godoc.org/github.com/labstack/gommon/log">log</a>.<a
+href="https://godoc.org/github.com/labstack/gommon/log#JSON">JSON</a>)
+Debug(i ...interface{}) Debugf(format <a
+href="https://godoc.org/builtin#string">string</a>, args ...interface{}) Debugj(j
+<a href="https://godoc.org/github.com/labstack/gommon/log">log</a>.<a
+href="https://godoc.org/github.com/labstack/gommon/log#JSON">JSON</a>)
+Info(i ...interface{}) Infof(format <a
+href="https://godoc.org/builtin#string">string</a>, args ...interface{}) Infoj(j <a
+href="https://godoc.org/github.com/labstack/gommon/log">log</a>.<a
+href="https://godoc.org/github.com/labstack/gommon/log#JSON">JSON</a>)
+Warn(i ...interface{}) Warnf(format <a
+href="https://godoc.org/builtin#string">string</a>, args ...interface{}) Warnj(j
+<a href="https://godoc.org/github.com/labstack/gommon/log">log</a>.<a
+href="https://godoc.org/github.com/labstack/gommon/log#JSON">JSON</a>)
+Error(i ...interface{}) Errorf(format <a
+href="https://godoc.org/builtin#string">string</a>, args ...interface{}) Errorj(j
+<a href="https://godoc.org/github.com/labstack/gommon/log">log</a>.<a
+href="https://godoc.org/github.com/labstack/gommon/log#JSON">JSON</a>)
+Fatal(i ...interface{}) Fatalj(j <a
+href="https://godoc.org/github.com/labstack/gommon/log">log</a>.<a
+href="https://godoc.org/github.com/labstack/gommon/log#JSON">JSON</a>)
+Fatalf(format <a href="https://godoc.org/builtin#string">string</a>, args
+...interface{}) Panic(i ...interface{}) Panicj(j <a

@@ -1,0 +1,48 @@
+168
+CHAPTER 7
+Go web services
+ The next listing is another example XML file, with the same name post.xml, show-
+ing how you can parse it.
+<?xml version="1.0" encoding="utf-8"?>
+<post id="1">
+  <content>Hello World!</content>
+  <author id="2">Sau Sheong</author>
+  <comments>
+    <comment id="1">
+      <content>Have a great day!</content>
+      <author id="3">Adam</author>
+    </comment>
+    <comment id="2">
+      <content>How are you today?</content>
+      <author id="4">Betty</author>
+    </comment>
+  </comments>
+</post>
+Most of the XML file is similar to listing 7.3, except now you have an XML subelement,
+comments (in bold), which is a container of multiple XML subelements comment. In
+this case, you want to get the list of comments in the post, but creating a struct
+Comments to contain the list of comments seems like overkill. To simplify, you’ll use
+rule 6 to leap-frog over the comments XML subelement. Rule 6 states that to get to an
+XML element directly without specifying the tree structure, you can use the struct tag
+`xml:"a>b>c"`. The next listing shows the modified Post struct with the new struct
+field and the corresponding mapping struct tag.
+type Post struct {
+  XMLName  xml.Name  `xml:"post"`
+  Id       string    `xml:"id,attr"`
+  Content  string    `xml:"content"`
+  Author   Author    `xml:"author"`
+  Xml      string    `xml:",innerxml"`
+  Comments []Comment `xml:"comments>comment"`
+}
+To get a list of comments, you’ve specified the type of the Comments struct field to be a
+slice of Comment structs (shown in bold). You also map this field to the comment XML
+subelement using the struct tag `xml:"comments>comment"`. According to rule 6, this
+will allow you to jump right into the comment subelement and bypass the comments
+XML element. 
+ Here’s the code for the Comment struct, which is similar to the Post struct:
+type Comment struct {
+  Id      string `xml:"id,attr"`
+Listing 7.4
+XML file with nested elements
+Listing 7.5
+Post struct with comments struct field

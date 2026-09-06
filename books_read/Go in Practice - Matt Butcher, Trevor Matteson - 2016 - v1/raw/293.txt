@@ -1,0 +1,66 @@
+270
+CHAPTER 11
+Reflection and code generation
+ 
+package main
+import (
+     "bufio"
+     "bytes"
+     "errors"
+     "fmt"
+     "reflect"
+     "strconv"
+     "strings"
+)
+type Processes struct {
+     Total    int     `ini:"total"`
+     Running  int     `ini:"running"`
+     Sleeping int     `ini:"sleeping"`
+     Threads  int     `ini:"threads"`
+     Load     float64 `ini:"load"`
+}
+func main() {
+     fmt.Println("Write a struct to output:")
+     proc := &Processes{
+            Total:    23,
+            Running:  3,
+            Sleeping: 20,
+            Threads:  34,
+            Load:     1.8,
+     }
+     data, err := Marshal(proc)
+     if err != nil {
+            panic(err)
+     }
+     fmt.Println(string(data))
+     fmt.Println("Read the data back into a struct")
+     proc2 := &Processes{}
+     if err := Unmarshal(data, proc2); err != nil {
+            panic(err)
+     }
+     fmt.Printf("Struct: %#v", proc2)
+}
+The top-level code is straightforward. You begin with an instance of your Processes
+struct and then marshal it into a byte array. When you print the results, they’ll be in
+your INI file format. Then you take that same data and run it back through the other
+direction, expanding the INI data into a new Processes struct. Running the program
+produces output like this:
+$ go run load.go
+Write a struct to a output:
+total=23
+running=3
+Listing 11.13
+Processes and main()
+Most of these imports 
+are used later.
+You saw this struct in 
+listing 11.11.
+Creates an instance 
+of the Processes 
+struct
+Marshals the struct 
+into a []byte
+Prints the result
+Creates a new Processes struct 
+and unmarshals the data into it
+Prints out the struct

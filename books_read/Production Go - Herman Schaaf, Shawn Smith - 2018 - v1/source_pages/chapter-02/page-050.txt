@@ -1,0 +1,41 @@
+Basics
+44
+12
+for scanner.Scan() {
+13
+m[scanner.Text()]++
+14
+}
+15
+if err := scanner.Err(); err != nil {
+16
+log.Printf("ERROR: could not read stdin: %s", err)
+17
+}
+18
+for k, v := range m {
+19
+log.Printf("%s => %d", k, v)
+20
+}
+21
+}
+If we had a file that looked like this:
+go
+python
+ruby
+php
+go
+go
+go
+and we piped it into our program like so:
+$ go run main.go < langs.txt
+we would see output like the following (order is not guaranteed when iterating over maps, so the
+order of our output might change when running more than once):
+2017/10/13 13:12:21 go => 4
+2017/10/13 13:12:21 python => 1
+2017/10/13 13:12:21 ruby => 1
+2017/10/13 13:12:21 php => 1
+Writing Output
+One way of writing output to a file in Go is to use the *File returned from os.Create. os.Create will
+create a file for reading and writing. If the file already exists, it will be truncated:

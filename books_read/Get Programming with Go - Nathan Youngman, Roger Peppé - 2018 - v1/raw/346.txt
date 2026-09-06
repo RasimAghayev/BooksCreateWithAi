@@ -1,0 +1,39 @@
+331
+Unit 7
+    for {
+        select {
+        case <-finished:
+            return
+        case ms := <-msgc:
+            for _, m := range ms {
+                log.Printf("earth received report of life sign level %d from
+➥%s at %v", m.LifeSigns, m.Rover, m.Pos)
+            }
+        }
+    }
+}
+func startDriver(name string, grid *MarsGrid, marsToEarth chan []Message) 
+➥*RoverDriver {
+    var o *Occupier
+    // Try a random point; continue until we've found one that's
+    // not currently occupied.
+    for o == nil {
+        startPoint := image.Point{X: rand.Intn(grid.Size().X), Y: rand.Intn(
+➥grid.Size().Y)}
+        o = grid.Occupy(startPoint)
+    }
+    return NewRoverDriver(name, o, marsToEarth)
+}
+// Radio represents a radio transmitter that can send
+// message to Earth.
+type Radio struct {
+    fromRover chan Message
+}
+// SendToEarth sends a message to Earth. It always
+// succeeds immediately - the actual message
+// may be buffered and actually transmitted later.
+func (r *Radio) SendToEarth(m Message) {
+    r.fromRover <- m
+}
+// NewRadio returns a new Radio instance that sends
+ 

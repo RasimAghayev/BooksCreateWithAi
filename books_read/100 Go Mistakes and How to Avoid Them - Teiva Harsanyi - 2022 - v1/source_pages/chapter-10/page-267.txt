@@ -1,0 +1,54 @@
+247
+10.4
+#78: Common SQL mistakes
+}
+rows, err := stmt.Query(id)
+// ...
+We prepare the statement and then execute it while providing the arguments. The
+first output of the Prepare method is an *sql.Stmt, which can be reused and run
+concurrently. When the statement is no longer needed, it must be closed using the
+Close() method.
+NOTE
+The Prepare and Query methods have alternatives to provide an addi-
+tional context: PrepareContext and QueryContext.
+For efficiency and security, we need to remember to use prepared statements when it
+makes sense. 
+10.4.4 Mishandling null values
+The next mistake is to mishandle null values with queries. Let’s write an example
+where we retrieve the department and age of an employee:
+rows, err := db.Query("SELECT DEP, AGE FROM EMP WHERE ID = ?", id)
+if err != nil {
+return err
+}
+// Defer closing rows
+var (
+department string
+age int
+)
+for rows.Next() {
+err := rows.Scan(&department, &age)
+if err != nil {
+return err
+}
+// ...
+}
+We use Query to execute a query. Then, we iterate over the rows and use Scan to copy
+the column into the values pointed to by the department and age pointers. If we run
+this example, we may get the following error while calling Scan:
+2021/10/29 17:58:05 sql: Scan error on column index 0, name "DEPARTMENT":
+converting NULL to string is unsupported
+Here, the SQL driver raises an error because the department value is equal to NULL. If
+a column can be nullable, there are two options to prevent Scan from returning an error.
+ The first approach is to declare department as a string pointer:
+var (
+department *string
+age
+int
+)
+Executes the 
+prepared query
+Executes
+the query
+Scans each row
+Changing the type 
+from string to *string

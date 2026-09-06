@@ -1,0 +1,22 @@
+190
+Testing your application
+Testing is one of the main critical activities in programming, but often it’s
+neglected or left as an afterthought. Go provides basic testing capabilities that look
+surprisingly primitive, but as you’ll learn in this chapter, Go supplies the tools to
+create the automated tests you need as a programmer. This chapter also covers the
+check and Ginkgo packages, popular Go testing libraries that extend the built-in
+testing package.
+ As with the web application programming libraries we’ve explored in the previ-
+ous few chapters, Go provides only the fundamental tools. As a programmer you’ll
+need to build on them to deliver the kind of tests that you need. 
+This chapter covers
+■
+The Go testing libraries
+■
+Unit testing
+■
+HTTP testing
+■
+Testing with dependency injection
+■
+Using third-party testing libraries

@@ -1,0 +1,12 @@
+Part 2
+Basic web applications
+Web applications follow a simple request-response model of program-
+ming. Every request from the client gets a response from the server.  Every web
+application has a few basic components—the router that routes requests to dif-
+ferent handlers, the handlers that process the requests, and the template engine
+that translates combines static content with dynamic data to produce the data
+that is sent back to the client.
+ In chapters 3-6, you will learn how to use Go to accept HTTP requests using a
+router, process them using handlers, and return responses with the template
+engine. In addition, most web applications store data in one way or another, so
+you will also learn how you can use Go to persist data.  

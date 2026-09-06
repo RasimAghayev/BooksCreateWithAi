@@ -1,0 +1,24 @@
+Setter/Getters, Attribute Accessors and Structs
+27
+Questions
+1. What have we learned?
+Anonymous struct fields are useful when you want to create a struct with a unique type, and
+you don’t want to create a new type just for that.
+2. Why is it useful?
+Go’s anonymous struct fields are a great way to pass data to functions without having to
+create a new type.
+3. What is an anonymous struct fields?
+Anonymous struct fields are struct fields without a name.
+4. What is the limitations of an anonymous struct fields?
+Anonymous structs are limited to a single type declaration.
+5. What is a properties of an object in OOP?
+In OOP, properties of an object are collectively called attributes.
+6. What is the equivalent object attribute in Go?
+An attribute is a property of an object. In Go, an attribute is a field of a struct.
+7. How do you access the value of an anonymous field?
+You can only access the value by calling the literal name of the type in the struct, and with
+this semantics, it comes with a limitation.
+8. What is the limitation of an anonymous field?
+It is important to take note that when using anonymous field names, you have a limitation
+of having a declaration of the same type only once, since anonymous struct fields need to
+have unique value types, otherwise, there cannot be a distinction between each type.

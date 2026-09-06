@@ -1,0 +1,42 @@
+122
+CHAPTER 5
+Debugging and testing
+The changes to the code are minimal. Instead of using the regular net.Dial, this
+code has net.DialTimeout, which adds a nicety to the regular net.Dial call: it speci-
+fies how long it’ll wait for the connection before giving up. You set this to 30 seconds.
+With TCP, the timeout includes time to send the message and receive the ACK. But
+with UDP, you set the timeout largely for just how long it takes your app to resolve the
+address and send the message. Setting a timeout gives you a little bit of a safety net
+when the network isn’t functioning as expected.
+ To run the preceding code, you also need to restart your nc server as a UDP server:
+nc -luk 1902.
+ Using UDP for logging has distinct advantages:
+The app is resistant to back pressure and log server outages. If the log server
+hiccups, it may lose some UDP packets, but the client won’t be impacted.
+Sending logs is faster even without back pressure.
+The code is simple.
+But this route also has some major disadvantages. Depending on your needs, these
+drawbacks may indicate that this is the wrong route for you:
+Log messages can get lost easily. UDP doesn’t equip you to know whether a mes-
+sage was received correctly.
+Log messages can be received out of order. Large log messages may be pack-
+etized and then get jumbled in transition. Adding a timestamp to the message
+(as you’ve done) can help with this, but not totally resolve it.
+Sending the remote server lots of UDP messages may turn out to be more likely
+to overwhelm the remote server, because it can’t manage its connections and
+slow down the data intake. Although your app may be immune to back pres-
+sure, your log server may be worse off.
+Based on our own experiences, UDP-based logging definitely has a time and a place. It’s
+quick and efficient. If you can predict with relative accuracy how much work your log
+server needs to do, this method provides a useful and simple path to network logging.
+ But a few cases might definitively tilt your decision away from UDP logging. You
+may not want to use UDP logging when you can’t accurately predict how much logging
+data will go from the app server to the log server, or when losing occasional log mes-
+sages is unacceptable.
+ TCP logging is prone to back pressure, but UDP logging won’t guarantee data accu-
+racy. It’s a conundrum that we’re used to dealing with from image encoding: do you
+want precise images at the expense of large file sizes (GIF, PNG), or compact images
+that lose some data (JPEG)? With logging, you may need to make a similar choice. This
+isn’t to say that nothing can be done to make things better. For example, back-
+pressure stress can be delayed by creating a large buffer for logs to be temporarily
+stored in case of network saturation. 

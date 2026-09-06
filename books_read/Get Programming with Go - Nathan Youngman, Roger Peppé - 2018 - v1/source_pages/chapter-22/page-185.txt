@@ -1,0 +1,18 @@
+170
+22 
+LESSON
+GO’S GOT NO CLASS
+After reading lesson 22, you’ll be able to
+Write methods that provide behavior to structured data
+Apply principles of object-oriented design
+Go isn’t like classical languages. It has no classes and no objects, and it omits features 
+like inheritance. Yet Go still provides what you need to apply ideas from object-oriented 
+design. This lesson explores the combination of structures with methods.
+Consider this 
+Synergy is a buzzword commonly heard in entrepreneurial circles. It
+means "greater than the sum of its parts." The Go language has types, methods on
+types, and structures. Together, these provide much of the functionality that classes do
+for other languages, without needing to introduce a new concept into the language.
+What other aspects of Go exhibit this property of combining to create something
+greater?
+ 

@@ -1,0 +1,49 @@
+188
+CHAPTER 8
+Concurrency: Foundations
+ Finally, when main returns, we want things to be handled gracefully by closing this
+file descriptor. Therefore, we need to propagate a signal.
+ A possible approach is to use context.WithCancel, which returns a context (first
+variable returned) that will cancel once the cancel function (second variable
+returned) is called:
+func main() {
+ctx, cancel := context.WithCancel(context.Background())
+defer cancel()
+go func() {
+CreateFileWatcher(ctx, "foo.txt")
+}()
+// ...
+}
+When main returns, it calls the cancel function to cancel the context passed to
+CreateFileWatcher so that the file descriptor is closed gracefully.
+ Next, let’s discuss the last aspects of Go contexts: values. 
+8.6.3
+Context values
+The last use case for Go contexts is to carry a key-value list. Before understanding the
+rationale behind it, let’s first see how to use it.
+ A context conveying values can be created this way:
+ctx := context.WithValue(parentCtx, "key", "value")
+Just like context.WithTimeout, context.WithDeadline, and context.WithCancel,
+context.WithValue is created from a parent context (here, parentCtx). In this case,
+we create a new ctx context containing the same characteristics as parentCtx but also
+conveying a key and a value.
+ We can access the value using the Value method:
+ctx := context.WithValue(context.Background(), "key", "value")
+fmt.Println(ctx.Value("key"))
+value
+The key and values provided are any types. Indeed, for the value, we want to pass any
+types. But why should the key be an empty interface as well and not a string, for exam-
+ple? That could lead to collisions: two functions from different packages could use the
+same string value as a key. Hence, the latter would override the former value. Conse-
+quently, a best practice while handling context keys is to create an unexported custom
+type:
+package provider
+type key string
+const myCustomKey key = "key"
+Creates a 
+cancellable 
+context
+Defers the call 
+to cancel
+Calls the function using 
+the created context

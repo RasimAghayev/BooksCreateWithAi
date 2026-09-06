@@ -1,0 +1,48 @@
+271
+11.4
+#85: Not using table-driven tests
+11.4
+#85: Not using table-driven tests
+Table-driven tests are an efficient technique for writing condensed tests and thus
+reducing boilerplate code to help us focus on what matters: the testing logic. This sec-
+tion goes through a concrete example to see why table-driven tests are worth knowing
+when working with Go.
+ Let’s consider the following function that removes all the new-line suffixes (\n or
+\r\n) from a string:
+func removeNewLineSuffixes(s string) string {
+if s == "" {
+return s
+}
+if strings.HasSuffix(s, "\r\n") {
+return removeNewLineSuffixes(s[:len(s)-2])
+}
+if strings.HasSuffix(s, "\n") {
+return removeNewLineSuffixes(s[:len(s)-1])
+}
+return s
+}
+This function removes all the leading \r\n and \n suffixes recursively. Now, let’s say
+we want to test this function extensively. We should at least cover the following cases:
+Input is empty.
+Input ends with \n.
+Input ends with \r\n.
+Input ends with multiple \n.
+Input ends without newlines.
+The following approach creates one unit test per case:
+func TestRemoveNewLineSuffix_Empty(t *testing.T) {
+got := removeNewLineSuffixes("")
+expected := ""
+if got != expected {
+t.Errorf("got: %s", got)
+}
+}
+func TestRemoveNewLineSuffix_EndingWithCarriageReturnNewLine(t *testing.T) {
+got := removeNewLineSuffixes("a\r\n")
+expected := "a"
+if got != expected {
+t.Errorf("got: %s", got)
+}
+}
+func TestRemoveNewLineSuffix_EndingWithNewLine(t *testing.T) {
+got := removeNewLineSuffixes("a\n")
+expected := "a"

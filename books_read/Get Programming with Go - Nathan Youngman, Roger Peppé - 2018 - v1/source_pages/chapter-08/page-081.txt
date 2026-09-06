@@ -1,0 +1,40 @@
+66
+Lesson 8  Big numbers
+8.3
+Constants of unusual size
+Constants can be declared with a type, just like variables. And just like variables, a uint64 
+constant can’t possibly contain a number like 24 quintillion:
+const distance uint64 = 24000000000000000000
+It gets interesting when you declare a constant 
+without a type. For variables, Go uses type infer-
+ence to determine the type, and in the case of 24 
+quintillion, overflows the int type. Constants are 
+different. Rather than infer a type, constants can 
+be untyped. The following line doesn’t cause an 
+overflow error:
+const distance = 24000000000000000000
+Constants are declared with the const keyword, but 
+every literal value in your program is a constant 
+too. That means unusually sized numbers can be 
+used directly, as shown in the following listing.
+fmt.Println("Andromeda Galaxy is", 24000000000000000000/299792/86400, "light days away.")
+Calculations on constants and literals are performed during compilation rather than 
+while the program is running. The Go compiler is written in Go. Under the hood, 
+untyped numeric constants are backed by the big package, enabling all the usual opera-
+tions with numbers well beyond 18 quintillion, as shown in the following listing.
+const distance = 24000000000000000000
+const lightSpeed = 299792
+const secondsPerDay = 86400
+const days = distance / lightSpeed / secondsPerDay
+fmt.Println("Andromeda Galaxy is", days, "light days away.")
+Listing 8.3 Literals of unusual size: constant.go
+Listing 8.4 Constants of unusual size: constant.go
+Constant 
+24000000000000000000 
+overflows uint64
+Prints Andromeda Galaxy is 
+926568346 light days away.
+Prints Andromeda 
+Galaxy is 926568346 
+light days away.
+ 

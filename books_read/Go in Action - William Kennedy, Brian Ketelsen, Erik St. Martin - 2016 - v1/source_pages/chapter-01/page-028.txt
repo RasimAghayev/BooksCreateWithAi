@@ -1,0 +1,48 @@
+7
+Hello, Go
+provides a simple way to declare that your type has data to be read in a way that other
+functions in the standard library understand. Here’s the definition:
+type Reader interface {
+Read(p []byte) (n int, err error)
+}
+To write a type that implements the io.Reader interface, you only need to implement
+a Read method that accepts a slice of bytes and returns an integer and possible error. 
+ This is a radical departure from the interface systems used in other object-oriented
+programming languages. Go’s interfaces are smaller and more aligned with single
+actions. In practice, this allows significant advantages in code reuse and composability.
+You can implement an io.Reader on nearly any type that has data available, and then
+pass it to any Go function that knows how to read from io.Reader. 
+ The entire networking library in Go is built using the io.Reader interface, because
+it allows it to separate the network implementation required for each different net-
+work operation from the functionality of your application. It makes interfaces fun, ele-
+gant, and flexible. That same io.Reader enables simple operations with files, buffers,
+sockets, and any other data source. Using a single interface allows you to operate on
+data efficiently, regardless of the source. 
+1.1.4
+Memory management
+Improper memory management causes applications to crash and leak memory, and
+even crash the operating system. Go has a modern garbage collector that does the
+hard work for you. In other systems languages, like C or C++, you need to allocate a
+piece of memory before you can use it, and then free it when you’re done. If you fail
+to do either of these correctly, you’ll have program crashes or memory leaks. It isn’t
+always easy to track a piece of memory when it’s no longer needed; threads and heavy
+concurrency make it even harder. When you write code with garbage collection in
+mind, Go’s garbage collection adds little overhead to program execution time, but
+reduces development effort significantly. Go takes the tedium out of programming
+and leaves the bean counting to the accountants. 
+1.2
+Hello, Go
+It’s much easier to get the feel of a programming language by seeing it in action. Let’s
+look at the traditional Hello World! application written in Go:
+package main
+import "fmt"
+func main(){
+fmt.Println("Hello World!")
+}
+Go programs are 
+organized as packages.
+The import statement allows you to use external 
+code. The fmt package provided by the standard 
+library allows you to format and output data.
+The main function is what gets executed when 
+you run your application—just like in C.

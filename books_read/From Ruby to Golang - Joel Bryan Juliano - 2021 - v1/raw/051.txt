@@ -1,0 +1,67 @@
+Hash and Maps
+45
+1
+package main
+2
+3
+import (
+4
+"fmt"
+5
+)
+6
+7
+type produce struct {
+8
+flavour string
+9
+kind
+string
+10
+}
+11
+12
+func main() {
+13
+var basket map[string]*produce
+14
+15
+basket = make(map[string]*produce)
+16
+17
+basket["apple"] = &produce{
+18
+flavour: `It's a little sour and bitter, but mostly
+19
+sweet, not at all salty, very juicy in general.`,
+20
+kind:
+"fruit",
+21
+}
+22
+23
+basket["kale"] = &produce{
+24
+flavour: `It boasts deep, earthy flavors that can range
+25
+from rich and meaty to herbaceous and slightly bitter.`,
+26
+kind:
+"veggies",
+27
+}
+28
+29
+if exists := basket["cabbage"] != nil; exists == false {
+30
+fmt.Println("Item does not exists")
+31
+}
+32
+}
+1
+$ go run map_read_non_present_key_3.go
+2
+3
+Item does not exists

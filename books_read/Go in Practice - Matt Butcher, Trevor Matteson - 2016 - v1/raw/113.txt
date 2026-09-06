@@ -1,0 +1,48 @@
+90
+CHAPTER 4
+Handling errors and panics
+ Listing 4.2 shows this technique in action. First, you run Concat(args…), which
+expands the args array as if you’d called Concat(arg[0], arg[1],…). You assign the
+two return values to result and err. Then, still on that line, you check to see if err
+isn’t nil. If err is set to something, you know an error occurred, so you print the
+error message.
+ It’s important to note that when you use this two-part if statement, the assign-
+ments stay in scope for any else and else if statements, so result is still in scope
+when you go to print it.
+ This scoping illustrates why the two-clause if is a nice feature to have. It encour-
+ages good memory-management practices while simultaneously preventing that pat-
+tern that haunts our debugging nightmares: if a = b. 
+ In listing 4.1, you saw the Concat function, and in listing 4.2 you’ve seen how it’s
+used. But there’s a technique already present in this example that you should look
+at explicitly.
+TECHNIQUE 16
+Minimize the nils
+Nils are annoying for several reasons. They’re a frequent cause of bugs in the system,
+and we as developers are often forced into a practice of checking values to protect
+against nils.
+ In some parts of Go, nils are used to indicate something specific. As you saw in the
+preceding code, anytime an error return value is nil, you ought to construe that as
+meaning, specifically, “There were no errors when this function executed.” But in
+many other cases, the meaning of a nil is unclear. And in perhaps the most annoying
+cases, nils are treated as placeholders anytime a developer doesn’t feel like returning a
+value. That’s where this technique comes in.
+PROBLEM
+Returning nil results along with errors isn’t always the best practice. It puts more work
+on your library’s users, provides little useful information, and makes recovery harder.
+SOLUTION
+When it makes sense, avail yourself of Go’s powerful multiple returns and send back
+not just an error, but also a usable value.
+DISCUSSION
+This pattern is illustrated in the Concat function you saw previously. Let’s take a sec-
+ond look, focusing on the line where an error is returned.
+func Concat(parts ...string) (string, error) {
+     if len(parts) == 0 {
+            return "", errors.New("No strings supplied")
+     }
+    return strings.Join(parts, " "), nil
+}
+Listing 4.3
+Returning useful data with an error
+Returns both an 
+empty string and 
+an error

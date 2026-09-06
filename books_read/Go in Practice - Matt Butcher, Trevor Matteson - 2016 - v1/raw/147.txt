@@ -1,0 +1,56 @@
+124
+CHAPTER 5
+Debugging and testing
+compression, and deduplication. These things make your life easier. Additionally, sys-
+tem administrators are adept at using these log files for analysis, and many tools and
+utilities are available for working with the log files. These are compelling reasons to
+log to the standard facility rather than creating your own.
+PROBLEM
+You want to send application log messages into the system logger.
+SOLUTION
+Configure Go’s syslog package and use it.
+DISCUSSION
+Go’s logging package includes support for syslogs. In fact, a dedicated package is avail-
+able for this: log/syslog. The syslog package gives you two ways of working with the
+system log. First, you can use it as a logging back end to the logger you’ve looked at
+already. This is a great way of taking code that you already have and redirecting it into
+the syslog.
+ Second, you can use all of the defined log levels and facilities directly in a syslog-
+specific style. This second route isn’t as portable, but it’s closer to what syslog expects.
+ Although we’ll focus on this second method of doing things, the following listing is
+a quick example of generating a Go logger that’s backed to syslog.
+package main
+import (
+     "fmt"
+     "log"
+     "log/syslog"
+)
+func main() {
+     priority := syslog.LOG_LOCAL3 | syslog.LOG_NOTICE
+     flags := log.Ldate | log.Lshortfile 
+     logger, err := syslog.NewLogger(priority, flags)
+     if err != nil {
+            fmt.Printf("Can't attach to syslog: %s", err)
+            return
+     }
+     logger.Println("This is a test log message.")
+}
+When you run this code, your syslog should have a message that looks something like
+this:
+Jun 30 08:34:03 technosophos syslog_logger[76564]: 2015/06/30 
+syslog_logger.go:18: This is a test log message.
+This message formatting is less than ideal, but it captures what you need to know. Let’s
+walk through the highlights of the code.
+Listing 5.5
+A logger directed to syslog
+Tells the logger how to
+appear to syslog
+Sets the flags, 
+as you’ve 
+done before
+Creates
+a new
+syslog
+logger
+Sends a 
+simple message

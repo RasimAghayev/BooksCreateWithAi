@@ -1,0 +1,15 @@
+Other Books You May Enjoy
+If you enjoyed this book, you may be interested in these other books by Packt: 
+Distributed Computing with Go
+V.N. Nikhil Anurag
+ISBN: 978-1-78712-538-4
+Gain proficiency with concurrency and parallelism in Go
+Learn how to test your application using Go's standard library
+Learn industry best practices with technologies such as REST, OpenAPI,
+Docker, and so on
+Design and build a distributed search engine
+Learn strategies on how to design a system for web scale
+Go Web Development Cookbook
+Arpit Aggarwal
+ISBN: 978-1-78728-674-0
+Create a simple HTTP and TCP web server and understand how it works

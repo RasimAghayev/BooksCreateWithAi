@@ -1,0 +1,35 @@
+47
+Declaring floating-point variables
+6.1.1
+Single precision floating-point numbers
+Go has two floating-point types. The default floating-point type is float64, a 64-bit 
+floating-point type that uses eight bytes of memory. Some languages use the term 
+double precision  to describe the 64-bit floating-point type.
+The float32 type uses half the memory of float64 but offers less precision. This type is 
+sometimes called single precision. To use float32, you must specify the type when declar-
+ing a variable. The following listing shows float32 in use.
+var pi64 = math.Pi
+var pi32 float32 = math.Pi
+fmt.Println(pi64)
+fmt.Println(pi32)
+When working with a large amount of data, such as thousands of vertices in a 3D game, 
+it may make sense to sacrifice precision for memory savings by using float32.
+TIP Functions in the math package operate on float64 types, so prefer float64 unless you
+have a good reason to do otherwise.   
+6.1.2
+The zero value
+In Go, each type has a default value, called the zero value. The default applies when you 
+declare a variable but don’t initialize it with a value, as you can see in the next listing.
+var price float64
+fmt.Println(price)
+The previous listing declares price with no value, so Go initializes it with zero. To the 
+computer, it’s identical to the following:
+price := 0.0
+Listing 6.1 64-bit vs. 32-bit floating-point: pi.go
+Listing 6.2 Declaring a variable without a value: default.go
+Prints 3.141592653589793
+Prints 3.1415927
+Quick check 6.2 How many bytes of memory does a single precision float32 use?
+QC 6.2 answer A float32 uses 4 bytes (or 32 bits).
+Prints 0
+ 

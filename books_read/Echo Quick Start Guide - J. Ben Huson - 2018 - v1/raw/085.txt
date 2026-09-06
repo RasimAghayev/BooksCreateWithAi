@@ -1,0 +1,29 @@
+func ParameterMadlibHandler(c echo.Context) error {
+        return c.String(http.StatusOK,
+                fmt.Sprintf("I %s with a %s %s!",
+                        c.Param("verb"),
+                        c.Param("adjective"),
+                        c.Param("noun"),
+                ),
+        )
+}
+The corresponding node after insertion would contain a list of parameter names
+that would look like the following:
+["verb", "adjective", "noun"]
+Now, when a request comes into the service that matches /i/:/with/a/:/:, the
+router will maintain a list of parameter values and map each : value to the
+corresponding named parameter. The following is an example HTTP call that
+exercises this route:
+curl http://localhost:8080/i/run/with/a/tall/woman -D -                  
+HTTP/1.1 200 OK
+Content-Type: text/plain; charset=UTF-8
+Date: Sun, 06 May 2018 17:02:31 GMT
+Content-Length: 24
+I run with a tall woman!
+Wildcards are handled in a similar fashion, except there is no concept of a named
+wildcard. Because of this, wildcards are best used to match any suffix. It is not
+practical to do the following because you will not have easy access to the values:
+e.GET(“/i/*/from/a/*/*”, WildcardMadlibHandler)
+Though the preceding code will work, you will lose the ability to easily
+reference the values you are Glob matching within the handler. This is why
+typically you would use a * to reference a variable suffix on a route.

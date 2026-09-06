@@ -1,0 +1,39 @@
+61
+Handlers and handler functions
+case it’s main.hello), and then call it. As a result, we’ll get hello! in the browser and a
+printed statement on the console that says this: 
+Handler function called – main.hello
+Naturally if we can chain together two handler functions, we can chain more. The
+same principle allows us to stack handlers to perform multiple actions, like Lego
+bricks. This is sometimes called pipeline processing (see figure 3.4). 
+Say we have another function named protect, which checks for the user’s authoriza-
+tion before executing the handler:
+func protect(h http.HandlerFunc) http.HandlerFunc {
+    return func(w http.ResponseWriter, r *http.Request) {
+        . . .                                           
+        h(w, r)
+    }
+}
+Then to use protect, we simply chain them together:
+http.HandleFunc("/hello", protect(log(hello)))
+You might have noticed that while I mentioned earlier that we’re chaining handlers,
+the code in listing 3.10 actually shows chaining handler functions. The mechanisms
+for both chaining handlers and handler functions are very similar, as shown next. 
+package main
+import (
+    "fmt"
+Listing 3.11
+Chaining handlers
+Do some work
+Input
+f3
+Do some work
+f2
+Output
+Do some work
+f1
+Figure 3.4
+Chaining more handlers
+Code, omitted for brevity, 
+to make sure the user is 
+authorized.

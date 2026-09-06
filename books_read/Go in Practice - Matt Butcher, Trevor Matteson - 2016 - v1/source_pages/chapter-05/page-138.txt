@@ -1,0 +1,49 @@
+115
+Logging
+application’s running lifetime. For example, a quick peek at a web server’s log file
+should reveal when the server was last started, whether it has encountered any abnor-
+mal conditions, and whether it’s handling requests.
+5.2.1
+Using Go’s logger
+Go provides two built-in packages for logging: log and log/syslog. We’ll talk about
+the main package first, and in section 5.2.2 we’ll turn to the syslog package.
+ The log package provides basic support (mainly in the form of formatting) for
+writing log messages. In its simplest usage, it formats messages and sends them to
+Standard Error, as shown in the following listing.
+package main
+import (
+     "log"
+)
+func main() {
+     log.Println("This is a regular message.")
+     log.Fatalln("This is a fatal error.")
+     log.Println("This is the end of the function.")
+}
+If you were to run this code, the output would look something like this:
+$ go run simple.go
+2015/04/27 08:18:36 This is a regular message.
+2015/04/27 08:18:36 This is a fatal error.
+exit status 1
+We have a few things to point out about this example. The first is that the error mes-
+sages are all sent to Standard Error, regardless of whether the message is an actual
+error or an informational message. If you glance at the godocs for the log package,
+you’ll notice that it doesn’t distinguish between message types. But it does make a sec-
+ond distinction, and that leads us to our other point.
+ When you call log.Fatalln or any of the other “fatal” calls, the library prints the
+error message and then calls os.Exit(1), forcing the program to quit. Additionally,
+log.Panic calls log an error message and then issue a panic.
+ The log functions all have printf-style variants so that you can insert information
+into your log message string: log.Printf("The value of i is %s", i).
+ Practically speaking, we haven’t found the basic logging functions to be all that
+useful. Although some momentum exists in the Docker/container world behind log-
+ging to Standard Out and Standard Error, the prevailing wisdom seems to be that log
+messages should be sent to either a logging service or a designated file. To that end,
+we’ve gotten a lot more use out of the log.Logger type that’s also in the package.
+Listing 5.1
+Simple log usage
+Writes a message
+to os.Stderr
+Writes a message to 
+os.Stderr and then exits 
+with an error code
+This never gets executed.

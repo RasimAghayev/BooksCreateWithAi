@@ -1,0 +1,16 @@
+39
+Packaging and tooling
+In chapter 2 you got an overview of the syntax and language structure of Go. Now
+you’ll dive deeper into how code is organized into packages and how you interact
+with those packages. Packages are a critical concept in Go. The idea is to separate
+semantic units of functionality into different packages. When you do this, you
+enable code reuse and control the use of the data inside each package. 
+ Before we get into the particulars, you should already be familiar with the com-
+mand prompt or system shell, and you should have Go installed according to the
+guidelines in the preface of this book. If you’re ready, let’s start by understanding
+what a package is and why it’s important in the Go ecosystem. 
+In this chapter
+Understanding how Go code is organized
+Using the Go command
+Going farther with other Go developer tools
+Collaborating with other Go developers

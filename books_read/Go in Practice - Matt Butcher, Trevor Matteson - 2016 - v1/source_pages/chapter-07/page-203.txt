@@ -1,0 +1,47 @@
+180
+CHAPTER 7
+Serving and receiving assets and forms
+This rudimentary example takes a command-line argument for a location and uses it
+within a template. When no value is passed into the application, a default is used.
+ This example serves to illustrate the idea. In production software, you’d use some-
+thing more complicated:
+1
+Pass the location in as configuration. See chapter 2 for multiple ways you can do
+this, including configuration files, etcd, and command-line arguments.
+2
+If no value is passed in, it should be logged and possibly cause a panic. The lack
+of a configuration value shouldn’t allow production, and testing before that, to
+serve content pointing to an invalid URL.
+3
+The location can be attached to a global configuration object and reused across
+responses in the application.
+If the server handling these files is only serving the files, it should be optimized for
+serving static files. For example, if you’re using an Apache web server, you can turn off
+modules you don’t need.
+ HTTP/2, the most recent version of the HTTP specification, provides features that
+may cause you to consider serving files along with application pages. For example,
+when a browser requests a page, an HTTP/2 server can respond with the page and any
+associated files for the page. The associated files can be sent to the browser even before
+it requests them, and all of the files can be sent over the original connection requesting
+the page. For this to happen, the server needs to serve the application and files.
+NOTE
+The HTTP/2 specification is documented in RFC 7540 by the Internet
+Engineering Task Force. You can read it at https://tools.ietf.org/html/
+rfc7540.
+Serving content is only half of the process for modern interactive applications. To
+complete the cycle, the server needs to handle interaction from users.
+7.2
+Handling form posts
+Working with HTML forms and POST or PUT requests in general is common in web
+applications and websites. Go provides much of what you need in the http package
+within the standard library. Although the functionality is available under the hood, it’s
+not always obvious how you should use it. The following patterns highlight methods
+for working with data, whether it’s a form submission or a multipart POST or PUT
+request.
+7.2.1
+Introduction to form requests
+When a request is made to a server and it contains form data, that request isn’t pro-
+cessed into a usable structure by default. Most of the request handling across most Go
+programs doesn’t need to work with form data, so it’s a feature you need to opt into.
+Opting in is fairly straightforward. The following example shows the simplest way to
+parse form data and get access to it:

@@ -1,0 +1,24 @@
+117
+15 
+LESSON
+CAPSTONE: TEMPERATURE TABLES
+Write a program that displays temperature conversion 
+tables. The tables should use equals signs (=) and pipes 
+(|) to draw lines, with a header section:
+=======================
+| ºC       | ºF       |
+=======================
+| -40.0    | -40.0    |
+| ...      | ...      |
+=======================
+The program should draw two tables. The first table has 
+two columns, with C in the first column and F in the 
+second column. Loop from –40 C through 100 C in 
+steps of 5 using the temperature conversion methods 
+from lesson 13 to fill in both columns.
+After completing one table, implement a second table with the columns reversed, con-
+verting from F to C.
+Drawing lines and padding values is code you can reuse for any data that needs to be 
+displayed in a two-column table. Use functions to separate the table drawing code from 
+the code that calculates the temperatures for each row.
+ 

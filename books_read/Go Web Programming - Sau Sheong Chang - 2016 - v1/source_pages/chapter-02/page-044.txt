@@ -1,0 +1,24 @@
+23
+Let’s ChitChat
+2.1
+Let’s ChitChat
+Internet forums are everywhere. They’re one of the most popular uses of the internet,
+related to the older bulletin board systems (BBS), Usenet, and electronic mailing lists.
+Yahoo! and Google Groups are very popular (see figure 2.1), with Yahoo! reporting 10
+million groups (each group is a forum on its own) and 115 million group members.
+One of the biggest internet forums around, Gaia Online, has 23 million registered
+users and a million posts made every day, with close to 2 billion posts and counting.
+Despite the introduction of social networks like Facebook, internet forums remain
+one of the most widely used means of communications on the internet.
+Essentially, internet forums are the equivalent of a giant bulletin board where anyone
+(either registered or anonymous users) can hold conversations by posting messages
+on the forum. These conversations, called threads, usually start off as a topic that a user
+wants to talk about, and other users add to the conversation by posting their replies to
+the original topic. More sophisticated forums are hierarchical, with forums having
+subforums with specific categories of topics that are being discussed. Most forums are
+moderated by one or more users, called moderators, who have special permissions.
+ In this chapter, we’ll develop a simple internet forum called ChitChat. Because this
+is a simple example, we’ll be implementing only the key features of an internet forum.
+Users will only be able to sign up for an account and log in to create a thread or post a
+Figure 2.1
+Google Groups Go programming language forum, an example of an internet forum

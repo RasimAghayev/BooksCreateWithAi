@@ -1,0 +1,54 @@
+94
+CHAPTER 5
+Go’s type system
+ 
+09 // user defines a user in the program.
+10 type user struct {
+11
+name
+string
+12
+email string
+13 }
+14
+15 // notify implements a method with a value receiver.
+16 func (u user) notify() {
+17
+fmt.Printf("Sending User Email To %s<%s>\n",
+18
+u.name,
+19
+u.email)
+20 }
+There are two types of receivers in Go: value receivers and pointer receivers. In listing
+5.13 on line 16, the notify method is declared with a value receiver.
+func (u user) notify() {
+The receiver for notify is declared as a value of type user. When you declare a method
+using a value receiver, the method will always be operating against a copy of the value
+used to make the method call. Let’s skip to line 32 of the program in listing 5.11 to see
+a method call on notify.
+29
+// Values of type user can be used to call methods
+30
+// declared with a value receiver.
+31
+bill := user{"Bill", "bill@email.com"}
+32
+bill.notify()
+Listing 5.15 shows a call to the notify method using a value of type user. On line 31,
+a variable named bill of type user is declared and initialized with a name and email
+address. Then on line 32, the notify method is called using the variable bill.
+bill.notify()
+The syntax looks similar to when you call a function from a package. In this case how-
+ever, bill is not a package name but a variable name. When we call the notify
+method in this case, the value of bill is the receiver value for the call and the notify
+method is operating on a copy of this value. 
+ You can also call methods that are declared with a value receiver using a pointer.
+Listing 5.13
+listing11.go: lines 09–20
+Listing 5.14
+Declaration of a method with a value receiver
+Listing 5.15
+listing11.go: lines 29–32
+Listing 5.16
+Calling a method from a variable

@@ -1,0 +1,29 @@
+Setting up Echo
+After you have a working installation of Go, you will be able to install the Echo
+web application framework. To install third-party libraries and packages, you
+can use the go get command to get any package you need. The following is how
+you would go about installing Echo version 3.3.5, which is the latest version at
+the time of writing this book, and which is the version of Echo we will use for
+the remainder of this book:
+go get github.com/labstack/echo
+cd $GOPATH/src/github.com/labstack/echo 
+git checkout tags/3.3.5
+cd -
+The preceding commands will clone the Echo web application framework into
+your GOPATH in the appropriate location, and then checkout the 3.3.5 release tag of
+the repository. With the preceding command, we can ensure that we are using the
+correct version of Echo. Cloning the repository directly and checking out the
+appropriate version might seem a little bit annoying, but unfortunately the go get
+tool, at the time of writing, does not support versioned package downloads. In
+future chapter examples, we will utilize a version pinning tool that is extremely
+handy called dep, which will eliminate the need to perform these steps on a per
+project basis.
+In order to verify that we have your environment completely set up, we will now
+create a small Echo-based web application, and compile it to prove we have a
+working setup. You can download the following code using git with the
+following commands:
+mkdir -p $GOPATH/src/github.com/PacktPublishing/
+cd $GOPATH/src/github.com/PacktPublishing/
+git clone https://github.com/PacktPublishing/Echo-Essentials
+cd Echo-Essentials
+Now that you have the code, you will be able to see the following code located

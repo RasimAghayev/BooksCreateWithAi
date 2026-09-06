@@ -1,0 +1,46 @@
+97
+TECHNIQUE 19
+Issuing panics
+ Running this program provides this output:
+go run zero_divider.go
+Divide 1 by 0
+Error: Can't divide by zero
+Divide 2 by 0
+panic: runtime error: integer divide by zero
+[signal 0x8 code=0x7 addr=0x22d8 pc=0x22d8]
+goroutine 1 [running]:
+main.main()
+   /Users/mbutcher/Code/go-in-practice/chapter4/zero_divider.go:18 +0x2d8
+The first division using precheckDivide returns an error, and the second division
+causes a panic because you never checked the divisor. Conceptually speaking, the rea-
+sons for this are important:
+When you checked the value before dividing, you never introduced the situa-
+tion where the program was asked to do something it couldn’t.
+When you divided, you caused the system to encounter a state that it couldn't
+handle. This is when a panic should occur.
+Practically speaking, errors are something that we as developers ought to expect to go
+wrong. After all, they’re documented in the code. You can glance at the definition of
+precheckDivide and see an error condition that you need to handle when you call
+the function. Although an error might represent something outside the norm, we
+can’t really say that they’re unexpected.
+ Panics, on the other hand, are unexpected. They occur when a constraint or limi-
+tation is unpredictably surpassed. When it comes to declaring a panic in your code,
+the general rule of thumb is don’t panic unless there’s no clear way to handle the con-
+dition within the present context. When possible, return errors instead.
+4.2.2
+Working with panics
+Go developers have expectations about how to correctly panic, though those expectations
+aren’t always clearly laid out. Before diving into the proper handling of panics, you’ll look
+at a technique that all Go developers should know when it comes to issuing panics.
+TECHNIQUE 19
+Issuing panics
+The definition of Go’s panic function can be expressed like this: panic(interface{}).
+When you call panic, you can give it almost anything as an argument. You can, should
+you so desire, call panic(nil), as shown in the following listing.
+package main
+func main() {
+     panic(nil)
+}
+Listing 4.10
+Panic with nil
+Panic about nothing!

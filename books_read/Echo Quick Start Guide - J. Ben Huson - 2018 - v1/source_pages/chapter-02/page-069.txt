@@ -1,0 +1,16 @@
+Summary
+Within this whirlwind chapter, much was covered about setting up an Echo
+project, as well as fundamentals of developing within the Echo framework.
+Some primary features of the framework were discussed, and examples were
+used to expose the reader to the concepts.
+It is clear, based on the examples that were used within this chapter, that the
+most important aspect for a successful web application is the code's layout and
+organization. We are able to focus more on the particular application logic
+associated with our application by using the Echo framework. There is less need
+to find solutions to already solved problems such as request middleware
+pipelines, routing of URL paths to application handlers, and taking input and
+rendering output effectively.
+In the remainder of the book, we will be looking at the features of the Echo
+framework in greater depth. In the next chapter, we will start looking closely at
+the routing capabilities, and the best practices in the resource identifier for
+application-handler mapping.

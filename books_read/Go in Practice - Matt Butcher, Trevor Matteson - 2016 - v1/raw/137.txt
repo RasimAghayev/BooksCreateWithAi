@@ -1,0 +1,54 @@
+114
+CHAPTER 5
+Debugging and testing
+5.1
+Locating bugs
+Sometimes you see a bug and know immediately what caused it. More often, you need
+to spend a short amount of time in the code hunting for the problem. And every once
+in a while, you hit those frustrating beasts that take hours or even days to track down.
+ That third category of bug usually warrants the use of special tools or tactics to
+track down the issue. This section covers some of those tools and tactics.
+5.1.1
+Wait, where is my debugger?
+The go-to debugging tool of choice for many software developers is (surprise!) the
+debugger. This magnificent tool executes your code and walks you through each step of
+the way at whatever pace you desire.
+ Before we dive headlong into the discussion, there’s one thing worth noting.
+Despite the plethora of developer-oriented features in Go, it doesn’t yet have a fully
+functional debugger. The core team has focused on other things, and the closest thing
+to an official Go debugger is the GNU Debugger (GDB) plugin. You can use the vener-
+able old GDB to do some debugging, but it’s not as reliable as many developers desire.
+TIP
+If you’d like to get GDB configured for debugging Go, the golang web-
+site has a great introduction (http://golang.org/doc/gdb).
+The Go community has also stepped in, and one project in particular looks good to
+us. Delve (https://github.com/derekparker/delve) is a new Go debugger under
+active development. As of this writing, the Delve installation process is tricky, espe-
+cially on a Mac. But if you’re looking for a full-featured debugger that does an admira-
+ble job of tracing goroutines, Delve is a sound bet. Our guess is that Delve will
+supplant GDB as the choice debugger for the Go community.
+ 
+Another 
+alternative 
+is 
+the 
+slightly 
+less 
+traditional 
+Godebug 
+tool
+(https://github.com/mailgun/godebug). Although breakpoints have to be coded
+into your source, Godebug instruments your code and allows you to get a deeper view
+into what’s going on.
+ With all of that said, maybe we’re a little bit old-school, but we haven’t found the
+debugger situation to be much of a drawback. Go provides great libraries and tools
+that have gotten us out of even our most sticky situations. With that caveat behind us,
+let’s dive into some good code-quality practices in Go.
+5.2
+Logging
+It has long been the accepted practice that long-running processes write status infor-
+mation to a log file or subsystem. If you take a look at any popular programming lan-
+guage, you’ll find libraries that provide common logging features. Go is no exception.
+In fact, the Go designers decided to include logging in the core libraries.
+ Typically, logs are intended to capture certain pieces of valuable information that
+developers, system administrators, and other programs can use to learn about an

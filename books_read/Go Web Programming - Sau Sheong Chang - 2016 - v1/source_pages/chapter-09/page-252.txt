@@ -1,0 +1,48 @@
+231
+Goroutines
+(though it’s still better than with just one CPU) whereas the benchmark for goPrint2
+is better than with two CPUs (though the improvement is just a disappointing 40 %).
+The benchmarks are worse because of the same issue I mentioned earlier: scheduling
+and running on multiple CPUs have a cost, and if the processing doesn’t warrant the
+high cost, it can make the performance worse.
+ The moral of the story? Increasing the number of CPUs doesn’t necessarily mean
+better performance. It’s important to understand your code and do lots of bench-
+marking.
+9.2.3
+Waiting for goroutines
+You saw how goroutines are run independently, and in a previous example, you also
+saw how the goroutines started in the program would end unceremoniously when the
+program ended. You got away with it by adding a time delay using the Sleep function,
+but that’s a very hacky way of handling it. Although the danger of a program ending
+before the goroutines can complete is less probable in any serious code (because
+you’ll know right away and change it), you may often encounter a need to ensure all
+goroutines complete before moving on to the next thing.
+ Go provides a simple mechanism called the WaitGroup, which is found in the sync
+package. The mechanism is straightforward:
+■
+Declare a WaitGroup.
+■
+Set up the WaitGroup’s counter using the Add method.
+■
+Decrement the counter using the Done method whenever a goroutine com-
+pletes its task.
+■
+Call the Wait method, which will block until the counter is 0.
+The following listing shows an example. You’ll be using the same printNumbers2 and
+printLetters2 functions that previously needed a one-microsecond delay.
+package main
+import "fmt"
+import "time"
+import "sync"
+func printNumbers2(wg *sync.WaitGroup) {
+  for i := 0; i < 10; i++ {
+    time.Sleep(1 * time.Microsecond)
+    fmt.Printf("%d ", i)
+  }
+  wg.Done()                               
+}
+func printLetters2(wg *sync.WaitGroup) {
+  for i := 'A'; i < 'A'+10; i++ {
+Listing 9.6
+Using WaitGroups
+Decrement counter

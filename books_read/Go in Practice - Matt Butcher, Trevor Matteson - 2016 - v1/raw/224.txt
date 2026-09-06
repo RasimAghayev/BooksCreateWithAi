@@ -1,0 +1,45 @@
+201
+TECHNIQUE 51
+Custom HTTP error passing
+func main() {
+     http.HandleFunc("/", displayError)
+     http.ListenAndServe(":8080", nil)
+}
+This simple server always returns the error message An Error Occurred. Along with
+the custom message, served with a type of text/plain, the HTTP status message is set
+to 403, correlating to forbidden access.
+ The http package in the standard library has constants for the various status codes.
+You can read more about the codes at https://en.wikipedia.org/wiki/List_of_HTTP_
+status_codes.
+ A client can read the codes the server responds with to learn about what happened
+with the request. In listing 8.5, when the res.StatusCode is checked, the client is
+looking for a status in the 200 range, which signifies a successful request. The follow-
+ing snippet shows a simple example of printing the status:
+res, _ := http.Get("http://example.com")
+fmt.Println(res.Status)
+fmt.Println(res.StatusCode)
+The res.Status is a text message for the status. Example responses look like 200 OK
+and 404 Not Found. If you’re looking for the error code as a number, res.Status-
+Code is the status code as an int.
+ Both the response code and the error message are useful for clients. With them,
+you can display error messages and automatically handle situations.
+8.2.1
+Generating custom errors
+A plain text error string and an HTTP status code representing an error are often
+insufficient. For example, if you’re displaying web pages, you’ll likely want your error
+pages to be styled like your application or site. Or if you’re building an API server that
+responds with JSON, you’ll likely want error responses to be in JSON as well.
+ The first part of working with custom error responses is for the server to generate
+them.
+TECHNIQUE 51
+Custom HTTP error passing
+You don’t have much room for customization when using the Error function within
+the http package. The response type is hardcoded as plain text, and the X-Content-
+Type-Options header is set to nosniff. This header tells some tools, such as Microsoft
+Internet Explorer and Google Chrome, to not attempt to detect a content type other
+than what was set. This leaves little opportunity to provide a custom error, aside from
+the content of the plain text string.
+PROBLEM
+How can you provide a custom response body and content type when there’s an error?
+Sets up all paths to serve the 
+HTTP handler displayError

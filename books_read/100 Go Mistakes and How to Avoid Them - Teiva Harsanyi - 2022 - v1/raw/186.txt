@@ -1,0 +1,43 @@
+166
+CHAPTER 8
+Concurrency: Foundations
+introducing different steps that separate concurrent threads can tackle. Meanwhile,
+parallelism is about execution, and we can use it at the step level by adding more par-
+allel threads. Understanding these two concepts is fundamental to being a proficient
+Go developer.
+ The next section discusses a prevalent mistake: believing that concurrency is always
+the way to go. 
+8.2
+#56: Thinking concurrency is always faster
+A misconception among many developers is believing that a concurrent solution is
+always faster than a sequential one. This couldn’t be more wrong. The overall perfor-
+mance of a solution depends on many factors, such as the efficiency of our structure
+(concurrency), which parts can be tackled in parallel, and the level of contention
+among the computation units. This section reminds us about some fundamental
+knowledge of concurrency in Go; then we will see a concrete example where a concur-
+rent solution isn’t necessarily faster.
+8.2.1
+Go scheduling
+A thread is the smallest unit of processing that an OS can perform. If a process wants
+to execute multiple actions simultaneously, it spins up multiple threads. These threads
+can be
+Concurrent—Two or more threads can start, run, and complete in overlapping
+time periods, like the waiter thread and the coffee machine thread in the previ-
+ous section.
+Parallel—The same task can be executed multiple times at once, like multiple
+waiter threads.
+The OS is responsible for scheduling the thread’s processes optimally so that
+All the threads can consume CPU cycles without being starved for too much
+time.
+The workload is distributed as evenly as possible among the different CPU
+cores.
+NOTE
+The word thread can also have a different meaning at a CPU level. Each
+physical core can be composed of multiple logical cores (the concept of
+hyperthreading), and a logical core is also called a thread. In this section,
+when we use the word thread, we mean the unit of processing, not a logical
+core.
+A CPU core executes different threads. When it switches from one thread to another,
+it executes an operation called context switching. The active thread consuming CPU
+cycles was in an executing state and moves to a runnable state, meaning it’s ready to be
+executed pending an available core. Context switching is considered an expensive

@@ -1,0 +1,9 @@
+ACKNOWLEDGMENTS
+xvi
+I’d also like to thank the creators of Go—Robert Griesemer, Rob Pike, and Ken
+Thompson—as well as contributors to the net/http, html/template, and other web
+standard libraries, especially Brad Fitzpatrick, without whom I probably wouldn’t have
+anything to write about!
+ Last but certainly not least, I’d like to thank my family—the love of my life, Wooi
+Ying, and my taller-than-me-now son, Kai Wen. I hope that in writing this book, I will
+be an inspiration to him and he will soon pick up my book proudly and learn from it.

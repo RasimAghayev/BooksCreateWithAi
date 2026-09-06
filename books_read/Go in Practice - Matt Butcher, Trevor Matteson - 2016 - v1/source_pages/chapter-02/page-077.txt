@@ -1,0 +1,42 @@
+54
+CHAPTER 2
+A solid foundation
+ The pathResolver is set as the handler function for the built-in HTTP server when
+the server is started D. For pathResolver to work as a handler function, it needs to
+implement the ServeHTTP method and implicitly implement the HandlerFunc inter-
+face. The ServeHTTP method is where path resolving happens.
+ When a request comes into the server, the ServeHTTP method iterates over the
+paths registered with the pathResolver E. For each path, it checks the current HTTP
+method and path to see if a function is mapped to the combination F. This is a
+check you construct because with REST servers you’ll often need to handle different
+HTTP methods (for example, a DELETE or GET request) with entirely different func-
+tions. When a match is found, the handler function registered for that case is exe-
+cuted G. If no matched paths are found in the lookup, you default to a 404 Page Not
+Found error H.
+ You should be aware of the pros and cons of path resolution using the path pack-
+age. Here are the pros:
+Easy to get started with simple path matching.
+Included in the standard library, the path package is well traveled and tested.
+The cons have a common thread in that the path package is generic to paths and not
+specific to URL paths. The cons are as follows:
+The wildcard abilities of the path package are limited. For example, a path of
+foo/* will match foo/bar but not foo/bar/baz. Using * for a wildcard stops at
+the next /. To match foo/bar/baz, you’d need to look for a path like foo/*/*.
+Because this is a generic path package rather than one specific to URLs, some
+nice-to-have features are missing. For example, in listing 2.17 the path
+/goodbye/* is registered. Visiting the path /goodbye in a browser will display a
+Page Not Found message, whereas visiting /goodbye/ works. Although there’s a
+technical path difference (the trailing /), the common web use case isn’t trans-
+parently handled. You’ll need to identify and handle cases such as this one.
+This method is useful for simple path scenarios and it’s one that we, the authors, have
+successfully used.
+TECHNIQUE 8
+URL pattern matching
+For most REST-style apps, simple pattern matching with regular expressions is more
+than sufficient. But what if you want to go beyond that and do something fancy with
+your URLs? The path package isn’t well suited for this because it supports only simple
+POSIX-style pattern matching.
+PROBLEM
+Simple path-based matching isn’t enough for an application that needs to treat a path
+more like a text string and less like a file path. This is particularly important when
+matching across a path separator (/).

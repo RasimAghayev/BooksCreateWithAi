@@ -1,0 +1,65 @@
+Contents
+Preface . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
+1
+Introduction . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
+2
+About the Author . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
+2
+Setter/Getters, Attribute Accessors and Structs . . . . . . . . . . . . . . . . . . . . . . . . . . . .
+3
+Instance Variables . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
+5
+Struct . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
+6
+Public Structs . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
+9
+Attaching a Struct to a Function . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
+11
+Pass-by-value and Pass-by-reference . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
+16
+Pointer Receiver
+. . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
+18
+Value Receiver
+. . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
+19
+Decouple and Reuse Structs through Inheritance . . . . . . . . . . . . . . . . . . . . . . . . . .
+21
+Anonymous Structs . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
+24
+Anonymous Struct Fields . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
+25
+Chapter Questions . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
+28
+Hash and Maps . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
+29
+Maps by Declaration . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
+30
+Initialization by Make . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
+30
+Initialization by Literal Type Assignment . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
+32
+Maps by Assignment . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
+34
+Assignment with a Key/Value . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
+34
+Assignment on an Empty Map . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
+35
+Using Struct in Maps . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
+35
+Struct Maps by Declaration . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
+36
+Struct Maps by Assignment . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
+37
+Struct Maps with Array Values . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
+38
+Maps with Dynamic Types . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
+39
+Deleting Map Values . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
+40
+Reading a Non-Present Key from a Map . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
+43
+Variadic Functions . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
+46
+Variadic Interface . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
+48

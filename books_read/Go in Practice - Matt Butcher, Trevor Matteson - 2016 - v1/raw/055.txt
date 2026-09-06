@@ -1,0 +1,43 @@
+32
+CHAPTER 2
+A solid foundation
+The gnuflag package has almost the exact same API as the flag package, with one
+notable difference. The Parse function has an additional argument. Otherwise, it’s a
+drop-in replacement. The flag package will parse flags between the command name
+and the first nonflag argument. For example, in listing 2.4, the -s and -n flags are
+defined, and -n takes a value. When flag parses foo, it has reached a nonflag argu-
+ment and stops parsing. That means -bar won’t be parsed to see if it’s a flag. The
+gnuflag package has an option to continue parsing that would allow it to find flags
+positioned where -bar is.
+$ flag_based_cli –s –n Buttercup foo -bar
+To switch from the flag package to the gnuflag package, you need to change only
+two things in an application. First, instead of importing the flag package, import
+launchpad.net/gnuflag. Then, add an additional first argument to the Parse func-
+tion of either true or false. A value of true looks for flags anywhere in the com-
+mand, and false behaves like the flag package. That’s it.
+NOTE
+lanuchpad.net uses the Bazaar version-control system. You need to
+have this installed in order for Go to fetch the package. More details are avail-
+able at http://bazaar.canonical.com/.
+GO-FLAGS
+Some community flag packages break from the conventions used in the flag package
+within the standard library. One such package is github.com/jessevdk/go-flags. It
+provides Linux- and BSD-style flags, providing even more features than those in
+gnuflag, but uses an entirely different API and style. Features include the following:
+Short flags, such as –f, and groups of short flags, such as -fg.
+Multiple-letter or long flags, such as --flag.
+Supporting option groups.
+Generating well-formed help documentation.
+Passing values for flags in multiple formats such as -p/usr/local, -p /usr
+/local, and -p=/usr/local.
+The same option can, optionally, appear more than once and be stored multi-
+ple times on a slice.
+To illustrate using this flag package, the following listing shows our Spanish-capable
+Hello World console application rewritten using go-flags.
+package main
+import (
+     "fmt"
+Listing 2.4
+flag package flag parsing
+Listing 2.5
+Using go-flags

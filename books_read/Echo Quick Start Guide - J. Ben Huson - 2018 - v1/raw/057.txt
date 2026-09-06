@@ -1,0 +1,11 @@
+package renderings
+type HealthCheckResponse struct {
+Message string `json:"message"`
+}
+This HealthCheckResponse structure contains one attribute called Message. It
+should be noted with this project layout structure that we can and should name
+all of our related files similarly to keep the code structure as intuitive as possible.
+Within the handlers directory, there is a health_check.go file, which will
+handle all of the health check-related application logic. Similarly, there is a
+renderings health_check.go, which will store all of the renderings related to the
+health check response structures.

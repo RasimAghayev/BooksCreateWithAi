@@ -1,0 +1,41 @@
+18
+Lesson 2  A glorified calculator
+NOTE Variables must be declared before you can use them. Go will report an error if you
+assign a value to a variable that hasn’t been declared with var—for example, speed = 16. This
+restriction can help catch mistakes, such as accidentally assigning a value to distence when
+you intended to type distance.
+2.4
+Taking a shortcut
+There may not be any shortcuts to visit Mars, but Go provides a few keystroke-saving 
+shortcuts.
+2.4.1
+Declare multiple variables at once
+When you declare variables or constants, you can declare each one on its own line like 
+this:
+var distance = 56000000
+var speed = 100800
+Or you can declare them as a group:
+var (
+    distance = 56000000
+    speed = 100800
+)
+Quick check 2.3 
+1
+The SpaceX Interplanetary Transport System lacks a warp drive, but it will coast to Mars 
+at a respectable 100,800 km/h. An ambitious launch date of January 2025 would place 
+Mars and Earth 96,300,000 km apart. How many days would it take to reach Mars? 
+Modify listing 2.3 to find out.
+2
+There are 24 hours in one Earth day. To give 24 a descriptive name in your program,
+which keyword would you use?
+QC 2.3 answer
+1
+Spaceships don’t travel in a straight line, but as an approximation, the trip would take 39 days.
+const hoursPerDay = 24
+var speed = 100800
+// km/h
+var distance = 96300000 // km
+fmt.Println(distance/speed/hoursPerDay, "days")
+2
+The const keyword because the value doesn’t change while the program is running.
+ 

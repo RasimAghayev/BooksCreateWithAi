@@ -1,0 +1,43 @@
+355
+Final words
+fields of a struct by size in descending order can lead to more compact structs
+(less memory allocation and potentially a better spatial locality).
+Understanding the fundamental differences between heap and stack should
+also be part of your core knowledge when optimizing a Go application. Stack
+allocations are almost free, whereas heap allocations are slower and rely on the
+GC to clean the memory.
+Reducing allocations is also an essential aspect of optimizing a Go application.
+This can be done in different ways, such as designing the API carefully to pre-
+vent sharing up, understanding the common Go compiler optimizations, and
+using sync.Pool.
+Use the fast-path inlining technique to efficiently reduce the amortized time to
+call a function.
+Rely on profiling and the execution tracer to understand how an application
+performs and the parts to optimize.
+Understanding how to tune the GC can lead to multiple benefits such as han-
+dling sudden load increases more efficiently.
+To help avoid CPU throttling when deployed in Docker and Kubernetes, keep
+in mind that Go isn’t CFS-aware.
+Final words
+Congratulations for reaching the end of 100 Go Mistakes and How to Avoid Them. I gen-
+uinely hope that you enjoyed reading this book and that it will help you with your per-
+sonal and/or professional projects.
+ Remember that making mistakes is part of the learning process, and as I high-
+lighted in the preface, it was also a significant source of inspiration for this book. What
+matters, in the end, is our capacity to learn from them.
+ If you want to continue the discussion, you can follow me on Twitter: @teivah.
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 

@@ -1,0 +1,48 @@
+103
+Actions
+The arg in both formats is the argument to the action. We’ll examine arguments in
+detail later in this chapter. For now, consider arguments to be values like a string con-
+stant, a variable, a function, or a method that returns a value. Let’s see how it can be
+used in a template. First, you need to create a handler that generates a random inte-
+ger between 0 and 10, shown in the next listing. Then you check if it’s larger than 5
+and return it as a Boolean to the template.
+package main
+import (
+    "net/http"
+    "html/template"
+    "math/rand"
+    "time"
+)
+func process(w http.ResponseWriter, r *http.Request) {  
+    t, _ := template.ParseFiles("tmpl.html")
+    rand.Seed(time.Now().Unix())
+    t.Execute(w, rand.Intn(10) > 5)
+}
+func main() {
+    server := http.Server{
+        Addr: "127.0.0.1:8080",
+    }
+    http.HandleFunc("/process", process)
+    server.ListenAndServe()
+}
+Next, in the template file tmpl.html, you test the argument (which happens to be the
+dot, which is the value passed from the handler) and display either Number is greater
+than 5! or Number is 5 or less!
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <title>Go Web Programming</title>
+  </head>
+  <body>
+    {{ if . }}
+      Number is greater than 5!
+    {{ else }}
+      Number is 5 or less!
+    {{ end }}
+  </body>
+</html>
+Listing 5.3
+Generating a random number in the handler
+Listing 5.4
+Template file tmpl.html for conditional action

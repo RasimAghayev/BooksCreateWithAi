@@ -1,0 +1,43 @@
+9
+Noteworthy aspects of Go
+This example shows how to print the body of a simple HTTP GET request. The HTTP
+client can go far beyond this to deal with proxies, perform TLS handling, set headers,
+handle cookies, create client objects, and even swap out the transport layer altogether.
+ Creating an HTTP server with Go is a common task. What Go provides in the stan-
+dard library is powerful enough to operate at scale, easy to get started with, and flexi-
+ble enough to handle complex applications. Chapter 3 is dedicated to getting up and
+running with an HTTP server.
+HTML
+If you’re working with web servers, you’re likely going to work with HTML as well. The
+html and html/template packages provide a great start to generating web pages.
+Whereas the html package deals with escaping and unescaping HTML, the html/
+template package deals with creating reusable HTML templates. The security model
+for handling the data is documented, and helper functions exist for working with
+HTML, JavaScript, and more. The template system is extensible, making it an ideal
+base for more-complicated functionality, while providing a good set of functionality
+for anyone to get started.
+CRYPTOGRAPHY
+Cryptography has become a common component of an application, whether you’re
+dealing with hashes or encrypting sensitive information. Go provides the common
+functionality including MD5, multiple versions of Secure Hash Algorithm (SHA),
+Transport Layer Security (TLS), Data Encryption Standard (DES), Triple Data Encryp-
+tion Algorithm (TDEA), Advanced Encryption Standard (AES, formerly known as Rijn-
+dael), Keyed-Hash Message Authentication Code (HMAC), and many others.
+Additionally, a cryptographically secure random number generator is provided.
+DATA ENCODING
+When you share data between systems, an immediate concern is encoding. Did the
+data come in with base64 encoding? Does JavaScript Object Notation (JSON) or
+Extensible Markup Language (XML) data need to be turned into a local object? These
+are common situations, especially in our modern networked world.
+ Go was designed with encoding in mind. Internally, Go is entirely handled as
+UTF-8. This should be no surprise, as the creators of UTF-8 also created Go. But not
+everything passed around between systems is in UTF-8, and you have to deal with data
+formats that add meaning to the text. To handle the transitions and manipulations,
+Go has packages and interfaces. The packages provide features such as the ability to
+turn a JSON string into instantiated objects, and the interfaces provide a way to switch
+between encodings or add new ways to work with encodings via external packages.
+1.2.3
+Concurrency with goroutines and channels
+Computer processors with multiple processing cores have become commonplace.
+They’re in devices from servers to cell phones. Yet most programming languages were
+designed for processors with a single core, because that’s what existed at the time.

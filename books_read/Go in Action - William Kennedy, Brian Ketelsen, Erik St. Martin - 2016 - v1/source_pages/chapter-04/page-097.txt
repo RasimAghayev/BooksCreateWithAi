@@ -1,0 +1,59 @@
+76
+CHAPTER 4
+Arrays, slices, and maps
+The built-in function append is also a variadic function. This means you can pass mul-
+tiple values to be appended in a single slice call. If you use the ... operator, you can
+append all the elements of one slice into another. 
+// Create two slices each initialized with two integers.
+s1 := []int{1, 2}
+s2 := []int{3, 4}
+// Append the two slices together and display the results.
+fmt.Printf("%v\n", append(s1, s2...))
+Output:
+[1 2 3 4]
+As you can see by the output, all the values of slice s2 have been appended to slice s1.
+The value of the new slice returned by the append function is then displayed by the
+call to Printf. 
+ITERATING OVER SLICES
+Since a slice is a collection, you can iterate over the elements. Go has a special keyword
+called range that you use in conjunction with the keyword for to iterate over slices. 
+// Create a slice of integers.
+// Contains a length and capacity of 4 elements.
+slice := []int{10, 20, 30, 40}
+// Iterate over each element and display each value.
+for index, value := range slice {
+fmt.Printf("Index: %d
+Value: %d\n", index, value)
+}
+Listing 4.37
+Appending to a slice from another slice
+Listing 4.38
+Iterating over a slice using for range
+addr
+Pointer
+2
+Length
+2
+Capacity
+Plum
+Kiwi
+slice := source[2:3:3]
+slice = append(slice, "Kiwi")
+Apple
+Orange
+Plum
+[ 0 ]
+Banana
+[ 1 ]
+Grape
+[ 2 ]
+[ 0 ]
+[ 1 ]
+addr
+Pointer
+1
+Length
+1
+Capacity
+Figure 4.18
+A representation of the new slice after the append operation

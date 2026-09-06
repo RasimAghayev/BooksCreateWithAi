@@ -1,0 +1,58 @@
+98
+CHAPTER 5
+Go’s type system
+ Let’s look at a type from the net package.
+32 type IP []byte
+Listing 5.25 shows a type called IP which is declared as a slice of bytes. Declaring a type
+like this is useful when you want to declare behavior around a built-in or reference type.
+The compiler will only let you declare methods for user-defined types that are named.
+329 func (ip IP) MarshalText() ([]byte, error) {
+330
+if len(ip) == 0 {
+331
+return []byte(""), nil
+332
+}
+333
+if len(ip) != IPv4len && len(ip) != IPv6len {
+334
+return nil, errors.New("invalid IP address")
+335
+}
+336
+return []byte(ip.String()), nil
+337 }
+The MarshalText method in listing 5.26 has been declared using a value receiver of
+type IP. A value receiver is exactly what you expect to see since you don’t share refer-
+ence type values. This also applies to passing reference type values as parameters to
+functions and methods.
+318 // ipEmptyString is like ip.String except that it returns
+319 // an empty string when ip is unset.
+320 func ipEmptyString(ip IP) string {
+321
+if len(ip) == 0 {
+322
+return ""
+323
+}
+324
+return ip.String()
+325 }
+In listing 5.27 you see the ipEmptyString function. This function is passed a value of
+the type IP. Once again, you can see how the caller’s reference type value for this
+parameter is not shared with the function. The function is passed a copy of the caller’s
+reference type value. This also applies to return values. In the end, reference type val-
+ues are treated like primitive data values. 
+5.3.3
+Struct types
+Struct types can represent data values that could have either a primitive or nonprimi-
+tive nature. When the decision is made that a struct type value should not be mutated
+when something needs to be added or removed from the value, then it should follow
+the guidelines for the built-in and reference types. Let’s start with looking at a struct
+implemented by the standard library that has a primitive nature.
+Listing 5.25
+golang.org/src/net/ip.go: line 32
+Listing 5.26
+golang.org/src/net/ip.go: lines 329–337
+Listing 5.27
+golang.org/src/net/ip.go: lines 318–325

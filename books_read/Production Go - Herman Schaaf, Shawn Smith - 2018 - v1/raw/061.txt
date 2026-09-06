@@ -1,0 +1,54 @@
+Strings
+55
+Splitting a string
+1
+package main
+2
+3
+import "fmt"
+4
+import "strings"
+5
+6
+func ExampleSplit() {
+7
+l := strings.Split("a,b,c", ",")
+8
+fmt.Printf("%q", l)
+9
+// Output: ["a" "b" "c"]
+10
+}
+The strings.Split function takes a string and a separator as arguments. In this case, we passed in
+"a,b,c" and the separator “,” and received a string slice containing the separate letters a, b, and c as
+strings.
+Counting and finding substrings
+Using the strings package, we can also count the number of non-overlapping instances of a substring
+in a string with the aptly-named strings.Count. The following example uses strings.Count to count
+occurrences of both the single letter a, and the substring ana. In both cases we pass in a string²¹.
+Notice that we get only one occurrence of ana, even though one may have expected it to count
+ana both at positions 1 and 3. This is because strings.Count returns the count of non-overlapping
+occurrences.
+Count occurrences in a string
+1
+package main
+2
+3
+import (
+4
+"fmt"
+5
+"strings"
+6
+)
+7
+8
+func ExampleCount() {
+9
+s := "banana"
+10
+c1 := strings.Count(s, "a")
+11
+c2 := strings.Count(s, "ana")
+²¹Remember, Go does not support function overloading, so a single character should be passed as a string if the function expects a string,
+like most functions in the strings standard library.

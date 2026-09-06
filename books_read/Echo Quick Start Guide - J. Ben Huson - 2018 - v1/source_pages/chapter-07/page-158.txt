@@ -1,0 +1,43 @@
+        TestRun        = false
+)
+func main() {
+        //...
+        if TestRun {
+                e.POST("/stop-test-server", func(ctx echo.Context) error {
+                        StopTestServer <- true
+                        return nil
+                })
+        }
+        //…
+}
+As you can see within our main application, we flag the addition of a POST
+handler to the endpoint /stop-test-server that is handled by the anonymous
+function shown, which merely informs our test when it is time to stop the test
+server. This may seem silly, but now when we run the following command, the go
+test command starts up our main function and allows us to run external tests
+against it, and allows us to externally stop the processing of the tests which show
+us the coverage information for our handlers package:
+go test ./cmd/service/ -v -coverpkg ./handlers -coverprofile cov.txt -run=TestRunMain
+=== RUN   TestRunMain
+   ____    __
+  / __/___/ /  ___
+ / _// __/ _ \/ _ \
+/___/\__/_//_/\___/ v3.2.6
+High performance, minimalist Go web framework
+https://echo.labstack.com
+____________________________________O/_______
+                                    O\
+⇨ http server started on [::]:8080
+At this point, you are able to perform HTTP calls against this using external
+tools, such as curl seen here:
+curl http://localhost:8080/health-check
+{"message":"Everything is good!"}
+curl -XPOST http://localhost:8080/stop-test-server
+After performing these two curl commands, if you look at the output from your
+test run, you will notice that we get some logging information about the requests
+performed, as well as finally, the coverage information for our handler functions,
+which is pasted here:
+--- PASS: TestRunMain (67.31s)
+PASS
+coverage: 7.9% of statements in ./handlers
+ok      github.com/PacktPublishing/Echo-Essentials/chapter7/cmd/service    67.320s  cove

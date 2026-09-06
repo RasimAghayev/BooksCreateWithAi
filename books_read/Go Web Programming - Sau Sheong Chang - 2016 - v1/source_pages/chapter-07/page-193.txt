@@ -1,0 +1,52 @@
+172
+CHAPTER 7
+Go web services
+  Content string   `xml:"content"`
+  Author  Author   `xml:"author"`
+}
+type Author struct {
+  Id   string `xml:"id,attr"`
+  Name string `xml:",chardata"`
+}
+func main() {
+  post := Post{    
+    Id:      "1",
+    Content: " Hello World!",
+    Author: Author{
+      Id:   "2",
+      Name: "Sau Sheong",
+    },
+  }
+  output, err := xml.Marshal(&post)  
+  if err != nil {
+    fmt.Println("Error marshalling to XML:", err)
+    return
+  }
+  err = ioutil.WriteFile("post.xml", output, 0644)
+  if err != nil {
+    fmt.Println("Error writing XML to file:", err)
+    return
+  }
+}
+As you can see, the structs and the struct tags are the same as those you used when
+unmarshaling the XML. Marshaling simply reverses the process and creates XML from
+a struct. First, you populate the struct with data. Then, using the Marshal function
+you create the XML from the Post struct. Here’s the content of the post.xml file
+that’s created:
+<post id="1"><content>Hello World!</content><author id="2">Sau Sheong
+</author></post>
+It’s not the prettiest, but it’s correctly formed XML. If you want to make it look pret-
+tier, use the MarshalIndent function:
+output, err := xml.MarshalIndent(&post, "", "\t")
+The first parameter you pass to MarshalIndent is still the same, but you have two addi-
+tional parameters. The second parameter is the prefix to every line and the third
+parameter is the indent, and every level of indentation will be prefixed with this.
+Using MarshalIndent, you can produce prettier output:
+<post id="1">
+  <content>Hello World!</content>
+  <author id="2">Sau Sheong</author>
+</post>
+Creates struct 
+with data
+Marshals struct to a 
+byte slice of XML data

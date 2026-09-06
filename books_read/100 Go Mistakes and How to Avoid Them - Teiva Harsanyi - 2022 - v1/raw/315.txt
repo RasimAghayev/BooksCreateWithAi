@@ -1,0 +1,41 @@
+295
+11.9
+#90: Not exploring all the Go testing features
+11.9.2 Testing from a different package
+When writing unit tests, one approach is to focus on behaviors instead of internals.
+Suppose we expose an API to clients. We may want our tests to focus on what’s visible
+from the outside, not the implementation details. This way, if the implementation
+changes (for example, if we refactor one function into two), the tests will remain the
+same. They can also be easier to understand because they show how our API is used. If
+we want to enforce this practice, we can do so using a different package.
+ In Go, all the files in a folder should belong to the same package, with only one
+exception: a test file can belong to a _test package. For example, suppose the follow-
+ing counter.go source file belongs to the counter package:
+package counter
+import "sync/atomic"
+var count uint64
+func Inc() uint64 {
+atomic.AddUint64(&count, 1)
+return count
+}
+The test file can live in the same package and access internals such as the count vari-
+able. Or it can live in a counter_test package, like this counter_test.go file:
+package counter_test
+import (
+"testing"
+"myapp/counter"
+)
+func TestCount(t *testing.T) {
+if counter.Inc() != 1 {
+t.Errorf("expected 1")
+}
+}
+In this case, the test is implemented in an external package and cannot access inter-
+nals such as the count variable. Using this practice, we can guarantee that a test won’t
+use any unexported elements; hence, it will focus on testing the exposed behavior. 
+11.9.3 Utility functions
+When writing tests, we can handle errors differently than we do in our production
+code. For example, let’s say we want to test a function that takes as an argument a
+Customer struct. Because the creation of a Customer will be reused, we decide to cre-
+ate a specific createCustomer function for the sake of the tests. This function will
+return a possible error alongside a Customer:

@@ -1,0 +1,40 @@
+Метрики  395
+Эта конфигурация определяет единственную цель с  именем fibonacci , 
+которая доступна по адресу host.docker.internal:3000 , и  настраивает сбор 
+метрик каждые пять секунд (по умолчанию он производится раз в минуту).
+Что такое host.docker.internal?
+Имя host.docker.internal – это специальное имя, определяемое в Docker Desktop для 
+Mac и Windows, которое разрешается во внутренний IP-адрес. Он позволяет кон-
+тейнеру взаимодействовать с процессами хоста.
+Важно отметить, что этот адрес определяется только для удобства разработки и не 
+будет работать в промышленном окружении в Mac и Windows за пределами Docker 
+Desktop (то есть он не поддерживается по умолчанию в Docker в Linux).
+После создания файла prometheus.yml  можно запустить Prometheus. Самый 
+простой способ – использовать контейнер Docker:
+docker run -d --name prometheus \
+  -p 9090:9090 \
+  -v "${PWD}/prometheus.yml:/etc/prometheus/prometheus.yml" \
+  prom/prometheus:v2.23.0
+ Если для разработки вы используете Linux, то добавьте в команду выше параметр 
+--add-host=host.docker.internal:host-gateway. Но не используйте его в промышлен-
+ном окружении.
+Теперь, когда обе службы запущены, можно отправить запрос:
+$ curl localhost:3000?n=6
+13
+За кулисами OpenTelemetry просто запишет количество вызовов (в том 
+числе и рекурсивных) функции Fibonacci .
+Вывод конечной точки метрик
+Теперь, когда все службы работают, вы в любой момент сможете получить 
+экспортируемые метрики с по мощью стандартной утилиты curl , обратив-
+шись к конечной точке /metrics :
+$ curl localhost:3000/metrics
+# HELP fibonacci_requests_total Total number of Fibonacci requests.
+# TYPE fibonacci_requests_total counter
+fibonacci_requests_total{application="fibonacci",container_id="d35f0bef2ca0"} 25
+# HELP memory_usage_bytes Amount of memory used.
+# TYPE memory_usage_bytes gauge
+memory_usage_bytes{application="fibonacci",container_id="d35f0bef2ca0"}
+  7.5056128e+07
+# HELP num_goroutines Number of running goroutines.
+# TYPE num_goroutines gauge
+num_goroutines{application="fibonacci",container_id="d35f0bef2ca0"} 6

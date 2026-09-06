@@ -1,0 +1,16 @@
+121
+16 
+LESSON
+ARRAYED IN SPLENDOR
+After reading lesson 16, you’ll be able to
+Declare and initialize arrays
+Assign and access the elements of an array
+Iterate through arrays
+Arrays are ordered collections of elements with a fixed length. This lesson uses arrays to 
+store the names of planets and dwarf planets in our solar system, but you can collect 
+anything you like.
+Consider this Do you have a collection or did you in the past? Maybe stamps, coins,
+stickers, books, shoes, trophies, movies, or something else?
+Arrays are for collecting many of the same type of thing. What collections could you
+represent with an array?
+ 

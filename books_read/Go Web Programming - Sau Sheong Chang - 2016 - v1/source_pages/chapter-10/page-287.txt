@@ -1,0 +1,48 @@
+266
+CHAPTER 10
+Deploying Go
+Using heroku create will initialize a local Git repository for the web service and add
+the remote Heroku repository. Once you’ve created the application, you can use Git
+to push the code to the application:
+git push heroku master
+This will push your code to Heroku, triggering a build and deploy. And that’s all you
+need to do! Heroku also provides a number of nifty application management tools for
+scaling and managing releases, as well as configuration tools to add new services.
+10.3
+Deploying to Google App Engine
+Another popular PaaS for Go web applications is the Google App Engine (GAE).
+Google has a number of services in its Google Cloud Platform suite of products,
+including the App Engine and the Compute Engine. The App Engine is a PaaS ser-
+vice; a Compute Engine, like AWS’s EC2 and Digital Ocean’s Droplets, is an IaaS
+service. Using EC2 or Droplets isn’t much different from having your own VM or run-
+ning your own server, and we’ve covered that. This section explores Google’s powerful
+PaaS service, GAE.
+ There are a number of reasons why you’d use GAE as compared with any other
+PaaS, including Heroku. The main reasons are performance and scalability. GAE allows
+you to build applications that can automatically scale and load balance according to its
+load. Google also provides a large number of tools and capabilities built into the GAE.
+For example, it can allow your application to authenticate into Google Accounts and it
+provides services to send emails, create logs, and serve and manipulate images. Inte-
+gration into other Google APIs is also more straightforward using GAE.
+ With any advantages there are also a number of disadvantages. For one, you have
+read-only access to the filesystem, you can’t have a request lasting more than 60 sec-
+onds (GAE will kill it if you do), and you can’t have direct network access or make
+other kinds of system calls. This means you can’t (at least not easily) access many ser-
+vices outside of Google’s sandboxed application environment.
+ Figure 10.2 shows a high-level overview of the steps for deploying a web application
+on the GAE.
+Figure 10.2
+Steps to deploy on the Google App Engine. First change the code to use Google libraries 
+and create the app.yml configuration file. Then create the application and push it to the GAE.
+As with all other Google services, you’ll need a Google account to start with. Unlike Her-
+oku, much of the management and servicing of the web application is done through
+the web interface (figure 10.3), called the Google Developer Console (https://
+console.developers.google.com). 
+Change code: use
+Google libraries
+Create
+app.yml file
+Create GAE
+application
+Push code to
+GAE application

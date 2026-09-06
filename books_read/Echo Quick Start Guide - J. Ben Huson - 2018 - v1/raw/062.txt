@@ -1,0 +1,17 @@
+if err := bcrypt.CompareHashAndPassword(
+user.PasswordHash, []byte(lr.Password)); err != nil {
+resp.Success = false
+resp.Message = "Username or Password incorrect"
+return c.JSON(http.StatusUnauthorized, resp) }
+// need to make a token, successful login
+signingKey := c.Get(models.SigningContextKey).([]byte)
+// Create the Claims
+claims := &jwt.StandardClaims{
+ExpiresAt: time.Now().Add(time.Hour * 72).Unix(), Issuer: "service",
+}
+token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims) ss, err :=
+token.SignedString(signingKey) if err != nil {
+resp.Success = false
+resp.Message = "Server Error"
+return c.JSON(http.StatusInternalServerError, resp) }
+resp.Token = ss

@@ -1,0 +1,51 @@
+121
+5.5
+#40: Useless string conversions
+}
+return sb.String()
+}
+Before the iteration, we compute the total number of bytes the final string will contain
+and assign the result to total. Note that we’re not interested in the number of runes
+but the number of bytes, so we use the len function. Then we call Grow to guarantee
+space for total bytes before iterating over the strings.
+ Let’s run a benchmark to compare the three versions (v1 using +=; v2 using
+strings.Builder{} without preallocation; and v3 using strings.Builder{} with pre-
+allocation). The input slice contains 1,000 strings, and each string contains 1,000 bytes:
+BenchmarkConcatV1-4
+16
+72291485 ns/op
+BenchmarkConcatV2-4
+1188
+878962 ns/op
+BenchmarkConcatV3-4
+5922
+190340 ns/op
+As we can see, the latest version is by far the most efficient: 99% faster than v1 and
+78% faster than v2. We may ask ourselves, how can iterating twice on the input slice
+make the code faster? The answer lies in mistake #21, “Inefficient slice initialization”:
+if a slice isn’t allocated with a given length or capacity, the slice will keep growing each
+time it becomes full, resulting in additional allocations and copies. Hence, iterating
+twice is the most efficient option in this case.
+ strings.Builder is the recommended solution to concatenate a list of strings.
+Usually, this solution should be used within a loop. Indeed, if we just have to concate-
+nate a few strings (such as a name and a surname), using strings.Builder is not rec-
+ommended as doing so will make the code a bit less readable than using the +=
+operator or fmt.Sprintf.
+ As a general rule, we can remember that performance-wise, the strings.Builder
+solution is faster from the moment we have to concatenate more than about five
+strings. Even though this exact number depends on many factors, such as the size of
+the concatenated strings and the machine, this can be a rule of thumb to help us
+decide when to choose one solution over the other. Also, we shouldn’t forget that if
+the number of bytes of the future string is known in advance, we should use the Grow
+method to preallocate the internal byte slice.
+ Next, we will discuss the bytes package and why it may prevent useless string con-
+versions. 
+5.5
+#40: Useless string conversions
+When choosing to work with a string or a []byte, most programmers tend to favor
+strings for convenience. But most I/O is actually done with []byte. For example,
+io.Reader, io.Writer, and io.ReadAll work with []byte, not strings. Hence, work-
+ing with strings means extra conversions, although the bytes package contains many
+of the same operations as the strings package.
+ Let’s see an example of what we shouldn’t do. We will implement a getBytes func-
+tion that takes an io.Reader as an input, reads from it, and calls a sanitize function.

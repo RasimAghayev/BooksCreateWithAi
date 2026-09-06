@@ -1,0 +1,22 @@
+Understanding HTTP, Go, and Echo
+Echo is a performance-focused, open source Go web application framework. Go
+is an increasingly popular language choice for creating web applications due to
+the flexibility and performance built into the `net/http` standard library package
+that comes with the language. The `net/http` package provides many useful and
+powerful primitives, such as its web server implementation, request and response
+types and methods, uniform resource location router, as well as a clean handler
+interface and function type declaration.
+We will begin by taking an inventory of the basic building blocks of a web
+application from the protocol. Then, we will explore what the `net/http` package
+provides, and very briefly touch on how a web application framework could
+build with these primitives to provide developers with structure for building
+successful applications. It will be shown how the Echo web application
+framework fills the voids left by the `net/http` package, allowing for ease of
+development. Finally, we will end with best practices for setting up your web
+application using Echo.
+Within this chapter, we will cover:
+A refresher of the primitives of the Hypertext Transport Protocol (HTTP)
+An overview of what the net/http standard library provides
+A brief explanation of why the standard library is lacking and in need of a
+framework
+How to set up your Go environment and install the Echo Framework

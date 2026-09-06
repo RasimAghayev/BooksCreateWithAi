@@ -1,0 +1,38 @@
+301
+Unit 4
+    // white pieces
+    board[7][0] = 'R'
+    board[7][1] = 'N'
+    board[7][2] = 'B'
+    board[7][3] = 'Q'
+    board[7][4] = 'K'
+    board[7][5] = 'B'
+    board[7][6] = 'N'
+    board[7][7] = 'R'
+    display(board)
+}
+Lesson 17
+package main
+import "fmt"
+// Planets attaches methods to []string.
+type Planets []string
+func (planets Planets) terraform() {
+    for i := range planets {
+        planets[i] = "New " + planets[i]
+    }
+}
+func main() {
+    planets := []string{
+        "Mercury", "Venus", "Earth", "Mars",
+        "Jupiter", "Saturn", "Uranus", "Neptune",
+    }
+    Planets(planets[3:4]).terraform()
+    Planets(planets[6:]).terraform()
+    fmt.Println(planets)
+}
+Experiment: terraform.go
+Prints [Mercury Venus 
+Earth New Mars 
+Jupiter Saturn New 
+Uranus New Neptune]
+ 

@@ -1,0 +1,48 @@
+v
+brief contents
+PART 1
+GO AND WEB APPLICATIONS ......................................... 1
+1
+■
+Go and web applications
+3
+2
+■
+Go ChitChat
+22
+PART 2
+BASIC WEB APPLICATIONS .......................................... 45
+3
+■
+Handling requests
+47
+4
+■
+Processing requests
+69
+5
+■
+Displaying content
+96
+6
+■
+Storing data
+125
+PART 3
+BEING REAL ............................................................ 153
+7
+■
+Go web services
+155
+8
+■
+Testing your application
+190
+9
+■
+Leveraging Go concurrency
+223
+10
+■
+Deploying Go
+256

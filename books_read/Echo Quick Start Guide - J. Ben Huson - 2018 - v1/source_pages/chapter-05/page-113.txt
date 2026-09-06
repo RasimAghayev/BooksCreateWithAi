@@ -1,0 +1,8 @@
+Post Go 1.7
+Due to the release of Go 1.7, the standard library now offers context
+implementation within the request data structure itself. This means that one no
+longer has to choose between one of the prior options for passing the context
+from handler to handler when building a web framework, as that context is now
+always present on the request itself. Granted, this context is a little more of a
+bare bones lightweight context, but it does support cancellation and is used
+elsewhere.

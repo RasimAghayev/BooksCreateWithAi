@@ -1,0 +1,73 @@
+Testing
+88
+Testing an HTTP handler
+1
+package main
+2
+3
+import (
+4
+"net/http"
+5
+"net/http/httptest"
+6
+"testing"
+7
+)
+8
+9
+func TestHTTPHandler(t *testing.T) {
+10
+// Create a request to pass to our handler.
+11
+req, err := http.NewRequest("GET", "/hello", nil)
+12
+if err != nil {
+13
+t.Fatal(err)
+14
+}
+15
+16
+// We create a ResponseRecorder, which satisfies
+17
+// the http.ResponseWriter interface, to record
+18
+// the response.
+19
+r := httptest.NewRecorder()
+20
+handler := http.HandlerFunc(helloHandler)
+21
+22
+// Our handler satisfies http.Handler, so we can call
+23
+// the ServeHTTP method directly and pass in our
+24
+// Request and ResponseRecorder.
+25
+handler.ServeHTTP(r, req)
+26
+27
+// Check that the status code is what we expect.
+28
+if r.Code != http.StatusOK {
+29
+t.Errorf("helloHandler returned status code %v, want %v",
+30
+r.Code, http.StatusOK)
+31
+}
+32
+33
+// Check that the response body is what we expect.
+34
+want := "Hello, friend :)\n"
+35
+got := r.Body.String()
+36
+if got != want {
+37
+t.Errorf("helloHandler returned body %q want %q",
+38
+got, want)

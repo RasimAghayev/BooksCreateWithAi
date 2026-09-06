@@ -1,0 +1,62 @@
+69
+TECHNIQUE 12
+Locking with a mutex
+func (w *words) add(word string, n int) {
+     count, ok := w.found[word]
+     if !ok {
+            w.found[word] = n
+            return
+     }
+     w.found[word] = count + n
+}
+func tallyWords(filename string, dict *words) error {
+     file, err := os.Open(filename)
+     if err != nil {
+            return err
+     }
+     defer file.Close()
+     scanner := bufio.NewScanner(file)
+     scanner.Split(bufio.ScanWords)
+     for scanner.Scan() {
+            word := strings.ToLower(scanner.Text())
+            dict.add(word, 1)
+     }
+     return scanner.Err()
+}
+The main function loops over all the files you supply on the command line, generating
+statistics for each as it goes. What you expect, when you run the preceding code, is for
+the tool to read text files and print out a list of the words that it finds. Let’s try it on a
+single file:
+$ go run race.go 1.txt
+Words that appear more than once:
+had: 2
+down: 2
+the: 5
+have: 2
+that: 3
+would: 3
+…
+That’s what you’d expect the output to look like. Now, if you pass in more than one
+filename, the tool will process each file in its own goroutine. Let’s try that:
+$ go run race.go *.txt
+fatal error: concurrent map writes
+goroutine 8 [running]:
+runtime.throw(0x115890, 0xd)
+     /usr/local/go/src/runtime/panic.go:527 +0x90 fp=0x82029cbf0
+     sp=0x82029cbd8
+runtime.evacuate(0xca600, 0x8202142d0, 0x16)
+     /usr/local/go/src/runtime/hashmap.go:825 +0x3b0 fp=0x82029ccb0 
+     sp=0x82029cbf0
+Tracks the number of times 
+you’ve seen this word
+If the word isn’t 
+already tracked, add 
+it. Otherwise, 
+increment the count.
+Open a file, parse its 
+contents, and count 
+the words that appear. 
+Copy function does all 
+the copying for you.
+Scanner is a useful tool 
+for parsing files like this.

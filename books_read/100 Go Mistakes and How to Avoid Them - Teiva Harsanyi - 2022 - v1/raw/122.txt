@@ -1,0 +1,46 @@
+102
+CHAPTER 4
+Control structures
+Because we access the original array, this code prints 2 instead of 10.
+Using an array pointer:
+a := [3]int{0, 1, 2}
+for i, v := range &a {
+a[2] = 10
+if i == 2 {
+fmt.Println(v)
+}
+}
+We assign a copy of the array pointer to the temporary variable used by range.
+But because both pointers reference the same array, accessing v also returns 10.
+Both options are valid. However, the second option doesn’t lead to copying the whole
+array, which may be something to keep in mind in case the array is significantly large.
+ In summary, the range loop evaluates the provided expression only once, before
+the beginning of the loop, by doing a copy (regardless of the type). We should
+remember this behavior to avoid common mistakes that might, for example, lead us
+to access the wrong element.
+ In the next section, we see how to avoid common mistakes using range loops with
+pointers. 
+4.3
+#32: Ignoring the impact of using pointer elements in 
+range loops
+This section looks at a specific mistake when using a range loop with pointer ele-
+ments. If we’re not cautious enough, it can lead us to an issue where we reference the
+wrong elements. Let’s examine this problem and how to fix it.
+ Before we begin, let’s clarify the rationale for using a slice or map of pointer ele-
+ments. There are three main cases:
+In terms of semantics, storing data using pointer semantics implies sharing the
+element. For example, the following method holds the logic to insert an ele-
+ment into a cache:
+type Store struct {
+m map[string]*Foo
+}
+func (s Store) Put(id string, foo *Foo) {
+s.m[id] = foo
+// ...
+}
+Here, using the pointer semantics implies that the Foo element is shared by
+both the caller of Put and the Store struct.
+Sometimes we already manipulate pointers. Hence, it can be handy to store
+pointers directly in our collection instead of values.
+Ranges over &a 
+instead of a

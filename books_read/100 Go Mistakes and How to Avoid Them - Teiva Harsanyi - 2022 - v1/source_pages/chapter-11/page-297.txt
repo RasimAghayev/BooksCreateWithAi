@@ -1,0 +1,50 @@
+277
+11.5
+#86: Sleeping in unit tests
+NOTE
+Some testing libraries, such as testify, offer retry features. For exam-
+ple, in testify, we can use the Eventually function, which implements
+assertions that should eventually succeed and other features such as configur-
+ing the error message.
+Another strategy is to use channels to synchronize the goroutine publishing the Foo
+structs and the testing goroutine. For example, in the mock implementation, instead
+of copying the slice received into a field, we can send this value to a channel:
+type publisherMock struct {
+ch chan []Foo
+}
+func (p *publisherMock) Publish(got []Foo) {
+p.ch <- got
+}
+func TestGetBestFoo(t *testing.T) {
+mock := publisherMock{
+ch: make(chan []Foo),
+}
+defer close(mock.ch)
+h := Handler{
+publisher: &mock,
+n:
+2,
+}
+foo := h.getBestFoo(42)
+// Check foo
+if v := len(<-mock.ch); v != 2 {
+t.Fatalf("expected 2, got %d", v)
+}
+}
+The publisher sends the received argument to a channel. Meanwhile, the testing
+goroutine sets up the mock and creates the assertion based on the received value. We
+can also implement a timeout strategy to make sure we don’t wait forever for mock.ch
+if something goes wrong. For example, we can use select with a time.After case.
+ Which option should we favor: retry or synchronization? Indeed, synchronization
+reduces waiting time to the bare minimum and makes a test fully deterministic if well
+designed.
+ If we can’t apply synchronization, we should perhaps reconsider our design since
+we may have a problem. If synchronization is truly impossible, we should use the retry
+option, which is a better choice than using passive sleeps to eradicate non-determin-
+ism in tests.
+ Let’s continue our discussion of how to prevent flakiness in testing, this time when
+using the time API. 
+Sends the 
+arguments received
+Compares these 
+arguments

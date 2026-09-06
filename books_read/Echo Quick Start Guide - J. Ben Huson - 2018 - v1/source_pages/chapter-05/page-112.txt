@@ -1,0 +1,15 @@
+Hiding context within a request
+A third clever mechanism for passing contextual state to handlers from the web
+application framework or middleware is to hide the context within the request
+itself. Since the request contains dynamic map information such as request
+headers and form key/value pairs, it is fairly easy to embed new information into
+this existing structure.
+A good example of this is the Vestigo URL Router: https://github.com/husobee/vesti
+go. This standalone URL router actually hides the request URL parameter names
+and values within form fields on the request structure itself. This allows the
+developer to access the contextual framework's supplied information, in this
+case, the URL parameter names and values, without the need to use a central
+map or use a modified function signature. What is striking about this design is
+that the developer using this web application framework will be able to get all of
+the URL parameters from the router within their application handlers without
+subscribing to a modified application handler function signature.

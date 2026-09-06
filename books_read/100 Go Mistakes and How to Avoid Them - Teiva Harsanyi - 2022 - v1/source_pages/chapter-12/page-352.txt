@@ -1,0 +1,56 @@
+332
+CHAPTER 12
+Optimizations
+12.6.2 Compiler optimizations
+One of the goals of the Go compiler is to optimize our code if possible. Here’s a con-
+crete example regarding maps.
+ In Go, we can’t define a map using a slice as a key type. In some cases, especially in
+applications doing I/O, we may receive []byte data that we would like to use as a key.
+We are obliged to transform it into a string first, so we can write the following code:
+type cache struct {
+m map[string]int
+}
+func (c *cache) get(bytes []byte) (v int, contains bool) {
+key := string(bytes)
+v, contains = c.m[key]
+return
+}
+Because the get function receives a []byte slice, we convert it to a key string to query
+the map.
+ However, the Go compiler implements a specific optimization if we query the map
+using string(bytes):
+func (c *cache) get(bytes []byte) (v int, contains bool) {
+v, contains = c.m[string(bytes)]
+return
+}
+Despite this being almost the same code (we call string(bytes) directly instead of
+passing a variable), the compiler will avoid doing this bytes-to-string conversion.
+Hence, the second version is faster than the first.
+ This example illustrates that two versions of a function that look similar may result
+in different assembly code following the Go compiler’s work. We should also be aware
+of the possible compiler optimizations to optimize an application. And we need to
+watch future Go releases to check whether new optimizations are added to the lan-
+guage. 
+12.6.3 sync.Pool
+Another avenue for improvement if we want to tackle the number of allocations is using
+sync.Pool. We should understand that sync.Pool isn’t a cache: there’s no fixed size or
+maximum capacity that we can set. Instead, it’s a pool to reuse common objects.
+ Let’s imagine that we want to implement a write function that receives an
+io.Writer, calls a function to get a []byte slice, and then writes it to the io.Writer.
+Our code looks like this (we omit error handling for the sake of clarity):
+func write(w io.Writer) {
+b := getResponse()
+_, _ = w.Write(b)
+}
+Holds a map 
+of strings
+Converts from 
+[]byte to string
+Queries the map 
+using the string value
+Queries the map directly 
+using string(bytes)
+Receives a []byte 
+response
+Writes to 
+the io.Writer

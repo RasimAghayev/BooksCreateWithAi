@@ -1,0 +1,53 @@
+32
+CHAPTER 2
+Go quick-start
+functions in the program would be called before the main function begins. Let’s look
+at the imports again from the main.go code file.
+07
+_ "github.com/goinaction/code/chapter2/sample/matchers"
+08
+"github.com/goinaction/code/chapter2/sample/search"
+The import to the search package on line 08 allows the compiler to find the init
+function in the default.go code file. Once the compiler sees the init function, it’s
+scheduled to be called prior to the main function being called. 
+ The init function in the default.go code file is performing a special task. It’s creat-
+ing a value of the defaultMatcher type and passing that value to the Register func-
+tion that can be found in the search.go code file.
+59 // Register is called to register a matcher for use by the program.
+60 func Register(feedType string, matcher Matcher) {
+61
+if _, exists := matchers[feedType]; exists {
+62
+log.Fatalln(feedType, "Matcher already registered")
+63
+}
+64
+65
+log.Println("Register", feedType, "matcher")
+66
+matchers[feedType] = matcher
+67 }
+This function is responsible for adding the Matcher value to the map of registered
+matchers. All of this registration needs to happen before the main function gets called.
+Using init functions is a great way to accomplish this type of initialized registration. 
+2.4
+RSS matcher
+The last piece of code to review is the implementation of the RSS matcher. Everything
+we’ve reviewed up to now was to allow the implementation of different matcher types
+to run and search content within the program’s framework. The structure of the RSS
+matcher is similar to the structure of the default matcher. It’s the implementation of
+the interface method Search that’s different and in the end gives each matcher its
+uniqueness. 
+ The RSS document in listing 2.47 shows you a sample of what we expect to receive
+when we use any link in the data feed that’s typed as an RSS feed.
+<rss xmlns:npr="http://www.npr.org/rss/" xmlns:nprml="http://api
+<channel>
+<title>News</title>
+<link>...</link>
+<description>...</description>
+Listing 2.45
+main.go: lines 07–08
+Listing 2.46
+search/search.go: lines 59–67
+Listing 2.47
+Expected RSS feed document

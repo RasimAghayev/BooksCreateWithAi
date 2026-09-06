@@ -1,0 +1,20 @@
+146
+19 
+LESSON
+THE EVER-VERSATILE MAP
+After reading lesson 19, you’ll be able to
+Use maps as collections for unstructured data
+Declare, access, and iterate over maps
+Explore some uses of the versatile map type
+Maps come in handy when you’re searching for something, and we’re not just talking 
+about Google Maps (www.google.com/mars/). Go provides a map collection with keys 
+that map to values. Whereas arrays and slices are indexed by sequential integers, map 
+keys can be nearly any type.
+NOTE This collection goes by several different names: dictionaries  in Python, hashes  in
+Ruby, and objects in JavaScript. Associative arrays  in PHP and tables in Lua serve as both
+maps and conventional arrays.
+Maps are especially useful for unstructured data where the keys are determined while a 
+program is running. Programs written in scripting languages tend to use maps for struc-
+tured data as well—data where the keys are known ahead of time. Lesson 21 covers Go’s 
+structure type, which is better suited for those cases.
+ 

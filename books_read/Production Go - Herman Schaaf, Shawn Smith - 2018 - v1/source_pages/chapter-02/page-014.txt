@@ -1,0 +1,51 @@
+Basics
+8
+13
+"ramen",
+14
+}
+15
+rand.Seed(time.Now().Unix())
+16
+fmt.Printf("We'll have %s for dinner tonight!\n", dinners[rand.Intn(len(dinn\
+17
+ers))])
+18
+}
+We can run our code with go run main.go. The other option is to build our code as an executable
+and run that. To do that, we first run go build to make sure that the code compiles. Then we run go
+install:
+$ go build
+$ go install
+$ cd $GOPATH/bin
+$ ./dinner
+We'll have pizza for dinner tonight!
+We can also run these commands from outside of our GOPATH, like so:
+$ go build github.com/prodgopher/dinner
+$ go install github.com/prodgopher/dinner
+If we want to expose this functionality in a package so we can reuse it in other places, we need
+to add this functionality to a package. Let’s say we just want to return the name of the dinner,
+rather than the whole string, like “pizza”, “ramen”, etc. For convenience, let’s reuse the same
+github.com/prodgopher/dinner directory. Remove the main.go file and create a new dinner.go file
+that looks like this:
+Random dinner selection package
+1
+package dinner
+2
+3
+import (
+4
+"math/rand"
+5
+"time"
+6
+)
+7
+8
+func Choose() string {
+9
+dinners := []string{
+10
+"tacos",
+11
+"pizza",

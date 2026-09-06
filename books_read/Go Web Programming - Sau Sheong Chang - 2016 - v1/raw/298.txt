@@ -1,0 +1,26 @@
+277
+Deploying to Docker
+Once you’ve downloaded Docker Machine and made it executable, you can use it to
+create a Docker host in any of the cloud providers. One of the easiest is probably Digi-
+tal Ocean, a virtual private server (VPS) provider known for its ease-of-use and low
+cost. (A VPS is a VM sold as a service by a provider.) In May 2015, Digital Ocean
+became the second-largest hosting company in the world, in terms of web-facing serv-
+ers, after AWS. 
+ To create a Docker host on Digital Ocean, you’ll first need to sign up for a Digital
+Ocean account. Once you have an account, go to the Applications & API page at
+https://cloud.digitalocean.com/settings/applications. 
+ On this page there is a Generate New Token button (figure 10.8), which you can
+click to generate a token. Enter any name you want, and remember to keep the Write
+check box selected. Then click the Generate Token button to create a personal access
+token, which is something like a username and password rolled into one, used for API
+authentication. The token is only shown when you create it—it won’t be shown
+again—so you should store it someplace safe. 
+Figure 10.8
+Generating a personal access token on Digital Ocean is as easy as clicking 
+the Generate New Token button.
+To create a Docker host on Digital Ocean through Docker Machine, execute this com-
+mand on the console:
+docker-machine create --driver digitalocean --digitalocean-access-token 
+<tokenwsd
+Creating CA: /home/sausheong/.docker/machine/certs/ca.pem
+Creating client certificate: /home/sausheong/.docker/machine/certs/cert.pem

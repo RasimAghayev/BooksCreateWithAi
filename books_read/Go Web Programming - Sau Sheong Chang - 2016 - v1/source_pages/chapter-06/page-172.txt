@@ -1,0 +1,48 @@
+151
+Go relational mappers
+      Db.Model(&readPost).Related(&comments)
+fmt.Println(comments[0])  
+}
+Note that the way that you create the database handler is similar to what you’ve been
+doing all along. Also note that we no longer need to set up the database tables sepa-
+rately using a setup.sql file. This is because Gorm has an automatic migration capabil-
+ity that creates the database tables and keeps them updated whenever you change the
+corresponding struct. When you run the program, the database tables that are needed
+will be created accordingly. To run this properly you should drop the database alto-
+gether and re-create it:
+func init() {
+    var err error
+    Db, err = gorm.Open("postgres", "user=gwp dbname=gwp password=gwp 
+    sslmode=disable")
+    if err != nil {
+          panic(err)
+    }
+    Db.AutoMigrate(&Post{}, &Comment{})
+}
+The AutoMigrate method is a variadic method. A variadic method or function is a
+method or function that can take one or more parameters. Here it’s called with refer-
+ences to the Post and Comment structs. If you change the structs to add in a new field,
+a corresponding table column will be created. 
+ Let’s take a look at one of the structs, Comment:
+type Comment  struct {
+    Id        int
+    Content   string
+    Author    string `sql:"not null"`
+    PostId    int  
+    CreatedAt time.Time
+}
+There’s a field called CreatedAt, which is of type time.Time. If you place this field in
+any struct, whenever a new record is created in the database it’ll be automatically pop-
+ulated. In this case, this is when the record is created.
+ You’ll also notice that some of the fields have struct tags which instruct Gorm to
+create and map to the correct fields. In the case of the Author field, the struct tag
+`sql: "not null"` tells Gorm to create a column that’s not null. 
+ Also notice that unlike our previous example, you didn’t add a Post field in the
+Comments struct. Instead, you placed a PostId field. Gorm automatically assumes that a
+field in this form will be a foreign key and creates the necessary relationships.
+ So much for the setup. Now let’s take a look at creating, and retrieving, posts and
+comments. First, create a post:
+post := Post{Content: "Hello World!", Author: "Sau Sheong"}
+Db.Create(&post)
+{1 Good post! Joe 1 2015-04-13 
+11:38:50.920377 +0800 SGT}

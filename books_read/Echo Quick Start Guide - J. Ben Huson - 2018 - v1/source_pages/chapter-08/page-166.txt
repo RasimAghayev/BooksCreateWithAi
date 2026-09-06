@@ -1,0 +1,20 @@
+const tmpl = `
+<html>
+<head> <title>{{.Title}}</title> </head> <body> <table> <th>
+<td>Reminder Name</td> <td>Reminder ID</td> <td>Reminder Due</td>
+</th>
+{{ range .Reminders }}
+<tr>
+<td>{{ .Name }}</td> <td>{{ .ID }}</td> <td>{{ .Due }}</td> </tr>
+{{ else }}
+<tr>
+<td colspan=3>No rows!</td> </tr>
+{{ end }}
+</body> </html>
+`
+type Reminder struct {
+ID uuid.UUID
+Name string
+Due time.Time }
+const Week = time.Duration(time.Hour * 24 * 7)
+func mustTime(d time.Time, err error) time.Time {

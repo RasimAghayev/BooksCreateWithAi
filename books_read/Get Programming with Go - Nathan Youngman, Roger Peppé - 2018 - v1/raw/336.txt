@@ -1,0 +1,39 @@
+321
+Unit 6
+            d := digits[r][c]
+            if d != empty {
+                grid[r][c].digit = d
+                grid[r][c].fixed = true
+            }
+        }
+    }
+    return &grid
+}
+// Set a digit on a Sudoku grid.
+func (g *Grid) Set(row, column int, digit int8) error {
+    switch {
+    case !inBounds(row, column):
+        return ErrBounds
+    case !validDigit(digit):
+        return ErrDigit
+    case g.isFixed(row, column):
+        return ErrFixedDigit
+    case g.inRow(row, digit):
+        return ErrInRow
+    case g.inColumn(column, digit):
+        return ErrInColumn
+    case g.inRegion(row, column, digit):
+        return ErrInRegion
+    }
+    g[row][column].digit = digit
+    return nil
+}
+// Clear a cell from the Sudoku grid.
+func (g *Grid) Clear(row, column int) error {
+    switch {
+    case !inBounds(row, column):
+        return ErrBounds
+    case g.isFixed(row, column):
+        return ErrFixedDigit
+    }
+ 

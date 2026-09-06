@@ -1,0 +1,23 @@
+223
+Leveraging
+Go concurrency
+One of the things that Go is well known for is its ability to make writing concurrent
+programs easier and less susceptible to errors. This chapter introduces concur-
+rency and discusses Go’s concurrency model and design. We’ll talk about the two
+main features of Go that provide concurrency: goroutines and channels. You’ll see
+an example of using Go concurrency in a web application to improve the app’s per-
+formance.
+9.1
+Concurrency isn’t parallelism
+Concurrency is when two or more tasks start, run, and end within the same period of
+time and these tasks can potentially interact with each other. The tasks are consid-
+ered to be concurrent to each other, as opposed to being sequential. Concurrency
+is a large and complex topic, and this chapter gives only a simple introduction. 
+This chapter covers
+■
+Understanding concurrency and parallelism 
+principles
+■
+Introducing goroutines and channels
+■
+Using concurrency in web applications

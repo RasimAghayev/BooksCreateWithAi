@@ -1,0 +1,24 @@
+ix
+Acknowledgments
+Ulises Flynn, and William E. Wheeler. We’d also like to thank all the early access readers 
+who provided feedback through the forums.
+Finally, we would like to thank Michael Stephens for suggesting the crazy idea of writ-
+ing a book, and the Go community for creating a language and ecosystem that we’re 
+excited to write about!
+Nathan Youngman
+Naturally, I need to thank my parents, without whom I wouldn’t be here today. Both of 
+my parents encouraged me to pursue my interest in computer programming from an 
+early age, providing books and courses and access to computers.
+In addition to the official reviewers, I would like to thank Matthias Stone for providing 
+feedback on early drafts, and Terry Youngman for helping me brainstorm ideas. I also 
+want to thank the Edmonton Go community for cheering me on, and my employer, 
+Mark Madsen, for providing the flexibility to make this endeavor feasible.
+More than anyone else, I want to thank Roger Peppé for coming alongside me as 
+coauthor. He shortened the long road ahead by writing unit 7, and gave the project 
+a much needed bump in momentum.
+Roger Peppé
+Most of all, I’d like to thank my wife, Carmen, for her forbearance and support as I 
+worked on this book when we could have been out walking in the hills.
+Many thanks also to Nathan Youngman and Manning for their trust in taking me on as 
+coauthor and for their patience during the final stages of this book.
+ 

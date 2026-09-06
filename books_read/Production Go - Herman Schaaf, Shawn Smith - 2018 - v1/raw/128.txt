@@ -1,0 +1,71 @@
+Tooling
+122
+39
+// normalizeCountry takes an Entry and normalizes its country name
+40
+func normalizeCountry(e *Entry) error {
+41
+co := strings.Map(removeSpaces, strings.ToLower(e.Country))
+42
+if _, ok := countries[co]; !ok {
+43
+return fmt.Errorf("invalid country %q", e.Country)
+44
+}
+45
+46
+e.Country = countries[co]
+47
+48
+return nil
+49
+}
+50
+51
+// EntryPostHandler is the POST endpoint for entries
+52
+func EntryPostHandler(w http.ResponseWriter, req *http.Request) {
+53
+decoder := json.NewDecoder(req.Body)
+54
+defer req.Body.Close()
+55
+var entry Entry
+56
+err := decoder.Decode(&entry)
+57
+if err != nil {
+58
+log.Printf("ERROR: could not decode Entry: %s", err)
+59
+w.WriteHeader(http.StatusBadRequest)
+60
+w.Write([]byte(fmt.Sprintf("Could not decode Entry: %s\n", err)))
+61
+return
+62
+}
+63
+64
+go func(e *Entry) {
+65
+normalizeCountry(e)
+66
+}(&entry)
+67
+68
+log.Printf("INFO: received Entry %v", entry)
+69
+}
+70
+71
+func main() {
+72
+http.HandleFunc("/entries", EntryPostHandler)
+73
+74
+log.Printf("Running on %s ...", *addr)
+75
+log.Fatal(http.ListenAndServe(*addr, nil))
+76
+}

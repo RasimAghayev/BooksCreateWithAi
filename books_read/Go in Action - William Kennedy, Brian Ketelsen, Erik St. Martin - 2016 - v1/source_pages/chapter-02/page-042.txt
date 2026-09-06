@@ -1,0 +1,54 @@
+21
+Search package
+ 
+39
+Match(matcher, feed, searchTerm, results)
+40
+waitGroup.Done()
+The first thing the goroutine does is call a function called Match, which can be found
+in the match.go code file. The Match function takes a value of type Matcher, a pointer
+to a value of type Feed, the search term, and the channel where the results are written
+to. We’ll look at the internals of this function later, but for now it’s enough to know
+that Match will search the feed and output matches to the results channel. 
+ Once the function call to Match completes, we execute the code on line 40, which
+is to decrement the WaitGroup count. Once every goroutine finishes calling the Match
+function and the Done method, the program will know every feed has been processed.
+There’s something else interesting about the method call to Done: the WaitGroup
+value was never passed into the anonymous function as a parameter, yet the anony-
+mous function has access to it. 
+ Go supports closures and you’re seeing this in action. In fact, the searchTerm and
+results variables are also being accessed by the anonymous function via closures.
+Thanks to closures, the function can access those variables directly without the need to
+pass them in as parameters. The anonymous function isn’t given a copy of these vari-
+ables; it has direct access to the same variables declared in the scope of the outer func-
+tion. This is the reason why we don’t use closures for the matcher and feed variables. 
+29
+// Launch a goroutine for each feed to find the results.
+30
+for _, feed := range feeds {
+31
+// Retrieve a matcher for the search.
+32
+matcher, exists := matchers[feed.Type]
+The values of the feed and matcher variables are changing with each iteration of the
+loop, as you can see on lines 30 and 32. If we used closures for these variables, as the
+values of these variables changed in the outer function, those changes would be
+reflected in the anonymous function. All the goroutines would be sharing the same
+variables as the outer function thanks to closures. Unless we passed these values in as
+function parameters, most of the goroutines would end up processing the same feed
+using the same matcher—most likely the last one in the feeds slice. 
+ With all the search goroutines working, sending results on the results channel
+and decrementing the waitGroup counter, we need a way to display those results and
+keep the main function alive until all the processing is done.
+44
+// Launch a goroutine to monitor when all the work is done.
+45
+go func() {
+46
+// Wait for everything to be processed.
+Listing 2.23
+search/search.go: lines 39–40
+Listing 2.24
+search/search.go: lines 29–32
+Listing 2.25
+search/search.go: lines 44–57

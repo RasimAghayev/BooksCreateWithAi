@@ -1,0 +1,46 @@
+Continuous Integration
+In this chapter, we will explore the topic of continuous integration (CI). Continuous integration is a
+general term that describes the process of running tests and builds automatically whenever a team
+member adds new code to the codebase. Continuous integration in a production-ready Go system
+often also includes running miscellaneous checks and linters.
+It is possible to write your own continuous integration system, but the effort is likely not worth
+it. There are many existing continuous integration systems out there. Some, like Travis CI, are
+hosted for you and are free for open source projects. Others, like Drone, are open source and free for
+self-hosting, but also comes with enterprise versions. We tabulated some popular alternatives that
+currently support Go in the following table:
+CI Service
+Open Source
+Configuration
+Free version available
+Travis CI
+No
+.travis.yml
+Yes, for open source
+projects
+Drone CI
+Yes
+.drone.yml that describes
+Yes, as well as enterprise
+Docker build steps
+options. Always
+self-hosted
+Jenkins
+Yes
+Jenkinsfile, either
+Yes, if self-hosted. Paid
+hosted
+declarative or scripted
+versions also exist.
+TeamCity
+No
+Scripts and pipelines
+No, only freemium
+configured through a UI
+Of the above four options, we recommend using either Travis CI or Drone CI, mostly for their relative
+simplicity. We will first discuss the more famous Travis CI in more detail, and then move on to the
+under-appreciated (but amazing) Drone CI.
+Travis CI
+For an open source project, we can use Travis CI⁴⁸ for free. Even if the project is not open source,
+Travis CI is a good choice. It’s easy to set up - just sign in to their webapp, add the repository, and
+add a .travis.yml file to the repository. Here is an example .travis.yml from Go Report Card:
+⁴⁸https://travis-ci.org/

@@ -1,0 +1,19 @@
+287
+22 
+Appendix
+SOLUTIONS
+This appendix provides our solutions for the end-of-lesson exercises and capstone proj-
+ects. Please keep in mind that there is more than one solution for any problem.
+NOTE You can download these solutions and the rest of the source code from the Man-
+ning website at www.manning.com/books/get-programming-with-go or browse the source
+code online at github.com/nathany/get-programming-with-go.
+Unit 0
+Lesson 1
+package main
+import (
+    "fmt"
+)
+func main() {
+    fmt.Println("Hello, Nathan")
+Experiment: playground.go
+ 

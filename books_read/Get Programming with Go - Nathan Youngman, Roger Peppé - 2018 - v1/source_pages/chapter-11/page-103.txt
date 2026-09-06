@@ -1,0 +1,23 @@
+88
+11 
+LESSON
+CAPSTONE: THE VIGENÈRE CIPHER
+The Vigenère cipher (see en.wikipedia.org/ 
+wiki/Vigenere_cipher) is a 16th century vari-
+ant of the Caesar cipher. For this challenge, 
+you will write a program to decipher text 
+using a keyword.
+Before describing the Vigenère cipher, allow 
+us to reframe the Caesar cipher, which you’ve 
+already worked with. With the Caesar cipher, 
+a plain text message is ciphered by shifting 
+each letter ahead by three. The direction is 
+reversed to decipher the resulting message.
+Assign each English letter a numeric value, 
+where A = 0, B = 1, all the way to Z = 25. With 
+this in mind, a shift by 3 can be represented by 
+the letter D (D = 3).
+To decipher the text in table 11.1, start with the letter L and shift it by D. Because L = 11 
+and D = 3, the result of 11–3 is 8, or the letter I. Should you need to decipher the letter A, 
+it should wrap around to become X, as you saw in lesson 9.
+ 

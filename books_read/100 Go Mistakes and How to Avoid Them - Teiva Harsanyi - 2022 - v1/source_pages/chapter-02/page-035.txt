@@ -1,0 +1,48 @@
+15
+2.3
+#3: Misusing init functions
+In this case, the foo package is initialized before main. Hence, the init functions of foo
+are executed.
+ Another aspect of an init function is that it can’t be invoked directly, as in the fol-
+lowing example:
+package main
+func init() {}
+func main() {
+init()
+}
+This code produces the following compilation error:
+$ go build .
+./main.go:6:2: undefined: init
+Now that we’ve refreshed our minds about how init functions work, let’s see when we
+should use or not use them. The following section sheds some light on this.
+2.3.2
+When to use init functions
+First, let’s look at an example where using an init function can be considered inappro-
+priate: holding a database connection pool. In the init function in the example, we
+open a database using sql.Open. We make this database a global variable that other
+functions can later use:
+var db *sql.DB
+func init() {
+dataSourceName :=
+os.Getenv("MYSQL_DATA_SOURCE_NAME")
+d, err := sql.Open("mysql", dataSourceName)
+if err != nil {
+log.Panic(err)
+}
+err = d.Ping()
+if err != nil {
+log.Panic(err)
+}
+db = d
+}
+In this example, we open the database, check whether we can ping it, and then assign
+it to the global variable. What should we think about this implementation? Let’s
+describe three main downsides.
+ First, error management in an init function is limited. Indeed, as an init function
+doesn’t return an error, one of the only ways to signal an error is to panic, leading the
+application to be stopped. In our example, it might be OK to stop the application any-
+way if opening the database fails. However, it shouldn’t necessarily be up to the
+Invalid reference
+Environment variable
+Assigns the DB connection 
+to the global db variable

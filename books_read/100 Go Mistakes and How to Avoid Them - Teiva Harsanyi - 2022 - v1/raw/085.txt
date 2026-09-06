@@ -1,0 +1,77 @@
+65
+3.4
+#20: Not understanding slice length and capacity
+The first argument, representing the
+length, is mandatory. However, the sec-
+ond argument representing the capacity
+is optional. Figure 3.2 shows the result
+of this code in memory.
+ In this case, make creates an array of
+six elements (the capacity). But because
+the length was set to 3, Go initializes
+only the first three elements. Also,
+because the slice is an []int type, the
+first three elements are initialized to the
+zeroed value of an int: 0. The grayed
+elements are allocated but not yet used.
+ If we print this slice, we get the ele-
+ments within the range of the length, [0
+0 0]. If we set s[1] to 1, the second ele-
+ment of the slice updates without
+impacting its length or capacity. Figure
+3.3 illustrates this.
+ However, accessing an element outside the length range is forbidden, even though
+it’s already allocated in memory. For example, s[4] = 0 would lead to the following
+panic:
+panic: runtime error: index out of range [4] with length 3
+How can we use the remaining space of the slice? By using the append built-in function:
+s = append(s, 2)
+This code appends to the existing s slice a new element. It uses the first grayed ele-
+ment (which was allocated but not yet used) to store element 2, as figure 3.4 shows.
+ The length of the slice is updated
+from 3 to 4 because the slice now con-
+tains four elements. Now, what happens
+if we add three more elements so that
+the backing array isn’t large enough?
+s = append(s, 3, 4, 5)
+fmt.Println(s)
+If we run this code, we see that the slice
+was able to cope with our request:
+[0 1 0 2 3 4 5]
+Because an array is a fixed-size structure, it can store the new elements until element
+4. When we want to insert element 5, the array is already full: Go internally creates
+ptr
+len
+3
+cap
+6
+0
+0
+0
+s
+Figure 3.2
+A three-length, six-capacity slice
+Figure 3.3
+Updating the slice’s second element: 
+s[1] = 1
+ptr
+len
+4
+cap
+6
+0
+1
+0
+s
+2
+Figure 3.4
+Appending an element to s
+ptr
+len
+3
+cap
+6
+0
+1
+0
+s

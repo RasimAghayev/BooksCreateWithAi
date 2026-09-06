@@ -1,0 +1,104 @@
+240
+INDEX
+packages (continued)
+dependencies
+gb build tool and 54–56
+general discussion 52
+using godep tool 52–53
+exporting and unexporting identifiers in
+119–127
+import statements
+overview 42
+remote packages 42–43
+renaming import 43–44
+init functions in 44–45
+main 40–41
+naming conventions 40
+overview 40
+standard library 185
+_test suffix 226
+using go command with
+doc command 49
+fmt command 48
+godoc command 49–51
+overview 45–47
+vet command 47–48
+Panicln function 190
+parallelism 129–132
+pointers, arrays of 60–61
+polymorphism 101, 109–111
+pool package 167–177
+Println function 190
+Python 2
+R
+race conditions 139–142
+range keyword 19, 30, 76–77
+Reader interface 204–205
+reference types 97–98
+reflect package 25
+regexp package 38
+remote packages 42–43
+repositories, creating 51–52
+ResetTimer method 235
+ResponseRecorder type 227
+Routes function 224
+Ruby 2
+run command 47
+-run option 232
+runner package 158–166
+runtime package 133, 137
+S
+select statements 164–165, 171
+ServeHTTP method 227
+SetFlags function 190
+SetMaxThreads function 131
+sharing code 8
+short variable declaration operator ( := ) 17, 90
+slices
+append operations on 71–72
+assigning values in 68
+creating
+make function 66–67
+nil and empty slices 67–68
+defined 65
+internals of 65
+iterating over 76–78
+multidimensional 79–80
+passing between functions 80–81
+slicing 68–71
+three-index slices 72–76
+Sourcegraph 186
+standard library
+documentation 185–186
+interfaces in 102–104
+io package
+functions implementing Writer interface
+205–208
+implementing curl program using 208–209
+overview 203, 210
+Reader interface 204–205
+Writer interface 203–204
+JSON
+decoding 196–201
+encoding 201–202
+log package
+creating customized loggers 191–195
+overview 187–191, 195
+Start method 165
+stderr device 187
+stdin device 203
+stdout device 187, 203
+Stop method 164
+StoreInt64 function 144–145
+strings package 97
+struct keyword 89, 98–101
+sync package 18
+T
+table tests 216–219
+test command 213–214
+testing
+benchmarking 232–236
+documentation examples 228–232
+unit testing
+API endpoints 223–228
+basic tests 212–216

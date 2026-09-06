@@ -1,0 +1,37 @@
+Strings
+57
+Using strings.Index to find substrings in a string
+1
+package main
+2
+3
+import "fmt"
+4
+import "strings"
+5
+6
+func ExampleIndex() {
+7
+an := strings.Index("banana", "an")
+8
+am := strings.Index("banana", "am")
+9
+fmt.Println(an, am)
+10
+// Output: 1 -1
+11
+}
+The strings package also contains a corresponding LastIndex function, which returns the index of
+the last (ie. right-most) instance of a matching substring, or -1 if it is not found.
+The strings package contains many more useful functions. To name a few: ToLower, ToUpper, Trim,
+Equals and Join, all performing actions that match their names. For more information on these and
+other functions, refer to the strings package docs²². As a final example, let’s see how we might
+combine some of the functions in the strings package in a real program, and discover some of its
+more surprising functions.
+Advanced string functions
+The program below repeatedly takes input from the user, and declares whether or not the typed
+sentence is palindromic. For a sentence to be palindromic, we mean that the words should be the
+same when read forwards and backwards. We wish to ignore punctuation, and assume the sentence
+is in English, so there are spaces between words. Take a look and notice how we use two new
+functions from the strings package, FieldsFunc and EqualFold, to keep the code clear and concise.
+²²https://golang.org/pkg/strings/

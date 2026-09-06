@@ -1,0 +1,32 @@
+Tooling
+118
+Goroutine 7 (running) created at:
+github.com/gopher/cat.updateCat()
+/Users/gopher/mygo/src/github.com/gopher/cat/cat.go:23 +0x65
+github.com/gopher/cat.TestUpdateCat()
+/Users/gopher/mygo/src/github.com/gopher/cat/cat_test.go:9 +0x88
+testing.tRunner()
+/Users/gopher/go/src/testing/testing.go:746 +0x16c
+Goroutine 6 (running) created at:
+testing.(*T).Run()
+/Users/gopher/go/src/testing/testing.go:789 +0x568
+testing.runTests.func1()
+/Users/gopher/go/src/testing/testing.go:1004 +0xa7
+testing.tRunner()
+/Users/gopher/go/src/testing/testing.go:746 +0x16c
+testing.runTests()
+/Users/gopher/go/src/testing/testing.go:1002 +0x521
+testing.(*M).Run()
+/Users/gopher/go/src/testing/testing.go:921 +0x206
+main.main()
+github.com/gopher/cat/_test/_testmain.go:44 +0x1d3
+==================
+2017/09/24 18:12:58 meow
+--- FAIL: TestUpdateCat (0.00s)
+testing.go:699: race detected during execution of test
+FAIL
+exit status 1
+FAIL
+github.com/gopher/cat
+0.013s
+That’s a lot of output, but let’s take a look at the first two blocks of text:

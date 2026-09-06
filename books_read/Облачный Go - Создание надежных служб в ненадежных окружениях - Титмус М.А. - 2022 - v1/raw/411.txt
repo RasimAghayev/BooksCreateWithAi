@@ -1,0 +1,97 @@
+Предметный указатель  411
+простые числа, 49
+пустой идентификатор, 53
+срезы, 54, 56
+строки, 50
+указатели, 61
+cокращенная форма объявления 
+переменных, 51
+библиотеки, 131, 241
+как появился, 36
+модули, 133
+основы языка, 48
+особенности, 37
+протокол буферов, 245
+форматирование, 153
+форматирование ввода/вывода, 52
+Go 1, 42
+Go 2, 42
+go, ключевое слово, 82
+Google, 36, 236
+Gorilla, библиотека, 132, 134
+Go-YAML, пакет, 333
+Grafana, 396
+Graphite, 382
+GraphQL, 239, 240
+gRPC, 236, 240, 244, 245, 299, 371
+H
+Hashicorp, 238
+HashiCorp, 215, 261
+HashiCorp Consul, 326
+HCL, 341
+HEAD, метод, 241
+Head, функция, 241
+Helm, 322
+Heroku, компания, 194
+Honeycomb, 360
+host.docker.internal, 395
+HTTP , 239
+HTTP/1.1, стандарт, 302
+I
+IaaS (Infrastructure as a Service – 
+инфраструктура как услуга), 27
+if, инструкция, 65
+INI, 341
+iota, 147
+Istio, 238, 322
+J
+Jaeger, 365, 366, 376, 378
+Java, 37, 43, 59, 153, 360
+Java Properties, 341
+Java RMI, 244
+JavaScript, 327, 360
+JMX Exporter, 387
+JSON, 245, 341, 377, 378
+JSON, формат, 327
+json.Marshal, функция, 328
+json.Unmarshal, функция, 329
+K
+Kibana (ELK), 203
+Kubernetes, 322, 326
+возможности, 318
+L
+len, встроенная функция, 55
+Lightstep, 360
+Linkerd, 238
+ListenAndServe, функция, 131, 166
+ListenAndServeTLS, функция, 167
+log, пакет, 401
+Logrus, пакет журналирования, 404
+Logstash, 203
+LRU, кеш, 214
+M
+make, встроенная функция, 56
+Meter, 385
+N
+Node Exporter, 387
+O
+OpenTelemetry, 358, 370, 374, 376, 384, 385
+компоненты, 359
+пакеты для трассировки, 364
+OpenZipkin, 366
+os.Getenv, функция, 320
+os.LookEnv, функция, 320
+P
+PaaS (Platform as a Service – платформа 
+как услуга), 194
+panic, оператор, 69
+PEM (Privacy Enhanced Mail), формат, 165
+Perl, 153
+PHP , 153, 360
+POST, метод, 241
+PostgreSQL Exporter, 388
+Privacy Enhanced Mail (PEM), формат, 165
+Prometheus, 383, 386, 396
+экспортеры, 387
+PromQL, 383
+Push Gateway, 388

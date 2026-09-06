@@ -1,0 +1,72 @@
+101
+4.2
+#31: Ignoring how arguments are evaluated in range loops
+variable is a copy of the array. Let’s see this principle in action with the following
+example that updates a specific array index during the iteration:
+a := [3]int{0, 1, 2}
+for i, v := range a {
+a[2] = 10
+if i == 2 {
+fmt.Println(v)
+}
+}
+This code updates the last index to 10. However, if we run this code, it does not print
+10; it prints 2, instead, as figure 4.3 shows.
+As we mentioned, the range operator creates a copy of the array. Meanwhile, the loop
+doesn’t update the copy; it updates the original array: a. Therefore, the value of v
+during the last iteration is 2, not 10.
+ If we want to print the actual value of the last element, we can do so in two ways:
+By accessing the element from its index:
+a := [3]int{0, 1, 2}
+for i := range a {
+a[2] = 10
+if i == 2 {
+fmt.Println(a[2])
+}
+}
+Creates an array 
+of three elements
+Iterates over 
+the array
+Updates the 
+last index
+Prints the content 
+of the last index
+0
+1
+2
+Array copy
+End of first iteration
+0
+1
+2
+a
+Before iterations
+0
+1
+2
+0
+1
+10
+0
+1
+2
+0
+1
+10
+0
+1
+2
+0
+1
+10
+End of second iteration
+End of third iteration
+Print 2
+Array range iteration example
+Figure 4.3
+range iterates over 
+the array copy (left) while the loop 
+modifies a (right).
+Accesses a[2] instead of 
+the range value variable

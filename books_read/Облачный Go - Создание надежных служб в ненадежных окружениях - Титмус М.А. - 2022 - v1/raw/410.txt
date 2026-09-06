@@ -1,0 +1,82 @@
+Предметный указатель
+Символы
+.NET, 360
+A
+Adapter (Адаптер), шаблон, 95
+Amazon, 279
+Amazon Web Services (AWS), 27
+Apache Thrift, 240, 244
+append, встроенная функция, 57
+AWS Lambda, 229
+B
+Blackbox Exporter, 388
+byte, 50
+C
+C++, 153, 222, 360
+C++ (язык программирования), 43
+cинхронные инструменты, 390
+cокращенная форма объявления 
+переменных, 51
+C (язык программирования), 43, 153
+cap, встроенная функция, 56
+case, выражение, 67
+chan, ключевое слово, 83
+Circuit Breaker (Размыкатель цепи), 98
+Circuit Breaker (Размыкатель цепи), 
+шаблон, 94, 294, 295
+Cloud Native Computing Foundation, 244
+Cobra, пакет, 322
+CockroachDB, 322
+Consul, 198, 341
+context, пакет, 89
+CORBA, 244
+CSP (Communicating Sequential Processes – 
+взаимодействия последовательных 
+процессов), 183
+D
+Debounce (Антидребезг), шаблон, 97, 104
+defer, ключевое слово, 70
+delete, встроенная функция, 59
+Docker, 168, 169, 322
+Dockerfile, 169
+Docker Hub, 171
+DynamoDB, 279
+E
+Effector, функция, 102
+Elastic Compute Cloud (EC2), 27
+Elasticsearch, 203
+ELF (Executable Linkable Format – 
+формат выполняемых и компонуемых 
+модулей), 258
+ELK, 398
+envfile, 341
+Envoy, 238
+Erlang, 360
+error, тип данных, 68
+etcd, 198, 326, 341
+F
+FaaS (Functions as a Service – функции как 
+услуга), 201, 229
+fallthrough, ключевое слово, 66
+Fan-In (Мультиплексор), шаблон, 110
+Fan-Out (Демультиплексор), шаблон, 112
+fsnotify, пакет, 339
+Future (В будущем), шаблон, 114
+G
+Ganglia, 382
+GCP Cloud Functions, 229
+GET, метод, 241
+Get, функция, 241
+GetContext, функция, 299
+Go
+базовые типы данных, 48
+error, 68
+ассоциативные массивы, 54, 140
+комплексные числа, 50
+константы, 54
+контейнеры, 54
+логические значения, 49
+массивы, 54, 55
+нулевые значения, 52
+объявление переменной, 51
+переменные, 51

@@ -1,0 +1,59 @@
+12
+CHAPTER 1
+Getting into Go
+In this example, a variable is passed from one goroutine to another through a chan-
+nel. This operation works even when goroutines are running in parallel on different
+processor cores. Although this example shows one-directional information passing,
+channels can be one-directional or bidirectional.
+ The following listing is an example of taking advantage of a channel.
+package main
+import (
+     "fmt"
+     "time"
+)
+func printCount(c chan int) {
+     num := 0
+     for num >= 0 {
+            num = <-c
+            fmt.Print(num, " ")
+     }
+}
+func main() {
+     c := make(chan int)
+     a := []int{8, 6, 7, 5, 3, 0, 9, -1}
+     go printCount(c)
+     for _, v := range a {
+            c <- v
+     }
+     time.Sleep(time.Millisecond * 1)
+     fmt.Println("End of main")
+}
+At the start of main, an integer-typed channel c is created D to communicate between
+goroutines. When printCount is started as a goroutine, the channel is passed in E. As
+an argument to printCount, the channel needs to be identified as an integer channel
+B. In the for loop inside printCount, num waits for channel c to send in integers C.
+Back in main, a list of integers is iterated over and passed into the channel c one at a
+time F. When each integer is passed into the channel on main F, it’s received into
+num within printCount C. printCount continues until the for loop goes into
+another iteration and comes to the channel statement again C, where it waits for
+another value to come in on the channel. After main is done iterating over the inte-
+gers, it continues on. When main is finished executing, the entire program is done, so
+you pause for a second G before exiting so printCount can complete before main is
+done. Running this code produces the following listing.
+8 6 7 5 3 0 9 -1 End of main
+Listing 1.7
+Using channels: channel.go
+Listing 1.8
+Channel output
+An int type channel passed in
+B
+Waits for value to come in
+C
+A channel is created.
+D
+Starts the goroutine
+E
+Passes ints into channel
+F
+main pauses before ending.
+G

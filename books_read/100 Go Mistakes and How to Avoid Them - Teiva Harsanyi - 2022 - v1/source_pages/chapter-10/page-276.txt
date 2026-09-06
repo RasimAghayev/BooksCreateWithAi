@@ -1,0 +1,45 @@
+256
+CHAPTER 10
+The standard library
+ We would return only the first HTTP status code: in the previous example, 500.
+However, Go would also log a warning:
+2021/10/29 16:45:33 http: superfluous response.WriteHeader call
+from main.handler (main.go:20)
+This warning means we tried to write the status code multiple times and doing so was
+superfluous.
+ In terms of execution, the main impact would be to continue the execution of a
+function that should have been stopped. For example, if foo was returning a pointer
+in addition to the error, continuing execution would mean using this pointer, perhaps
+leading to a nil pointer dereference (and hence a goroutine panic).
+ The fix for this mistake is to keep thinking about adding the return statement fol-
+lowing http.Error:
+func handler(w http.ResponseWriter, req *http.Request) {
+err := foo(req)
+if err != nil {
+http.Error(w, "foo", http.StatusInternalServerError)
+return
+}
+// ...
+}
+Thanks to the return statement, the function will stop its execution if we end in the
+if err != nil branch.
+ This error is probably not the most complex of this book. Yet, it’s so easy to forget
+about it that this mistake occurs fairly frequently. We always need to remember that
+http.Error doesn’t stop a handler execution and must be added manually. Such an
+issue can and should be caught during testing if we have decent coverage.
+ The last section of this chapter continues our discussion of HTTP. We see why
+production-grade applications shouldn’t rely on the default HTTP client and server
+implementations. 
+10.7
+#81: Using the default HTTP client and server
+The http package provides HTTP client and server implementations. However, it’s all
+too easy for developers to make a common mistake: relying on the default implemen-
+tations in the context of applications that are eventually deployed in production. Let’s
+look at the problems and how to overcome them.
+10.7.1 HTTP client
+Let’s define what default client means. We will use a GET request as an example. We
+can use the zero value of an http.Client struct like so:
+client := &http.Client{}
+resp, err := client.Get("https://golang.org/")
+Adds the return 
+statement

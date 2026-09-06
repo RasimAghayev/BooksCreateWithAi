@@ -1,0 +1,51 @@
+88
+CHAPTER 4
+Handling errors and panics
+ We start with errors. After briefly revisiting the error-handling idioms for Go, we
+dive into best practices. Errors can inform developers about something that has gone
+wrong, and if you do it right, they can also assist in recovering and moving on. Go’s
+way of working with errors differs from the techniques used in languages such as
+Python, Java, and Ruby. But when you correctly use these techniques, you can write
+robust code.
+ The panic system in Go signals abnormal conditions that may threaten the integ-
+rity of a program. Our experience has been that it’s used sporadically, and often reac-
+tively, so our focus in this chapter is on making the most of the panic system, especially
+when it comes to recovering from a panic. You’ll learn when to use panics, how (and
+when) to recover from them, and how Go’s error and panic mechanisms differ from
+other languages.
+ Although Go is occasionally criticized for having a verbose error system, this chap-
+ter illustrates why this system is conducive to building better software. By keeping
+errors at the forefront of the developer’s mind, Go fights against our own cognitive
+overconfidence bias. We may be disposed to believe that we write bug-free code. But
+when we always keep error handling front and center, Go gets us used to the idea that
+we have to code defensively, regardless of how good we think we are.
+4.1
+Error handling
+One of Go’s idioms that often trips up newcomers is its error handling. Many popular
+languages, including Python, Java, and Ruby, involve a theory of exception handling
+that includes throwing and catching special exception objects. Others, like C, often use
+the return value for error handling, and manage the mutated data through pointers.
+ In lieu of adding exception handlers, the Go creators exploited Go’s ability to
+return multiple values. The most commonly used Go technique for issuing errors is to
+return the error as the last value in a return, as shown in the following listing.
+package main
+import (
+     "errors"
+     "strings"
+)
+func Concat(parts ...string) (string, error) {
+     if len(parts) == 0 {
+            return "", errors.New("No strings supplied")
+     }
+     return strings.Join(parts, " "), nil
+}
+Listing 4.1
+Returning an error
+Useful error and 
+string utilities
+Concat returns a string 
+and an error.
+Returns an error if 
+nothing was passed in
+Returns the new 
+string and nil

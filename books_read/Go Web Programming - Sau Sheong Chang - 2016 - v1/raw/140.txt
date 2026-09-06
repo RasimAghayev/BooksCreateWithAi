@@ -1,0 +1,29 @@
+119
+Nesting templates
+Chrome, or Safari, nothing will happen—you’ll get a blank page. If you use Firefox,
+you’ll get something like figure 5.11.
+What just happened? By default Internet Explorer, Chrome, and Safari have built-in
+support for protection against certain types of XSS attacks. As a result, the simulated
+XSS attack doesn’t work on these browsers. But you can turn off the protection by
+sending a special HTTP response header: X-XSS-Protection (originally created by Micro-
+soft for Internet Explorer) will disable it. (Note: Firefox doesn’t have default protec-
+tion against these types of attacks.)
+ If you really want to stop the browser from protecting you from XSS attacks, you
+simply need to set a response header in our handler:
+func process(w http.ResponseWriter, r *http.Request) {  
+    w.Header().Set("X-XSS-Protection", "0")
+    t, _ := template.ParseFiles("tmpl.html")  
+    t.Execute(w, template.HTML(r.FormValue("comment")))
+}
+Once you do this and try the same attack again, you’ll find that the attack works for
+Internet Explorer, Chrome, and Safari.
+5.7
+Nesting templates
+We went through quite a lot of features of the Go template engine in this chapter.
+Before we move on, I’d like to show you how you can use layouts in your web app. 
+ So what exactly are layouts? Layouts are fixed patterns in web page design that can
+be reused for multiple pages. Web apps often use layouts, because pages in a web app
+need to look the same for a consistent UI. For example, many web application designs
+have a header menu as well as a footer that provides additional information such as
+Figure 5.11
+You are pwnd! 

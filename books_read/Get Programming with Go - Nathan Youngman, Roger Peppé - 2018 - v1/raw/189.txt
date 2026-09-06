@@ -1,0 +1,36 @@
+174
+Lesson 22  Go’s got no class
+22.3 The class alternative
+Go doesn’t have the class of classical languages like Python, Ruby, and Java. Yet a struc-
+ture with a few methods fulfills much of the same purpose. If you squint, they aren’t 
+that different.
+To drive the point home, build a whole new world type from the ground up. It will have 
+a field for the radius of the planet, which you’ll use to calculate the distance between 
+two locations, as shown in the following listing.
+type world struct {
+    radius float64
+}
+Mars has a volumetric mean radius of 3,389.5 kilometers. Rather than declare 3389.5 as a 
+constant, use the world type to declare Mars as one of many possible worlds:
+var mars = world{radius: 3389.5}
+Then a distance method is attached to the world type, giving it access to the radius field. It 
+accepts two parameters, both of type location, and will return a distance in kilometers:
+func (w world) distance(p1, p2 location) float64 {
+    
+}
+This is going to involve some math, so be sure to import the math package, as follows:
+import "math"
+The location type uses degrees for latitude and longitude, but the math functions in the 
+standard library use radians. Given that a circle has 360 or 2π radians, the following 
+function performs the necessary conversion:
+// rad converts degrees to radians.
+func rad(deg float64) float64 {
+    return deg * math.Pi / 180
+}
+Now for the distance calculation. It uses a number of trigonometric functions including 
+sine, cosine, and arccosine. If you’re a math geek, you can look up the formulas 
+(www.movable-type.co.uk/scripts/latlong.html) and research the Spherical Law of 
+Listing 22.4 A whole new world: world.go
+To-do: some math 
+using w.radius
+ 

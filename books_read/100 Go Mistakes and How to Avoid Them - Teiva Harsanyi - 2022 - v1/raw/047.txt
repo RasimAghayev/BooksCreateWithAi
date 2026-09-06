@@ -1,0 +1,50 @@
+27
+2.7
+#7: Returning interfaces
+case, the abstractions defined in the encoding package are used across the standard
+library, and the language designers knew that creating these abstractions up front was
+valuable. We are back to the discussion in the previous section: don’t create an
+abstraction if you think it might be helpful in an imaginary future or, at least, if you
+can’t prove this abstraction is valid.
+ An interface should live on the consumer side in most cases. However, in particu-
+lar contexts (for example, when we know—not foresee—that an abstraction will be
+helpful for consumers), we may want to have it on the producer side. If we do, we
+should strive to keep it as minimal as possible, increasing its reusability potential and
+making it more easily composable.
+ Let’s continue the discussion about interfaces in the context of function signa-
+tures. 
+2.7
+#7: Returning interfaces
+While designing a function signature, we may have to return either an interface or a
+concrete implementation. Let’s understand why returning an interface is, in many
+cases, considered a bad practice in Go.
+ We just presented why interfaces live, in general, on the consumer side. Figure 2.7
+shows what would happen dependency-wise if a function returns an interface instead
+of a struct. We will see that it leads to issues.
+ We will consider two packages:
+
+client, which contains a Store interface
+
+store, which contains an implementation of Store
+Figure 2.7
+There’s a dependency from the store package to the client package.
+In the store package, we define an InMemoryStore struct that implements the Store
+interface. Meanwhile, we create a NewInMemoryStore function to return a Store inter-
+face. There’s a dependency from the implementation package to the client package in
+this design, and that may already sound a bit odd.
+ For example, the client package can’t call the NewInMemoryStore function any-
+more; otherwise, there would be a cyclic dependency. A possible solution could be to
+Package client
+Depends
+Package store
+Store
+interface
+InMemoryStore
+struct
+NewInMemoryStore()               {
+    // ...
+    return 
+}        
+client.
+Store
+InMemoryStore

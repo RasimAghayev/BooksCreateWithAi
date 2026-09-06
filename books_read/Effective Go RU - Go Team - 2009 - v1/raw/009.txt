@@ -1,0 +1,45 @@
+func unhex(c byte) byte {
+    switch {
+    case '0' <= c && c <= '9':
+        return c - '0'
+    case 'a' <= c && c <= 'f':
+        return c - 'a' + 10
+    case 'A' <= c && c <= 'F':
+        return c - 'A' + 10
+    }
+    return 0
+}
+Автоматического перехода к следующему случаю ( fall through ) нет, но можно указать несколько значений для одного случая через запятую.
+func shouldEscape(c byte) bool {
+    switch c {
+    case ' ', '?', '&', '=', '#', '+', '%':
+        return true
+    }
+    return false
+}
+Хотя break в Go используется не так часто, как в некоторых других языках, похожих на C , его можно применять для досрочного завершения switch .
+Иногда, однако, требуется выйти из окружающего цикла, а не из switch , и в Go это можно сделать, поместив метку на цикл и используя break с
+указанием этой метки. Этот пример демонстрирует оба использования.
+Loop:
+    for n := 0; n < len(src); n += size {
+        switch {
+        case src[n] < sizeOne:
+            if validateOnly {
+                break
+            }
+            size = 1
+            update(src[n])
+        case src[n] < sizeTwo:
+            if n+1 >= len(src) {
+                err = errShortInput
+                break Loop
+            }
+            if validateOnly {
+                break
+            }
+            size = 2
+            update(src[n] + src[n+1]<<shift)
+        }
+    }
+Конечно, оператор continue также принимает необязательную метку, но он применяется только к циклам.
+Для завершения этого раздела вот функция сравнения для срезов байтов, которая использует два оператора switch :

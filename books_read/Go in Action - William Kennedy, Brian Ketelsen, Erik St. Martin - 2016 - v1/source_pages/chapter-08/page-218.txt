@@ -1,0 +1,94 @@
+197
+Encoding/Decoding
+]
+}
+}
+Here’s the example that retrieves and decodes the response into a struct type.
+01 // This sample program demonstrates how to decode a JSON response
+02 // using the json package and NewDecoder function.
+03 package main
+04
+05 import (
+06
+"encoding/json"
+07
+"fmt"
+08
+"log"
+09
+"net/http"
+10 )
+11
+12 type (
+13
+// gResult maps to the result document received from the search.
+14
+gResult struct {
+15
+GsearchResultClass string `json:"GsearchResultClass"`
+16
+UnescapedURL
+string `json:"unescapedUrl"`
+17
+URL
+string `json:"url"`
+18
+VisibleURL
+string `json:"visibleUrl"`
+19
+CacheURL
+string `json:"cacheUrl"`
+20
+Title
+string `json:"title"`
+21
+TitleNoFormatting
+string `json:"titleNoFormatting"`
+22
+Content
+string `json:"content"`
+23
+}
+24
+25
+// gResponse contains the top level document.
+26
+gResponse struct {
+27
+ResponseData struct {
+28
+Results []gResult `json:"results"`
+29
+} `json:"responseData"`
+30
+}
+31 )
+32
+33 func main() {
+34
+uri := "http://ajax.googleapis.com/ajax/services/search/web?
+v=1.0&rsz=8&q=golang"
+35
+36
+// Issue the search against Google.
+37
+resp, err := http.Get(uri)
+38
+if err != nil {
+39
+log.Println("ERROR:", err)
+40
+return
+41
+}
+42
+defer resp.Body.Close()
+43
+44
+// Decode the JSON response into our struct type.
+45
+var gr gResponse
+46
+err = json.NewDecoder(resp.Body).Decode(&gr)
+Listing 8.24
+listing24.go

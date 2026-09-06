@@ -1,0 +1,44 @@
+Arrays and Slices
+70
+15
+array3[2] = "baz"
+16
+fmt.Println(array3) // [foo bar baz]
+What we need is using Go’s built-in append function to extend an array to a new variable.
+Array Append
+1
+array := make([]string, 1, 2)
+2
+array[0] = "foo"
+3
+4
+fmt.Println(array) // [foo]
+5
+6
+array2 := array[:2]
+7
+array2[1] = "bar"
+8
+9
+fmt.Println(array2) // [foo bar]
+10
+11
+array3 := array[:2]
+12
+array3 = append(array3, "baz")
+13
+14
+fmt.Println(array3) // [foo bar baz]
+On line 10, we used append to array3, extending the length of array3.
+Questions
+1. What have we learned?
+We can use append to extend an array.
+2. Why is it useful?
+Appending an array is useful when we need to extend an array to a new variable.
+3. What are the dangers of using array append?
+If we append to an array that is not large enough to hold the new values, the array will be
+reallocated and the old values will be lost.
+Arrays with Variadic Types
+In Ruby, there’s a catch-all method argument that can be used to store multiple parameters into array
+or hash. In this example, we add a splat asterisk in the method argument, so that we can capture the
+parameters as an array.

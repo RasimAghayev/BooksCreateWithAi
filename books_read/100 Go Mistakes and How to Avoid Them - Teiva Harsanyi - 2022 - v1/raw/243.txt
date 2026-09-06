@@ -1,0 +1,55 @@
+223
+9.12
+#72: Forgetting about sync.Cond
+wg := sync.WaitGroup{}
+var v uint64
+for i := 0; i < 3; i++ {
+wg.Add(1)
+go func() {
+// ...
+}()
+}
+// ...
+Both solutions are fine. If the value we want to set eventually to the wait group counter
+is known in advance, the first solution prevents us from having to call wg.Add multiple
+times. However, it requires making sure the same count is used everywhere to avoid
+subtle bugs.
+ Let’s be cautious not to reproduce this common mistake made by Go developers.
+When using a sync.WaitGroup, the Add operation must be done before spinning up a
+goroutine in the parent goroutine, whereas the Done operation must be done within
+the goroutine.
+ The following section discusses another primitive of the sync package: sync.Cond. 
+9.12
+#72: Forgetting about sync.Cond
+Among the synchronization primitives in the sync package, sync.Cond is probably the
+least used and understood. However, it provides features that we can’t achieve with
+channels. This section goes through a concrete example to show when sync.Cond can
+be helpful and how to use it.
+ The example in this section implements a donation goal mechanism: an applica-
+tion that raises alerts whenever specific goals are reached. We will have one goroutine
+in charge of incrementing a balance (an updater goroutine). In contrast, other gor-
+outines will receive updates and print a message whenever a specific goal is reached
+(listener goroutines). For example, one goroutine is waiting for a $10 donation goal,
+whereas another is waiting for a $15 donation goal.
+ One first naive solution uses mutexes. The updater goroutine increments the bal-
+ance every second. On the other side, the listener goroutines loop until their dona-
+tion goal is met:
+type Donation struct {
+mu
+sync.RWMutex
+balance int
+}
+donation := &Donation{}
+// Listener goroutines
+f := func(goal int) {
+donation.mu.RLock()
+for donation.balance < goal {
+donation.mu.RUnlock()
+donation.mu.RLock()
+Creates and instantiates a 
+Donation struct containing the 
+current balance and a mutex
+Creates 
+a closure
+Checks if the goal 
+is reached

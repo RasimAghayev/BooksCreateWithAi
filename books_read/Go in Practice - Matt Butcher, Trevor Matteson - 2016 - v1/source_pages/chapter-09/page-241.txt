@@ -1,0 +1,78 @@
+218
+CHAPTER 9
+Using the cloud
+on, monitoring the Go runtime inside every application, and cross-compiling to vari-
+ous systems before deploying. You’ll explore how to do this while avoiding pitfalls that
+can catch you off guard.
+ This chapter rounds out some key cloud concepts. After you’ve completed this
+chapter and the previous chapters, you’ll have what you need to build and operate
+cloud-based applications written in Go.
+9.1
+What is cloud computing?
+This is one of the fundamental questions that can make all the difference in both soft-
+ware development and operating applications. Is cloud a marketing term? Yes. Is there
+something else fundamentally different going on? Yes. Given the way the term is
+thrown around for use in everything from web applications and phone applications to
+physical servers and virtual machines, its meaning can be difficult to navigate for
+someone not familiar with the space. In this introductory section, you’ll learn about
+cloud computing in a way that you can apply to software development and operations.
+9.1.1
+The types of cloud computing
+In the simplest form of cloud computing, part of a system is managed by someone
+else. This can be someone else in your company, an outside service provider, an auto-
+mation system, or any combination of these. If an outside service provider is provid-
+ing part of the stack, what parts are they providing? Figure 9.1 shows the three forms
+of cloud computing and how they compare to an environment where you own the
+entire stack.
+ With a traditional server or rack of servers, you need to manage all of the compo-
+nents of the stack, right down to the physical space holding the hardware. When
+changes are needed, someone needs to order the hardware, wait for it to show up,
+connect it, and manage it. This can take a bit of time.
+Application
+Application
+Application
+Application
+Data
+Data
+Data
+Data
+Runtime
+Runtime
+Runtime
+Runtime
+Operating system
+Operating system
+Operating system
+Operating system
+Virtualization
+Virtualization
+Virtualization
+Virtualization
+Servers
+Servers
+Servers
+Servers
+Storage
+Storage
+Storage
+Storage
+Networking
+Networking
+Networking
+Networking
+Traditional
+Server/Rack
+IaaS:
+Infrastructure as a service
+PaaS:
+Platform as a service
+SaaS:
+Software as a service
+Managed by you
+Managed by you
+Managed by you
+Service managed
+Service managed
+Service managed
+Figure 9.1
+The types of cloud computing

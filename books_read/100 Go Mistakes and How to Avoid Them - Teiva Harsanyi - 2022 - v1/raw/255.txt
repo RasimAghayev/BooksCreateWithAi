@@ -1,0 +1,44 @@
+235
+10.2
+#76: time.After and memory leaks
+10.1
+#75: Providing a wrong time duration
+The standard library provides common functions and methods that accept a
+time.Duration. However, because time.Duration is an alias for the int64 type, new-
+comers to the language can get confused and provide a wrong duration. For example,
+developers with a Java or JavaScript background are used to passing numeric types.
+ To illustrate this common error, let’s create a new time.Ticker that will deliver the
+ticks of a clock every second:
+ticker := time.NewTicker(1000)
+for {
+select {
+case <-ticker.C:
+// Do something
+}
+}
+If we run this code, we notice that ticks aren’t delivered every second; they are deliv-
+ered every microsecond.
+ Because time.Duration is based on the int64 type, the previous code is correct
+since 1000 is a valid int64. But time.Duration represents the elapsed time between
+two instants in nanoseconds. Therefore, we provided NewTicker with a duration of
+1,000 nanoseconds = 1 microsecond.
+ This mistake happens frequently. Indeed, standard libraries in languages such as
+Java and JavaScript sometimes ask developers to provide durations in milliseconds.
+ Furthermore, if we want to purposely create a time.Ticker with an interval of 1
+microsecond, we shouldn’t pass an int64 directly. We should instead always use the
+time.Duration API to avoid possible confusion:
+ticker = time.NewTicker(time.Microsecond)
+// Or
+ticker = time.NewTicker(1000 * time.Nanosecond)
+This is not the most complex mistake in this book, but developers with a background
+in other languages can easily fall into the trap of believing that milliseconds are
+expected for the functions and methods in the time package. We must remember to
+use the time.Duration API and provide an int64 alongside a time unit.
+ Now, let’s discuss a common mistake when using the time package with
+time.After. 
+10.2
+#76: time.After and memory leaks
+time.After(time.Duration) is a convenient function that returns a channel and
+waits for a provided duration to elapse before sending a message to this channel. Usu-
+ally, it’s used in concurrent code; otherwise, if we want to sleep for a given duration,
+we can use time.Sleep(time.Duration). The advantage of time.After is that it can

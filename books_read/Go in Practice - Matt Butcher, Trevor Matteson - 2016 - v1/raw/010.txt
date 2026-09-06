@@ -1,0 +1,97 @@
+CONTENTS
+ix
+4.2
+The panic system
+95
+Differentiating panics from errors
+96
+■Working with panics
+97
+TECHNIQUE 19
+Issuing panics
+97
+Recovering from panics
+99
+TECHNIQUE 20
+Recovering from panics
+100
+Panics and goroutines
+104
+TECHNIQUE 21
+Trapping panics on goroutines
+105
+4.3
+Summary
+111
+5 Debugging and testing
+113
+5.1
+Locating bugs
+114
+Wait, where is my debugger?
+114
+5.2
+Logging
+114
+Using Go’s logger
+115
+TECHNIQUE 22
+Logging to an arbitrary writer
+116
+TECHNIQUE 23
+Logging to a network resource
+118
+TECHNIQUE 24
+Handling back pressure in network logging
+120
+Working with system loggers
+123
+TECHNIQUE 25
+Logging to the syslog
+123
+5.3
+Accessing stack traces
+126
+TECHNIQUE 26
+Capturing stack traces
+126
+5.4
+Testing
+129
+Unit testing
+129
+TECHNIQUE 27
+Using interfaces for mocking or stubbing
+130
+TECHNIQUE 28
+Verifying interfaces with canary tests
+132
+Generative testing
+134
+5.5
+Using performance tests and benchmarks
+136
+TECHNIQUE 29
+Benchmarking Go code
+137
+TECHNIQUE 30
+Parallel benchmarks
+139
+TECHNIQUE 31
+Detecting race conditions
+141
+5.6
+Summary
+142
+PART 3
+AN INTERFACE FOR YOUR APPLICATIONS.........145
+6 HTML and email template patterns
+147
+6.1
+Working with HTML templates
+148
+Standard library HTML package overview
+148
+■Adding 
+functionality inside templates
+150

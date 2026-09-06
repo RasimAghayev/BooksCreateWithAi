@@ -1,0 +1,38 @@
+163
+Reusing structures with types
+   
+21.2 Reusing structures with types
+If you need multiple structures with the same fields, you can define a type, much like 
+the celsius type in lesson 13. The location type declared in the following listing is used to 
+place the Spirit rover at Columbia Memorial Station and the Opportunity rover at Chal-
+lenger Memorial Station.
+type location struct {
+    lat  float64
+    long float64
+}
+var spirit location
+spirit.lat = -14.5684
+spirit.long = 175.472636
+var opportunity location
+opportunity.lat = -1.9462
+opportunity.long = 354.4734
+fmt.Println(spirit, opportunity)
+Listing 21.2 Location type: location.go
+Quick check 21.1 
+1
+What advantage do structures have over individual variables?
+2
+Bradbury Landing is about 4,400 meters below Martian “sea level.” If curiosity had an
+altitude field, how would you assign it the value of –4400?
+QC 21.1 answer 
+1
+Structures group related values together, making it simpler and less error-prone to pass them 
+around.
+2
+curiosity.altitude = -4400
+Reuses the 
+location type
+Prints 
+{-14.5684 175.472636} 
+{-1.9462 354.4734}
+ 

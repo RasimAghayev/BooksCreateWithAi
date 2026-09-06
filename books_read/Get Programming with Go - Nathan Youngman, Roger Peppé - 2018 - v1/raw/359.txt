@@ -1,0 +1,94 @@
+344
+Index
+structures
+as alternative to classes 174–175
+attaching methods to 171–172
+composing with composition 178–180
+copying 165–166
+customizing JSON with struct tags 168–169
+declaring 162–163
+encoding to JSON 167–168
+initializing with composite literals 164–165
+pointing to 208–209
+reusing with types 163–164
+struct embedding 181
+struct tags 168–169
+with slices 166–167
+switch statement 30, 37
+sync package, Mutex type 272
+syntax errors 10
+T
+three-index slicing 142–143
+threequals operator 26
+time package 158
+After function 260, 275
+Date function 190–192
+Duration function 260–261
+Hour constant 211–212
+Millisecond constant 260–261, 274–280
+Now function 211–213
+Second constant 31–32, 110–111, 254, 
+256–257, 260, 274
+Sleep function 31, 110, 158, 254, 256–257, 
+260, 270, 274
+Unix function 60, 95
+UTC constant 190
+time sharing 256
+Time type 212
+ToUpper function 90
+true constant 24–25
+type assertions 243–244
+type behavior, adding with methods 105–107
+type conversion
+Boolean values 86
+caution regarding 82
+mismatched types 80–81
+numeric types 81–82
+strings 84–85, 87
+type declaration
+declaring new types 102–103
+using types 104–105
+type keyword 102
+U
+uint type 55
+uint16 type 56
+uint64 type 56
+and constants 66
+uint8 type 56, 71
+Unix function (time) 60, 95
+Unlock method (mutexes) 271
+unsigned integer types 54
+untyped constants 66, 102
+url package 242
+Error type 247
+Parse method 247
+V
+validating parameters 238
+var keyword 17–18
+variable scope
+narrow vs. wide scope 38
+overview 35–49
+short declaration 36
+variables 17–18
+assigning functions to 109–110
+declaring multiple 18–19
+floating-point 46
+displaying 48–49
+single precision 47
+zero value 47
+integer 54
+architecture-independent types 54
+displaying types 55
+string
+declaring 69–70
+decoding strings into runes 75–77
+immutable nature of 72–87
+raw string literals 69–70
+variadic functions, declaring 144
+W
+worker functions 277
+wrapping (integers) 58
+Writer interface 193
+Z
+zero value 47, 69
+ 

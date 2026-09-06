@@ -1,0 +1,75 @@
+Tooling
+125
+and there is our data race. We could fix this race in a similar manner to the way we fixed the cat
+race earlier, but instead let’s try using a sync.WaitGroup⁴⁰:
+Country journal API with sync.WaitGroup
+1
+package main
+2
+3
+import (
+4
+"encoding/json"
+5
+"flag"
+6
+"fmt"
+7
+"log"
+8
+"net/http"
+9
+"strings"
+10
+"sync"
+11
+"unicode"
+12
+)
+13
+14
+var (
+15
+addr
+= flag.String("http", "127.0.0.1:8000", "HTTP listen address")
+16
+countries = map[string]string{
+17
+"england":
+"England",
+18
+"japan":
+"Japan",
+19
+"southafrica":
+"South Africa",
+20
+"unitedstates": "United States",
+21
+}
+22
+)
+23
+24
+// Entry is a user-submitted entry summarizing their trip
+25
+// to a given country
+26
+type Entry struct {
+27
+Country string
+28
+Text
+string
+29
+}
+30
+31
+// removeSpaces is a function for strings.Map that removes
+32
+// all spaces from a string
+33
+func removeSpaces(r rune) rune {
+34
+if unicode.IsSpace(r) {
+⁴⁰https://golang.org/pkg/sync/#WaitGroup

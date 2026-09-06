@@ -1,0 +1,34 @@
+Benchmarks
+108
+We now have two new columns on the right: the number of bytes per operation, and the number
+of heap allocations per operation. For our Fibonnaci functions, both of these are zero. Why is this?
+Let’s add the -gcflags=-m option to see the details. The output below is truncated to the first 10 lines:
+$ go test -bench=. -benchmem -gcflags=-m
+# _/home/herman/Dropbox/mastergo/manuscript/code/benchmarks/fibonacci
+./fibonacci_bench_test.go:10:20: BenchmarkF b does not escape
+./fibonacci_fast_bench_test.go:6:24: BenchmarkFastF b does not escape
+./fibonacci_test.go:22:5: t.common escapes to heap
+./fibonacci_test.go:6:15: leaking param: t
+./fibonacci_test.go:22:38: tt.n escapes to heap
+./fibonacci_test.go:22:38: got escapes to heap
+./fibonacci_test.go:22:49: tt.want escapes to heap
+./fibonacci_test.go:10:3: TestF []struct { n int; want int } literal does not\
+escape
+./fibonacci_test.go:22:12: TestF ... argument does not escape
+...
+The Go compiler performs escape analysis³². If an allocation does not escape the function, it can be
+stored on the stack. Variables placed on the stack avoid the costs involved with a heap allocation
+and the garbage collector. The omission of the fibonacci.go file from the output above implies that
+no variables from our F and FastF functions escaped to the heap. Let’s take another look at the FastF
+function to see why this is:
+func FastF(n int) int {
+var a, b int = 0, 1
+for i := 0; i < n; i++ {
+a, b = b, a+b
+}
+return a
+}
+In this function, the a, b, and i variables are declared locally and do not need to be put onto the heap,
+because they are not used again when the function exits. Consider what would happen if, instead
+of storing only the last two values, we naively stored all values calculated up to n:
+³²https://en.wikipedia.org/wiki/Escape_analysis

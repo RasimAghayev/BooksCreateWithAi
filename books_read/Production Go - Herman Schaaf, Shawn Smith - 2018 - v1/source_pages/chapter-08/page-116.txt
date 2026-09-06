@@ -1,0 +1,69 @@
+Benchmarks
+110
+Modulo vs Bitwise-and
+In our Fibonacci benchmarks so far, we have made use of a list of four integer test cases:
+6
+var nums = []int{
+7
+0, 10, 20, 30,
+8
+}
+which we then loop over in the BenchmarkF function:
+13
+for n := 0; n < b.N; n++ {
+14
+FastF(nums[n%m])
+15
+}
+But when it comes down to the nanoseconds, modulo is a relatively slow computation to do on
+every iteration. It can actually have an impact on the accuracy of our results! Let’s peek at the Go
+assembler code. Go allows us to do this with the go tool compile -S command, which outputs a
+pseudo-assembly language called ASM. In the command below, we filter the instructions for the
+line we are interested in with grep:
+$ go tool compile -S fibonacci.go fibonacci_bench_test.go | grep "fibonacci_b\
+ench_test.go:14"
+0x0036 00054 (fibonacci_bench_test.go:14)
+MOVQ
+(BX)(DX*8), AX
+0x003a 00058 (fibonacci_bench_test.go:14)
+MOVQ
+AX, (SP)
+0x003e 00062 (fibonacci_bench_test.go:14)
+PCDATA
+$0, $0
+0x003e 00062 (fibonacci_bench_test.go:14)
+CALL
+"".F(SB)
+0x0043 00067 (fibonacci_bench_test.go:14)
+MOVQ
+""..autotmp_5+16(SP),\
+AX
+0x0061 00097 (fibonacci_bench_test.go:14)
+MOVQ
+"".numbers(SB), BX
+0x0068 00104 (fibonacci_bench_test.go:14)
+MOVQ
+"".numbers+8(SB), SI
+0x006f 00111 (fibonacci_bench_test.go:14)
+TESTQ
+CX, CX
+0x0072 00114 (fibonacci_bench_test.go:14)
+JEQ 161
+0x0074 00116 (fibonacci_bench_test.go:14)
+MOVQ
+AX, DI
+0x0077 00119 (fibonacci_bench_test.go:14)
+CMPQ
+CX, $-1
+0x007b 00123 (fibonacci_bench_test.go:14)
+JEQ 132
+0x007d 00125 (fibonacci_bench_test.go:14)
+CQO
+0x007f 00127 (fibonacci_bench_test.go:14)
+IDIVQ
+CX
+0x0082 00130 (fibonacci_bench_test.go:14)
+JMP 137
+0x0084 00132 (fibonacci_bench_test.go:14)
+NEGQ
+AX

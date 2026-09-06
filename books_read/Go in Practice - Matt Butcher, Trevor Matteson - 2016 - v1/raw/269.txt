@@ -1,0 +1,65 @@
+246
+CHAPTER 10
+Communication between cloud services
+Listing 10.8 opens in a similar manner to the web servers in earlier chapters. The
+same patterns there can be used here. The real work is done in the handler, shown in
+the following listing.
+func handler(res http.ResponseWriter, req *http.Request) {
+     u := &pb.User{
+            Name:  proto.String("Inigo Montoya"),
+            Id:    proto.Int32(1234),
+            Email: proto.String("inigo@montoya.example.com"),
+     }
+     body, err := proto.Marshal(u)
+     if err != nil {
+            http.Error(res, err.Error(), http.StatusInternalServerError)
+            return
+     }
+     res.Header().Set("Content-Type", "application/x-protobuf")
+     res.Write(body)
+}
+Writing a response as a protocol buffer is fairly similar to writing a JSON or XML
+response. One difference is that values to properties on messages are pointers to a
+value rather than a value itself. Calls to proto.String, proto.Int32, and other func-
+tions return pointers to values rather than the values passed in.
+ A client can be used to retrieve and read the messages. The following listing show-
+cases a simple client.
+res, err := http.Get("http://localhost:8080")
+if err != nil {
+     …
+}
+defer res.Body.Close()
+b, err = ioutil.ReadAll(res.Body)
+if err != nil {
+     …
+}
+var u pb.User
+err = proto.Unmarshal(b, &u)
+if err != nil {
+     …
+}
+Listing 10.9
+Protocol buffer server handler
+Listing 10.10
+Protocol buffer client 
+Creates a pointer to a new instance 
+of the generated User type in the 
+protocol buffer package
+Values are wrapped in calls to
+the proto package to return a
+reference to the value.
+Marshals the instance 
+into a message
+Sets the content
+type and writes
+the message
+to output
+Performs a GET request to 
+the server from listings 
+10.8 and 10.9
+Reads the response body 
+to get one complete 
+protocol buffer message
+Creates a variable and unmarshals the 
+message into it. The pb package is the same 
+imported package from listing 10.8.

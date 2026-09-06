@@ -1,0 +1,45 @@
+354
+CHAPTER 12
+Optimizations
+For every 100 ms, the quota is set to 400 ms. If the eight threads are busy executing
+goroutines, after 50 ms, we reach the quota of 400 ms (8 × 50 ms = 400 ms). What will
+be the consequence? CFS will throttle the CPU resource. Hence, no more CPU
+resources will be allocated until the start of another period. In other words, our appli-
+cation will be on hold for 50 ms.
+ For example, a service with an average latency of 50 ms can take up to 150 ms to
+complete. This is a possible 300% penalty on the latency.
+ So, what’s the solution? First, keep an eye on Go issue 33803 (https://github.com/
+golang/go/issues/33803). Perhaps in a future version of Go, GOMAXPROCS will be
+CFS-aware.
+ A solution for today is to rely on a library made by Uber called automaxprocs
+(github.com/uber-go/automaxprocs). We can use this library by adding a blank
+import to go.uber.org/automaxprocs in main.go; it will automatically set GOMAX-
+PROCS to match the Linux container CPU quota. In the previous example, GOMAXPROCS
+would be set to 4 instead of 8, so we wouldn’t be able to reach a state where the CPU is
+throttled.
+ In summary, let’s remember that currently, Go isn’t CFS-aware. GOMAXPROCS is based
+on the host machine rather than on the defined CPU limits. Consequently, we can
+reach a state where the CPU is throttled, leading to long pauses and substantial effects
+such as a significant latency increase. Until Go becomes CFS-aware, one solution is to
+rely on automaxprocs to automatically set GOMAXPROCS to the defined quota. 
+Summary
+Understanding how to use CPU caches is important for optimizing CPU-bound
+applications because the L1 cache is about 50 to 100 times faster than the main
+memory.
+Being conscious of the cache line concept is critical to understanding how to
+organize data in data-intensive applications. A CPU doesn’t fetch memory word
+by word; instead, it usually copies a memory block to a 64-byte cache line. To get
+the most out of each individual cache line, enforce spatial locality.
+Making code predictable for the CPU can also be an efficient way to optimize
+certain functions. For example, a unit or constant stride is predictable for the
+CPU, but a non-unit stride (for example, a linked list) isn’t predictable.
+To avoid a critical stride, hence utilizing only a tiny portion of the cache, be
+aware that caches are partitioned.
+Knowing that lower levels of CPU caches aren’t shared across all the cores helps
+avoid performance-degrading patterns such as false sharing while writing con-
+currency code. Sharing memory is an illusion.
+Use instruction-level parallelism (ILP) to optimize specific parts of your code to
+allow a CPU to execute as many parallel instructions as possible. Identifying
+data hazards is one of the main steps.
+You can avoid common mistakes by remembering that in Go, basic types are
+aligned with their own size. For example, keep in mind that reorganizing the

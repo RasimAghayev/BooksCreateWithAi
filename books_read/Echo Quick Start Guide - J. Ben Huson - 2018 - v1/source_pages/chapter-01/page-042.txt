@@ -1,0 +1,20 @@
+Reasons for a framework
+Due to the minimalist implementations within the net/http package, classic web
+application paradigms that developers have been employing for years in the
+industry are noticeably absent. This is not an oversight by the creators of the
+net/http package, but rather a feature. By keeping the functionality of the package
+stripped of higher level functionality, the developer building a web application
+has the flexibility to build solutions that fit their particular use cases.
+This minimalism-based mindset does cause work for developers, in that higher
+level functionality must be built into the web application itself. An example
+would be middleware and request pipeline processing. This is common in many
+web application frameworks, and request pipelines have been implemented in a
+plethora of ways by various projects, all motivated by different priorities.
+Another example would be URL routing to handlers. Though an implementation
+exists in the standard library, it has been shown in the industry that the current
+embodiment within the net/http package is lacking in functionality for the
+majority of common use cases. Moreover, there are no helpers for common
+problems such as encoding and rendering responses, or binding request inputs to
+variables within a handler. Lastly, up until very recently, the net/http package did
+not have a mechanism by which request context could be kept throughout the
+request's lifetime.

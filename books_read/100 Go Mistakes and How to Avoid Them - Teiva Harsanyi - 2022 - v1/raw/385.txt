@@ -1,0 +1,63 @@
+Teiva Harsanyi
+ISBN-13: 978-1-61729-959-9
+U
+nderstanding mistakes is the best way to improve the 
+quality of your code. Th is unique book examines 100 
+bugs and ineffi  ciencies common to Go applications, 
+along with tips and techniques to avoid making them in 
+your own projects.
+100 Go Mistakes and How to Avoid Them shows you how to 
+replace common programming problems in Go with idiom-
+atic, expressive code. In it, you’ll explore dozens of interesting 
+examples and case studies as you learn to spot mistakes that 
+might appear in your own applications. Expert author Teiva 
+Harsanyi organizes the error avoidance techniques into 
+convenient categories, ranging from types and strings to 
+concurrency and testing. 
+What’s Inside
+● Identify and squash code-level bugs
+● Avoid problems with application structure and design
+● Perfect your data and control structures
+● Optimize your code by eliminating ineffi  ciencies
+For developers profi cient with Go programming and syntax.
+Teiva Harsanyi is a senior software engineer at Docker with 
+experience in various domains, including safety-critical indus-
+tries like air traffi  c management.
+Register this print book to get free access to all ebook formats. 
+Visit https://www.manning.com/freebook
+100 Go Mistakes 
+and How to Avoid Them
+GO / PROGRAMMING
+M A N N I N G
+“
+Required reading for 
+Go developers before they 
+touch code in production. 
+It’s the Go equivalent 
+  of Eff ective Java.”
+—Neeraj Shah,  Nutanix 
+“
+Clear and eff ective 
+examples. Armed with the 
+understanding of how and why 
+mistakes occur, you’re equipped 
+to avoid costly errors.”
+—Giuseppe Maxia, Vmware  
+“
+Teiva Harsanyi catalogs real 
+problems and easy-to-miss 
+‘gotchas,’ and delves into the 
+nuanced world of why they 
+happen. Not having this book 
+will be your 101st mistake.”
+—Anupam Sengupta, Red Hat 
+“
+Learn good habits by 
+identifying bad ones. 
+Th e writing is engaging, the 
+examples relevant, 
+  and the insights useful.”
+ 
+—Th ad Meyer
+LI-COR Biosciences
+See first page

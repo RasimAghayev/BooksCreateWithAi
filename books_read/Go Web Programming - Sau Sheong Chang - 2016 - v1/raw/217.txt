@@ -1,0 +1,51 @@
+196
+CHAPTER 8
+Testing your application
+=== RUN TestLongRunningTest
+--- PASS: TestLongRunningTest (10.00s)
+PASS
+coverage: 46.7% of statements
+ok    unit_testing  10.004s
+Notice that the TestLongRunningTest test case runs for 10 seconds, as expected. Now
+run this in the console
+go test –v –cover -short
+and run the tests again:
+=== RUN TestDecode
+--- PASS: TestDecode (0.00s)
+=== RUN TestEncode
+--- SKIP: TestEncode (0.00s)
+  main_test.go:24: Skipping encoding for now
+=== RUN TestLongRunningTest
+--- SKIP: TestLongRunningTest (0.00s)
+  main_test.go:29: Skipping long-running test in short mode
+PASS
+coverage: 46.7% of statements
+ok    unit_testing  0.004s
+As you can see, the long-running test case is now skipped.
+8.2.2
+Running tests in parallel
+As mentioned earlier, unit test cases are meant to be tested independently. Sometimes
+this isn’t possible because dependencies exist within a test suite. When it is possible,
+you can run unit test cases in parallel in order to speed up the tests. Let’s see how to
+do this in Go.
+ Add a file named parallel_test.go, shown in this listing, in the same directory.
+package main
+import (
+  "testing"
+  "time"
+)
+func TestParallel_1(t *testing.T) {    
+  t.Parallel()   
+  time.Sleep(1 * time.Second)
+}
+func TestParallel_2(t *testing.T) {   
+  t.Parallel()
+  time.Sleep(2 * time.Second)
+}
+Listing 8.4
+Parallel testing
+Works for
+1 second
+Calls Parallel function to 
+run test cases in parallel
+Works for 2 seconds

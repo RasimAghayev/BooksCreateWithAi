@@ -1,0 +1,63 @@
+113
+Type embedding
+In listing 5.50, we have a program that shows how to embed a type and access the
+embedded identifiers. We start with the declaration of two struct types on lines 10
+and 24.
+09 // user defines a user in the program.
+10 type user struct {
+11
+name
+string
+12
+email string
+13 }
+23 // admin represents an admin user with privileges.
+24 type admin struct {
+25
+user
+// Embedded Type
+26
+level string
+27 }
+On line 10 in listing 5.51, we have the declaration of a struct type named user, and
+then on line 24 we have the declaration of a second struct type named admin. Inside
+the declaration of the admin type on line 25, we have the embedding of the user type
+as an inner type of admin. To embed a type, all that needs to happen is for the type
+name to be declared. One line 26, we have the declaration of a field named level.
+Notice the difference between declaring a field and embedding a type. 
+ Once we embed the user type inside of admin, we can say that user is an inner type
+of the outer type admin. The concept of having an inner and outer type makes it easier
+to understand the relationship between the two. 
+15 // notify implements a method that can be called via
+16 // a value of type user.
+17 func (u *user) notify() {
+18
+fmt.Printf("Sending user email to %s<%s>\n",
+19
+u.name,
+20
+u.email)
+21 }
+Listing 5.52 shows the declaration of a method named notify using a pointer receiver
+of type user. The method just displays a friendly message stating an email is being sent
+to a specific user and email address. Now let’s look at the main function.
+30 func main() {
+31
+// Create an admin user.
+32
+ad := admin{
+33
+user: user{
+34
+name:
+"john smith",
+35
+email: "john@yahoo.com",
+36
+},
+Listing 5.51
+listing50.go: lines 09–13, 23–27
+Listing 5.52
+listing50.go: lines 15–21
+Listing 5.53
+listing50.go: lines 30–45

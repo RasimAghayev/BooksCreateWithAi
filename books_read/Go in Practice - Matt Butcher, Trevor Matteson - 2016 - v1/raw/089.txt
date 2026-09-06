@@ -1,0 +1,54 @@
+66
+CHAPTER 3
+Concurrency in Go
+     var i int = -1
+     var file string
+     for i, file = range os.Args[1:] {
+            wg.Add(1)
+            go func(filename string) {
+                   compress(filename)
+                   wg.Done()
+            }(file)
+     }
+     wg.Wait()
+     fmt.Printf("Compressed %d files\n", i+1)
+}
+func compress(filename string) error {
+     // Unchanged from above
+}
+In this revised compression tool, you’ve changed the main function in significant
+ways. First, you’ve added a wait group.
+ A wait group is a message-passing facility that signals a waiting goroutine when it’s
+safe to proceed. To use it, you tell the wait group when you want it to wait for some-
+thing, and then you signal it again when that thing is done. A wait group doesn’t need
+to know more about the things it’s waiting for other than (a) the number of things it’s
+waiting for, and (b) when each thing is done. You increment the first with wg.Add,
+and as your task completes, you signal this with wg.Done. The wg.Wait function blocks
+until all tasks that were added are done. Figure 3.2 illustrates the process.
+ In this program, you call wg.Done inside a goroutine. That goroutine accepts a file-
+name and then runs your compress function on it. Notice that you’ve done something
+that at first blush appears redundant. Instead of closing over file inside the closure,
+Because you want to reference i outside the 
+for loop you declare the variables here.
+The outer goroutine (main) waits until all the 
+compressing goroutines have called wg.Done.
+For every file you add, you tell the wait group that you’re 
+waiting for one more compress operation.
+This function calls compress
+and then notifies the wait
+group that it’s done.
+Because you’re calling a goroutine in
+a for loop, you need to do a little
+trickery with the parameter passing.
+Main
+Workers
+Add items to
+wait group
+2. Mark wait group done
+Wait until all
+works are done
+and then continue
+1.
+3.
+Figure 3.2
+Wait groups in action

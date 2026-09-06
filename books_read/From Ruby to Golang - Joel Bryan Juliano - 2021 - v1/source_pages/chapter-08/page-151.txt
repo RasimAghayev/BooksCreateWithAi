@@ -1,0 +1,49 @@
+Glossary
+145
+Normally
+Under normal conditions or
+circumstances; usually; most of the time
+Notation (generic)
+The act, process, method, or an instance
+of representing by a system or set of
+marks, signs, figures, or characters
+Notation
+In linguistics and semiotics, a notation is
+a system of graphics or symbols,
+characters and abbreviated expressions,
+used (for example) in artistic and
+scientific disciplines to represent
+technical facts and quantities by
+convention.
+Note
+A symbol or annotation. A mark or
+token by which a thing may be known; a
+visible sign; a character; a distinctive
+mark or feature; a characteristic quality.
+Not
+Negates the meaning of the modified
+verb
+Now
+Present; current
+Number
+An abstract entity used to describe
+quantity
+O(n)
+Big O Notation, Indicating a Relative
+Order of Growth and Complexity n That
+is Attached to the Function O
+Object
+A thing that has physical existence
+Once
+One and only one time
+Open
+Not closed; accessible; unimpeded
+Operate
+To perform a work or labour; to exert
+power or strength, physical or
+mechanical; to act
+Operating (generic)
+In operation; that operates
+Operation
+The method by which a device performs
+its function

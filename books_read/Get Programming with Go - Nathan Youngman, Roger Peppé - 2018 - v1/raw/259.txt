@@ -1,0 +1,19 @@
+244
+Lesson 28  To err is human
+    os.Exit(1)
+}
+The preceding listing will output the following errors:
+2 error(s) occurred:
+- out of bounds
+- invalid digit
+NOTE If a type satisfies multiple interfaces, type assertions can also convert from one
+interface to another.   
+28.4 Don’t panic
+Several languages rely heavily on exceptions for communicating and handling errors. Go 
+doesn’t have exceptions, but it does have a similar mechanism called panic. When a panic 
+occurs, the program will crash, as is the case with unhandled exceptions in other lan-
+guages.
+Quick check 28.8 What does the type assertion err.(SudokuError) do?
+QC 28.8 answer It attempts to convert the err value from the error interface type to the concrete
+SudokuError type.
+ 

@@ -1,0 +1,55 @@
+includes a line specifying that we would like to have a login link, and use the
+Reverse template data method we have created previously to render this link to the
+/login route:
+<html>
+        <head>
+                <title>{{.Title}}</title>
+        </head>
+        <body>
+          <a href={{ .Reverse "login" }}>Login</a>
+                <table>
+                        <th>
+                                <td>Reminder Name</td>
+                                <td>Reminder ID</td>
+                                <td>Reminder Due</td>
+                        </th>
+                        {{ range .Reminders }}
+                        <tr>
+                                <td>{{ .Name }}</td>
+                                <td>{{ .ID }}</td>
+                                <td>{{ .Due }}</td>
+                        </tr>
+                        {{ else }}
+                        <tr>
+                                <td colspan=3>No rows!</td>
+                        </tr>
+                        {{ end }}
+        </body>
+</html>
+When this template is rendered the TmplData.Reverse method is called with the
+parameter "login" which in turn calls our Echo instance's Reverse function. This
+will look up a route with a name login and return the full route associated.
+Following is the rendered content of the template:
+<html>
+        <head>
+                <title>Reminders Page</title>
+        </head>
+        <body>
+            <a href=/login>Login</a>
+                <table>
+                        <th>
+                                <td>Reminder Name</td>
+                                <td>Reminder ID</td>
+                                <td>Reminder Due</td>
+                        </th>
+                        
+                        <tr>
+                                <td>Oil Change</td>
+                                <td>7edc58cf-bd3f-48cb-b741-b2cafb106943</td>
+                                <td>2018-08-12 22:49:02.562939274 -0400 EDT m=+7776002.5
+                        </tr>
+                        
+                        <tr>
+                                <td>Birthday Party</td>
+                                <td>b6b0da75-bbd5-4d61-9090-c88b9ca0dcec</td>
+                                <td>2020-01-01 00:00:00 +0000 UTC</td>

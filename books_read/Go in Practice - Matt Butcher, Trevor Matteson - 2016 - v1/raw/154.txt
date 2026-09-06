@@ -1,0 +1,51 @@
+131
+TECHNIQUE 27
+Using interfaces for mocking or stubbing
+DISCUSSION
+Say you’re writing software that uses a third-party library that looks like the following
+listing.
+type Message struct {
+     // ...
+}
+func (m *Message) Send(email, subject string, body []byte) error {
+     // ...
+     return nil
+}
+This describes some kind of message-sending system. In your code, you use that
+library to send a message from your application. In the course of writing your tests,
+you want to ensure that the code that sends the message is being called, but you don’t
+want to send the message. One way to gracefully deal with this is to write your own
+interface that describes the methods shown in listing 5.12, and have your code use
+that interface in its declarations instead of directly using the Message type, as the fol-
+lowing listing shows.
+type Messager interface {
+     Send(email, subject string, body []byte) error
+}
+func Alert(m Messager, problem []byte) error {
+     return m.Send("noc@example.com", "Critical Error", problem)
+}
+Because you’ve created an abstraction from Message to Messager, you can easily write
+a mock and use that for your testing, as shown in the next listing.
+package msg
+import (
+     "testing"
+)
+type MockMessage struct {
+     email, subject string
+     body           []byte
+}
+func (m *MockMessage) Send(email, subject string, body []byte) error 
+     m.email = email
+Listing 5.12
+The message struct
+Listing 5.13
+Use an interface
+Listing 5.14
+Testing with a mock
+Defines an interface that 
+describes the methods 
+you use on Message
+Passes that interface instead
+of the Message type
+The MockMessage
+implements Messager.

@@ -1,0 +1,18 @@
+177
+23 
+LESSON
+COMPOSITION AND FORWARDING
+After reading lesson 23, you’ll be able to
+Compose structures with composition
+Forward methods to other methods
+Forget about classical inheritance
+When you look around the world, everything you see is made up of smaller parts. Peo-
+ple tend to have bodies with limbs, which in turn have fingers or toes. Flowers have pet-
+als and stems. Mars Rovers have wheels and treads and entire subsystems, like the 
+Rover Environmental Monitoring Station (REMS). Each part plays its role.
+In the world of object-oriented programming, objects are composed of smaller objects in 
+the same way. Computer scientists call this object composition  or simply composition.
+Gophers use composition with structures, and Go provides a special language feature 
+called embedding  to forward methods. This lesson demonstrates composition and 
+embedding with a fictional weather report from REMS.
+ 

@@ -1,0 +1,47 @@
+Arrays and Slices
+68
+Questions
+1. What have we learned?
+We learned that when we slice a slice, we are not creating a new array, but instead, we are
+referencing the same memory address of the previous array.
+2. Why is this important?
+This is important because we can’t assume that the capacity of the new array is the same as
+the length of the old array.
+3. What is the third parameter of creating a sliced array using make?
+The third parameter is the capacity of the new array.
+4. Why do we set the capacity of an array slice in Go?
+To avoid the error of trying to assign a value to an array that is out of bounds.
+Deep Copy
+If you want to copy the values of the old array to a new array variable and modify it without affecting
+the values of the old array, you can use a fixed array assignment or you would use a combination
+of make and copy.
+In the following example, we will create a new basket array that can be modified without affecting
+the original array is referenced.
+Deep Copy
+1
+basket1 := make([]string, 1, 3)
+2
+basket1[0] = "apple"
+3
+4
+basket2 := basket1[:2]
+5
+basket2[1] = "mango"
+6
+7
+basket3 := make([]string, cap(basket1))
+8
+9
+copy(basket3, basket2)
+10
+11
+basket3[1] = "pineapple"
+12
+basket3[2] = "kiwi"
+13
+14
+fmt.Println(basket3) // [apple pineapple kiwi]
+15
+fmt.Println(basket2) // [apple mango]
+16
+fmt.Println(basket1) // [apple]

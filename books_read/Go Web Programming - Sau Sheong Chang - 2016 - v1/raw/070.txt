@@ -1,0 +1,40 @@
+49
+The Go net/http library 
+framework; moving it to another framework or even extending the application or add-
+ing new features requires deep knowledge of the framework (or customized versions
+of the framework).  
+ This book isn’t about rejecting frameworks or conventions or patterns. A good web
+application framework is often the best way to build scalable and robust web applica-
+tions quickly. But it’s important to understand the underlying concepts infrastructure
+that these frameworks are built on. In the case of the Go programming language,
+using the standard libraries typically means using the net/http and html/template
+libraries. With proper understanding, it becomes easier to see why certain conven-
+tions and patterns are what they are. This helps us to avoid pitfalls, gives clarity, and
+stops us from following patterns blindly. 
+ In this and the next chapter, we’ll be focusing on net/http; chapter 5 covers html/
+template. 
+ The net/http library is divided into two parts, with various structs and functions
+supporting either one or both (see figure 3.1):
+■
+Client—Client, Response, Header, Request, Cookie
+■
+Server—Server, ServeMux, Handler/HandleFunc, ResponseWriter, Header,
+Request, Cookie
+We’ll start by using the net/http library as the server, and in this chapter we’ll talk
+about how Go handles requests from the client. In the next chapter, we’ll continue
+with the net/http library but focus on using it to process the request.
+ In this book, we’ll focus on using the net/http library’s server capabilities and not
+its client capabilities.
+Client
+Client
+Server
+Response
+ResponseWriter
+Handler/HandlerFunc
+Server
+ServeMux
+Header
+Cookie
+Request
+Figure 3.1
+Chaining handlers

@@ -1,0 +1,40 @@
+Benchmarks
+104
+The output tells us that the benchmarks were run on a Linux x86-64 environment. Furthermore, the
+testing package executed our one benchmark, BenchmarkF. It ran the b.N loop 1000 times, and each
+iteration (i.e. each call to F) lasted 1,255,534ns (∼1.2ms) on average.
+1.2ms per call seems a bit slow! Especially considering that the numbers we provided to the Fibonacci
+function were quite small. Let’s improve our original function by not using recursion.
+An improved Fibonacci function
+1
+package fibonacci
+2
+3
+// FastF returns the nth Fibonnaci number,
+4
+// but does not use recursion.
+5
+func FastF(n int) int {
+6
+var a, b int = 0, 1
+7
+for i := 0; i < n; i++ {
+8
+a, b = b, a+b
+9
+}
+10
+return a
+11
+}
+This new function FastF, is equivalent to the original, but uses only two variables and no recursion
+to calculate the final answer. Neat! Let’s check whether it’s actually any faster. We can do this by
+adding a new benchmark function for FastF:
+func BenchmarkFastF(b *testing.B) {
+// run FastF(n) b.N times
+m := len(numbers)
+for n := 0; n < b.N; n++ {
+FastF(numbers[n%m])
+}
+}
+Again we run go test -bench=.. This time we will see the output of both benchmarks:

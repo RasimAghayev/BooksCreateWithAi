@@ -1,0 +1,46 @@
+56
+CHAPTER 3
+Handling requests
+ That’s because ServeMux (which is what DefaultServeMux is an instance of) has a
+method named ServeHTTP with the same signature! In other words, a ServeMux is also
+an instance of the Handler struct. DefaultServeMux is an instance of ServeMux, so it is
+also an instance of the Handler struct. It’s a special type of handler, though, because
+the only thing it does is redirect your requests to different handlers depending on the
+URL that’s provided. If we use a handler instead of the default multiplexer, we’ll be
+able to respond, as shown in this listing.  
+package main
+import (
+    "fmt"
+    "net/http"
+)
+type MyHandler struct{}
+func (h *MyHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
+    fmt.Fprintf(w, "Hello World!")
+}
+func main() {
+    handler := MyHandler{}
+    server := http.Server{
+        Addr:    "127.0.0.1:8080",
+        Handler: &handler,
+    }
+    server.ListenAndServe()
+}
+Now let’s start the server (if you’re a bit hazy on how to do this, please flip to section
+2.7). If you go to http://localhost:8080 in your browser you’ll see Hello World! 
+ Here’s the tricky bit: if you go to http://localhost:8080/anything/at/all you’ll still
+get the same response! Why this is so should be quite obvious. We just created a han-
+dler and attached it to our server, so we’re no longer using any multiplexers. This
+means there’s no longer any URL matching to route the request to a particular han-
+dler, so all requests going into the server will go to this handler. 
+ In our handler, the ServeHTTP method does all the processing. It doesn’t do any-
+thing except return Hello World!, so that’s what it does for all requests into the server. 
+ This is the reason why we’d normally use a multiplexer. Most of the time we want
+the server to respond to more than one request, depending on the request URL. Natu-
+rally if you’re writing a very specialized server for a very specialized purpose, simply
+creating one handler will do the job marvelously. 
+3.3.2
+More handlers
+Most of the time, we don’t want to have a single handler to handle all the requests like
+in listing 3.6; instead we want to use different handlers instead for different URLs. To
+Listing 3.6
+Handling requests

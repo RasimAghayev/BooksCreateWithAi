@@ -1,0 +1,58 @@
+194
+CHAPTER 8
+Testing your application
+func TestEncode(t *testing.T) {
+  t.Skip("Skipping encoding for now")                  
+}
+Notice that the test file is in the same package as the program file. In this example
+you’ll only use the testing package, so that’s the only package you’ll be importing.
+The function TestDecode takes in a parameter, t, that’s a pointer to a testing.T
+struct. This is a test case that represents the unit testing of the decode function. The
+testing.T struct is one of the two main structs in the package, and it’s the main struct
+that you’ll be using to call out any failures or errors.
+ The testing.T struct has a number of useful functions:
+■
+Log—Similar to fmt.Println; records the text in the error log.
+■
+Logf—Similar to fmt.Printf. It formats its arguments according to the given
+format and records the text in the error log.
+■
+Fail—Marks the test function as having failed but allows the execution to
+continue.
+■
+FailNow—Marks the test function as having failed and stops its execution.
+There are also a few convenience functions that combine these functions, as shown in
+figure 8.1.
+In figure 8.1, the Error function is a combination of calling the Log function, followed
+by the Fail function. The Fatal function is a combination of calling the Log function
+followed by the FailNow function.
+ In the test function you call the decode function normally, and then test the
+results. If the results aren’t what you expect, you can call any of the Fail, FailNow,
+Error, Errorf, Fatal, or Fatalf functions accordingly. The Fail function, as
+you’ve probably guessed, tells you that the test case has failed but allows you to con-
+tinue the execution of the rest of the test case. The FailNow function is stricter and
+exits the test case once it’s encountered. Fail and FailNow only affect the test case
+they’re in—in this case, the TestDecode test case.
+ Run the TestDecode test case now. In the console, run this command in the direc-
+tory where the main_test.go file is:
+go test
+This will execute all _test.go files in the same directory, and you should see something
+like this (assuming the files are in a directory named unit_testing):
+PASS
+ok    unit_testing  0.004s
+Skips the test 
+altogether
+FailNow
+Fail
+Fatal
+Error
+Log
+Fatalf
+Errorf
+Logf
+Figure 8.1
+Convenience functions in testing.T, with 
+each cell representing a single function. The functions in 
+the white cells are combination functions. For example, 
+the Error function is a combination of calling the Fail
+function, followed by the Log function.

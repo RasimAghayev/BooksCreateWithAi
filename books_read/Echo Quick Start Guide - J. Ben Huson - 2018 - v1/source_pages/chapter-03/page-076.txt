@@ -1,0 +1,41 @@
+prefix, as all of the routes start with /. Next, we have a non-handler node with
+the prefix log that has two children, in and out. If you apply all of the prefixes to
+the leaf node out, you end up with the path /logout, which contains a reference to
+the handlers.Logout handler function. As you can see, the total depth of our tree is
+only three levels. This simple example doesn't do justice to the power of this
+data structure in this context, but if you have an extremely large API, such as the
+full GitHub API partially shown in the following snippet for brevity, you can
+understand how a prefix tree works for target routing:
+└── /
+    ├── r
+    │   ├── epos
+    │   │   ├── /
+    │   │   │   └── :
+    │   │   │       └── /
+    │   │   │           └── :
+    │   │   │               └── /
+    │   │   │                   ├── events
+    │   │   │                   ├── notifications
+    │   │   │                   ├── s
+    │   │   │                   │   ├── ta
+    │   │   │                   │   │   ├── rgazers
+    │   │   │                   │   │   └── t
+    │   │   │                   │   │       ├── s/
+  
+You may be asking, where does the HTTP request method come into play for
+selecting the appropriate handler within Echo? As we mentioned earlier, we very
+clearly articulate the method in the Add method, as well as in the helper named
+method functions. For historical context as well as to show how the framework
+has grown, when Echo was much younger, Echo actually kept a Radix Tree per
+HTTP method. This means that there was a separate data structure for GET
+routes, POST routes, as well as the other HTTP request methods. Echo would
+take the HTTP request method and isolate the appropriate tree to search for the
+endpoints based on said request method.
+Unfortunately, this behavior led to an issue with RFC compliance, as stated in
+this pull request: https://github.com/labstack/echo/pull/205. The problem is that Echo
+would send a 404 Not Found response code to the requester in the event that said
+requester attempted to request a resource with an HTTP method that the API did
+not support. For example, say your API has a resource called /reminder/123 and
+you did not want a user to be able to use the POST method to that resource. By
+using a separate Radix Tree per method, we would end up searching in the POST
+method Radix Tree only to find there is not a node with that prefix. Echo would

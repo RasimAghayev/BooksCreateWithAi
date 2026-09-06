@@ -1,0 +1,16 @@
+this construct. This chapter also investigates a few mechanisms related to the
+context, which are request binding and response rendering. The chapter shows
+examples of how to accomplish as well as some related best practices.
+Chapter 6, Performing Logging and Error Handling, exposes to the reader an
+often-overlooked but critically important aspect of application design: logging
+and error handling. This chapter provides real examples of how logging and
+error handling can work within your Echo-based web applications.
+Chapter 7, Testing Applications, marches into effective testing techniques for
+testing a web application API. We will start with some definitions of various
+forms of testing and then progress into test implementations. There are also neat
+tricks shown within the chapter to provide you with more information about
+coverage numbers from external testing.
+Chapter 8, Providing Templates and Static Content, goes over how to interact with
+Echo's file serving capabilities in order to provide static content to your callers.
+By building on Go's html/template package, we also go into depth on how to
+make the most of dynamic template rendering.

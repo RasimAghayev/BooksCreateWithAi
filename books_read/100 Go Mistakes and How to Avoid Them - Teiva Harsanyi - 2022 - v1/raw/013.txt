@@ -1,0 +1,102 @@
+CONTENTS
+xi
+11.7
+#88: Not using testing utility packages
+281
+The httptest package
+281
+■The iotest package
+283
+11.8
+#89: Writing inaccurate benchmarks
+285
+Not resetting or pausing the timer
+286
+■Making wrong 
+assumptions about micro-benchmarks
+287
+■Not being careful 
+about compiler optimizations
+289
+■Being fooled by the observer 
+effect
+291
+11.9
+#90: Not exploring all the Go testing features
+294
+Code coverage
+294
+■Testing from a different package
+295
+Utility functions
+295
+■Setup and teardown
+296
+12 Optimizations
+299
+12.1
+#91: Not understanding CPU caches
+300
+CPU architecture
+300
+■Cache line
+301
+■Slice of structs vs. 
+struct of slices
+304
+■Predictability
+305
+■Cache placement 
+policy
+307
+12.2
+#92: Writing concurrent code that leads to false sharing
+312
+12.3
+#93: Not taking into account instruction-level parallelism
+315
+12.4
+#94: Not being aware of data alignment
+321
+12.5
+#95: Not understanding stack vs. heap
+324
+Stack vs. heap
+324
+■Escape analysis
+329
+12.6
+#96: Not knowing how to reduce allocations
+331
+API changes
+331
+■Compiler 
+optimizations
+332
+■sync.Pool
+332
+12.7
+#97: Not relying on inlining
+334
+12.8
+#98: Not using Go diagnostics tooling
+337
+Profiling
+337
+■Execution tracer
+344
+12.9
+#99: Not understanding how the GC works
+347
+Concepts
+347
+■Examples
+349
+12.10
+#100: Not understanding the impacts of running Go in 
+Docker and Kubernetes
+352
+Final words
+355
+index
+357

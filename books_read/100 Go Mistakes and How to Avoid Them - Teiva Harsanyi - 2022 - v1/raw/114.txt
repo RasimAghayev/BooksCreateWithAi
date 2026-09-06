@@ -1,0 +1,11 @@
+94
+CHAPTER 3
+Data types
+A map can always grow in memory, but it never shrinks. Hence, if it leads to
+some memory issues, you can try different options, such as forcing Go to re-
+create the map or using pointers.
+To compare types in Go, you can use the == and != operators if two types are
+comparable: Booleans, numerals, strings, pointers, channels, and structs are
+composed entirely of comparable types. Otherwise, you can either use
+reflect.DeepEqual and pay the price of reflection or use custom implementa-
+tions and libraries.

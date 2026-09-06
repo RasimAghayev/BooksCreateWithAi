@@ -1,0 +1,47 @@
+226
+CHAPTER 9
+Leveraging Go concurrency
+func printLetters1() {
+  for i := 'A'; i < 'A'+10; i++ {
+    fmt.Printf("%c ", i)
+  }
+}
+func print1() {
+  printNumbers1()
+  printLetters1()
+}
+func goPrint1() {
+  go printNumbers1()
+  go printLetters1()
+}
+func main() {
+}
+The previous listing has two functions, printNumbers1 and printLetters1. These do
+nothing but loop and print numbers or letters. The function printNumbers1 prints
+from 0 to 9; printLetters1 prints from A to J. A function named print1 calls
+printNumbers1 and printLetters1 consecutively, and another function named
+goPrint1 calls printNumbers1 and printLetters1 as goroutines. 
+ For this example, the main function doesn’t do anything because you’ll be running
+the code using test cases. This way, you can take advantage of the timing that’s cap-
+tured and printed; otherwise you’d need to write the necessary code to find out how
+fast they run, and there’s no actual testing of the code.
+ To run the test cases, shown in this listing, use a separate test file named
+goroutine_test.go.
+package main
+import "testing"
+func TestPrint1(t *testing.T) {    
+  print1()
+}
+func TestGoPrint1(t *testing.T) {    
+  goPrint1()
+}
+When you run the test using the command
+go test –v
+this is what you’ll get:
+=== RUN TestPrint1
+0 1 2 3 4 5 6 7 8 9 A B C D E F G H I J --- PASS: TestPrint1 (0.00s)
+Listing 9.2
+Test file for running goroutine examples
+Normal run
+Runs as 
+goroutines

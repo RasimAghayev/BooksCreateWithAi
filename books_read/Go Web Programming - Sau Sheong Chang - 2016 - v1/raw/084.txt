@@ -1,0 +1,46 @@
+63
+Handlers and handler functions
+3.3.5
+ServeMux and DefaultServeMux
+We discussed ServeMux and DefaultServeMux earlier in this chapter and in the previ-
+ous chapter. ServeMux is an HTTP request multiplexer. It accepts an HTTP request and
+redirects it to the correct handler according to the URL in the request, illustrated in
+figure 3.5.  
+ServeMux is a struct with a map of entries that map a URL to a handler. It’s also a han-
+dler because it has a ServeHTTP method. ServeMux’s ServeHTTP method finds the URL
+most closely matching the requested one and calls the corresponding handler’s
+ServeHTTP (see figure 3.6).
+ So what is DefaultServeMux? ServeMux isn’t an interface, so DefaultServeMux isn’t
+an implementation of ServeMux. DefaultServeMux is an instance of ServeMux that’s
+Client
+Multiplexer:
+ServeMux
+Handler
+Handler
+Handler
+Server
+Request
+/hello
+/
+/world
+Figure 3.5
+Multiplexing requests to handlers
+indexHandler
+helloHandler
+worldHandler
+indexHandler
+helloHandler
+worldHandler
+Multiplexer: ServeMux
+/hello
+/
+/world
+Request
+GET /hello HTTP/1.1
+Struct that maps
+URL to handlers
+ServeHTTP method
+calls corresponding
+handler's ServeHTTP
+Figure 3.6
+Inside a multiplexer

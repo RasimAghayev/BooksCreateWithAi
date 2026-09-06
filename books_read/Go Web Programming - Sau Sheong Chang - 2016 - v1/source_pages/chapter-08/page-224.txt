@@ -1,0 +1,46 @@
+203
+HTTP testing with Go
+ Go’s testing package provides a TestMain function that allows you to do whatever
+setup or teardown is necessary. A typical TestMain function looks something like this:
+func TestMain(m *testing.M) {
+  setUp()
+  code := m.Run()
+  tearDown()
+  os.Exit(code)
+}
+where setUp and tearDown are functions you can define to do setup and teardown for
+all your test case functions. Note that setUp and tearDown are run only once for all test
+cases. The individual test case functions are called by calling the Run function on m. Call-
+ing the Run function returns an exit code, which you can pass to the os.Exit function.
+ This listing shows how this changes our test cases now.
+package main
+import (
+  "encoding/json"
+  "net/http"
+  "net/http/httptest"
+  "os"
+  "strings"
+  "testing"
+)
+var mux *http.ServeMux
+var writer *httptest.ResponseRecorder
+func TestMain(m *testing.M) {
+  setUp()
+  code := m.Run()
+  os.Exit(code)
+}
+func setUp() {
+  mux = http.NewServeMux()
+  mux.HandleFunc("/post/", handleRequest)
+  writer = httptest.NewRecorder()
+}
+func TestHandleGet(t *testing.T) {
+  request, _ := http.NewRequest("GET", "/post/1", nil)
+  mux.ServeHTTP(writer, request)
+  if writer.Code != 200 {
+    t.Errorf("Response code is %v", writer.Code)
+  }
+  var post Post
+  json.Unmarshal(writer.Body.Bytes(), &post)
+Listing 8.11
+ Using TestMain with httptest

@@ -1,0 +1,51 @@
+package main
+import (
+    "fmt"
+    "sort"
+)
+type Sequence []int
+// Методы, необходимые для sort.Interface.
+func (s Sequence) Len() int {
+    return len(s)
+}
+func (s Sequence) Less(i, j int) bool {
+    return s[i] < s[j]
+}
+func (s Sequence) Swap(i, j int) {
+    s[i], s[j] = s[j], s[i]
+}
+// Copy возвращает копию Sequence.
+func (s Sequence) Copy() Sequence {
+    copy := make(Sequence, 0, len(s))
+    return append(copy, s...)
+}
+// Метод для вывода - сортирует элементы перед выводом.
+func (s Sequence) String() string {
+    s = s.Copy() // Сделать копию; не перезаписывать аргумент.
+    sort.Sort(s)
+    str := "["
+    for i, elem := range s { // Цикл O(N²); исправим это в следующем примере.
+        if i > 0 {
+            str += " "
+        }
+        str += fmt.Sprint(elem)
+    }
+    return str + "]"
+}
+func main() {
+    // Создаем объект seq типа Sequence
+    var seq Sequence
+    // Аллоцируем память под 10 элементов
+    seq = make(Sequence, 10)
+    // Закинем в seq случайные элементы
+    seq = append(seq, 123, 632, 73, -123, 5, 6)
+    // Выведем в консоль seq
+    fmt.Println(seq)
+    // Вывод: [-123 0 0 0 0 0 0 0 0 0 0 5 6 73 123 632]
+    // Потому что мы для нашего типа Sequence имплементировали интерфейс Stringer,
+    // написав реализацию метода String.
+    // Поэтому при вызове fmt.Println у нас вызывается метод String() и идет сортировка массива 
+}
+Преобразования
+Метод String для типа Sequence повторяет работу, которую уже делает Sprint для срезов. (Кроме того, его сложность $O(N²)$, что неэффективно.)
+Мы можем разделить эту работу (и также ускорить её), если преобразуем Sequence в обычный []int перед вызовом Sprint .

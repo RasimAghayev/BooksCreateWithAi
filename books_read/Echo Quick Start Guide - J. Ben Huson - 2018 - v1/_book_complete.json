@@ -1,0 +1,33 @@
+{
+  "book_id": "echo_quick_start_guide_j_ben_huson_2018_v1",
+  "title": "Echo Quick Start Guide",
+  "title_original": "Echo Quick Start Guide",
+  "author": "J. Ben Huson",
+  "year": 2018,
+  "version": 1,
+  "pages": 180,
+  "primary_language": "Go",
+  "level": 2,
+  "level_name": "Elementary",
+  "level_icon": "🌱",
+  "domains": ["Web Development", "Backend Development"],
+  "technologies": ["Go", "Echo Framework", "net/http", "Middleware", "Template", "JSON", "UUID", "HTTP", "gorilla/context", "labstack/echo"],
+  "tags": ["#go", "#golang", "#echo", "#webdev", "#backend", "#middleware", "#routing", "#rest", "#api", "#framework"],
+  "chapters": [
+    {"chapter": 1, "title": "Understanding HTTP, Go, and Echo", "pages": "1-22", "pdf_pages": "30-47"},
+    {"chapter": 2, "title": "Developing Echo Projects", "pages": "23-48", "pdf_pages": "48-69"},
+    {"chapter": 3, "title": "Exploring Routing Capabilities", "pages": "49-68", "pdf_pages": "70-86"},
+    {"chapter": 4, "title": "Implementing Middleware", "pages": "69-88", "pdf_pages": "87-105"},
+    {"chapter": 5, "title": "Utilizing the Request Context and Data Bindings", "pages": "89-113", "pdf_pages": "106-125"},
+    {"chapter": 6, "title": "Performing Logging and Error Handling", "pages": "114-133", "pdf_pages": "126-141"},
+    {"chapter": 7, "title": "Testing Applications", "pages": "134-156", "pdf_pages": "142-161"},
+    {"chapter": 8, "title": "Providing Templates and Static Content", "pages": "157-173", "pdf_pages": "162-177"}
+  ],
+  "summary": "Echo framework-unu tək layihə (health-check + login/logout + reminder API) üzərində öyrədir: HTTP əsasları, Go net/http primitivləri, layihə strukturu (bindings/handlers/middlewares/models/renderings), Radix tree routing (38,662 ns/op, 0 allocs), middleware zəncirləri (Pre/Use/route-spesifik), echo.Context (sync.Pool reuse), Bind+Validate, rendering helper-ləri, logging/error handling (Recover middleware), unit/benchmark/integration testing (httptest, MockDB, -coverpkg) və statik məzmun + html/template inteqrasiyası.",
+  "isbn": "9781789340849",
+  "publisher": "Packt Publishing",
+  "series": "Quick Start Guide",
+  "completed_at": "2026-09-06T18:45:00Z",
+  "workspace": "Echo Quick Start Guide - J. Ben Huson - 2018 - v1",
+  "source_pdf": "books_read/Echo Quick Start Guide - J. Ben Huson - 2018 - v1/Echo Quick Start Guide - J. Ben Huson - 2018 - v1.pdf"
+}

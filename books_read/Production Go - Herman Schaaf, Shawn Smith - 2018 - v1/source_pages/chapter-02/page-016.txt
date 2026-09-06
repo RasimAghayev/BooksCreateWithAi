@@ -1,0 +1,42 @@
+Basics
+10
+var x = 1
+Similar to the above method, but in this case we can declare the specific contents. The type is also
+implied.
+Lastly, the short-hand variable declaration:
+x := 1
+This is probably the most common way, and the type is also implied like the above. Sometimes the
+var declaration method is used stylistically to indicate that the variable will be changed soon after
+the declaration. For example:
+1
+var found bool
+2
+for _, x := range entries {
+3
+if x.Name == "Gopher" {
+4
+found = true
+5
+}
+6
+}
+One key difference between var and := declarations is that the shorthand version (:=) cannot be used
+outside of a function, only var can. This means that variables in the global scope must be declared
+using var. This is valid:
+Example using var to declare variable in global scope
+1
+package main
+2
+3
+import "fmt"
+4
+5
+var a = 1
+6
+7
+func main() {
+8
+fmt.Println(a)
+9
+}
+but this will not compile:

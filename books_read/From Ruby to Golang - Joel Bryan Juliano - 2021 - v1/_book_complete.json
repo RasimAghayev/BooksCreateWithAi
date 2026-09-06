@@ -1,0 +1,33 @@
+{
+  "book_id": "from_ruby_to_golang_2021_v1",
+  "title": "From Ruby to Golang",
+  "title_original": "From Ruby to Golang: A Ruby Programmer's Guide to Learning Go",
+  "author": "Joel Bryan Juliano",
+  "year": 2021,
+  "version": 1,
+  "pages": 160,
+  "primary_language": "Go",
+  "level": 2,
+  "level_name": "Elementary",
+  "level_icon": "🌱",
+  "domains": ["Software Engineering", "Backend Development", "Cross-language Transition"],
+  "technologies": ["Go", "Ruby", "struct", "map", "slice", "array", "variadic", "interface", "go modules", "dep", "enumerable"],
+  "tags": ["#go", "#golang", "#ruby", "#transition", "#beginner", "#struct", "#map", "#slice", "#interface", "#modules"],
+  "chapters": [
+    {"chapter": 1, "title": "Introduction and communication (variables)", "pages": "1-2", "pdf_pages": "7-9"},
+    {"chapter": 2, "title": "Setter/Getters, Attribute Accessors and Structs", "pages": "3-28", "pdf_pages": "10-34"},
+    {"chapter": 3, "title": "Hash and Maps, Variadic Functions", "pages": "29-54", "pdf_pages": "35-60"},
+    {"chapter": 4, "title": "Arrays and Slices, Navigating your Arrays", "pages": "55-81", "pdf_pages": "61-87"},
+    {"chapter": 5, "title": "Package Management (Go Modules, dep)", "pages": "82-92", "pdf_pages": "88-98"},
+    {"chapter": 6, "title": "Collection Functions (Enumerable in Go)", "pages": "93-100", "pdf_pages": "99-107"},
+    {"chapter": 7, "title": "Organizing your Functions using Interface", "pages": "101-111", "pdf_pages": "108-117"},
+    {"chapter": 8, "title": "Glossary (Ruby-Go terminology)", "pages": "112-158", "pdf_pages": "118-165"}
+  ],
+  "summary": "Ruby proqramçıları üçün Go-yə keçid bələdçisi — hər mövzu Ruby nümunəsi ilə açılır və Go tərcüməsi ilə davam edir: instans dəyişəni→struct, attr_accessor→pointer receiver, inheritance→embedding, Hash→map (make/literal ilkinləşdirmə, zero value, comma-ok), Array→slice (value vs reference, capacity, deep copy, append), each→for range (5 semantik forma), splat→variadic, **kwargs→...interface{}, module→package, RubyGems/Bundler→Go Modules/dep, Enumerable metodları (all?/any?/collect/detect/drop) Go loop patternləri ilə, interface-in 3 istifadə forması (self-documenting API, type contract, return contract) və 46 səhifəlik lüğət.",
+  "isbn": "978-1080944002",
+  "publisher": "Leanpub (self-published)",
+  "series": "",
+  "completed_at": "2026-09-06T16:30:00Z",
+  "workspace": "From Ruby to Golang - Joel Bryan Juliano - 2021 - v1",
+  "source_pdf": "books_read/From Ruby to Golang - Joel Bryan Juliano - 2021 - v1/From Ruby to Golang - Joel Bryan Juliano - 2021 - v1.pdf"
+}

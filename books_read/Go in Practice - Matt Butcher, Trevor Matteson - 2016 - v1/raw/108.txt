@@ -1,0 +1,9 @@
+Part 2
+Well-rounded applications
+The second part covers when things don’t go as planned. What happens if
+an application panics? How do you have tests that help catch problems before
+they occur in production? Chapter 4 focuses on errors and panics—how things
+can be handled well when they go wrong. This is especially true when handling
+panics and errors on goroutines. Chapter 5 shifts gears into debugging and test-
+ing. This includes logging problems so that you can debug when situations arise
+in production. 

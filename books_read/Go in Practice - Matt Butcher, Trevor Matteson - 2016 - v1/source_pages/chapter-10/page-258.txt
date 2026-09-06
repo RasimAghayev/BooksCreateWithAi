@@ -1,0 +1,19 @@
+235
+Communication between
+cloud services
+Representational State Transfer (REST) is the most common form of communica-
+tion between services, and the most common data format used to transfer informa-
+tion is JSON. REST is an incredibly powerful way to expose interacting with
+applications to developers and the applications they build.
+ When communicating between cloud services or microservices within a broader
+application, you have options besides REST. Some of these options provide for
+faster communication that uses less bandwidth. In a microservice architecture, in
+which network communications come into play and can make a real performance
+difference, some areas can be optimized.
+This chapter covers
+Introducing microservice communication
+Reusing connections between services for faster 
+performance
+Providing faster JSON marshaling and unmarshaling
+Using protocol buffers for faster payload transfer
+Communicating over RPC

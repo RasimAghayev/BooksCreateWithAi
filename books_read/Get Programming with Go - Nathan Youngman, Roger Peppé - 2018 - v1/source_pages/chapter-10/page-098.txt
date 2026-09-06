@@ -1,0 +1,33 @@
+83
+Convert types with caution
+var bh float64 = 32767
+var h = int16(bh)
+fmt.Println(h)
+If the value of bh is 32,768, which is too big for an int16, the result is what we’ve come to 
+expect of integers in Go: it wraps around, becoming the lowest possible number for an 
+int16, –32768.
+The Ada language used for the Arianne 5 behaves differently. The type conversion from 
+float64 to int16 with an out-of-range value caused a software exception. According to the 
+report, this particular calculation was only meaningful prior to liftoff, so Go’s approach 
+may have been better in this instance, but usually it’s best to avoid incorrect data.
+To detect whether converting a type to int16 will result in an invalid value, the math pack-
+age provides min/max constants:
+if bh < math.MinInt16 || bh > math.MaxInt16 {
+    // handle out of range value
+}
+NOTE These min/max constants are untyped, allowing the comparison of bh, a floating-
+point value, to MaxInt16. Lesson 8 talks more about untyped constants.   
+Listing 10.2 Ariane type conversion: ariane.go
+To-do: add 
+rocket science
+Quick check 10.3 What code will determine if the variable v is within the range of an 8-bit
+unsigned integer?
+QC 10.3 answer 
+v := 42
+if v >= 0 && v <= math.MaxUint8 {
+    v8 := uint8(v)
+    fmt.Println("converted:", v8)
+}
+Prints 
+converted: 42
+ 

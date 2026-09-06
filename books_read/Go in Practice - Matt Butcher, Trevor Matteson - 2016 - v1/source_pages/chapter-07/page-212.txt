@@ -1,0 +1,44 @@
+189
+TECHNIQUE 48
+Incrementally saving a file
+such as the widely used libmagic. At the time of writing, several Go packages provide
+bindings to libmagic, making it easy to use from within Go.
+NOTE
+A specification to sniff MIME types is available at http://mimesniff.spec
+.whatwg.org/.
+7.2.3
+Working with raw multipart data
+The previous file-handling techniques work well when you’re dealing with small files
+or files as a whole, but limit your ability to work with files while they’re being
+uploaded. For example, if you’re writing a proxy and want to immediately transfer the
+file to another location, the previous techniques will cache large files on the proxy.
+ The Go standard library provides both high-level helper functions for common
+file-handling situations, and lower-level access that can be used for the less common
+ones or when you want to define your own handling.
+ The handler function for a request is executed when a request begins, rather than
+when a request is completed. Many requests happen quickly, and the helper functions
+account for any delay. If you work with, for example, large files, you have an opportu-
+nity to act while uploads are happening.
+ Instead of using the ParseMultipartForm method on the Request object inside
+an http handler function, you can access the raw stream of the request by accessing
+the underlying *multipart.Reader object. This object is accessible by using the
+MultipartReader method on the Request.
+ The following technique uses the lower-level multipart handling. This illustrates
+how it works in addition to handling some common cases.
+TECHNIQUE 48
+Incrementally saving a file
+Imagine that you’re building a system meant to handle a lot of large file uploads. The
+files aren’t stored on your API server but are instead stored in a back-end service
+designed for files. Using ParseMultipartForm is going to put those files into the tem-
+porary files directory on your API server while the uploads are in progress. To support
+large file uploads with ParseMultipartForm handling, your server would need a large
+disk cache for the files and careful handling to make sure it doesn’t get full while par-
+allel uploads are happening.
+PROBLEM
+You want to save the file, as it’s being uploaded, to a location of your choice. That loca-
+tion could be on the server, on a shared drive, or on another location altogether.
+SOLUTION
+Instead of using ParseMultipartForm, read the multipart data from the request as it’s
+being uploaded. This can be accessed with the MultipartReader method on the
+Request. As files and other information are coming in, chunk by chunk, save and pro-
+cess the parts rather than wait for uploads to complete.

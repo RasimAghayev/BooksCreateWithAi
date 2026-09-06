@@ -1,0 +1,41 @@
+ABOUT THIS BOOK
+xvii
+Chapter 2 walks you through a complete Go program, teaching you all that Go
+has to offer as a language along the way.
+Chapter 3 introduces the concept of packaging and how to best set up your Go
+workspace and development environment. It also shows how to use the Go tool-
+ing, including fetching and building your code. 
+Chapter 4 provides a detailed view of Go’s built-in data types: arrays, slices,
+and maps. It explains the implementation and mechanics behind these data
+structures. 
+Chapter 5 is a detailed view of Go’s type system, from struct types to named
+types to interfaces and type embedding. It also covers how all these things come
+together to allow you to structure and write complex software in a simpler way.
+Chapter 6 dives deeply into how the Go scheduler, concurrency, and channels
+work. It teaches the mechanics behind this aspect of the language.
+Chapter 7 takes what you learn from chapter 6 and shows more practical code
+around concurrency patterns. You will learn how to implement goroutine pools
+to manage work and how to pool reusable resources to be shared.
+Chapter 8 explores the standard library and goes deep into three packages: log,
+json, and io. The chapter focuses on some of the intricacies of these three
+packages. 
+Chapter 9 closes the book by showing how to use the testing and benchmarking
+framework. You will learn how to write unit and table tests and benchmarks, and
+how to add examples to your documentation and use the examples as tests. 
+About the code
+All source code in the book is presented in a mono-spaced typeface like this, which
+sets it off from the surrounding text.  In many listings, the code is annotated to point
+out key concepts, and numbered bullets are sometimes used in the text to provide
+additional information about the code.  
+ Source code for the examples in the book is available for download from the pub-
+lisher’s website at www.manning.com/books/go-in-action and from GitHub at https://
+github.com/goinaction/code.
+Author Online
+Purchase of Go in Action includes free access to a private web forum run by Manning
+Publications where you can make comments about the book, ask technical questions,
+and receive help from the authors and from other users. To access the forum and sub-
+scribe to it, point your web browser to www.manning.com/books/go-in-action. This
+page provides information on how to get on the forum once you’re registered, what
+kind of help is available, and the rules of conduct on the forum.  
+ 
+ 

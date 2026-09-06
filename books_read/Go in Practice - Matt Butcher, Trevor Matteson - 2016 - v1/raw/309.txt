@@ -1,0 +1,162 @@
+286
+INDEX
+RunParallel method 139
+runtime detection, cloud com-
+puting and 227–230
+runtime monitoring, cloud 
+computing and
+232–234
+runtime package 127–128, 234
+runtime.Gosched() function
+62–63
+runtime.ReadMemStats 
+function 234
+RWMutex object 175
+S
+SaaS (software as service)
+219–220
+Save method 225
+SCM (software configuration 
+management) 22
+SDKs (software development 
+kits) 202
+Secure Hash Algorithm.
+See SHA
+select statement 73, 75
+SendRequest function 94
+ServeContent function
+173–174, 176
+ServeFile function 170–171
+ServeHTTP method 54, 56
+serveTemplate function 152
+serving static content 169–180
+setField() function 273–274
+SHA (Secure Hash Algorithm)
+9
+short flags 32
+short variable declarations 5
+signal package 48
+simple_gz.go program 65
+Sinatra 57
+slow-start 238
+smtp package 165
+software as service. See SaaS
+software configuration manage-
+ment. See SCM
+software development kits.
+See SDKs
+source code 129
+stack dumps 123, 126
+Stack function 127–128
+stack traces, debugging 
+with 126–128
+Standard Error 115–116
+standard library (HTML 
+templates) 150–152
+Standard Output 127–128
+start function 105
+static content. See serving static 
+content
+strconv package 44
+streaming responses 154
+String() method 259
+strings package 51
+StripPrefix 171
+struct fields 272
+StructField.Tag.Get() 
+function 271
+StructField.Tag() function 271
+structs
+accessing 262
+accessing fields on 262
+annotating 266–267
+generating 275
+marshaling 269
+processing tags on 268
+unmarshaling 269
+styles template 159–160
+sum() function 257
+switching values 254
+sync package 47, 67, 72, 80, 
+175
+sync.Locker interface 67
+sync.Mutex 67, 142
+sync.RWLock 72
+sync.WaitGroup 63
+syslog package 115, 124
+syslog.Debug function 126
+syslog.Dial function 126
+system loggers 123–126
+T
+T.Error function 130
+t.Execute() function 140
+T.Fatal function 130
+tags, annotating 267–274
+target interface 261
+TCP (Transmission Control 
+Protocol) 7
+TDEA (Triple Data Encryption 
+Algorithm) 9
+template execution failure
+154–155
+template.HTML 162
+template.Template instance
+152
+templates 147–167
+HTML templates 148–164
+mixing templates 155–164
+parsing templates 152–154
+standard library 148–152
+template execution 
+failure 154–155
+overview 147
+using for email 164–167
+ternary operator 5
+_test.go files 129
+testing 129–136
+benchmarking 136–143
+generative testing 134–136
+overview 14–15
+unit testing 129–134
+testing code 129
+testing package 15, 136
+testing/quick package 134
+TestName 15
+text/template package
+148–149, 166
+text/template/parser 
+package 153
+time.After function 74
+time.Sleep 63, 73
+time.Time function 74
+Timeout() method 197
+timeouts 197
+TLS (Transport Layer Security)
+9
+toolchain, go executable as
+13–17
+code coverage 16
+formatting 17
+package management 13–14
+testing 14–15
+Trace log level 123
+transcoding application 236
+Transmission Control Protocol. 
+See TCP
+Triple Data Encryption Algo-
+rithm. See TDEA
+try/catch blocks 92, 95
+Twelve-Factor App paradigm
+118
+twelve-factor apps 43
+type switch
+sum with 255
+with extra type 256
+Type.Elem() function 261
+Type.Interface() method 261
+Type.NumField() function 265
+TypeByExtension function 188
+types
+checking and converting 259
+discussion 259–262
+examining 262

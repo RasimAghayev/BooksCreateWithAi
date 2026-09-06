@@ -1,0 +1,63 @@
+250
+CHAPTER 9
+Leveraging Go concurrency
+  for k, v := range db.store {
+    dist := distance(target, v)
+    if dist < smallest {
+      filename, smallest = k, dist
+    }
+  }
+  delete(db.store, filename)
+  db.mutex.Unlock()    
+  return filename
+}
+In the new nearest method, you can lock the section that searches for the best-fitting
+tile. You shouldn’t just lock the delete function because doing so will still cause a race
+condition—another goroutine can find the same tile just before it’s removed from the
+database.
+ Next is the cut function. 
+func cut(original image.Image, db *DB, tileSize, x1, y1, x2, y2 int) <-chan 
+image.Image {                                                      
+  c := make(chan image.Image)                                      
+  sp := image.Point{0, 0}
+  go func() {                                           
+    newimage := image.NewNRGBA(image.Rect(x1, y1, x2, y2))
+    for y := y1; y < y2; y = y + tileSize {
+      for x := x1; x < x2; x = x + tileSize {
+        r, g, b, _ := original.At(x, y).RGBA()
+        color := [3]float64{float64(r), float64(g), float64(b)}
+        nearest := db.nearest(color)                               
+        file, err := os.Open(nearest)
+        if err == nil {
+          img, _, err := image.Decode(file)
+          if err == nil {
+            t := resize(img, tileSize)
+            tile := t.SubImage(t.Bounds())
+            tileBounds := image.Rect(x, y, x+tileSize, y+tileSize)
+            draw.Draw(newimage, tileBounds, tile, sp, draw.Src)
+          } else {
+            fmt.Println("error:", err)
+          }
+        } else {
+          fmt.Println("error:", nearest)
+        }
+        file.Close()
+      }
+    }
+    c <- newimage.SubImage(newimage.Rect)
+  }()
+  return c
+}
+Listing 9.21
+The cut function
+Unsets mutex 
+flag by unlocking it
+Passes in reference to 
+DB struct instead of map
+Returns
+channel
+Creates anonymous 
+goroutine
+Calls nearest
+method on DB to
+get best-fitting tile

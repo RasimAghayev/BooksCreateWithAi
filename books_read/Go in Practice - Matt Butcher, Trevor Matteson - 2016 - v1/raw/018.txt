@@ -1,0 +1,30 @@
+ACKNOWLEDGMENTS
+xvii
+Matt Butcher
+I began writing this book at Revolv, continued when Google/Nest acquired us, and
+finished at Deis. Thanks to all three for supporting the writing of this book. Thanks to
+Brian Hardock, Cristian Cavalli, Lann Martin, and Chris Ching, all of whom served as
+early sounding boards. Matt Boersma provided helpful feedback for several chapters.
+Kent Rancourt and Aaron Schlesinger each inspired particular code examples in this
+book. Matt Fisher, Sivaram Mothiki, Keerthan Mala, Helgi Þorbjörnsson (yes, Helgi, I
+copied and pasted that), Gabe Monroy, Chris Armstrong, Sam Boyer, Jeff Bleiel,
+Joshua Anderson, Rimas Mocevicius, Jack Francis, and Josh Lane all (wittingly or
+unwittingly) influenced specific portions of this book. The impact of Michelle Noorali
+and Adam Reese cannot be understated; I’ve learned a lot watching a couple of Ruby
+developers master Go. And thanks to Angie, Annabelle, Claire, and Katherine for
+their unflagging support and understanding.
+Matt Farina
+I would like to thank Kristin, my beautiful and amazing wife, along with our wonderful
+daughters, Isabella and Aubrey, for their love and support.
+ I wrote this book while working at Hewlett Packard Enterprise, formerly Hewlett-
+Packard. Working at HPE has taught me invaluable lessons while providing me with
+the opportunity to work alongside and learn from those far wiser than myself. Specifi-
+cally, I need to thank Rajeev Pandey, Brian Aker, Steve McLellan, Erin Handgen, Eric
+Gustafson, Mike Hagedorn, Susan Balle, David Graves, and many others. They have
+affected the way I write and operate applications, and that has shown up in these
+chapters in subtle ways.
+ There have been many others who influenced portions of this book, sometimes
+without realizing it. Thanks to Tim Pletcher, Jason Buberel, Sam Boyer, Larry Gar-
+field, and all those I may have forgotten who had a positive influence.
+ Finally, I want to thank Matt Butcher. I never imagined authoring books until you
+suckered me into it. Thanks! 

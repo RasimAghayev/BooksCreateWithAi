@@ -1,0 +1,44 @@
+99
+TECHNIQUE 19
+Issuing panics
+With this method, it’s still easy to print the panic message with print formatters:
+fmt.Printf("Error: %s", thePanic). And it’s just as easy to send the panic back
+through the error system. That’s why it’s idiomatic to pass an error to a panic.
+We’ve never seen particularly credible ways of using panics beyond the technique
+we’ve described here. But our lack of creativity doesn’t mean that there might not be a
+useful but non-idiomatic way of creatively passing non-error types to a panic.
+ Now that you have a firm understanding of how to raise panics, you can turn to the
+other half of the issue: recovery.
+4.2.3
+Recovering from panics
+Any discussion of panics would be incomplete without a discussion of recovering from
+panics. Panic recovery in Go depends on a feature of the language called deferred func-
+tions. Go has the ability to guarantee the execution of a function at the moment its
+parent function returns. This happens regardless of whether the reason for the parent
+function’s return is a return statement, the end of the function block, or a panic. An
+example in the next listing helps explain this.
+package main
+import "fmt"
+func main() {
+     defer goodbye()
+     fmt.Println("Hello world.")
+}
+func goodbye() {
+     fmt.Println("Goodbye")
+}
+Without the defer statement, this program would print Goodbye followed by Hello
+world. But defer modifies the order of execution. It defers executing goodbye until
+the rest of main has executed. Right as the main function completes, the deferred
+goodbye function is run. The output of the program is this:
+$ go run simple_defer.go
+Hello world.
+Goodbye
+Listing 4.12
+Simple defer
+Thinking outside the panic box 
+Although we’ve just claimed that the best thing to send a panic is an error, there’s a
+reason that panics don’t require error types: the panic system is defined to be flexi-
+ble. In some ways, this is analogous to the way that Java allows Throwables that
+aren’t necessarily exceptions. A Go panic is one way to unwind the stack.
+Defers execution of goodbye
+Prints a line. This happens before goodbye.

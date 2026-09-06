@@ -1,0 +1,35 @@
+71
+Characters, code points, runes, and bytes
+A byte is an alias for the uint8 type. It’s intended for binary data, though byte can be used 
+for English characters defined by ASCII, an older 128-character subset of Unicode.
+Both byte and rune behave like the integer types they are aliases for, as shown in the fol-
+lowing listing.
+var pi rune = 960
+var alpha rune = 940
+var omega rune = 969
+var bang byte = 33
+fmt.Printf("%v %v %v %v\n", pi, alpha, omega, bang)
+To display the characters rather than their numeric values, the %c format verb can be 
+used with Printf:
+fmt.Printf("%c%c%c%c\n", pi, alpha, omega, bang)
+TIP Any integer type will work with %c, but the rune alias indicates that the number 960
+represents a character.
+Rather than memorize Unicode code points, Go provides a character literal. Just enclose 
+a character in single quotes 'A'. If no type is specified, Go will infer a rune, so the follow-
+ing three lines are equivalent:
+grade := 'A'
+var grade = 'A'
+var grade rune = 'A'
+The grade variable still contains a numeric value, in this case 65, the code point for a cap-
+ital 'A'. Character literals can also be used with the byte alias:
+var star byte = '*'
+Listing 9.4 rune and byte: rune.go
+Type aliases
+An alias is another name for the same type, so rune and int32 are interchangeable.
+Though byte and rune  have been in Go from the beginning, Go 1.9 introduced the ability
+to declare your own type aliases. The syntax looks like this:
+type byte = uint8
+type rune = int32
+Prints 960 940 969 33
+Prints πάω!
+ 

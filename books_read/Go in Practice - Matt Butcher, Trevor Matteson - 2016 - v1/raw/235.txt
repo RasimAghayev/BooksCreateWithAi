@@ -1,0 +1,74 @@
+212
+CHAPTER 8
+Working with web services
+func main() {
+     http.HandleFunc("/test", displayTest)
+     http.ListenAndServe(":8080", nil)
+}
+func displayTest(w http.ResponseWriter, r *http.Request) {
+     t := r.Header.Get("Accept")
+     var err error
+     var b []byte
+     var ct string
+     switch t {
+     case "application/vnd.mytodos.json; version=2.0":
+            data := testMessageV2{"Version 2"}
+            b, err = json.Marshal(data)
+            ct = "application/vnd.mytodos.json; version=2.0"
+     case "application/vnd.mytodos.json; version=1.0":
+            fallthrough
+     default:
+            data := testMessageV1{"Version 1"}
+            b, err = json.Marshal(data)
+            ct = "application/vnd.mytodos.json; version=1.0"
+     } 
+     if err != nil {
+            http.Error(w, "Internal Server Error", 500)
+            return
+     }
+     w.Header().Set("Content-Type", ct)
+     fmt.Fprint(w, string(b))
+}
+type testMessageV1 struct {
+     Message string `json:"message"`
+}
+type testMessageV2 struct {
+     Info string `json:"info"`
+}
+When a client requests the content, it can specify no content type to get the default
+response. But if it wants to use API version 2, it will need to forego a simple GET
+request and specify more details. For example, the following snippet requests version
+2 and prints out the response:
+ct := "application/vnd.mytodos.json; version=2.0"
+req, _ := http.NewRequest("GET", "http://localhost:8080/test", nil)
+req.Header.Set("Accept", ct)
+res, _ := http.DefaultClient.Do(req)
+Listing 8.13
+Pass the API version in the content type
+Registers a path that can 
+have multiple content types
+Detects the content type 
+that was requested
+Generates 
+different 
+content to 
+return based on 
+different 
+content types
+If an error occurs 
+in creating the 
+JSON, returns it
+Sets the content 
+type to the type 
+that was generated
+Sends the content 
+to the requestor
+The content type with the API 
+version to request
+Creates a new GET
+request to the server
+created in listing 8.13
+Adds the requested content 
+type to the request headers
+Performs
+the request

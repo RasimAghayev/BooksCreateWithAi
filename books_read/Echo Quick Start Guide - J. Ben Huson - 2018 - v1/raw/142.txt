@@ -1,0 +1,31 @@
+Testing Applications
+Testing is critical to creating robust applications, and yet testing is very often
+avoided, or overlooked by developers. I believe part of the reasoning is that
+companies prioritize application feature speed to market over quality and robust
+application development. Another reason is that proper automated testing is
+considered difficult, whereas manual testing of an application is seen as the
+easier solution.
+Within this chapter, we will tackle the problems and solutions of testing
+applications within Go and more specifically, how we can test our Echo web
+applications. We start by covering the five primary categories of application
+testing and then progress into how each type of testing can be accomplished for
+our example web application. It will be shown how handler and middleware
+functions can be tested independently of the entire system. You will learn how to
+mock function calls in order to test various branches of your handlers, as well as
+point out tools that can help. Finally, we will show how you can perform
+external and integration testing using Go to build instrumented executable
+builds.
+The entire purpose of testing applications is to prove the code is performing and
+functioning the way it was designed. Without tests, you will have absolutely no
+idea what your code is actually doing. Testing is the empirical mechanism by
+which you can show the business the code functions and provide empirical proof
+to the business that this application is ready.
+This chapter will showcase how to perform various testing of your Go web
+application. By using the standard library testing facilities for your Go
+application, you are provided with a framework in which you can create unit
+tests as well as benchmark tests for your application. By performing some build
+trickery, you will be shown how to compile a coverage-enabled instrumented
+executable, for which you can get real solid coverage numbers from your
+integration testing. You will learn how to unit and benchmark test your handler
+code, as well as middleware code to find functional and performance problems
+within your code. By the end of this chapter, you will have a very strong grasp

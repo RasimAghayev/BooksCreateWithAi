@@ -1,0 +1,22 @@
+xv
+preface
+When we first started using Go, we saw a language with a lot of potential. We wanted to
+build applications with it. But it was a new language, and many companies are wary of
+introducing a new programming language.
+ This is especially true in the enterprise, where Go has the potential to have a huge
+impact. New languages are challenged to be trusted, accepted, and adopted. There
+are hundreds of thousands of developers in businesses where leaders need to be
+swayed to try a new language and developers need to learn it well enough to build
+applications and see a benefit.
+ Open source projects, conferences, training, and books all help to make a pro-
+gramming language more palatable. We wanted to write a book that teaches Go in
+order to help the Go community, help those trying to learn Go or to convince their
+organizations’ leadership, and help us in the companies that we work for and with.
+ When we first started the book, it was targeted squarely at cloud development with
+Go. Go is a language built for the cloud, and we’ve spent years working in cloud com-
+puting. Once we started working with Manning Publications, we saw an opportunity to
+expand beyond the cloud, into more useful and helpful patterns. And so the book
+shifted from being cloud-focused to pattern-focused. Yet it still retains its cloud roots.
+ Go in Practice is our attempt to help developers move from being familiar with the
+language to being productive with it. To help the community of developers grow,
+while helping organizations write better software.

@@ -1,0 +1,45 @@
+Hash and Maps
+39
+Questions
+1. What have we learned?
+We learned that we can create maps via struct by declaring the struct and assigning it into
+a map key.
+2. Why this is useful?
+This is useful because it allows us to create maps with structs, which is a common way to
+create data structures in Go.
+3. Why do you use a map by struct?
+Maps using struct is a useful way to contain your map information into data structures.
+4. How do you create an array in Go?
+The general form of defining an array is []valueType.
+5. How do you assign multiple values to a map?
+The valueType must be an array, with the general form of map[keyType][]valueType.
+Maps with Dynamic Types
+An empty interface{} value type provides the ability to mix strings, integers or dynamic values
+through function returns as keys or values in your maps, variables or functions arguments.
+To initialize an empty interface{} for your maps, you need to set it as either your key or value type.
+You can also intialize it independently, by assigning it as your variable type or function return type.
+Here’s an example of using an interface{} for a map to accept integers, strings, and function return
+values as a key type.
+Interface Map Value Types
+1
+package main
+2
+3
+import (
+4
+"fmt"
+5
+"github.com/google/uuid"
+6
+)
+7
+8
+func main() {
+9
+variable := map[interface{}]string{}
+10
+11
+variable[1] = "from an integer key"
+12
+variable["a"] = "from string key"
+13

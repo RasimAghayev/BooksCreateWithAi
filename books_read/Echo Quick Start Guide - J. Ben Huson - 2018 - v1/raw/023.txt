@@ -1,0 +1,5 @@
+To get the most out of this book
+An intermediate knowledge of the Go programming language as well as
+initial exposure to web application frameworks
+Ability to develop with an IDE and cursory experience on the command
+line

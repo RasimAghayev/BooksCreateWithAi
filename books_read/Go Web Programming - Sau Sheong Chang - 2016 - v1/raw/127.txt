@@ -1,0 +1,36 @@
+106
+CHAPTER 5
+Displaying content
+For the handler, we’ll pass a string hello to the template:
+func process(w http.ResponseWriter, r *http.Request) {  
+    t, _ := template.ParseFiles("tmpl.html")
+    t.Execute(w,"hello")
+}
+The dot before {{ with "world"}} is set to hello. The value is from the handler, but
+between {{ with "world"}} and {{ end }} it’s set to world. After {{ end }} it’ll revert
+to hello again, as shown in figure 5.4.
+As with the iterator action, there’s a variant of the set action that allows a fallback: 
+{{ with arg }} 
+  Dot is set to arg
+{{ else }}
+  Fallback if arg is empty 
+{{ end }}
+This listing takes another look at how this is used in tmpl.html.
+<html>
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <title>Go Web Programming</title>
+  </head>
+  <body>
+    <div>The dot is {{ . }}</div>
+    <div>
+    {{ with "" }}
+      Now the dot is set to {{ . }}
+    {{ else }}
+      The dot is still {{ . }}
+    {{ end }}
+Listing 5.8
+Setting the dot with fallback
+Figure 5.4
+Setting the dot 
+with the set action

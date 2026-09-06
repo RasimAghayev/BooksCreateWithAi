@@ -1,0 +1,36 @@
+303
+Unit 4
+        he ran again; the ground continued soft and springy, covered with the
+        same resilient weed which was the first thing his hands had touched in
+        Malacandra. Once or twice a small red creature scuttled across his
+        path, but otherwise there seemed to be no life stirring in the wood;
+        nothing to fear -- except the fact of wandering unprovisioned and alone
+        in a forest of unknown vegetation thousands or millions of miles
+        beyond the reach or knowledge of man.`
+    frequency := countWords(text)
+    for word, count := range frequency {
+        if count > 1 {
+            fmt.Printf("%d %v\n", count, word)
+        }
+    }
+}
+Capstone 20
+package main
+import (
+    "fmt"
+    "math/rand"
+    "time"
+)
+const (
+    width  = 80
+    height = 15
+)
+// Universe is a two-dimensional field of cells.
+type Universe [][]bool
+// NewUniverse returns an empty universe.
+func NewUniverse() Universe {
+    u := make(Universe, height)
+    for i := range u {
+        u[i] = make([]bool, width)
+Experiment: life.go
+ 

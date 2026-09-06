@@ -1,0 +1,21 @@
+230
+28 
+LESSON
+TO ERR IS HUMAN
+After reading lesson 28, you’ll be able to
+Write files and handle failure
+Handle errors with a flair of creativity
+Make and identify specific errors
+Keep calm and carry on
+The sirens sound. Students and teachers shuffle out of classrooms to the nearest exit and 
+congregate at the muster point. There’s no danger in sight and nothing is on fire. It’s 
+another routine fire drill. Everyone is better prepared in the event of a real emergency.
+File not found, invalid format, the server is unreachable. What does software do when 
+something goes wrong? Maybe the problem can be extinguished, allowing operations to 
+carry on as usual. Perhaps the best course of action is to exit safely, closing doors on the 
+way out—or crash through a fourth story window as a last resort.
+It’s important to have a plan. Consider the errors that could occur, how to communicate 
+those errors, and the steps to handle them. Go keeps error handling front and center, 
+encouraging you to think about failure and how to handle it. Like the tenth fire drill, 
+error handling can feel mundane at times, but it ultimately leads to reliable software.
+ 

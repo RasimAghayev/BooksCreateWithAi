@@ -1,0 +1,45 @@
+266
+CHAPTER 11
+Testing
+Using testing.Short, we can retrieve whether short mode was enabled while running
+the test. Then we use Skip to skip the test. To run tests using short mode, we have to
+pass -short:
+% go test -short -v .
+=== RUN
+TestLongRunning
+foo_test.go:9: skipping long-running test
+--- SKIP: TestLongRunning (0.00s)
+PASS
+ok
+foo
+0.174s
+TestLongRunning is explicitly skipped when the tests are executed. Note that unlike
+build tags, this option works per test, not per file.
+ In summary, categorizing tests is a best practice for a successful testing strategy. In
+this section, we’ve seen three ways to categorize tests:
+Using build tags at the test file level
+Using environment variables to mark a specific test
+Based on the test pace using short mode
+We can also combine approaches: for example, using build tags or environment vari-
+ables to classify a test (for example, as a unit or integration test) and short mode if our
+project contains long-running unit tests.
+ In the next section, we discuss why enabling the -race flag matters. 
+11.2
+#83: Not enabling the -race flag
+In mistake #58, “Not understanding race problems,” we defined a data race as occur-
+ring when two goroutines simultaneously access the same variable, with at least one
+writing to the variable. We should also know that Go has a standard race-detector tool
+to help detect data races. One common mistake is forgetting how important this tool
+is and not enabling it. This section looks at what the race detector catches, how to use
+it, and its limitations.
+ In Go, the race detector isn’t a static analysis tool used during compilation;
+instead, it’s a tool to find data races that occur at runtime. To enable it, we have to
+enable the -race flag while compiling or running a test. For example:
+$ go test -race ./...
+Once the race detector is enabled, the compiler instruments the code to detect data
+races. Instrumentation refers to a compiler adding extra instructions: here, tracking all
+memory accesses and recording when and how they occur. At runtime, the race detec-
+tor watches for data races. However, we should keep in mind the runtime overhead of
+enabling the race detector:
+Memory usage may increase by 5 to 10×.
+Execution time may increase by 2 to 20×.

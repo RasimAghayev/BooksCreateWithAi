@@ -1,0 +1,48 @@
+62
+CHAPTER 3
+Concurrency in Go
+SOLUTION
+Use a closure function and give the scheduler opportunity to run.
+DISCUSSION
+In Go, functions are first-class. They can be created inline, passed into other functions,
+and assigned as values to a variable. You can even declare an anonymous function and
+call it as a goroutine, all in a compact syntax, as the following listing shows.
+package main
+import (
+     "fmt"
+     "runtime"
+)
+func main() {
+     fmt.Println("Outside a goroutine.")
+     go func() {
+            fmt.Println("Inside a goroutine")
+     }()
+     fmt.Println("Outside again.")
+     runtime.Gosched()
+}
+This listing shows how to create the function inline and immediately call it as a gorou-
+tine. But if you execute this program, you may be surprised at the output, which may
+change from run to run. It’s not uncommon to see this:
+$ go run ./simple.go
+Outside a goroutine.
+Outside again.
+Inside a goroutine
+Goroutines run concurrently, but not necessarily in parallel. When you schedule a
+goroutine to run by calling go func, you’re asking the Go runtime to execute that
+function for you as soon as it can. But that’s likely not immediately. In fact, if your Go
+program can use only one processor, you can almost be sure that it won’t run immedi-
+ately. Instead, the scheduler will continue executing the outer function until a circum-
+stance arises that causes it to switch to another task. This leads us to another facet of
+this example.
+ You may have noticed the last line of the function, runtime.Gosched(). This is a
+way to indicate to the Go runtime that you’re at a point where you could pause and
+yield to the scheduler. If the scheduler has other tasks queued up (other goroutines),
+it may then run one or more of them before coming back to this function.
+ If you were to omit this line and rerun the example, your output would likely look
+like this:
+Listing 3.2
+An anonymous goroutine
+Declares an anonymous 
+function and executes it 
+as a goroutine
+Yields to the scheduler

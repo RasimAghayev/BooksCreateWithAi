@@ -1,0 +1,59 @@
+47
+TECHNIQUE 5
+Graceful shutdowns using manners
+package in the standard library shuts down immediately and doesn’t provide an
+opportunity to handle any of these situations. In the worst cases, this results in lost or
+corrupted data.
+PROBLEM
+To avoid data loss and unexpected behavior, a server may need to do some cleanup on
+shutdown.
+SOLUTION
+To handle these, you’ll need to implement your own logic or use a package such as
+github.com/braintree/manners.
+DISCUSSION
+Braintree, a division of PayPal, created the manners package that gracefully shuts down
+while maintaining the same interface for ListenAndServe that the core http package
+uses. Internally, the package uses the core http server while keeping track of connec-
+tions by using WaitGroup from the sync package. WaitGroup is designed to keep track
+of goroutines. The following listing takes a look at a simple manners-based server.
+package main
+import (
+     "fmt"
+     "net/http"
+     "os"
+     "os/signal"
+     "github.com/braintree/manners"
+)
+func main() {
+     handler := newHandler()
+     ch := make(chan os.Signal)
+     signal.Notify(ch, os.Interrupt, os.Kill)
+     go listenForShutdown(ch)
+     manners.ListenAndServe(":8080", handler)
+} 
+func newHandler() *handler {
+     return &handler{}
+}
+type handler struct{}
+func (h *handler) ServeHTTP(res http.ResponseWriter, req *http.Request) {
+     query := req.URL.Query()
+     name := query.Get("name")
+     if name == "" {
+            name = "Inigo Montoya"
+     }
+     fmt.Fprint(res, "Hello, my name is ", name)
+}
+Listing 2.15
+Graceful shutdown using manners: manners_shutdown.go
+Gets instance 
+of a handler
+B
+Sets up monitoring of 
+operating system signals
+C
+Starts the web server
+D
+E
+Handler
+responding to
+web requests

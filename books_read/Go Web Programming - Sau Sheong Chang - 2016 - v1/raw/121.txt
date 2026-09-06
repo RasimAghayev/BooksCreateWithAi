@@ -1,0 +1,43 @@
+100
+CHAPTER 5
+Displaying content
+func main() {
+    server := http.Server{
+        Addr: "127.0.0.1:8080",
+    }
+    http.HandleFunc("/process", process)
+    server.ListenAndServe()
+}
+We’re back to our server again. This time we have a handler function named process,
+which triggers the template engine. First, we parse the template file tmpl.html using
+the ParseFiles function which returns a parsed template of type Template and an
+error, which we conveniently ignore for brevity.
+t, _ := template.ParseFiles("tmpl.html")
+Then we call the Execute method to apply data (in this case, the string Hello World!)
+to the template:
+t.Execute(w, "Hello World!")
+We pass in the ResponseWriter along with the data so that the generated HTML can
+be passed into it. When you’re running this example, the template file should be in
+the same directory as the binary (remember that we didn’t specify the absolute path to
+the file).
+ This is the simplest way to use the template engine, and as expected, there are vari-
+ations, which I’ll describe later in the chapter.
+5.2.1
+Parsing templates
+ParseFiles is a standalone function that parses template files and creates a parsed
+template struct that you can execute later. The ParseFiles function is actually a con-
+venience function to the ParseFiles method on the Template struct. When you call
+the ParseFiles function, Go creates a new template, with the name of the file as the
+name of the template:
+t, _ := template.ParseFiles("tmpl.html")
+Then it calls the ParseFiles method on that template:
+t := template.New("tmpl.html")
+t, _ := t.ParseFiles("tmpl.html")
+ParseFiles (both the function and the method) can take in one or more filenames as
+parameters (making it a variadic function—that is, a function that can take in a vari-
+able number of parameters). But it still returns just one template, regardless of the
+number of files it’s passed. What’s up with that?
+ When we pass in more than one file, the returned parsed template has the name
+and content of the first file. The rest of the files are parsed as a map of templates,
+which can be referred to later on during the execution. You can think of this as
+ParseFiles returning a template when you provide a single file and a template set

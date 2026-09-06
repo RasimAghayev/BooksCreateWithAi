@@ -1,0 +1,36 @@
+Setter/Getters, Attribute Accessors and Structs
+19
+Questions
+1. What have we learned?
+Pointer receivers are a way to pass a pointer to a function.
+2. Why is it useful?
+It is useful because the function can use the pointer to access the data.
+3. Is pointer receiver a pass-by-reference or pass-by-value?
+Pointer receivers are pass-by-reference.
+4. What is an equivalent attribute accessor in Golang?
+Pointer receivers are an equivalent of attribute accessors in Go.
+5. What is a pointer-receiver in Go?
+A pointer-receiver is a function that takes a pointer as an argument.
+6. Why there’s an asterisk before the receiver type?
+The asterisk before the receiver type is a pointer receiver, which means it can be accessed and
+mutated directly.
+Value Receiver
+Value receiver is pass-by-value, which means that we pass the actual value or a resulting value to a
+variable. Value receivers will create a new independent variable copying the original value per each
+assignment.
+There are two functions in our previous example that utilize a value receiver function: those methods
+where the receiver type does not start with an asterisk, namely, the change_item and items functions
+which are also a method for basket struct.
+You might ask: Why does change_item mutate the value of the basket struct, does this mean that
+value receiver is also a setter? And the same with the pointer receiver?
+You can modify the parameter values but changes is not forwarded to the original variable. It is
+possible to have modification on existing variables with records, and value receivers can be setters
+of an initialized variable. However, any modifications to the variable will not reflect on new struct
+records. We still need to create the struct first, initialize it separately, before we can pass values to
+the new struct record.
+Value receivers are ideal for concurrent applications because it does not modify the original reference,
+but creates a new copy of the reference, making value receivers thread-safe. To explain this much
+further, let’s go back to our example above.
+In our pointer receiver example, we used append to append a produce in a newly initialized basket
+array. The change_item mutates an already initialized basket variable but it cannot mutate the struct
+basket directly. Here’s the general form of creating a value receiver.

@@ -1,0 +1,45 @@
+230
+CHAPTER 9
+Using the cloud
+err := checkDep("fortune")
+if err != nil {
+     log.Fatalln(err)
+}
+fmt.Println("Time to get your fortunte")
+In this example, the error is logged when a dependency isn’t installed. Logging isn’t
+always the action to take. There may be a fallback method to retrieve the missing
+dependency or an alternative dependency to use. Sometimes a missing dependency
+may be fatal to an application, and other times it can skip an action when a depen-
+dency isn’t installed. When you know something is missing, you can handle the situa-
+tion appropriately.
+9.3.2
+ Building for the cloud
+There’s no one hardware architecture or operating system for the cloud. You may
+write an application for the AMD64 architecture running on Windows and later find
+you need to run it on ARM8 and a Linux distribution. Building for the cloud requires
+designing to support multiple environments, which is easier handled up front in
+development and is something the standard library can help you with.
+TECHNIQUE 60
+Cross-compiling
+In addition to the variety of environments in cloud computing, it’s not unusual to
+develop a Go application on Microsoft Windows or Apple’s OS X and want to operate
+it on a Linux distribution in production, or to distribute an application via the cloud
+with versions for Windows, OS X, and Linux. In a variety of situations, an application is
+developed in one operating system but needs to run in a different one.  
+PROBLEM
+How can you compile for architectures and operating systems other than the one
+you’re currently on?
+SOLUTION
+The go toolchain provides the ability to cross-compile to other architectures and oper-
+ating systems. In addition to the go toolchain, gox allows you to cross-compile multiple
+binaries in parallel. You also can use packages, such as filepath, to handle differ-
+ences between operating systems instead of hardcoding values, such as the POSIX path
+separator /.
+DISCUSSION
+As of Go 1.5, the compiler installed with the go toolchain can cross-compile out of the
+box. This is done by setting the GOARCH and GOOS environment variables to specify the
+architecture and operating system. GOARCH specifies the hardware architecture such as
+amd64, 386, or arm, whereas GOOS specifies the operating system such as windows,
+linux, darwin, or freebsd.
+ The following example provides a quick illustration:
+$ GOOS=windows GOARCH=386 go build

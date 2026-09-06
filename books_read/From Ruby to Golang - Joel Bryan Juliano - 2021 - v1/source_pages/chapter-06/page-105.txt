@@ -1,0 +1,46 @@
+Collection Functions in Go
+99
+1
+a = [1, 2, 3, 4, 5, 0]
+2
+a.drop(3) #=> [4, 5, 0]
+And here’s our Golang implementation drop.
+1
+a := [...]int{1,2,3,4,5,0}
+2
+drop := a[3:]
+3
+4
+fmt.Println(drop)
+Questions
+1. What have we learned?
+We learn to emulate Ruby’s drop method, which drops the last item from an array.
+2. Why is it useful?
+In Ruby, it’s useful when you want to drop the last item from an array, but don’t want to use
+a pop method.
+Drop While Enumerable Method
+Similar to drop, drop_while returns the values that satisfy an expression.
+1
+a = [1, 2, 3, 4, 5, 0]
+2
+a.drop_while {|i| i < 3 }
+#=> [3, 4, 5, 0]
+And in Golang, we add a conditional expression inside the range, cut the
+value then break if it satisfies the condition.
+1
+a := [...]int{1,2,3,4,5,0}
+2
+3
+for _, i := range a {
+4
+if a[i] < 3 {
+5
+drop := a[2:]
+6
+fmt.Println(drop)
+7
+break
+8
+}
+9
+}

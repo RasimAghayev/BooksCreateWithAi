@@ -1,0 +1,34 @@
+123
+Using the block action to define default templates
+template file we parse, because both of these template files define the same template.
+In other words, we can switch content by parsing different template files, while main-
+taining the same template to be nested in the layout.
+ If we now recompile our server, start it, and access it through the browser,
+we’ll randomly see either a blue or red Hello World! showing up in the browser (see
+figure 5.12).
+5.8
+Using the block action to define default templates
+Go 1.6 introduced a new block action that allows you to define a template and use it at
+the same time. This is how it looks:
+{{ block arg }} 
+  Dot is set to arg 
+{{ end }}
+To see how this works, I’ll use the previous example and use the block action to repli-
+cate the same results. What I’ll do is default to using the blue Hello World template if
+no templates are specified. Instead of parsing the layout.html and blue_hello.html
+files in the else block, as in listing 5.28, I will parse layout.html only as indicated in
+bold in the following listing.
+func process(w http.ResponseWriter, r *http.Request) {  
+    rand.Seed(time.Now().Unix())
+    var t *template.Template
+    if rand.Intn(10) > 5 {
+        t, _ = template.ParseFiles("layout.html", "red_hello.html")
+    } else {
+        t, _ = template.ParseFiles("layout.html")
+    }
+    t.ExecuteTemplate(w, "layout", "")
+}
+Listing 5.29
+Parsing layout.html only
+Figure 5.12
+Switching templates 

@@ -1,0 +1,69 @@
+{
+  "book": "Go in Action",
+  "page_offset": 21,
+  "chapters": [
+    {
+      "chapter": 1,
+      "title": "Introducing Go",
+      "book_pages": "1-8",
+      "start_pdf_page": 23,
+      "end_pdf_page": 30
+    },
+    {
+      "chapter": 2,
+      "title": "Go quick-start",
+      "book_pages": "9-38",
+      "start_pdf_page": 30,
+      "end_pdf_page": 59
+    },
+    {
+      "chapter": 3,
+      "title": "Packaging and tooling",
+      "book_pages": "39-56",
+      "start_pdf_page": 60,
+      "end_pdf_page": 77
+    },
+    {
+      "chapter": 4,
+      "title": "Arrays, slices, and maps",
+      "book_pages": "57-87",
+      "start_pdf_page": 78,
+      "end_pdf_page": 108
+    },
+    {
+      "chapter": 5,
+      "title": "Go's type system",
+      "book_pages": "88-127",
+      "start_pdf_page": 109,
+      "end_pdf_page": 148
+    },
+    {
+      "chapter": 6,
+      "title": "Concurrency",
+      "book_pages": "128-157",
+      "start_pdf_page": 149,
+      "end_pdf_page": 178
+    },
+    {
+      "chapter": 7,
+      "title": "Concurrency patterns",
+      "book_pages": "158-183",
+      "start_pdf_page": 179,
+      "end_pdf_page": 204
+    },
+    {
+      "chapter": 8,
+      "title": "Standard library",
+      "book_pages": "184-210",
+      "start_pdf_page": 205,
+      "end_pdf_page": 231
+    },
+    {
+      "chapter": 9,
+      "title": "Testing and benchmarking",
+      "book_pages": "211-236",
+      "start_pdf_page": 232,
+      "end_pdf_page": 257
+    }
+  ]
+}

@@ -1,0 +1,20 @@
+88
+Go’s type system
+Go is a statically typed programming language. What that means is the compiler
+always wants to know what the type is for every value in the program. When the
+compiler knows the type information ahead of time, it can help to make sure that
+the program is working with values in a safe way. This helps to reduce potential
+memory corruption and bugs, and provides the compiler the opportunity to pro-
+duce more performant code. 
+ A value’s type provides the compiler with two pieces of information: first, how
+much memory to allocate—the size of the value—and second, what that memory
+represents. In the case of many of the built-in types, size and representation are
+part of the type’s name. A value of type int64 requires 8 bytes of memory (64 bits)
+In this chapter
+Declaring new user-defined types
+Adding behavior to types with methods
+Knowing when to use pointers and values
+Implementing polymorphism with interfaces
+Extending and changing types through 
+composition
+Exporting and unexporting identifiers

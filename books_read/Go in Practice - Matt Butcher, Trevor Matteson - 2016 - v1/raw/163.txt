@@ -1,0 +1,49 @@
+140
+CHAPTER 5
+Debugging and testing
+     }
+     b.RunParallel(func(pb *testing.PB) {
+            var buf bytes.Buffer
+            for pb.Next() {
+                   t.Execute(&buf, data)
+                   buf.Reset()
+            }
+     })
+}
+Most of our testing code remains unchanged. But instead of looping over a call to
+t.Execute(), you segment the code a little further. Running RunParallel runs the
+closure on multiple goroutines. Each one receives an indication, through pb.Next(),
+as to whether it should continue iterating. (Again, the looping feature is required.)
+This code example is almost the same as the one included with the Go documentation.
+ Now you need to run it. First, you’ll run it alongside our other two examples
+(though with the Logf() functions removed). And you’ll run it on only one CPU,
+which is the default:
+$ go test -bench . 
+testing: warning: no tests to run
+PASS
+BenchmarkTemplates               200000          10695 ns/op
+BenchmarkCompiledTemplates      1000000           1406 ns/op
+BenchmarkParallelTemplates      1000000           1404 ns/op
+ok      _/Users/mbutcher/Code/go-in-practice/chapter5/tests/bench    5.097s
+Your parallel version didn’t outperform the regular version. Why? Because the gorou-
+tines were all run on the same processor. Let’s specify that you want to see the testing
+tool run several versions of the same code, using a different number of CPUs each
+time:
+$ go test -bench . -cpu=1,2,4
+testing: warning: no tests to run
+PASS
+BenchmarkTemplates               200000             10019 ns/op
+BenchmarkTemplates-2             100000             14033 ns/op
+BenchmarkTemplates-4             100000             14971 ns/op
+BenchmarkCompiledTemplates      1000000              1217 ns/op
+BenchmarkCompiledTemplates-2    1000000              1137 ns/op
+BenchmarkCompiledTemplates-4    1000000              1307 ns/op
+BenchmarkParallelTemplates      1000000              1249 ns/op
+BenchmarkParallelTemplates-2    2000000               784 ns/op
+BenchmarkParallelTemplates-4    2000000               829 ns/op
+ok   _/Users/mbutcher/Code/go-in-practice/chapter5/tests/bench  14.993s
+In this run, you specify –cpu=1,2,4, which tells go test to run the tests with one, two,
+and then four CPUs, respectively. It runs each test this way and prints the results,
+appending –N to indicate when more than one processor was used.
+Instead of a for loop, passes 
+a closure into RunParallel

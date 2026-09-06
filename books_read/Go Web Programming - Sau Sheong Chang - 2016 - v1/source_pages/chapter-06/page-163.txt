@@ -1,0 +1,47 @@
+142
+CHAPTER 6
+Storing data
+readPost after retrieving it previously, you want to be able to delete it using a Delete
+method:
+readPost.Delete()
+That’s simple enough. If you look at the Delete method in the Post struct in the fol-
+lowing listing, there’s nothing new that we haven’t gone through before. 
+func (post *Post) Delete() (err error) {
+    _, err = Db.Exec("delete from posts where id = $1", post.Id)
+    return
+}
+As before, when you were updating the post, you’ll jump right into using the Exec
+method on the sql.DB struct. This executes the SQL statement, and as before, you’re
+not interested in the returned result and so assign it to the underscore (_).  
+ You probably noticed that the methods and functions I created are arbitrary. You
+can certainly change them to however you’d like. Instead of populating a Post struct
+with your changes, then calling the Update method on the struct, for example, you
+can pass the changes as parameters to the Update method. Or more commonly, if you
+want to retrieve posts using a particular column or filter, you can create different func-
+tions to do that.
+6.3.7
+Getting all posts
+One common function is to get all posts from the database, with a given limit. In other
+words, you want to do the following:
+posts, _ := Posts(10)
+You want to get the first 10 posts from the database and put them in a slice. This listing
+shows how you can do this.
+func Posts(limit int) (posts []Post, err error) {
+    rows, err := Db.Query("select id, content, author from posts limit $1", 
+    ➥ limit)
+    if err != nil {
+        return
+    }
+    for rows.Next() {
+        post := Post{}
+        err = rows.Scan(&post.Id, &post.Content, &post.Author)
+        if err != nil {
+            return
+        }
+        posts = append(posts, post)
+    }
+    rows.Close()
+Listing 6.11
+Deleting a post
+Listing 6.12
+Getting all posts

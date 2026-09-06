@@ -1,0 +1,49 @@
+163
+Runner
+41
+timeout:
+time.After(d),
+42
+}
+43 }
+Listing 7.8 shows a factory function called New, which accepts a value of type
+time.Duration and returns a pointer of type Runner. The function creates a value of
+type Runner and initializes each of the channel fields. The tasks field is not explicitly
+initialized, since the zero value for this field is a nil slice. Each channel field has a
+unique initialization, so let’s explore each one in more detail.
+ The interrupt channel is initialized as a buffered channel with a buffer of 1. This
+guarantees at least one os.Signal value is received from the runtime. The runtime
+sends this event in a nonblocking way. If a goroutine isn’t ready to receive this value,
+the value is thrown away. As an example, if the user hits Ctrl+C repeatedly, the pro-
+gram will receive the event only when a buffer is available in the channel and all other
+events will be thrown away. 
+ The complete channel is initialized as an unbuffered channel. When the gorou-
+tine running the tasks is finished, it sends an error value or nil error value on this
+channel. Then it waits for main to receive it. Once main receives the error value, it’s
+safe for the goroutine to terminate. 
+ The final channel, timeout, is initialized using the After function from the time
+package. The After function returns a channel of type time.Time. The runtime will
+send a time.Time value on this channel after the specified duration has elapsed. 
+ Now that you’ve seen how a Runner value is created and initialized, we can look at
+the methods associated with the Runner type. The first method, Add, is used to capture
+the task functions to be executed.
+45 // Add attaches tasks to the Runner. A task is a function that
+46 // takes an int ID.
+47 func (r *Runner) Add(tasks ...func(int)) {
+48
+r.tasks = append(r.tasks, tasks...)
+49 }
+Listing 7.9 shows the Add method, which is declared with a single varadic parameter
+named tasks. Varadic parameters can accept any number of values that are passed in. In
+this case the value must be a function that accepts a single integer value and returns
+nothing. The tasks parameter, once inside the code, becomes a slice of these func-
+tion values. 
+ Now let’s look at the run method.
+72 // run executes each registered task.
+73 func (r *Runner) run() error {
+74
+for id, task := range r.tasks {
+Listing 7.9
+runner/runner.go: lines 45–49
+Listing 7.10
+runner/runner.go: lines 72–85

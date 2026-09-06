@@ -1,0 +1,48 @@
+Hash and Maps
+53
+1
+$ go run variadic_array_of_mixed_arguments.go
+2
+3
+Name: apple
+4
+Flavour: It's a little sour and bitter, but mostly sweet,
+5
+not at all salty, very juicy in general.
+6
+Kind: fruit
+7
+8
+Name: cucumber
+9
+Flavour: Slightly bitter with a mild melon aroma and planty
+10
+flavor.
+11
+Kind: veggies
+12
+13
+You have passed a non-fruit or non-veggies argument water
+Hashes or Maps is a useful way to organize records in your program. Use it more and turn it into a
+workhorse of your project.
+Questions
+1. What have you learned?
+We have learned how to pass a variadic interface as an array to a method accepting a variadic
+argument.
+2. Where this is useful?
+This is useful when you want to process a variadic interface as an array.
+3. Why do you want to use a variadic interface?
+You want to use a variadic interface when you want to accept a variable number of
+arguments.
+4. When this is not useful?
+When we need to pass a fixed number of arguments to a function.
+5. How do you pass a variadic interface as array?
+Use ...variable
+6. What is type assertion?
+Type assertion is a way to test if a variable is of a certain type.
+7. In Javascript and Ruby, how do you type assert a variadic interface value?
+*Use typeof or is_a?
+8. In Golang, how do you type assert a variadic interface value?
+Use fmt.Sprintf("%T", item)
+9. What’s the difference between ...variable and variable...?
+...variable is a variadic interface, variable... is a variadic argument.

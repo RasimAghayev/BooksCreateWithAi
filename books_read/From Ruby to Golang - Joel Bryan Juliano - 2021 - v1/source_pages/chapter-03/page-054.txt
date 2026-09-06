@@ -1,0 +1,42 @@
+Hash and Maps
+48
+1
+$ ruby basket.rb
+2
+3
+Entry apple created!
+4
+There are 1 item(s) in the basket.
+5
+6
+Name: apple
+7
+Flavour: It's a little sour and bitter, but mostly sweet,
+8
+not at all salty, very juicy in general.
+9
+Kind: fruit
+Using a variadic operation, Go expects the argument to be an array, however, there are various ways
+to do this. We will discuss using variadic on an empty interface to accomplish a similar behavior of
+a double-splat operator in Ruby that converts to a map.
+Questions
+1. What have we learned?
+We learned that we can use variadic functions to emulate Ruby’s double-splat behaviour.
+2. Why this is useful?
+This is useful if you want to pass multiple arguments to a function and you want to access
+them in a map-like way.
+3. When this is not useful?
+This is not useful when we want to accept a fixed number of arguments.
+4. What is the purpose of double-splat operation in Ruby?
+It is used to call a method on a receiver and pass arguments to it.
+5. What is the equivalent of double-splat operations in Go?
+A variadic map interface.
+6. What is a variadic map interface in Go?
+A variadic map interface is a map interface that can have any number of entries.
+Variadic Interface
+One way to do a functionality similar to Ruby’s double-splat operator in Go is using variadic⁴
+functions to an empty interface⁵.
+Previously, I have discussed how you can use an interface{} in your map key type. The following
+example will explain using interface as a way to emulate Ruby’s double-splat operator in detail.
+⁴https://en.wikipedia.org/wiki/Variadic_function
+⁵https://tour.golang.org/methods/14

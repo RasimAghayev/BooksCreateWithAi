@@ -1,0 +1,44 @@
+100  Шаблоны программирования облачных приложений
+        if time.Now().Before(threshold) {
+            return result, err
+        }
+        result, err = circuit(ctx)
+        return result, err
+    }
+}
+Данная реализация DebounceFirst  делает все возможное, чтобы добиться 
+максимальной безопасности в  многопоточном окружении, заключая всю 
+функцию в мьютекс. Это заставит перекрывающиеся вызовы в начале пакета 
+ждать окончания кеширования результата, а также гарантирует, что circuit  
+будет вызвана ровно один раз, в самом начале пакета. Ключевое слово defer  
+гарантирует сброс значения treshhold , представляющего время завершения 
+пакета вызовов, при каждом следующем фактическом вызове circuit .
+Реализация «по последнему вызову» более запутанная, потому что вклю-
+чает использование time.Ticker , чтобы определить, достаточно ли прошло 
+времени с момента последней попытки вызвать функцию, и действительно 
+вызвать circuit . Как вариант можно создавать новый экземпляр time.Ticker  
+при каждом вызове, но это будет стоить очень дорого, если вызовы будут 
+следовать слишком часто:
+type Circuit func(context.Context) (string, error)
+func DebounceLast(circuit Circuit, d time.Duration) Circuit {
+    var threshold time.Time = time.Now()
+    var ticker *time.Ticker
+    var result string
+    var err error
+    var once sync.Once
+    var m sync.Mutex
+    return func(ctx context.Context) (string, error) {
+        m.Lock()
+        defer m.Unlock()
+        threshold = time.Now().Add(d)
+        once.Do(func() {
+            ticker = time.NewTicker(time.Millisecond * 100)
+            go func() {
+                defer func() {
+                    m.Lock()
+                    ticker.Stop()
+                    once = sync.Once{}
+                    m.Unlock()
+                }()
+                for {
+                    select {

@@ -1,0 +1,76 @@
+222
+CHAPTER 9
+Testing and benchmarking
+on line 36, the XML string named feed that represents the response is returned as the
+response body. 
+ Now, let’s look at how the mock server is integrated into the basic unit test and how
+the http.Get call is able to use it.
+43 // TestDownload validates the http Get function can download content
+44 // and the content can be unmarshaled and clean.
+45 func TestDownload(t *testing.T) {
+46
+statusCode := http.StatusOK
+47
+48
+server := mockServer()
+49
+defer server.Close()
+50
+51
+t.Log("Given the need to test downloading content.")
+52
+{
+53
+t.Logf("\tWhen checking \"%s\" for status code \"%d\"",
+54
+server.URL, statusCode)
+55
+{
+56
+resp, err := http.Get(server.URL)
+57
+if err != nil {
+58
+t.Fatal("\t\tShould be able to make the Get call.",
+59
+ballotX, err)
+60
+}
+61
+t.Log("\t\tShould be able to make the Get call.",
+62
+checkMark)
+63
+64
+defer resp.Body.Close()
+65
+66
+if resp.StatusCode != statusCode {
+67
+t.Fatalf("\t\tShould receive a \"%d\" status. %v %v",
+68
+statusCode, ballotX, resp.StatusCode)
+69
+}
+70
+t.Logf("\t\tShould receive a \"%d\" status. %v",
+71
+statusCode, checkMark)
+72
+}
+73
+}
+74 }
+In listing 9.15 you see the TestDownload function once more, but this time it’s using
+the mock server. On lines 48 and 49 a call to the mockServer function is made, and a
+call to the Close method is deferred for when the test function returns. After that, the
+test code looks identical to the basic unit test except for one thing.
+56
+resp, err := http.Get(server.URL)
+This time the URL to call is provided to by the httptest.Server value. When we use
+the URL provided by the mocking server, the http.Get call runs as expected. The
+http.Get call has no idea it’s not making a call over the internet. The call is made and
+Listing 9.15
+listing12_test.go: lines 43–74
+Listing 9.16
+listing12_test.go: line 56

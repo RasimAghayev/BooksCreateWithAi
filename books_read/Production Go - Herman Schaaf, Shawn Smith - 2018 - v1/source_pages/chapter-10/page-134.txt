@@ -1,0 +1,21 @@
+Security
+In this chapter, we’ll discuss a few ways to improve the security of our Go server. Most are quick and
+easy to implement. In reality a large production environment will require a robust security setup
+with a WAF and other tools, but here we’ll only discuss improvements for our Go code.
+Keep Go Up to Date
+One of the most important things we can do to ensure the security of our Go environment is to keep
+our Go version up to date.
+The golang-announce⁴² mailing list will announce (in a message prefixed with [security]) when a
+minor revision will be released with security fixes. For example, Go version 1.11.3 was released in
+December 2018 with a few security fixes, including a fix in go get -u for a remote execution bug.
+See more about Go’s security policy here⁴³.
+CSRF
+Cross-Site Request Forgery, or CSRF, is “an attack that forces an end user to execute unwanted
+actions on a web application in which they’re currently authenticated.”⁴⁴
+Imagine a user is logged into a bank’s website and receives a link from someone with malicious
+intent. The HTML of the malicious page redirects the user to the bank’s website and the money
+transfer form is pre-filled with the malicious user’s account and routing information. The malicious
+HTML might look like this:
+⁴²https://groups.google.com/forum/#!forum/golang-announce
+⁴³https://golang.org/security
+⁴⁴https://www.owasp.org/index.php/Cross-Site_Request_Forgery_(CSRF)

@@ -1,0 +1,75 @@
+Concurrency
+75
+26
+}
+27
+28
+func poll() {
+29
+ticker := time.NewTicker(5 * time.Second)
+30
+defer ticker.Stop()
+31
+for {
+32
+select {
+33
+case <-ticker.C:
+34
+resp, err := http.Get(bsaEndpoint)
+35
+if err != nil {
+36
+log.Println("ERROR: could not GET bsaEndpoint:", err)
+37
+}
+38
+defer resp.Body.Close()
+39
+40
+b, err := ioutil.ReadAll(resp.Body)
+41
+if err != nil {
+42
+log.Println("ERROR: could not parse response body:", err)
+43
+}
+44
+45
+var br bsaResponse
+46
+err = json.Unmarshal(b, &br)
+47
+if err != nil {
+48
+log.Println("ERROR: json.Unmarshal:", err)
+49
+}
+50
+51
+if len(br.Root.Advisories) > 0 {
+52
+for _, adv := range br.Root.Advisories {
+53
+log.Println(adv.Station, adv.Description.Text)
+54
+}
+55
+}
+56
+}
+57
+}
+58
+}
+59
+60
+func main() {
+61
+http.HandleFunc("/", func(w http.ResponseWriter, req *http.Request) {
+62
+go func() {
+63
+log.Println("hello, world 1")
+64
+}()

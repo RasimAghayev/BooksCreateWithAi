@@ -1,0 +1,51 @@
+173
+Parsing and creating XML with Go
+Still, it doesn’t look right. We don’t have the XML declaration. Although Go doesn’t
+create the XML declaration for you automatically, it does provide a constant
+xml.Header that you can use to attach to the marshaled output:
+err = ioutil.WriteFile("post.xml", []byte(xml.Header + string(output)), 0644)
+Prefix the output with xml.Header and then write it to post.xml, and you’ll have the
+XML declaration:
+<?xml version="1.0" encoding="UTF-8"?>
+<post id="1">
+    <content>Hello World!</content>
+    <author id="2">Sau Sheong</author>
+</post>
+Just as you manually decoded the XML into Go structs, you can also manually encode
+Go structs into XML (see figure 7.6). Listing 7.8 shows a simple example.
+package main
+import (
+  "encoding/xml"
+  "fmt"
+  "os"
+)
+type Post struct {
+  XMLName xml.Name `xml:"post"`
+  Id      string   `xml:"id,attr"`
+  Content string   `xml:"content"`
+  Author  Author   `xml:"author"`
+}
+type Author struct {
+  Id   string `xml:"id,attr"`
+  Name string `xml:",chardata"`
+}
+func main() {
+  post := Post{    
+    Id:      "1",
+    Content: "Hello World!",
+Listing 7.8
+Manually encoding Go structs to XML
+Create structs
+and populate
+with data
+Encode structs
+into the XML file
+using encoder
+Create encoder to
+encode structs
+Create XML file to
+store XML data
+Figure 7.6
+Create XML with Go by creating structs and encoding them into XML using an encoder
+Creates struct 
+with data

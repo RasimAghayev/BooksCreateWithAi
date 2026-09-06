@@ -1,0 +1,35 @@
+84
+Lesson 10  Converting between types
+10.4 String conversions
+To convert a rune or byte to a string, you can use the same type conversion syntax as 
+numeric conversions, as shown in the next listing. This gives the same result using the %c 
+format verb introduced in lesson 9 to display runes and bytes as characters.
+var pi rune = 960
+var alpha rune = 940
+var omega rune = 969
+var bang byte = 33
+fmt.Print(string(pi), string(alpha), string(omega), string(bang))
+Converting a numeric code point to a string works the same with any integer type. After 
+all, rune and byte are just aliases for int32 and uint8.
+To convert digits to a string, each digit must be converted to a code point, starting at 48 
+for the 0 character, through 57 for the 9 character. Thankfully, the Itoa function in the 
+strconv (string conversion) package does this for you, as shown in the next listing.
+countdown := 10
+str := "Launch in T minus " + strconv.Itoa(countdown) + " seconds."
+fmt.Println(str)
+NOTE Itoa is short for integer to ASCII. Unicode is a superset of the old ASCII standard.
+The first 128 code points are the same, which includes digits (used here), English letters,
+and common punctuation.
+Another way to convert a number to a string is to use Sprintf, a cousin of Printf that 
+returns a string rather than displaying it:
+countdown := 9
+str := fmt.Sprintf("Launch in T minus %v seconds.", countdown)
+fmt.Println(str)
+Listing 10.3 Converting rune to string: rune-convert.go
+Listing 10.4 Integer to ASCII: itoa.go
+Prints πάω!
+Prints Launch in T 
+minus 10 seconds.
+Prints Launch in T 
+minus 9 seconds.
+ 

@@ -1,0 +1,21 @@
+93
+12 
+LESSON
+FUNCTIONS
+After reading lesson 12, you’ll be able to
+Identify the parts of a function declaration
+Write reusable functions to build up larger programs
+This lesson begins by examining the 
+standard library documentation for 
+functions that were used in earlier 
+lessons.
+Once you’re familiar with the syntax 
+for declaring functions, you’ll write 
+functions for a weather station pro-
+gram. The Rover Environmental 
+Monitoring Station (REMS ) gathers 
+weather data on the surface of Mars. 
+You’ll write functions that could con-
+ceivably be part of a REMS program, 
+such as converting temperatures.
+ 

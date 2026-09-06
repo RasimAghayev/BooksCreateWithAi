@@ -1,0 +1,46 @@
+153
+Channels
+the channel. Once the baton is received, the next runner takes his mark on line 46
+unless the goroutine represents the fourth runner. On line 50 the runner runs around
+the track for 100 milliseconds. On line 55 if the fourth runner just finished running,
+the WaitGroup is decremented by the call to Done and the goroutine returns. If this
+isn’t the fourth runner, then on line 64 the baton is passed to the next runner who is
+already waiting. At this point both goroutines are locked until the exchange is made. 
+ In both examples we used an unbuffered channel to synchronize goroutines to
+simulate a tennis game and a relay race. The flow of the code was inline with the way
+these events and activities take place in the real world. This makes the code readable
+and self-documenting. Now that you know how unbuffered channels work, next you
+can learn how buffered channels work. 
+6.5.2
+Buffered channels
+A buffered channel is a channel with capacity to hold one or more values before they’re
+received. These types of channels don’t force goroutines to be ready at the same
+instant to perform sends and receives. There are also different conditions for when a
+send or receive does block. A receive will block only if there’s no value in the channel
+to receive. A send will block only if there’s no available buffer to place the value being
+sent. This leads to the one big difference between unbuffered and buffered channels:
+An unbuffered channel provides a guarantee that an exchange between two gorou-
+tines is performed at the instant the send and receive take place. A buffered channel
+has no such guarantee. 
+ In figure 6.7 you see an example of two goroutines adding and removing items
+from a buffered channel independently. In step 1 the goroutine on the right is in the
+process of receiving a value from the channel. In step 2 that same goroutine is able to
+complete the receive independent of the goroutine on the left sending a new value
+Channel
+1
+GR
+GR
+Channel
+2
+GR
+Channel
+4
+GR
+GR
+GR
+Channel
+3
+GR
+GR
+Figure 6.7
+Synchronization between goroutines using a buffered channel

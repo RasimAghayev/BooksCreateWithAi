@@ -1,0 +1,45 @@
+Arrays and Slices
+58
+Fixed-Array Automatic Size Calculation
+Go can automatically calculate the size of the declared array by specifying a triple dot ... notation
+to the size of the array inside the square brackets before the type. In the following example, we
+created a variable named fruits that was automatically set to a string array with a fixed size of 4,
+which allows us to assign the variable to the flavours string array with the same size.
+Auto Array Size in Go
+1
+var flavours [4]string
+2
+3
+fruits := [...]string{"Apple",
+4
+"Mango",
+5
+"Orange",
+6
+"Banana"}
+7
+8
+flavours = fruits
+9
+10
+fmt.Println(flavours)
+However this does not mean that it also automatically calculates the destination type, so the
+following example will throw an error.
+Auto Array Size Mismatch
+1
+var flavours [4]string
+2
+3
+fruits := [...]string{"Apple",
+4
+"Mango",
+5
+"Orange",
+6
+"Banana"}
+7
+8
+flavours = fruits
+9
+10
+fmt.Println(flavours)

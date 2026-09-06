@@ -1,0 +1,44 @@
+2
+CHAPTER 1
+Go: Simple to learn but hard to master
+ This chapter presents a quick refresher as to why Go has become mainstream over
+the years. We’ll discuss why, despite Go being considered simple to learn, mastering its
+nuances can be challenging. Finally, we’ll introduce the concepts this book covers.
+1.1
+Go outline
+If you are reading this book, it’s likely that you’re already sold on Go. Therefore, this
+section provides a brief reminder about what makes Go such a powerful language.
+ Software engineering has evolved considerably during the past decades. Most mod-
+ern systems are no longer written by a single person but by teams consisting of multi-
+ple programmers—sometimes even hundreds, if not thousands. Nowadays, code must
+be readable, expressive, and maintainable to guarantee a system’s durability over the
+years. Meanwhile, in our fast-moving world, maximizing agility and reducing the time
+to market is critical for most organizations. Programming should also follow this
+trend, and companies strive to ensure that software engineers are as productive as pos-
+sible when reading, writing, and maintaining code.
+ In response to these challenges, Google created the Go programming language in
+2007. Since then, many organizations have adopted the language to support various
+use cases: APIs, automation, databases, CLIs (command-line interfaces), and so on.
+Many today consider Go the language of the cloud.
+ Feature-wise, Go has no type inheritance, no exceptions, no macros, no partial
+functions, no support for lazy variable evaluation or immutability, no operator over-
+loading, no pattern matching, and on and on. Why are these features missing from
+the language? The official Go FAQ (https://go.dev/doc/faq) gives us some insight:
+Why does Go not have feature X? Your favorite feature may be missing because it doesn’t
+fit, because it affects compilation speed or clarity of design, or because it would make the
+fundamental system model too difficult.
+Judging the quality of a programming language via its number of features is probably
+not an accurate metric. At least, it’s not an objective of Go. Instead, Go utilizes a few
+essential characteristics when adopting a language at scale for an organization. These
+include the following:
+Stability—Even though Go receives frequent updates (including improvements
+and security patches), it remains a stable language. Some may even consider
+this one of the best features of the language.
+Expressivity—We can define expressivity in a programming language by how nat-
+urally and intuitively we can write and read code. A reduced number of key-
+words and limited ways to solve common problems make Go an expressive
+language for large codebases.
+Compilation—As developers, what can be more exasperating than having to wait
+for a build to test our application? Targeting fast compilation times has always
+been a conscious goal for the language designers. This, in turn, enables
+productivity.

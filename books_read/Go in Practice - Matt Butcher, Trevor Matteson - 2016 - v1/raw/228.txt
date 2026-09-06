@@ -1,0 +1,58 @@
+205
+TECHNIQUE 52
+Reading custom errors
+            b, _ := ioutil.ReadAll(res.Body)
+            res.Body.Close()
+            var data struct {
+                   Err Error `json:"error"`
+            }
+            err = json.Unmarshal(b, &data)
+            if err != nil { 
+                   sm := "Unable to parse json: %s. HTTP status: %s"
+                   return res, fmt.Errorf(sm, err, res.Status)
+            }
+            data.Err.HTTPCode = res.StatusCode
+            return res, data.Err
+     }
+     return res, nil
+}
+This code replaces the http.Get function for making a request to a server with the
+get function, which handles custom errors. The Error struct, which holds the data
+from the error, has the same structure as the error in technique 51. This custom error
+handling is designed to work with a server that emits errors in the same way as tech-
+nique 51. These two techniques could share a common package defining the error.
+ Adding the Error() method to the Error type implements the error interface.
+This allows instances of Error to be passed between functions as an error, like any
+other error.
+ The main function in the following snippet illustrates using the get function
+instead of http.Get. Any custom errors will print the custom error details from the
+JSON and exit the application:
+func main() {
+     res, err := get("http://localhost:8080")
+     if err != nil {
+            fmt.Println(err)
+            os.Exit(1)
+     }
+     b, _ := ioutil.ReadAll(res.Body)
+     res.Body.Close()
+     fmt.Printf("%s", b)
+}
+Using this technique for getting and passing HTTP errors around applications allows
+these errors to get the benefits of other error handling in Go. For example, using
+switch statements to test the type of error and reacting appropriately, as listing 8.4
+showed, will work for the custom errors.
+Reads the body of the 
+response into a buffer
+Parses the JSON
+response and
+places the data
+into a struct and
+responds to
+any errors
+Adds the HTTP 
+status code to the 
+Error instance
+Returns the custom 
+error and the response
+When there’s no error, returns 
+the response as expected

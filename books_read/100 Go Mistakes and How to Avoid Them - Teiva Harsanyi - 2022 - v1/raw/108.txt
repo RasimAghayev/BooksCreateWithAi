@@ -1,0 +1,53 @@
+88
+CHAPTER 3
+Data types
+printAlloc()
+for i := 0; i < n; i++ {
+delete(m, i)
+}
+runtime.GC()
+printAlloc()
+runtime.KeepAlive(m)
+We allocate an empty map, add 1 million elements, remove 1 million elements, and
+then run a GC. We also make sure to keep a reference to the map using runtime
+.KeepAlive so that the map isn’t collected as well. Let’s run this example:
+0 MB
+461 MB
+293 MB
+What can we observe? At first, the heap size is minimal. Then it grows significantly
+after having added 1 million elements to the map. But if we expected the heap size to
+decrease after removing all the elements, this isn’t how maps work in Go. In the end,
+even though the GC has collected all the elements, the heap size is still 293 MB. So the
+memory shrunk, but not as we might have expected. What’s the rationale?
+ We discussed in the previous section that a map is composed of eight-element
+buckets. Under the hood, a Go map is a pointer to a runtime.hmap struct. This struct
+contains multiple fields, including a B field, giving the number of buckets in the map:
+type hmap struct {
+B uint8 // log_2 of # of buckets
+// (can hold up to loadFactor * 2^B items)
+// ...
+}
+After adding 1 million elements, the value of B equals 18, which means 2^18 = 262,144
+buckets. When we remove 1 million elements, what’s the value of B? Still 18. Hence,
+the map still contains the same number of buckets.
+ The reason is that the number of buckets in a map cannot shrink. Therefore, remov-
+ing elements from a map doesn’t impact the number of existing buckets; it just zeroes
+the slots in the buckets. A map can only grow and have more buckets; it never shrinks.
+ In the previous example, we went from 461 MB to 293 MB because the elements
+were collected, but running the GC didn’t impact the map itself. Even the number of
+extra buckets (the buckets created because of overflows) remains the same.
+ Let’s take a step back and discuss when the fact that a map cannot shrink can be a
+problem. Imagine building a cache using map[int][128]byte. This map holds per
+customer ID (the int), a sequence of 128 bytes. Now, suppose we want to save the last
+Deletes 1 million 
+elements
+Triggers a 
+manual GC
+Keeps a reference to m so 
+that the map isn’t collected
+After m is 
+allocated
+After we add 
+1 million elements
+After we remove 1  
+million elements

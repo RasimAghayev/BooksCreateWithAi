@@ -1,0 +1,19 @@
+147
+HTML and email
+template patterns
+When you’re programmatically creating text or HTML responses in many program-
+ming environments, you need to seek out the right library to handle the HTML. Go
+handles this a little differently. In the standard library, Go provides template han-
+dling for both text and HTML. The HTML handling is built on top of the text tem-
+plate engine to add HTML-aware intelligence.
+ Although the standard library enables you to work with HTML templates, it
+stops short of having too many opinions. Instead, it provides a foundation along
+with the ability to extend and combine templates. For example, you could nest tem-
+plates or have a template inherit from another one. This simple and extensible
+design allows you to use many common template patterns.
+This chapter covers
+Adding functionality inside templates
+Nesting templates
+Using template inheritance
+Rendering objects to HTML
+Using email templates

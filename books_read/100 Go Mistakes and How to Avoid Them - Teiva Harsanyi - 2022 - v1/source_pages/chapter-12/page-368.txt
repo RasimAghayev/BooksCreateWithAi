@@ -1,0 +1,41 @@
+348
+CHAPTER 12
+Optimizations
+Sweep stage—Traverses the tree of references from the root and deallocates
+blocks of objects that are no longer referenced
+When a GC runs, it first performs a set of actions that lead to stopping the world (two stop-
+the-worlds per GC, to be precise). That is, all the available CPU time is used to perform
+the GC, putting our application code on hold. Following these steps, it starts the world
+again, resuming our application but also running a concurrent phase. For that reason,
+the Go GC is called concurrent mark-and-sweep: it aims to reduce the number of stop-the-
+world operations per GC cycle and mostly run concurrently alongside our application.
+ The Go GC also includes a way to free memory after consumption peak. Imagine
+that our application is based on two phases:
+An init phase that leads to frequent allocations and a large heap
+A runtime phase with moderate allocations and a small heap
+How will Go tackle the fact that the large heap is only helpful when the application
+starts, not after that? This is handled as part of the GC with a so-called periodic scaven-
+ger. After a certain time, the GC detects that such a large heap is no longer necessary,
+so it frees some memory and returns it to the OS.
+NOTE
+If the scavenger isn’t quick enough, we can manually force memory to
+be returned to the OS using debug.FreeOSMemory().
+The important question is, when will a GC cycle run? Compared to other languages
+such as Java, the Go configuration remains reasonably simple. It relies on a single
+environment variable: GOGC. This variable defines the percentage of the heap growth
+since the last GC before triggering another GC; the default value is 100%.
+ Let’s look at a concrete example to be sure we understand. Let’s assume a GC just
+got triggered and the current heap size is 128 MB. If GOGC=100, the next GC is trig-
+gered when the heap size reaches 256 MB. A GC is executed by default every time the
+heap size doubles. Also, if a GC hasn’t been executed during the last 2 minutes, Go
+will force one to run.
+ If we profile our application with production loads, we can fine-tune GOGC:
+Reducing it will cause the heap to grow more slowly, increasing the pressure on
+the GC.
+Conversely, bumping it will cause the heap to grow faster, reducing the pressure
+on the GC.
+GC traces
+We can print the GC traces by setting the GODEBUG environment variable, such as
+while running a benchmark:
+$ GODEBUG=gctrace=1 go test -bench=. -v
+Enabling gctrace writes a trace to stderr each time the GC runs.

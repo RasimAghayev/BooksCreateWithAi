@@ -1,0 +1,48 @@
+36
+CHAPTER 2
+A solid foundation
+The Flags property is a slice of cli.Flag containing the global flags C. Each flag has
+a long name, short name, or both. Some flags, such as a cli.StringFlag, have a
+Value property for the default value. cli.BoolFlag is an example of a flag without a
+default value. Its presence sets the value to true, and its absence sets the value to
+false. The Usage property is used for documentation that can be seen on the help
+screen.
+ cli.go provides the ability to have a default action when the application is run, to
+have commands, and to have nested subcommands. We cover commands and subcom-
+mands in the next section. Here you set the Action property that handles the default
+action D. The value of Action is a function that accepts *cli.Context as an argument
+and returns an error. This function contains the application code that should be run.
+In this case, it obtains the name to say hello to by using c.GlobalString("name")
+before printing hello to the name. If you want the returned error to cause the appli-
+cation to exit with a nonzero exit code, return an error of cli.ExitError, which can
+be created using the cli.NewExitError function.
+ The final step is to run the application that was just set up. To do this, os.Args,
+the arguments passed into the application, are passed into the Run method on the
+application E.
+TIP
+Arguments are available in the Action function. In this case, a string slice
+of arguments can be obtained by calling c.Args. For example, the first argu-
+ment would be c.Args()[0].
+COMMANDS AND SUBCOMMANDS
+Applications built with cli.go often have commands and subcommands, as illustrated
+in figure 2.2. Think of an application such as Git, in which you can run commands
+such as git add, git commit, and git push.
+Options available to 
+all commands using 
+context Global* 
+getters—for example, 
+GlobalString(”name”)
+The command
+to execute
+$ app [global options] command [command options] arguments
+Options available to 
+this commands through 
+context getters—for 
+example, String(”name”)
+Optionally, one or
+more arguments
+$ app [global options] command sub-command [command options] arguments
+A command nested
+below another command
+Figure 2.2
+Usage structure of an application with commands and subcommands

@@ -1,0 +1,43 @@
+54
+CHAPTER 3
+Handling requests
+Generating the SSL certificate and private key is relatively easy. An SSL certificate is
+essentially an X.509 certificate with the extended key usage set to server authentica-
+tion, so we’ll be using the crypto/x509 library to create the certificate. The private key
+is required to create the certificate, so we simply take the private key we created for
+the certificate and save it into a file for the server private key file. 
+ Let’s go through the code. First, we need to have a Certificate struct, which
+allows us to set the configuration for our certificate:
+template := x509.Certificate{
+  SerialNumber: serialNumber,
+  Subject: subject,    
+  NotBefore: time.Now(),
+  NotAfter:  time.Now().Add(365*24*time.Hour),
+  KeyUsage: x509.KeyUsageKeyEncipherment | x509.KeyUsageDigitalSignature,
+  ExtKeyUsage: []x509.ExtKeyUsage{x509.ExtKeyUsageServerAuth},
+  IPAddresses: []net.IP{net.ParseIP("127.0.0.1")},
+}
+We need a certificate serial number, which is a unique number issued by the CA. For
+our purposes, it’s good enough to use a very large integer that’s randomly generated.
+Next, we create the distinguished name and set it up as the subject for the certificate,
+and we also set up the validity period to last for one year from the day the certificate is
+created. The KeyUsage and ExtKeyUsage fields are used to indicate that this X.509
+certificate is used for server authentication. Finally, we set up the certificate to run
+from the IP 127.0.0.1 only.
+SSL certificates
+X.509 is an ITU-T (International Telecommunication Union Telecommunication Stan-
+dardization Sector) standard for a Public Key Infrastructure (PKI). X.509 includes
+standard formats for public key certificates. 
+An X.509 certificate (also colloquially called an SSL certificate) is a digital document
+expressed in ASN.1 (Abstract Syntax Notation One) that has been encoded. ASN.1 is
+a standard and notation that describes rules and structures for representing data in
+telecommunications and computer networking. 
+X.509 certificates can be encoded in various formats, including BER (Basic Encoding
+Rules). The BER format specifies a self-describing and self-delimiting format for
+encoding ASN.1 data structures. DER is a subset of BER, providing for exactly one
+way to encode an ASN.1 value, and is widely used in cryptography, especially X.509
+certificates.
+In SSL, the certificates can be saved in files of different formats. One of them is PEM
+(Privacy Enhanced Email, which doesn’t have much relevance here except as the name
+of the file format used), which is a Base64-encoded DER X.509 certificate enclosed
+between “-----BEGIN CERTIFICATE-----” and “-----END CERTIFICATE-----”.

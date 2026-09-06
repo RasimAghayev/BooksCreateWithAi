@@ -1,0 +1,41 @@
+72
+CHAPTER 3
+Concurrency in Go
+func tallyWords(filename string, dict *words) error {
+     // Unchanged from before
+}
+In this revised version, the words struct declares an anonymous field referencing
+sync.Mutex, basically granting the words.Lock and words.Unlock methods. This is a
+common way of exposing a lock on a struct. (You used these methods when looping
+over the words at the end of main.)
+ Now, inside the add method, you lock the object, modify the map, and then unlock
+the object. When multiple goroutines enter the add method, the first will get the lock,
+and the others will wait until the lock is released. This will prevent multiple goroutines
+from modifying the map at the same time.
+ It’s important to note that locks work only when all access to the data is managed
+by the same lock. If some data is accessed with locks, and others without, a race condi-
+tion can still occur. 
+ Sometimes it’s useful to allow multiple read operations on a piece of data, but to
+allow only one write (and no reads) during a write operation. The sync.RWLock pro-
+vides this functionality. The sync package has several other useful tools that simplify
+coordination across goroutines. But at this point, let’s turn our attention to another
+core concept in Go’s concurrency model: channels.
+3.3
+Working with channels
+Channels provide a way to send messages from one goroutine to another. This section
+covers several ways of using channels to accomplish common tasks and solve common
+problems.
+ The easiest way to understand channels is to compare them to network sockets.
+Two applications can connect over a network socket. Depending on how these appli-
+cations were written, network traffic can flow in a single direction or bidirectionally.
+Sometimes network connections are short-lived, and sometimes they stick around for
+a long time. Smart applications may even use multiple network connections, each
+sending and receiving different kinds of data. Just about any data can be sent over a
+network socket, but there’s a drawback: that data has to be marshaled into raw bytes.
+ Go channels work like sockets between goroutines within a single application. Like
+network sockets, they can be unidirectional or bidirectional. Channels can be short-
+lived or long-lived. And it’s common to use more than one channel in an app, having
+different channels send different kinds of data. But unlike network connections,
+channels are typed and can send structured data. There’s generally no need to mar-
+shal data onto a channel.
+ Let’s dive into channels by refactoring an earlier code sample to use channels.

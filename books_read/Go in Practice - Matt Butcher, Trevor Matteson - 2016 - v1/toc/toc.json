@@ -1,0 +1,83 @@
+{
+  "book": "Go in Practice",
+  "page_offset": 23,
+  "chapters": [
+    {
+      "chapter": 1,
+      "title": "Getting into Go",
+      "book_pages": "3-25",
+      "start_pdf_page": 26,
+      "end_pdf_page": 48
+    },
+    {
+      "chapter": 2,
+      "title": "A solid foundation",
+      "book_pages": "27-58",
+      "start_pdf_page": 50,
+      "end_pdf_page": 81
+    },
+    {
+      "chapter": 3,
+      "title": "Concurrency in Go",
+      "book_pages": "59-83",
+      "start_pdf_page": 82,
+      "end_pdf_page": 106
+    },
+    {
+      "chapter": 4,
+      "title": "Handling errors and panics",
+      "book_pages": "87-111",
+      "start_pdf_page": 110,
+      "end_pdf_page": 134
+    },
+    {
+      "chapter": 5,
+      "title": "Debugging and testing",
+      "book_pages": "113-143",
+      "start_pdf_page": 136,
+      "end_pdf_page": 166
+    },
+    {
+      "chapter": 6,
+      "title": "HTML and email template patterns",
+      "book_pages": "147-166",
+      "start_pdf_page": 170,
+      "end_pdf_page": 189
+    },
+    {
+      "chapter": 7,
+      "title": "Serving and receiving assets and forms",
+      "book_pages": "168-193",
+      "start_pdf_page": 191,
+      "end_pdf_page": 212
+    },
+    {
+      "chapter": 8,
+      "title": "Working with web services",
+      "book_pages": "194-213",
+      "start_pdf_page": 217,
+      "end_pdf_page": 236
+    },
+    {
+      "chapter": 9,
+      "title": "Using the cloud",
+      "book_pages": "217-234",
+      "start_pdf_page": 240,
+      "end_pdf_page": 257
+    },
+    {
+      "chapter": 10,
+      "title": "Communication between cloud services",
+      "book_pages": "235-252",
+      "start_pdf_page": 258,
+      "end_pdf_page": 275
+    },
+    {
+      "chapter": 11,
+      "title": "Reflection and code generation",
+      "book_pages": "253-280",
+      "start_pdf_page": 276,
+      "end_pdf_page": 303
+    }
+  ]
+}

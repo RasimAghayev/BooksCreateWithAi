@@ -1,0 +1,56 @@
+Basics
+14
+Unlike the other signed integer types, the int type does not explicitly state its width. This is because
+it acts as an alias for either int32 or int64, depending on the architecture being compiled to. This
+means that it will perform optimally on either architecture, and it is the most commonly used integer
+type in Go code.
+Go does not allow implicit type conversions. When converting between integer types, an explicit
+type cast is required. For example, see the following code:
+Type mixing that will result in a compile-time error
+1
+package main
+2
+3
+import (
+4
+"fmt"
+5
+)
+6
+7
+func main() {
+8
+var i32 int32 = 100
+9
+var i64 int64 = 100
+10
+11
+// This will result in a compile-time error:
+12
+fmt.Println(i32 + i64)
+13
+}
+This results in a compile-time error:
+1
+$ go run type_mix.go
+2
+type_mix.go:12:18: invalid operation: i32 + i64 (mismatched types int32 and i\
+3
+nt64)
+To fix the error, we can either use the same types from the start, or do a type cast. We will discuss
+type casts again later in this chapter, but here is how we might use a type cast to solve the problem:
+Using an integer type cast
+1
+package main
+2
+3
+import (
+4
+"fmt"
+5
+)
+6
+7
+func main() {
+8
+var i32 int32 = 100

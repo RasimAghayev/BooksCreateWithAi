@@ -1,0 +1,48 @@
+144
+CHAPTER 7
+Error management
+error type as the last parameter. But some developers may find this approach surpris-
+ing and be tempted to reproduce exception handling in languages such as Java or
+Python using panic and recover. So, let’s refresh our minds about the concept of
+panic and discuss when it’s considered appropriate or not to panic.
+ In Go, panic is a built-in function that stops the ordinary flow:
+func main() {
+fmt.Println("a")
+panic("foo")
+fmt.Println("b")
+}
+This code prints a and then stops before printing b:
+a
+panic: foo
+goroutine 1 [running]:
+main.main()
+main.go:7 +0xb3
+Once a panic is triggered, it continues up the call stack until either the current gorou-
+tine has returned or panic is caught with recover:
+func main() {
+defer func() {
+if r := recover(); r != nil {
+fmt.Println("recover", r)
+}
+}()
+f()
+}
+func f() {
+fmt.Println("a")
+panic("foo")
+fmt.Println("b")
+}
+In the f function, once panic is called, it stops the current execution of the function
+and goes up the call stack: main. In main, because the panic is caught with recover, it
+doesn’t stop the goroutine:
+a
+recover foo
+Note that calling recover() to capture a goroutine panicking is only useful inside a
+defer function; otherwise, the function would return nil and have no other effect. This
+is because defer functions are also executed when the surrounding function panics.
+ Now, let’s tackle this question: when is it appropriate to panic? In Go, panic is used
+to signal genuinely exceptional conditions, such as a programmer error. For example,
+Calls recover within 
+a defer closure
+Calls f, which panics. This panic is 
+caught by the previous recover.

@@ -1,0 +1,34 @@
+99
+Summary
+   
+Summary
+Functions are declared with a name, a list of parameters, and a list of results.
+Capitalized function names and types are made available to other packages.
+Each parameter or result is a name followed by a type, though types may be 
+elided when multiple named parameters or results have the same type. Results 
+can also be listed as types without names.
+Function calls are prefixed with the name of the package where the function is 
+declared, unless the function is declared in the same package it’s called from.
+Functions are called with arguments that correspond to the parameters they 
+accept. Results are returned to the caller with the return keyword.
+Isolation can be a good thing
+The kelvinToCelsius function in listing 12.1 is isolated from other functions. Its only input
+is the parameter it accepts, and its only output is the result it returns. It makes no mod-
+ifications to external state. Such functions are side-effect-free and are the the easiest to
+understand, test, and reuse.
+The kelvinToCelsius function does modify the variable k, but k and kelvin are completely
+independent variables, so assigning a new value to k inside the function has no impact
+on the kelvin variable in main. This behavior is called pass by value, because the k param-
+eter is initialized with the value of the kelvin argument. Pass by value facilitates the
+boundary between functions, helping to isolate one function from another.
+We’ve given the variables different names, but pass by value applies even if arguments
+and parameters have the same names.
+Additionally, the variable named k in kelvinToCelsius is completely independent from any
+variable named k in other functions, thanks to variable scope. Scope is covered in lesson
+4, but to reiterate, the parameters in a function declaration and the variables declared
+within a function body have function scope. Variables declared in different functions are
+completely independent, even if they have the same name.
+Quick check 12.2 What are some advantages of splitting code into functions?
+QC 12.2 answer Functions are reusable, they provide isolation for variables through function scope,
+and they provide a name for the action they perform which makes code easier to follow and understand.
+ 

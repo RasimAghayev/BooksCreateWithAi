@@ -1,0 +1,94 @@
+217
+Unit testing
+13 //
+content and handles different status conditions properly.
+14 func TestDownload(t *testing.T) {
+15
+var urls = []struct {
+16
+url
+string
+17
+statusCode int
+18
+}{
+19
+{
+20
+"http://www.goinggo.net/feeds/posts/default?alt=rss",
+21
+http.StatusOK,
+22
+},
+23
+{
+24
+"http://rss.cnn.com/rss/cnn_topstbadurl.rss",
+25
+http.StatusNotFound,
+26
+},
+27
+}
+28
+29
+t.Log("Given the need to test downloading different content.")
+30
+{
+31
+for _, u := range urls {
+32
+t.Logf("\tWhen checking \"%s\" for status code \"%d\"",
+33
+u.url, u.statusCode)
+34
+{
+35
+resp, err := http.Get(u.url)
+36
+if err != nil {
+37
+t.Fatal("\t\tShould be able to Get the url.",
+38
+ballotX, err)
+39
+}
+40
+t.Log("\t\tShould be able to Get the url",
+41
+checkMark)
+42
+43
+defer resp.Body.Close()
+44
+45
+if resp.StatusCode == u.statusCode {
+46
+t.Logf("\t\tShould have a \"%d\" status. %v",
+47
+u.statusCode, checkMark)
+48
+} else {
+49
+t.Errorf("\t\tShould have a \"%d\" status %v %v",
+50
+u.statusCode, ballotX, resp.StatusCode)
+51
+}
+52
+}
+53
+}
+54
+}
+55 }
+In listing 9.8, we’ve taken the basic unit test and converted it to a table test. Now we
+can use a single test function to test different URLs and status codes against the
+http.Get function. We don’t need to create a new test function for each URL and sta-
+tus code we want to test. Let’s look at the changes.
+12 // TestDownload validates the http Get function can download
+13 //
+content and handles different status conditions properly.
+14 func TestDownload(t *testing.T) {
+Listing 9.9
+listing08_test.go: lines 12–27

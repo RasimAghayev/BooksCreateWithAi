@@ -1,0 +1,47 @@
+59
+3.2
+#18: Neglecting integer overflows
+represent binary numbers (invert every bit and add 1). The main goal of this
+operation is to make x + (–x) equal 0 regardless of x.
+In Go, an integer overflow that can be detected at compile time generates a compila-
+tion error. For example,
+var counter int32 = math.MaxInt32 + 1
+constant 2147483648 overflows int32
+However, at run time, an integer overflow or underflow is silent; this does not lead to
+an application panic. It is essential to keep this behavior in mind, because it can lead
+to sneaky bugs (for example, an integer increment or addition of positive integers
+that leads to a negative result).
+ Before delving into how to detect an integer overflow with common operations,
+let’s think about when to be concerned about it. In most contexts, like handling a
+counter of requests or basic additions/multiplications, we shouldn’t worry too much if
+we use the right integer type. But in some cases, like memory-constrained projects
+using smaller integer types, dealing with large numbers, or doing conversions, we may
+want to check possible overflows.
+NOTE
+The Ariane 5 launch failure in 1996 (https://www.bugsnag.com/blog/
+bug-day-ariane-5-disaster) was due to an overflow resulting from converting a
+64-bit floating-point to a 16-bit signed integer. 
+3.2.2
+Detecting integer overflow when incrementing
+If we want to detect an integer overflow during an increment operation with a type
+based on a defined size (int8, int16, int32, int64, uint8, uint16, uint32, or uint64),
+we can check the value against the math constants. For example, with an int32:
+func Inc32(counter int32) int32 {
+if counter == math.MaxInt32 {
+panic("int32 overflow")
+}
+return counter + 1
+}
+This function checks whether the input is already equal to math.MaxInt32. We know
+whether the increment leads to an overflow if that’s the case.
+ What about int and uint types? Before Go 1.17, we had to build these constants
+manually. Now, math.MaxInt, math.MinInt, and math.MaxUint are part of the math
+package. If we have to test an overflow on an int type, we can do it using math.MaxInt:
+func IncInt(counter int) int {
+if counter == math.MaxInt {
+panic("int overflow")
+}
+return counter + 1
+}
+Compares with 
+math.MaxInt32

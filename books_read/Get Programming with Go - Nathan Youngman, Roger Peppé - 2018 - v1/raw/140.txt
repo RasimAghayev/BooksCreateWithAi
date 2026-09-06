@@ -1,0 +1,27 @@
+125
+Iterating through arrays
+16.4 Iterating through arrays
+Iterating through each element of an array is similar to iterating over each character of a 
+string in lesson 9, as shown in the following listing.
+dwarfs := [5]string{"Ceres", "Pluto", "Haumea", "Makemake", "Eris"}
+for i := 0; i < len(dwarfs); i++ {
+    dwarf := dwarfs[i]
+    fmt.Println(i, dwarf)
+}
+The range keyword provides an index and value for each element of an array with less 
+code and less chance for mistakes, as shown in the next listing.
+dwarfs := [5]string{"Ceres", "Pluto", "Haumea", "Makemake", "Eris"}
+for i, dwarf := range dwarfs {
+    fmt.Println(i, dwarf)
+}
+Both listings 16.4 and 16.5 produce the same output:
+0 Ceres
+1 Pluto
+2 Haumea
+3 Makemake
+4 Eris
+NOTE Remember that you can use the blank identifier (underscore) if you don’t need the
+index variable provided by range.
+Listing 16.4 Looping through an array: array-loop.go
+Listing 16.5 Iterating through an array with range: array-range.go
+ 

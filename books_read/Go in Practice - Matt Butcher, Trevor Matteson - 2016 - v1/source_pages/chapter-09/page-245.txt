@@ -1,0 +1,42 @@
+222
+CHAPTER 9
+Using the cloud
+This only scratches the surface of containers, cloud-native computing, and cloud com-
+puting in general. If you’re interested in more information, numerous books, training
+courses, and other information cover the topic in more detail.
+ One of the most important elements of cloud services that we need to look at in
+more detail is the way you manage the services. The interface to manage cloud ser-
+vices provides a point of interaction for Go applications.
+9.2
+Managing cloud services
+Managing cloud services, whether they’re IaaS, PaaS, or SaaS, typically happens
+through an API. This enables command-line tools, custom user interfaces, autono-
+mous applications (bots), and other tools to manage the services for you. Cloud ser-
+vices are programmable.
+ Web applications, such as the web console each cloud service vendor provides,
+appear to be simple and effective ways to view and manage cloud services. For some
+simple cases, this works. But the full power of the cloud is in the ability to program it.
+That includes automatically scaling horizontally, automatically repairing problems,
+and operating on large numbers of cloud assets at the same time.
+ Each of the cloud providers offers a REST API, and most of the time an SDK is built
+to interact with the API. The SDK or the API can be used within your applications to
+use the cloud services.
+9.2.1
+Avoiding cloud provider lock-in
+Cloud services are like platforms, and each has its own API. Although they provide the
+same or similar feature sets, their programmable REST API is often quite different. An
+SDK designed for one service provider won’t work against a competitor. There isn’t a
+common API specification that they all implement.
+TECHNIQUE 56
+Working with multiple cloud providers
+Many cloud service providers exist, and they’re distributed all over the world. Some
+are region-specific, conforming to local data-sovereignty laws, whereas others are
+global companies. Some are public and have an underlying infrastructure that’s
+shared with others; others are private, and everything down to the hardware is yours.
+These cloud providers can compete on price, features, and the changing needs of the
+global landscape.
+ Given the continuously changing landscape, it’s useful to remain as flexible as pos-
+sible when working with cloud providers. We’ve seen code written specifically for one
+cloud provider that has caused an application to become stuck on that provider, even
+when the user wanted to switch. Switching would be a lot of work, causing delays in
+new features. The trick is to avoid this kind of lock-in up front.

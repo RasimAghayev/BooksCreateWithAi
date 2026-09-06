@@ -1,0 +1,125 @@
+INDEX
+292
+U
+UDDI (Universal Description, 
+Discovery, and 
+Integration) 157
+unbuffered channels 233
+underscore character 141
+unescaping HTML 118–119
+unique identifier. See ID
+unit testing 191–200
+benchmarking 197–200
+running tests in parallel
+196–197
+skipping test cases 195–196
+Universal Description, Discov-
+ery, and Integration. See 
+UDDI
+Unmarshal function 169, 177, 
+199
+update method 141–142, 187
+uploading files 80–81
+Upstart job 262
+URI (uniform resource 
+locater) 10, 14–15
+url.URL type 70
+URN (uniform resource 
+name) 14
+User data structure 26
+user stories 216
+user-agent 8
+User-Agent header field 12
+user.CreateSession method 30
+user.go file 38
+UserId named field 31
+util.go file 31
+Uuid 31
+V
+-v flag 195
+$value variable 110
+value variable 240
+variables 110–111
+variadic function 37, 100, 151
+verbose flag 195, 212
+verbs 161
+vertical scaling 4
+VM (virtual machine) 257
+VPS (virtual private server) 277
+W
+w1 channel 234
+w2 channel 234
+WADL (Web Application 
+Description Language) 162
+Wait method 231–232, 252
+WaitGroup 231, 252
+web apps
+high performing 6
+how they work 6–7
+maintainable 5–6
+modular 5
+parts of 16–18
+handler 16–17
+template engine 17–18
+scalable 4–5
+Web Service Definition Lan-
+guage. See WSDL
+web services 155–189
+creating Go web services
+181–189
+JSON and 174–181
+creating JSON 178–181
+parsing JSON 175–178
+overview 155–157
+REST-based web services
+160–163
+converting actions to 
+resources 162
+making actions properties 
+of resources 163
+SOAP-based web 
+services 157–160
+XML and 163–174
+creating XML 171–174
+parsing XML 163–171
+web template 96
+Windows
+installing Go on 282
+installing PostgreSQL on 38
+with action 107
+workspace 282
+Write check box 277
+Write method 130–131, 133
+WriteFile 129
+WriteHeader method 83–84
+writing CSV files 130–132
+WS-Addressing 156
+ws-d image 278
+ws-h executable binary 265
+ws-s directory 261
+WS-Security 156
+ws.conf file 262
+WSDL (Web Service Definition 
+Language) 156
+WSDL message 159
+WWW-Authenticate response 
+header 14
+X
+X-XSS-Protection 119
+X.509 certificate 54
+XHR (XMLHttpRequest) 11
+XML (eXtensible Markupl 
+Language) 163–174
+creating 171–174
+parsing 163–171
+xml library 171, 179
+XML-RPC-based web 
+services 156
+xml.go file 171
+xml.Header 173
+xml.Name file 166
+xml.Unmarshal 163
+XMLName file 166
+XSS (cross-site scripting) 115
+XSS attacks, defending 
+against 116–118

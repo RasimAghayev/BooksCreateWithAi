@@ -1,0 +1,40 @@
+189
+The interface type
+An interface type can be used anywhere other types are used. For example, the follow-
+ing shout function has a parameter of type talker.
+func shout(t talker) {
+    louder := strings.ToUpper(t.talk())
+    fmt.Println(louder)
+}
+You can use the shout function with any value that satisfies the talker interface, whether 
+martians or lasers, as shown in the next listing.
+shout(martian{})
+shout(laser(2))
+The argument you pass to the shout function must satisfy the talker interface. For exam-
+ple, the crater type doesn’t satisfy the talker interface, so if you expect a crater to shout, 
+Go refuses to compile your program:
+type crater struct{}
+shout(crater{}) 
+Interfaces exhibit their flexibility when you need to change or extend code. When you 
+declare a new type with a talk method, the shout function will work with it. Any code 
+that only depends on the interface can remain the same, even as implementations are 
+added and modified.
+It’s worth noting that interfaces can be used with struct embedding, the language fea-
+ture covered in lesson 23. For example, the following listing embeds laser in a starship.
+type starship struct {
+    laser
+}
+s := starship{laser(3)}
+fmt.Println(s.talk())
+shout(s) 
+Listing 24.5 Shout what was spoken: shout.go
+Listing 24.6 Shouting: shout.go
+Listing 24.7 Embedding satisfies interfaces: starship.go
+Prints NACK NACK
+Prints PEW PEW
+crater does not 
+implement talker 
+(missing talk method)
+Prints pew pew pew
+Prints PEW PEW PEW
+ 

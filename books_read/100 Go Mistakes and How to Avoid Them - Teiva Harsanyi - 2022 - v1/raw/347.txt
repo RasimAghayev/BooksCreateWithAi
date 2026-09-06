@@ -1,0 +1,66 @@
+327
+12.5
+#95: Not understanding stack vs. heap
+c := sumPtr(a, b)
+println(*c)
+}
+//go:noinline
+func sumPtr(x, y int) *int {
+z := x + y
+return &z
+}
+The c variable in main is now a *int type. Let’s move directly to the last println state-
+ment, following the call to sumPtr. What would happen if z remained allocated on the
+stack (which can’t be the case)? See figure 12.29.
+Figure 12.29
+The c variable references an address that is no longer valid.
+If c was referencing the address of the z variable, and that z was allocated on the stack,
+we would have a major problem. The address would no longer be valid, plus the stack
+frame of main would keep growing and erase the z variable. For that reason, the stack
+isn’t enough, and we need another type of memory: the heap.
+ A memory heap is a pool of memory shared by all
+the goroutines. In figure 12.30, each of the three
+goroutines G1, G2, and G3 has its own stack. They all
+share the same heap.
+ In the previous example, we saw that the z vari-
+able couldn’t live on the stack; therefore, it is escaped
+to the heap. If the compiler cannot prove that a vari-
+able isn’t referenced after the function returns, the
+variable is allocated on the heap.
+ Why should we care? What’s the point of under-
+standing the differences between stack and heap?
+Because there’s a significant impact in terms of per-
+formance.
+Returns 
+a pointer
+func main() {
+   a := 3
+   b := 2
+   c := sumPtr(a, b)
+   println(*c)
+}
+func sumPtr(x, y int) *int {
+   z := x + y
+   return &z
+}
+Stack 
+i = 3
+y = 2
+z = 5
+main
+a = 3
+b = 2
+c = 0xc000038730
+Valid
+Invalid
+Heap
+Stack
+Stack
+Stack
+G1
+G2
+G3
+Figure 12.30
+Three goroutines 
+that have their own stacks but 
+share the heap

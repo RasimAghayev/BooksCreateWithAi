@@ -1,0 +1,42 @@
+206
+Lesson 26  A few pointers
+Changes to the value of bolden can be made in one place, because the administrator vari-
+able points to bolden rather than storing a copy:
+bolden = "Charles Frank Bolden Jr."
+fmt.Println(*administrator)
+It’s also possible to dereference administrator to change the value of bolden indirectly:
+*administrator = "Maj. Gen. Charles Frank Bolden Jr."
+fmt.Println(bolden)
+Assigning major to administrator results in a new pointer that’s also pointing at the bolden 
+string (see figure 26.3):
+major := administrator
+*major = "Major General Charles Frank Bolden Jr."
+fmt.Println(bolden)
+The major and administrator pointers both hold the same memory address and therefore 
+are equal:
+fmt.Println(administrator == major)
+Charles Bolden was succeeded by Robert M. Lightfoot Jr. on January 20, 2017. After 
+this change, administrator and major no longer point to the same memory address (see 
+figure 26.4):
+lightfoot := "Robert M. Lightfoot Jr."
+administrator = &lightfoot
+fmt.Println(administrator == major)
+Prints Charles Frank Bolden Jr.
+Prints Maj. Gen. Charles Frank Bolden Jr.
+Prints Major General Charles Frank Bolden Jr.
+scolese = 
+Christopher J.
+Scolese
+administrator = 
+0xc42000e280
+bolden = 
+major = 
+0xc42000e280
+Major General 
+Charles Frank Bolden Jr.
+Figure 26.3 
+administrator 
+and major point to bolden
+Prints true
+Prints false
+ 

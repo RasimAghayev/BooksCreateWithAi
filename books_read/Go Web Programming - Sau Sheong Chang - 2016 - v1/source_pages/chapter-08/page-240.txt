@@ -1,0 +1,40 @@
+219
+Third-party Go testing libraries 
+Testing with Ginkgo
+  put post
+  server_test.go:48
+•
+Ran 2 of 2 Specs in 0.000 seconds
+SUCCESS! -- 2 Passed | 0 Failed | 0 Pending | 0 Skipped PASS
+Ginkgo ran 1 suite in 577.104764ms
+Test Suite Passed
+That’s pretty impressive! But if you’re starting from no test cases at all, it seems silly to
+try to create the testing package test cases and then convert them. Let’s see how to
+write Ginkgo test cases from scratch.
+ Ginkgo provides some utilities to get you started. First, clear off your previous test
+files, including the Ginkgo test suite file. Then run these two commands on the con-
+sole, in the directory of your program:
+ginkgo bootstrap
+ginkgo generate
+The first line will create the Ginkgo test suite file; the second line generates the skele-
+ton for the test case file that you want to generate, shown in the following listing. 
+package main_test
+import (
+  . "<path/to/your/go_files>/ginkgo"
+  . "github.com/onsi/ginkgo"
+  . "github.com/onsi/gomega"
+)
+var _ = Describe("Ginkgo", func() {
+})
+Note that you aren’t using the main package anymore because Ginkgo isolates test
+cases from that package. Also, you’re importing a number of libraries into the top-
+level namespace using the dot (.) import. This is optional, and Ginkgo documenta-
+tion provides details on how to opt out of doing this. If you’re doing this, you should
+remember to export any functions in the main package that need to be tested through
+Ginkgo. The next example tests the HandleRequest function, so it must be exported;
+that is, the function name’s first character must be in upper case.
+ Also notice that Ginkgo uses the var _ = trick to call the Describe function.
+This is a common trick to avoid requiring an init function (which you used earlier
+on) and calling the Describe function in it. 
+Listing 8.24
+Ginkgo test file

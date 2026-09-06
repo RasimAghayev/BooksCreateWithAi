@@ -1,0 +1,60 @@
+Hash and Maps
+38
+25
+fmt.Printf(`Name: %s\n
+26
+Kind: %s\n
+27
+Flavour: %s\n\n`,
+28
+key,
+29
+value.kind,
+30
+value.flavour)
+31
+}
+32
+}
+Struct Maps with Array Values
+In order to assign multiple values to a map key, the valueType must be an array, with the general
+form of:
+1
+map[keyType][]valueType
+Noticed that we prepended the [] before the valueType. In Go, this is a general form to define
+an array. In Ruby, arrays are also defined with an open and closing square brackets [], in Go, the
+brackets needs to be explicitly defined in front of the valueType to form an array.
+This form of defining an array is not only applicable to maps, but can also be the same way to
+initialize an array in variables and function arguments.
+Using map by assignment, we can assign multiple values to a key. In our Ruby and Golang
+comparison in the first section of this article, we can rewrite our Ruby code above to the following
+Golang syntax:
+Map with Array Values
+1
+basket := map[string][]string{
+2
+"fruits":
+[]string{
+3
+"apple",
+4
+"mango",
+5
+"avocado"},
+6
+"veggies": []string{
+7
+"carrot",
+8
+"cucumber",
+9
+"kale"},
+10
+}
+11
+12
+for key, value := range basket {
+13
+fmt.Printf(`Key %s -- Value %s \n`, key, value)
+14
+}

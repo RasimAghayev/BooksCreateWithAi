@@ -1,0 +1,22 @@
+Preface
+In 2018, I was hired by a company that uses Go. After 8+ years of working with Ruby, the first thing
+I did to learn Go is to relate to what I know in Ruby. And I thought it would be a good idea to
+document my learning process. My initial intention is keep it as my personal documentation and
+notes, but after much careful thought and considerations, I decided to post it online. From one topic,
+it grew into a series of multiple online articles, discussing all about my research and learnings about
+the language, collecting it’s analogies that I can compare with Ruby to help me learn it.
+Go is a great language, it’s easy to read, with clear syntax. And it compiles to a single binary file
+which makes apps fast and compact, and can compile to run on different platforms. And it’s statically
+typed and garbage-collected making it efficient.
+It’s like a modern C with package support, memory safety, automatic garbage collection and
+concurrency baked-in. And you get all the nice features from a statically typed language, IDEs loves
+it, and so your development workflow.
+In today’s world of cloud native microservices, containerized architectures, You can be up-to-
+date with a knowledge in Go. Many notable open-source projects are built using Go (i.e. Docker,
+Kubernetes, Etherium and Terraform to name a few), and those platforms have APIs and SDKs
+readily available natively for you to use. And many global companies have been using Go in
+production (i.e. Google, Netflix, Dropbox, Heroku and Uber to name a few), proving that it has
+been battle-tested and powerful mature language to based your work into.
+This book was made with a Rubyist in mind, all the learning methapors are based on Ruby and I
+think it will help you to learn Go programming language when you already knows Ruby. Go can be
+your second or third programming language and this book can help you get started.

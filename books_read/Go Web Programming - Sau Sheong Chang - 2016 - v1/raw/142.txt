@@ -1,0 +1,42 @@
+121
+Nesting templates
+Notice that we start the file with {{ define "layout" }} and end it with {{ end }}.
+Anything within these two action tags is considered part of the layout template. This
+means if we have another define action tag after the {{ end }} we can define another
+template! In other words, we can define multiple templates in the same template file,
+as you can see in this listing.
+{{ define "layout" }}
+<html>
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <title>Go Web Programming</title>
+  </head>
+  <body>
+    {{ template "content" }}
+  </body>
+</html>
+{{ end }}
+{{ define "content" }}
+Hello World!
+{{ end }}
+The following listing shows how we use these templates in our handler.
+func process(w http.ResponseWriter, r *http.Request) {  
+    t, _ := template.ParseFiles("layout.html")
+    t.ExecuteTemplate(w, "layout", "")
+}
+Parsing the template file is the same, but this time if we want to execute the template,
+we have to be more explicit and use the ExecuteTemplate method, with the name of
+the template we want to execute as the second parameter. The layout template nests
+the content template, so if we execute the layout template, we’ll see Hello World! in
+the browser. Let’s use cURL to get the actual HTML so that we can see it properly:
+> curl -i http://127.0.0.1:8080/process
+HTTP/1.1 200 OK
+Date: Sun, 08 Feb 2015 14:09:15 GMT
+Content-Length: 187
+Content-Type: text/html; charset=utf-8
+<html>
+  <head>
+Listing 5.24
+Defining multiple templates in a single template file
+Listing 5.25
+Using explicitly defined templates

@@ -1,0 +1,50 @@
+161
+Introducing REST-based web services
+the same thing, except that you create models (called objects) to represent things and
+you define functions (called methods) and attach them to those models, which you can
+subsequently call. REST is an evolution of the same line of thought where instead of
+exposing functions as services to be called, you expose the models, called resources, and
+only allow a few actions (called verbs) on them.
+  When used over HTTP, a URL is used to represent a resource. HTTP methods are
+used as verbs to manipulate them, as listed in table 7.1.  
+The aha! moment that often comes to programmers who first read about REST is
+when they see the mapping between the use of HTTP methods for REST with the data-
+base CRUD operations. It’s important to understand that this mapping is not a 1-to-1
+mapping, nor is it the only mapping. For example, you can use both POST and PUT to
+create a new resource and either will be correctly RESTful.
+ The main difference between POST and PUT is that for PUT, you need to know
+exactly which resource it will replace, whereas a POST will create a new resource alto-
+gether, with a new URL. In other words, to create a new resource without knowing the
+URL, you’ll use POST but if you want to replace an existing resource, you’ll use PUT.
+ As mentioned in chapter 1, PUT is idempotent and the state of the server doesn’t
+change regardless of the number of times you repeat your call. If you’re using PUT to
+create a resource or to modify an existing resource, only one resource is being created
+at the provided URL. But POST isn’t idempotent; every time you call it, POST will cre-
+ate a resource, with a new URL.
+ The second aha! moment for programmers new to REST comes when they realize
+that these four HTTP methods aren’t the only ones that can be used. A lesser-known
+method called PATCH is often used to partially update a resource.
+ This is an example of a REST request:
+GET /comment/123 HTTP/1.1
+Note that there’s no body associated in the GET, unlike in the corresponding SOAP
+request shown here: 
+POST /GetComment HTTP/1.1
+Host: www.chitchat.com
+Content-Type: application/soap+xml; charset=utf-8
+Table 7.1
+HTTP methods and corresponding web services
+HTTP method
+What to use it for
+Example
+POST
+Creates a resource (where one doesn’t exist)
+POST /users
+GET
+Retrieves a resource
+GET /users/1
+PUT
+Updates  a resource with the given URL
+PUT /users/1
+DELETE
+Deletes a resource
+DELETE /users/1

@@ -1,0 +1,67 @@
+271
+TECHNIQUE 69
+Processing tags on a struct
+sleeping=20
+threads=34
+load=1.8
+Read the data back into a struct
+Struct: &main.Processes{Total:23, Running:3, Sleeping:20, Threads:34, 
+Load:1.8}
+The first section of output shows your marshaled data, and the second shows your
+unmarshaled struct. Next you can look at the Marshal() function, which brings much
+of your reflection knowledge back to the forefront. See the following listing.
+func fieldName(field reflect.StructField) string {
+     if t := field.Tag.Get("ini"); t != "" {
+            return t
+     }
+     return field.Name 
+}
+func Marshal(v interface{}) ([]byte, error) {
+     var b bytes.Buffer
+     val := 
+reflect.Indirect(reflect.ValueOf(v))
+     if val.Kind() != reflect.Struct {
+            return []byte{}, errors.New("unmarshal can only take structs")
+     }
+     t := val.Type()
+     for i := 0; i < t.NumField(); i++ {
+            f := t.Field(i)
+            name := fieldName(f)
+            raw := val.Field(i).Interface()
+            fmt.Fprintf(&b, "%s=%v\n", name, raw)
+     }
+     return b.Bytes(), nil
+}
+This Marshal() function takes the given v interface{} and reads through its fields.
+By examining the type, it can iterate through all the fields on the struct, and for each
+field, it can access the annotation (via StructField.Tag()). As it loops through the
+struct fields, it can also fetch the relevant values for each struct field. Rather than man-
+ually convert these values from their native type to a string, you rely on fmt.Fprintf()
+to do that work for you.
+ Of note, the fieldName() function uses Go’s automatic tag parsing. Although you
+can (if you desire) store any string data in an annotation, Go can parse tags for you.
+For any annotation tag that follows the format NAME:"VALUE", you can access
+the value by using StructField.Tag.Get(). It returns the value unprocessed. It’s a
+Listing 11.14
+The Marshal function
+A utility function to read tags off of struct fields
+Gets the tag off the 
+struct field
+If there is no tag, falls 
+back to the field name
+Gets a reflect.Value of the 
+current interface. 
+Dereferences pointers.
+For this
+program,
+you handle
+only structs.
+Loops through all of the 
+fields on the struct
+Gets the
+name from
+tagName
+Relies on the print 
+formatter to print the 
+raw data into the buffer
+Returns the contents of the buffer

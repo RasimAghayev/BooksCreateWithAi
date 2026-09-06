@@ -1,0 +1,32 @@
+16
+CHAPTER 1
+Getting into Go
+CODE COVERAGE 
+In addition to executing tests, the test system can generate code-coverage reports and
+provide a view of the coverage down to the statement level, as shown in listing 1.14.
+NOTE
+As of Go 1.5, the coverage commands are part of the core Go tool-
+chain. Prior to 1.5, cover had been an add-on tool.
+To see the code coverage from the tests, run the following command:
+$ go test -cover
+Adding the -cover flag to the go test command causes it to report code coverage
+alongside the other details about the tests.
+$ go test –cover
+PASS
+Coverage: 33.3% of statements
+ok   go-in-practice/chapter1/hello         0.011s
+Code coverage doesn’t stop there. Coverage can be exported into files that other tools
+can use. Those reports can be displayed using built-in tools. Figure 1.4 shows a report
+displayed in a web browser that indicates which statements were executed in the tests.
+Quite often test coverage reports provide details down to the line level. Multiple state-
+ments can be on the same line. A simple example can be seen in if and else state-
+ments. Go will display which statements were executed and which don’t have coverage
+in the tests.
+TIP
+More information about the cover tool can be found on the Go blog at
+http://blog.golang.org/cover.
+Testing is an important feature in Go and one we spend some time on in chapter 4.
+Listing 1.14
+Testing with code coverage
+Figure 1.4
+Code coverage displayed in a web browser

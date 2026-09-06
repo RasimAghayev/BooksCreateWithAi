@@ -1,0 +1,45 @@
+269
+TECHNIQUE 69
+Processing tags on a struct
+ 
+type Processes struct {
+     Total    int
+     Running  int
+     Sleeping int
+     Threads  int
+     Load     float32
+}
+To convert the plain file format into a struct like this, you can create a tag that fits your
+needs and then mark up your struct with them (see the following listing).
+type Processes struct {
+     Total    int     `ini:"total"`
+     Running  int     `ini:"running"`
+     Sleeping int     `ini:"sleeping"`
+     Threads  int     `ini:"threads"`
+     Load     float32 `ini:"load"`
+}
+This tag structure follows the same convention as the JSON and XML tags you saw ear-
+lier. But there’s no automatic facility in Go to handle parsing the file format and learn-
+ing from the struct annotations how to populate a Processes struct. You’ll do that
+work yourself.
+ As you design this, you can once again rely on existing conventions. Encoders and
+decoders in Go tend to provide marshal() and unmarshal() methods with a fairly
+predictable set of parameters and return values. So your INI file decoder will imple-
+ment the same pattern, as shown in the following listing.
+func Marshal(v interface{}) ([]byte, error) {}
+func Unmarshal(data []byte, v interface{}) error {}
+The bulk of both of these functions involves reflecting over the interface{} values
+and learning about how to extract data from or populate data into those values. To
+keep the code concise, the following example deals only with marshaling and unmar-
+shaling structs.
+ Reflection tends to be a little verbose, so you’ll split up the code for your program
+into smaller chunks, starting with a struct for your INI file and the main() function. In
+the first part, you’ll create a new type (Processes), and then in the main() function
+you’ll create a Processes struct, marshal it to your INI format, and then unmarshal it
+into a new Processes struct. See the next listing.
+Listing 11.10
+A bare Processes struct
+Listing 11.11
+The Processes struct with annotations
+Listing 11.12
+The marshal and unmarshal pattern

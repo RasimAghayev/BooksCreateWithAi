@@ -1,0 +1,45 @@
+Package Management
+89
+Questions
+1. What have we learned?
+We learn that we can use go mod -sync to generate a go.mod file based on the package import.
+2. Why is this useful?
+This is useful if you want to have a go.mod file for your project, but you don’t want to
+manually create it.
+3. What is an indirect comment in go.mod?
+An indirect comment is a comment that is not related to the package, but to the repository.
+4. How do we fix a failing indirect dependency in Go Modules?
+We fix an indirect comment by adding the semantic-version tag to the comment.
+Automatic go.mod Generation Through dep Package
+Manager
+Another way to automatically create your go.mod file is using dep package manager which will read
+the Gopkg.lock file to generate the go.mod file.
+If it’s your first time to use dep then you need to run dep init which will do three things:
+1. Automatically generate the Gopkg.toml
+2. Maintain package version locking via a Gopkg.lock file
+3. Downloads the dependencies to the vendor folder.
+After you have all the dep files, you can run:
+1
+$ dep ensure
+2
+3
+$ go get -u
+4
+5
+go: creating new go.mod: module github.com/foo/coffee
+6
+go: copying requirements from Gopkg.lock
+7
+go: finding github.com/foo/coffee latest
+8
+go: downloading github.com/foo/coffee v0.0.1
+9
+10
+$ go run .
+11
+12
+espresso
+13
+cappuccino
+14
+macchiato

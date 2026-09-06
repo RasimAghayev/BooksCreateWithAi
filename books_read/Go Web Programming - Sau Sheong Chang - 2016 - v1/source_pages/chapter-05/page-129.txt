@@ -1,0 +1,36 @@
+108
+CHAPTER 5
+Displaying content
+    <div> This is t1.html after</div>
+  </body>
+</html>
+As you can see, the name of the file is used as the name of the template. Remember
+that if we don’t set the name of the template when it’s created, Go will set the name of
+the file, including its extension, as the name of the template.
+ Let’s look at t2.html now.
+<div style="background-color: yellow;">
+  This is t2.html<br/>
+  This is the value of the dot in t2.html - [{{ . }}]
+</div>
+The template t2.html is a snippet of HTML. The next listing shows the handler, which
+is just as short.
+func process(w http.ResponseWriter, r *http.Request) {  
+    t, _ := template.ParseFiles("t1.html", "t2.html")
+    t.Execute(w, "Hello World!")
+}
+Unlike with the previous handlers, we need to parse both the template files that we’re
+going to use. This is extremely important because if we forget to parse our template
+files, we’ll get nothing.
+ Because we didn’t set the name of the templates, the templates in the template set
+use the name of the files. As mentioned earlier, the parameters for the ParseFiles
+function are position-sensitive for the first parameter. The first template file that’s
+parsed is the main template, and when we call the Execute method on the template
+set, this is the template that’ll be called.
+ Figure 5.6 shows what happens in the browser when you run the server.
+Listing 5.10
+t2.html
+Listing 5.11
+Handler that includes templates
+Figure 5.6
+Including a template 
+within a template

@@ -1,0 +1,74 @@
+Strings
+58
+A program that declares whether a sentence reads the same backward and forward, word for word
+1
+package main
+2
+3
+import (
+4
+"bufio"
+5
+"fmt"
+6
+"os"
+7
+"strings"
+8
+"unicode"
+9
+)
+10
+11
+// getInput prompts the user for some text, and then
+12
+// reads a line of input from standard input. This line
+13
+// of text is then returned.
+14
+func getInput() string {
+15
+fmt.Print("Enter a sentence: ")
+16
+scanner := bufio.NewScanner(os.Stdin)
+17
+scanner.Scan()
+18
+return scanner.Text()
+19
+}
+20
+21
+func isNotLetter(c rune) bool {
+22
+return !unicode.IsLetter(c)
+23
+}
+24
+25
+// isPalindromicSentence returns whether or not the given sentence
+26
+// is palindromic. To calculate this, it splits the string into words,
+27
+// then creates a reversed copy of the word slice. It then checks
+28
+// whether the reverse is equal (ignoring case) to the original.
+29
+// It also ignores any non-alphabetic characters.
+30
+func isPalindromicSentence(s string) bool {
+31
+// split into words and remove non-alphabetic characters
+32
+// in one operation by using FieldsFunc and passing in
+33
+// isNotLetter as the function to split on.
+34
+w := strings.FieldsFunc(s, isNotLetter)
+35
+36
+// iterate over the words from front and back
+37
+// simultaneously. If we find a word that is not the same
+38
+// as the word at its matching from the back, the sentence

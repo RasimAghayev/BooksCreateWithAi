@@ -1,0 +1,42 @@
+165
+Parsing and creating XML with Go
+You need to define two structs, Post and Author, to represent the data. Here you’ve
+used an Author struct to represent an author but you didn’t use a separate Content
+struct to represent the content because for Author you want to capture the id attri-
+bute. If you didn’t have to capture the id attribute, you could define Post as shown
+next, with a string representing an Author (in bold):
+type Post struct {
+  XMLName xml.Name `xml:"post"`
+  Id      string   `xml:"id,attr"`
+  Content string   `xml:"content"`
+  Author  string   `xml:"author"`
+  Xml     string   `xml:",innerxml"`
+}
+So what are those curious-looking things after the definition of each field in the Post
+struct? They are called struct tags and Go determines the mapping between the struct
+and the XML elements using them, shown in figure 7.3. 
+Struct tags are strings after each field that are a key-value pair. The key is a string and
+must not have a space, a quote ("), or a colon (:). The value must be a string between
+double quotes (""). For XML, the key must always be xml.
+Note that because of the way Go does the mapping, the struct and all the fields in the
+struct that you create must be public, which means the names need to be capitalized.
+In the previous code, the struct Post can’t be just post and Content can’t be content. 
+Why use backticks (`) in struct tags?
+If you’re wondering why backticks (`) are used to wrap around the struct tag, remember
+that strings in Go are created using the double quotes (") and backticks (`). Single
+quotes (') are used for runes (an int32 that represents a Unicode code point) only.
+You’re already using double quotes inside the struct tag, so if you don’t want to escape
+those quotes, you’ll have to use something else—hence the backticks.
+type Post struct {
+ XMLName xml.Name `xml:"post"`
+ Id      string   `xml:"id,attr"`
+ Content string   `xml:"content"`
+ Author  Author   `xml:"author"`
+ Xml     string   `xml:",innerxml"`
+}
+Struct tag
+Value
+Key
+Figure 7.3
+Struct tags are used to define the mapping 
+between XML and a struct.

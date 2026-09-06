@@ -1,0 +1,66 @@
+54
+CHAPTER 3
+Packaging and tooling
+3.7.2
+Introducing gb
+Gb is a whole new class of build tool being developed by members of the Go commu-
+nity. Gb takes a different approach to solving the reproducible-build problem, which
+starts with the understanding that wrapping the Go tooling is not an option.
+ The philosophy behind gb stems from the idea that Go doesn’t have reproducible
+builds because of the import statement. The import statement drives go get, but
+import doesn’t contain sufficient information to identify which revision of a package
+should be fetched any time go get is called. The possibility that go get can fetch a dif-
+ferent version of code for any given package at any time makes supporting the Go
+tooling in any reproducible solution complicated and tedious at best. You saw some of
+this tediousness with the large import paths when using godep. 
+ This understanding resulted in the creation of the gb build tool. Gb doesn’t wrap
+the Go tooling, nor does it use GOPATH. Gb replaces the Go tooling workspace meta-
+phor with a project-based approach. This has natively allowed vendoring without the
+need for rewriting import paths, which is mandated by go get and a GOPATH workspace.
+ Let’s look at how the last project could be converted into a gb project.
+/home/bill/devel/myproject ($PROJECT)
+|-- src
+|
+|-- cmd
+|
+|
+|-- myproject
+|
+|
+|
+|-- main.go
+|
+|-- examples
+|
+|-- model
+|
+|-- README.md
+|-- vendor
+|-- src
+|-- bitbucket.org
+|
+|-- ww
+|
+|-- goautoneg
+|
+|-- Makefile
+|
+|-- README.txt
+|
+|-- autoneg.go
+|
+|-- autoneg_test.go
+|-- github.com
+|-- beorn7
+|-- perks
+|-- README.md
+|-- quantile
+|-- bench_test.go
+|-- example_test.go
+|-- exampledata.txt
+|-- stream.go
+A gb project is simply a directory on disk that contains a subdirectory named src/. The
+symbol $PROJECT refers to the root directory on disk where the src/ directory is located
+and is only used as a shortcut for describing the location on disk for the project.
+Listing 3.12
+Example of a gb project

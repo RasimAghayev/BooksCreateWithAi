@@ -1,0 +1,24 @@
+23
+3 
+LESSON
+LOOPS AND BRANCHES
+After reading lesson 3, you’ll be able to
+Have your computer make choices with if and switch
+Repeat code with for loops
+Use conditions for looping and branching
+Computer programs rarely read from beginning to end like a novel. Programs are more 
+like Choose Your Own Adventure books or interactive fiction. They take different paths 
+under certain conditions or repeat the same steps until a condition is met.  
+If you’re familiar with the if, else, and for keywords found in many programming lan-
+guages, this lesson will serve as a speedy introduction to Go’s syntax.
+Consider this When Nathan was young, his family would play Twenty Questions to
+pass the time on long trips. One person would think of something, and everyone else
+tried to guess what it was. Questions could only be answered with yes or no. A question
+like “How big is it?” would invite a blank stare. Instead, a common question was “Is it
+larger than a toaster?”
+Computer programs operate on yes/no questions. Given some condition (such as
+larger than a toaster), a CPU can either continue down a path or jump (JMP) to some-
+where else in the program. Complex decisions need to be broken down into smaller,
+simpler conditions.
+➠
+ 

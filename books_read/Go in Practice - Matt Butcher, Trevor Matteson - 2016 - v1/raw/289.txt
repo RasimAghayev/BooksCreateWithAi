@@ -1,0 +1,46 @@
+266
+CHAPTER 11
+Reflection and code generation
+and arrays, and even information about what a channel can send or receive. For all of
+Go’s elegance, though, the reflection package can be difficult to learn and unforgiv-
+ing to use: many of the functions and methods in that package will panic rather than
+return errors.
+ The example you’ve looked at here sets the stage for using one of our favorite Go
+features. Next, you’ll look at Go’s annotation system. You’ll see how to build and
+access your own struct tags.
+11.2
+Structs, tags, and annotations
+Go has no macros, and unlike languages such as Java and Python, Go has only Spartan
+support for annotations. But one thing you can easily annotate in Go is properties on
+a struct. You’ve already seen this practice for providing JSON processing information.
+Here’s an example.
+11.2.1 Annotating structs
+In the previous chapter, you saw an example of using struct annotations with things
+like the JSON encoder. For example, you can begin with the struct from listing 11.5
+and annotate it for the JSON encoder, as shown in the following listing.
+package main
+import (
+     "encoding/json"
+     "fmt"
+)
+type Name struct {
+     First string `json:"firstName"`
+     Last  string `json:"lastName "`
+}
+func main() {
+     n := &Name{"Inigo", "Montoya"}
+     data, _ := json.Marshal(n)
+     fmt.Printf("%s\n", data)B
+}
+This code declares a single struct, Name, that’s annotated for JSON encoding. Roughly
+speaking, it maps the struct member First to the JSON field firstName, and the struct
+field Last to lastName. If you were to run this code, the output would look like this:
+$ go run json.go
+{"firstName":"Inigo","lastName":"Montoya"}
+The struct annotations make it possible to control how your JSON looks. Struct tags
+provide a convenient way to provide small bits of processing data to fields on a struct.
+Listing 11.8
+Simple JSON struct
+Annotates struct fields for JSON 
+encoding and decoding
+Marshals n to JSON and prints it

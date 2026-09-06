@@ -1,0 +1,31 @@
+19
+Hello Go
+You can do this in any directory. If your GOPATH is set up properly, this will create a
+binary executable file in your $GOPATH/bin directory named first_webapp. Run the
+executable file from the console. Because you have the $GOPATH/bin directory in
+your PATH you should be able to just run it from anywhere. This will start up your Go
+web application at port 8080. That’s it!
+ Now fire up your browser and go to http://localhost:8080. Figure 1.3 shows what
+you should see.
+Take a closer look at the code. The first line declares what kind of program you’re
+writing. The package keyword is followed by the name of the package. An executable
+program must always be in a package called main, and this is the same for a web app. If
+you have any experience with web application programming in some other languages
+(such as Ruby, Python, or Java) you might notice the difference right away. In those
+languages you often need to deploy the web application to an application server that
+provides an environment for your web applications to run. In Go, this environment is
+provided by the net/http package and is compiled together with the rest of your code
+to create a readily deployable standalone web app.
+ The next line imports the necessary libraries. You import standard Go libraries
+(packages) very much the same way you import other third-party libraries. Here
+you’re importing two packages: fmt, which allows formatted I/O (allowing you to do
+stuff like Fprintf) and http, which is the main package for interacting with HTTP:
+import (
+     "fmt"
+     "net/http"
+)
+This is followed by a function definition. You define a function named handler. The
+term handler is often used for callback functions triggered by an event, and that’s what
+Figure 1.3
+First web 
+application screenshot

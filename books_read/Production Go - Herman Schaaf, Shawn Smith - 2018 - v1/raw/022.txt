@@ -1,0 +1,44 @@
+Basics
+16
+An example of uint underflow
+1
+package main
+2
+3
+import (
+4
+"fmt"
+5
+)
+6
+7
+func main() {
+8
+var p, s uint32 = 0, 1
+9
+fmt.Printf("p - s = %d - %d = %d", p, s, p-s)
+10
+// Output: p - s = 0 - 1 = 4294967295
+11
+}
+Running this, we get:
+$ go run uint.go
+p - s = 0 - 1 = 4294967295
+As this example illustrates, if we are not careful when subtracting from the uint type, we can run into
+underflow and get a large positive value instead of -1. Be aware of the limitations before choosing
+unsigned integer types.
+Floating point numbers
+For floating point numbers we have two types, float32 and float64. A float32 represents a 32-
+bit floating-point number as described in the IEEE-754 standard, and float64 represents a 64-bit
+floating-point number.
+An integer can be converted to a floating-point number with a type conversion:
+1
+x := 15
+2
+y := float64(x)
+This will be especially useful when using the math package, as the functions of that package typically
+work with float64 (for example, math.Mod and math.Abs both take float64).
+Complex numbers
+Complex numbers are expressed by the types complex64 and complex128. A complex64 number is a
+float32 with real and imaginary parts, and a complex128 is a float64 with real and imaginary parts.
+Creating a complex number is done like so:

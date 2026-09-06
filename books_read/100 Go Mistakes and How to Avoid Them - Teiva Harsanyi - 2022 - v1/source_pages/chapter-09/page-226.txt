@@ -1,0 +1,48 @@
+206
+CHAPTER 9
+Concurrency: Practice
+Then what’s the purpose of Go allowing messages to be received from or sent to a nil
+channel? We will discuss this question with a concrete example.
+ We will implement a func merge(ch1, ch2 <-chan int) <-chan int function to
+merge two channels into a single channel. By merging them (see figure 9.7), we mean
+each message received in either ch1 or ch2 will be sent to the channel returned.
+How can we do this in Go? Let’s first write a naive implementation that spins up a
+goroutine and receives from both channels (the resulting channel will be a buffered
+channel with one element):
+func merge(ch1, ch2 <-chan int) <-chan int {
+ch := make(chan int, 1)
+go func() {
+for v := range ch1 {
+ch <- v
+}
+for v := range ch2 {
+ch <- v
+}
+close(ch)
+}()
+return ch
+}
+Within another goroutine, we receive from both channels, and each message ends up
+being published in ch.
+ The main issue with this first version is that we receive from ch1 and then we receive
+from ch2. It means we won’t receive from ch2 until ch1 is closed. This doesn’t fit our
+use case, as ch1 may be open forever, so we want to receive from both channels simul-
+taneously.
+ Let’s write an improved version with concurrent receivers using select:
+func merge(ch1, ch2 <-chan int) <-chan int {
+ch := make(chan int, 1)
+go func() {
+for {
+select {
+Merge
+ch1
+ch2
+Figure 9.7
+Merging two 
+channels into one
+Receives from ch1 and publishes 
+to the merged channel
+Receives from ch2 and publishes 
+to the merged channel
+Receives concurrently 
+to both ch1 and ch2

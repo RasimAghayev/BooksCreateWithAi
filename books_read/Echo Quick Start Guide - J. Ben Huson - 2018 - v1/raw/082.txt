@@ -1,0 +1,25 @@
+achieve zero allocations per call, Echo reuses context in a context pool. We will
+discuss that in Chapter 4, Utilizing the Request Context and Data Bindings.
+Interestingly, one of the most popular routers is the Gorilla Mux router from the
+Gorilla web toolkit, which is a collection of independent tools which can be used
+to create web applications. Gorilla Mux, as seen in the preceding code, performs
+fairly poorly compared to some of the other high-performance routers, taking an
+average of 7,431,130 nanoseconds to resolve a route, which is 175 times slower
+than Echo's router implementation for the full GitHub API. This slowness has
+everything to do with the implementation of the router. Gorilla Mux uses a
+regular expression-based routing engine, much like the Django web framework
+in Python. For every request that comes in, Gorilla Mux will iterate over all of
+the regular expressions it holds for routes, and check to see if the request
+matches.
+Though seven milliseconds does not seem like much to be worried about from a
+speed perspective, you have to realize that this is seven milliseconds of
+computation per request. If you have many requests, you will waste more and
+more time just trying to isolate which handler to run for the request. Since
+routing is performed on every single request, we need to keep an eye on
+performance.
+You should always use the best tool for the job when writing a web application,
+and there are many times when a Radix Tree does not make sense for API
+endpoint routing. Since a search from a Tree takes O(k), where k is the length of
+the string being searched within the tree, exceedingly long endpoint paths might
+have negative performance issues compared to a Hash Map data structure, which
+is built into the standard library.

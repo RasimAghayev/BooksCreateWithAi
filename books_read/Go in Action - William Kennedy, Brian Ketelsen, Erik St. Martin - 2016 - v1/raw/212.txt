@@ -1,0 +1,74 @@
+191
+Logging
+Panic family of functions is used to write a log message and then issue a panic, which
+unless recovered, will cause the program to terminate and stack trace. The Print fam-
+ily of functions is the standard way to write log messages. 
+ One nice thing about the log package is that loggers are multigoroutine-safe. This
+means that multiple goroutines can call these functions from the same logger value at
+the same time without the writes colliding with each other. The standard logger and
+any customized logger you may create will have this attribute. 
+ Now that you know how to use the log package and configure it, let’s explore how
+to create customized loggers so you can have different logging levels that can write
+logs to different destinations. 
+8.2.2
+Customized loggers
+Creating customized loggers require that you create your own Logger type values.
+Each logger you create can be configured for a unique destination and set with its
+own prefix and flags. Let’s look at an example program that creates different Logger
+type pointer variables to support different logging levels.
+01 // This sample program demonstrates how to create customized loggers.
+02 package main
+03
+04 import (
+05
+"io"
+06
+"io/ioutil"
+07
+"log"
+08
+"os"
+09 )
+10
+11 var (
+12
+Trace
+*log.Logger // Just about anything
+13
+Info
+*log.Logger // Important information
+14
+Warning *log.Logger // Be concerned
+15
+Error
+*log.Logger // Critical problem
+16 )
+17
+18 func init() {
+19
+file, err := os.OpenFile("errors.txt",
+20
+os.O_CREATE|os.O_WRONLY|os.O_APPEND, 0666)
+21
+if err != nil {
+22
+log.Fatalln("Failed to open error log file:", err)
+23
+}
+24
+25
+Trace = log.New(ioutil.Discard,
+26
+"TRACE: ",
+27
+log.Ldate|log.Ltime|log.Lshortfile)
+28
+29
+Info = log.New(os.Stdout,
+30
+"INFO: ",
+31
+log.Ldate|log.Ltime|log.Lshortfile)
+32
+Listing 8.11
+listing11.go

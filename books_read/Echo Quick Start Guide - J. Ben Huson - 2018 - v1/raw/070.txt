@@ -1,0 +1,21 @@
+Exploring Routing Capabilities
+In a web application, routing is the process of mapping the path component of a
+Uniform Resource Identifier (URI) to the handler code that represents a given
+resource. There are many ways to implement this functionality, all with positive
+and negative consequences for performance, usability, and functionality. The
+Echo framework provides an efficient solution to this problem through the
+implementation of a Radix Tree. Other frameworks range in routing
+implementation by using regular expressions, maps, and other mechanisms to
+perform this mapping functionality.
+Within this chapter, we will go through examples of how the routing capabilities
+within the Echo framework perform better than many other web application
+frameworks. We will dive into route organization, grouping of routes, and real
+examples of best practices when coming up with your routing. By the end of this
+chapter, you should have confidence with the following:
+How routing works within a web application:
+How to effectively group routes within your web application
+How to organize your application routes
+Internals and capabilities of the Echo router
+Comparisons with other routers:
+Performance considerations
+Functional considerations

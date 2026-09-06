@@ -1,0 +1,66 @@
+121
+Exporting and unexporting identifiers
+package, it’s good practice to name the package the same as the folder the code is in.
+All the Go tooling expects this convention, so it’s a good practice to follow. 
+ In package counters, we’ve declared a single identifier named alertCounter on
+line 06. This identifier is a type using int as its base type. An important aspect of this
+identifier is that it has been unexported. 
+ When an identifier starts with a lowercase letter, the identifier is unexported or
+unknown to code outside the package. When an identifier starts with an uppercase let-
+ter, it’s exported or known to code outside the package. Let’s look at the code that
+imports this package.
+01 // Sample program to show how the program can't access an
+02 // unexported identifier from another package.
+03 package main
+04
+05 import (
+06
+"fmt"
+07
+08
+"github.com/goinaction/code/chapter5/listing64/counters"
+09 )
+10
+11 // main is the entry point for the application.
+12 func main() {
+13
+// Create a variable of the unexported type and initialize
+14
+// the value to 10.
+15
+counter := counters.alertCounter(10)
+16
+17
+// ./listing64.go:15: cannot refer to unexported name
+18
+//
+counters.alertCounter
+19
+// ./listing64.go:15: undefined: counters.alertCounter
+20
+21
+fmt.Printf("Counter: %d\n", counter)
+22 }
+The code in listing64.go from listing 5.66 is declaring the main package on line 03,
+and then on line 08 the counters package is imported. With the counters package
+imported, we move to the main function and line 15.
+13
+// Create a variable of the unexported type and initialize
+14
+// the value to 10.
+15
+counter := counters.alertCounter(10)
+16
+17
+// ./listing64.go:15: cannot refer to unexported name
+18
+//
+counters.alertCounter
+19
+// ./listing64.go:15: undefined: counters.alertCounter
+On line 15 in listing 5.67, the code attempts to create a value of the unexported type
+alertCounter. But this code produces a compiler error that states that the code at
+Listing 5.66
+listing64.go
+Listing 5.67
+listing64.go: lines 13–19

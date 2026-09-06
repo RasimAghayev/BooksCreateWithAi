@@ -1,0 +1,23 @@
+Tooling
+115
+Hit Enter on any one of those and you’ll jump to the struct definition in the listed file. To get back
+to the list, do <Ctrl-W> j. Then you can scroll through it as before, or quit out of it as usual with :q.
+Go ahead and try some of the other guru commands like :GoReferrers, :GoCallees, and :GoCallers.
+More help on guru for vim-go can be found at the vim-go-tutorial³⁷, and a list of guru queries as
+well as other help output can be seen when running guru -help.
+Race Detector
+Go comes with a builtin mechanism for detecting race conditions³⁸. There are multiple ways to
+invoke it:
+$ go test -race mypkg
+// to test the package
+$ go run -race mysrc.go
+// to run the source file
+$ go build -race mycmd
+// to build the command
+$ go install -race mypkg // to install the package
+In this section we’ll write some code that contains a data race, and catch it with a test that we’ll run
+with the race detector enabled. A data race can occur in Go when two goroutines try to access the
+same object in memory concurrently, one of which is trying to write to the object, and there is no
+lock in place to control access to the object.
+³⁷https://github.com/fatih/vim-go-tutorial#guru
+³⁸https://golang.org/doc/articles/race_detector.html

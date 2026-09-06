@@ -1,0 +1,72 @@
+53
+TECHNIQUE 7
+Handling complex paths with wildcards
+func newPathResolver() *pathResolver {
+     return &pathResolver{make(map[string]http.HandlerFunc)}
+}
+type pathResolver struct {
+     handlers map[string]http.HandlerFunc
+}
+func (p *pathResolver) Add(path string, handler http.HandlerFunc) {
+     p.handlers[path] = handler
+}
+func (p *pathResolver) ServeHTTP(res http.ResponseWriter, req *http.Request) 
+{
+     check := req.Method + " " + req.URL.Path
+     for pattern, handlerFunc := range p.handlers {
+            if ok, err := path.Match(pattern, check); ok && err == nil {
+                   handlerFunc(res, req)
+                   return
+            } else if err != nil {
+                   fmt.Fprint(res, err)
+            }
+     }
+     http.NotFound(res, req)
+}
+func hello(res http.ResponseWriter, req *http.Request) {
+     query := req.URL.Query()
+     name := query.Get("name")
+     if name == "" {
+            name = "Inigo Montoya"
+     }
+     fmt.Fprint(res, "Hello, my name is ", name)
+}
+func goodbye(res http.ResponseWriter, req *http.Request) {
+     path := req.URL.Path
+     parts := strings.Split(path, "/")
+     name := parts[2]
+     if name == "" {
+            name = "Inigo Montoya"
+     }
+     fmt.Fprint(res, "Goodbye ", name)
+}
+The main function starts off quite differently by getting an instance of a pathResolver
+B. The pathResolver, which you’ll look at in a moment, contains the core logic for
+matching functions to paths. After an instance of the pathResolver has been created,
+two mappings of HTTP verbs and their paths are added to the resolver C. The format
+for these is the HTTP method name followed by a path, with a space separating the two.
+You can use an asterisk (*) as a wildcard character for the HTTP method or in the path.
+Creates new 
+initialized 
+pathResolver
+Adds paths
+to internal
+lookup
+Constructs
+our method
++ path to
+check
+Iterates over 
+registered paths
+E
+Executes the 
+handler function 
+for a matched path
+F
+Checks whether
+current path
+matches a
+registered one
+G
+If no path matches, the page wasn’t found.
+H

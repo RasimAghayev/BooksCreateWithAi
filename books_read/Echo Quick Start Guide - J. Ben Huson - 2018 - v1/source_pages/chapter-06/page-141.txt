@@ -1,0 +1,15 @@
+Summary
+In conclusion, logging and error handling within an Echo-based web application
+allows the developer a mechanism to make their applications more reliable and
+resilient. This will lead to fewer problems at deployment time, as well as a
+decreased need for developer interaction at operations time. In this chapter, we
+have shown you how to effectively use the logging capabilities in Echo to
+standardize how logging is performed within your web application. We have also
+looked at how Echo handles error conditions, and the best practices for the
+propagation of errors through middleware and handler functions.
+In Chapter 7, Testing Applications, we are taking on the elephant in the room by
+talking about how to test web applications. More often than not, testing web
+applications is a practice that is generally forgotten or ignored by developers,
+unfortunately. We will show you how to break down your web application into
+units that are testable. We will also talk about testing strategies for web
+application development.

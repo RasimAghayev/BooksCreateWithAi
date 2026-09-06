@@ -1,0 +1,19 @@
+INDEX
+364
+unidiomatic organization of code 5
+Unit stride 306
+Unlock method 37
+UUIDs (universally unique identifiers) 123
+V
+variable shadowing 7–9
+victim caches 303
+virtual cores 300
+W
+Wait method 170, 221, 226
+WithContext function 229
+work-stealing 168
+worker pooling pattern 182
+wrapping errors 146–149
+Write method 35, 38
+WriteHeader method 145
+WriteString method 120

@@ -1,0 +1,36 @@
+236
+Lesson 28  To err is human
+You can defer any function or method, and like multiple return values, defer isn’t specif-
+ically for error handling. It does improve error handling by removing the burden of 
+always having to remember to clean up. Thanks to defer, the code that handles errors 
+can focus on the error at hand, and nothing more.
+The defer keyword has made things a little better, but checking for errors after writing 
+each line is still a pain. It’s time to get creative!   
+28.2.3 Creative error handling
+In January 2015, a marvelous article on error handling was published on the Go blog 
+(blog.golang.org/errors-are-values). The article describes a simple way to write to a file 
+without repeating the same error-handling code after every line.
+To apply this technique, you need to declare a new type, which we call safeWriter in list-
+ing 28.5. If an error occurs while safeWriter is writing to a file, it stores the error instead 
+of returning it. Subsequent attempts to write to the same file will be skipped if writeln  
+sees that an error occurred previously.
+type safeWriter struct {
+    w   io.Writer
+    err error 
+}
+func (sw *safeWriter) writeln(s string) {
+    if sw.err != nil {
+        return
+    }
+    _, sw.err = fmt.Fprintln(sw.w, s)
+}
+Listing 28.5 Storing error values: writer.go
+Quick check 28.3 When will the deferred action be called?
+QC 28.3 answer Defer will be called when returning from the function.
+A place to store the 
+first error
+Skips the write if an error 
+occurred previously
+Writes a line and 
+store any error
+ 

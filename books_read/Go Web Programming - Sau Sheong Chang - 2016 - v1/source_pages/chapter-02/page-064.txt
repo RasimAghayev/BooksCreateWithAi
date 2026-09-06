@@ -1,0 +1,47 @@
+43
+Wrapping up
+2.8
+Starting the server
+Let’s round out this chapter by showing code that starts up the server and attaches the
+multiplexer to the server. This is part of the main function, so it will be in main.go.
+server := &http.Server{
+  Addr:     "0.0.0.0:8080",
+  Handler:  mux,
+}
+server.ListenAndServe()      
+The code is simple; you create a Server struct and call the ListenAndServe function
+on it and you get your server.
+ Now let’s get it up and running. Compile this from the console:
+go build
+This command will create a binary executable file named chitchat in the same direc-
+tory (and also in in your $GOPATH/bin directory). This is our ChitChat server. Let’s
+start the server:
+./chitchat
+This command will start the server. Assuming that you’ve created the necessary data-
+base tables, go to http://localhost:8080 and registered for an account; then log in and
+start creating your own forum threads.
+2.9
+Wrapping up
+We went through a 20,000-foot overview of the various building blocks of a Go web
+application. Figure 2.9 shows a final recap of the entire flow. As illustrated,  
+1
+The client sends a request to the server.
+2
+This is received by the multiplexer, which redirects it to the correct handler.
+Client
+Multiplexer
+Handler
+Handler
+Handler
+Template engine
+Templates
+Server
+Request
+Response
+Model
+Model
+Model
+Database
+Model
+Figure 2.9
+The web application big picture 

@@ -1,0 +1,32 @@
+270
+Lesson 31  Concurrent state
+Perhaps two gophers talking at the same time confuse the seller at the other end of the 
+line, and they end up ordering the wrong things, or the wrong quantity of things, or 
+something else about the order goes wrong. There’s no way to know—all bets are off.
+That’s the problem with shared Go values. Unless we explicitly know that it’s okay to 
+use the specific kind of value in question concurrently, we must assume that it’s not 
+okay. This kind of situation is known as a race condition because it’s as if the goroutines 
+are racing to use the value.
+NOTE The Go compiler includes functionality that tries to find race conditions in your
+code. It’s well worth using, and it’s always worth fixing your code if it reports a race. See
+golang.org/doc/articles/race_detector.html.
+NOTE It’s okay if two goroutines read from the same thing at the same time, but if you
+read or write at the same time as another write, you’ll get undefined behavior.
+31.1 Mutexes
+Back in the gopher factory, one clever gopher has a bright idea. She puts a glass jar in the 
+middle of the factory floor that holds a single metal token. When a gopher needs to use 
+the phone, they take the token out of the jar and keep it until the phone call has finished. 
+Then they return the token to the jar. If there’s no token in the jar when a gopher wants 
+to make a call, they have to wait until the token is returned.
+Consider this Say we have a bunch of goroutines working away, crawling the web
+and scraping web pages. We might want to keep track of which web pages have
+already been visited. Let’s say we want to keep track of the number of web links to each
+page (Google does something similar to this in order to rank web pages in its search
+results).
+It seems like we could use a map shared between the goroutines that holds the link
+count for each web page. When a goroutine processes a web page, it would increment
+the entry in the map for that page.
+However, doing that is a mistake because all the goroutines are updating the map at
+the same time, and that produces race conditions. We need some way of getting
+around that. Enter mutexes.
+ 

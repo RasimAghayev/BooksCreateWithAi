@@ -1,0 +1,59 @@
+G
+o may be the perfect systems language. Built with simpli-
+city, concurrency, and modern applications in mind, Go 
+provides the core tool set for rapidly building web, cloud, 
+and systems applications. If you know a language like Java or C#, 
+it’s easy to get started with Go; the trick is fi nding the practical
+dirt-under-the-fi ngernails techniques that you need to build 
+production-ready code. 
+Go in Practice guides you through dozens of real-world tech-
+niques in key areas. Following a cookbook-style Problem/
+Solution/Discussion format, this practical handbook builds on 
+the foundational concepts of the Go language and introduces 
+specifi c strategies you can use in your day-to-day applications. 
+You’ll learn techniques for building web services, using Go in 
+the cloud, testing and debugging, routing, network applications, 
+and much more.  Aft er fi nishing this book, you will be ready to 
+build sophisticated cloud-native Go applications.
+What’s Inside
+Dozens of specifi c, practical Golang techniques
+Using Go for devops and cloudops
+Writing RESTful web services and microservices
+ Practical Web dev techniques 
+Written for experienced developers who have already started ex-
+ploring Go and want to use it eff ectively in a production setting.
+Matt Butcher is a soft ware architect at Deis.  Matt Farina is a Prin-
+cipal Engineer in the Advanced Technology Group at Hewlett 
+Packard Enterprise. Th ey are both authors, speakers, and regular 
+open source contributors.
+To download their free eBook in PDF, ePub, and Kindle formats, owners 
+of this book should visit manning.com/books/go-in-practice
+$44.99 / Can $51.99  [INCLUDING eBOOK]
+GO/PROGRAMMING
+M A N N I N G
+“
+Vital knowledge that 
+will help take your 
+application development 
+    to the next level.”
+—From the Foreword by 
+Brian Ketelsen
+Coauthor of Go in Action
+“
+An invaluable resource 
+you can start using on 
+day one to build high-
+performance, real-world 
+web applications.”
+ 
+—Gary A. Staff ord
+Th oughtWorks
+“
+A great combination 
+of simple examples with 
+thorough explanations of 
+  practical concepts in Go.”
+—Brandon Titus, Mercury
+Butcher    Farina
+Go  IN PRACTICE
+SEE INSERT

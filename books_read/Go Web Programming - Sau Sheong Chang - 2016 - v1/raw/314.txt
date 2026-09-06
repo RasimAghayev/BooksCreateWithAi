@@ -1,0 +1,60 @@
+Sau Sheong Chang
+T
+he Go language handles the demands of scalable, high-
+performance web applications by providing clean and fast 
+compiled code, garbage collection, a simple concurrency 
+model, and a fantastic standard library. It’s perfect for writing 
+microservices or building scalable, maintainable systems.
+Go Web Programming teaches you how to build web applica-
+tions in Go using modern design principles. You’ll learn how 
+to implement the dependency injection design pattern for 
+writing test doubles, use concurrency in web applications, and 
+create and consume JSON and XML in web services. Along 
+the way, you’ll discover how to minimize your dependence on 
+external frameworks, and you’ll pick up valuable productivity 
+techniques for testing and deploying your applications. 
+What’s Inside
+● Basics
+● Testing and benchmarking 
+● Using concurrency 
+● Deploying to standalone servers, PaaS, and Docker
+● Dozens of tips, tricks, and techniques
+This book assumes you’re familiar with Go language basics 
+and the general concepts of web development.
+Sau Sheong Chang is Managing Director of Digital Technology 
+at Singapore Power and an active contributor to the Ruby and 
+Go communities.
+To download their free eBook in PDF, ePub, and Kindle formats, 
+owners of this book should visit 
+manning.com/books/go-web-programming
+$44.99 / Can $51.99  [INCLUDING eBOOK]
+Go Web Programming
+GO/PROGRAMMING
+M A N N I N G
+“
+As the importance of the 
+Go language grows, the need 
+for a great tutorial grows with 
+ it. This book ﬁ lls this need.”
+ 
+—Shaun Lippy
+Oracle Corporation
+“
+An excellent book, whether 
+you are an experienced 
+gopher, or you know 
+web development but 
+are new to Go.”
+ 
+—Benoit Benedetti
+University of Nice
+“
+Everything you need to get 
+started writing and deploying 
+web apps in Go.”
+—Brian Cooksey, Zapier
+“
+Deﬁ nitive how-to guide for 
+web development in Go.”
+—Gualtiero Testa, Factor-y S.r.l.
+SEE INSERT

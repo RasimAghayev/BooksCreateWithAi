@@ -1,0 +1,56 @@
+40
+CHAPTER 2
+A solid foundation
+ 
+package main
+import (
+     "encoding/json"
+     "fmt"
+     "os"
+)
+type configuration struct {
+     Enabled bool
+     Path    string
+}
+func main() {
+     file, _ := os.Open("conf.json")
+     defer file.Close()
+     decoder := json.NewDecoder(file)
+     conf := configuration{}
+     err := decoder.Decode(&conf)
+     if err != nil {
+            fmt.Println("Error:", err)
+     }
+     fmt.Println(conf.Path)
+}
+This method has only a few parts. First, a type or collection of types needs to be cre-
+ated representing the JSON file B. The names and nesting must be defined and map
+to the structure in the JSON file. The main function begins by opening the configura-
+tion file C and decoding the JSON file into an instance of the configuration struct
+D. If no errors occur, the values from the JSON file won’t be available on the conf vari-
+able and can be used in your application.
+NOTE
+JSON parsing and handling has many features and nuances. Chapter 6,
+which covers working with JSON APIs, presents the JSON features in more
+detail.
+Storing configuration in JSON is useful if you’re already familiar with JSON, using a
+distributed configuration store such as etcd, or want to stick with the Go standard
+library. JSON files can’t contain comments, which can be a common complaint when
+creating configuration files or generating examples of them. In the following two
+techniques, comments are available.
+Listing 2.9
+Parsing a JSON configuration file: json_config.go
+A type capable of holding 
+the JSON values
+B
+Opens the configuration file
+C
+Parses the JSON 
+into a variable 
+with the variables
+D
+etcd
+Inspired by Apache ZooKeeper and Doozer, etcd provides distributed shared configu-
+ration and service discovery. This highly available store uses the Raft consensus
+algorithm to manage the replication. etcd is written in Go. For more information, visit
+https://github.com/coreos/etcd.

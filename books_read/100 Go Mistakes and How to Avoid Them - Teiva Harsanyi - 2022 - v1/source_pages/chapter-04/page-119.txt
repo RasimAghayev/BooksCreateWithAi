@@ -1,0 +1,71 @@
+99
+4.2
+#31: Ignoring how arguments are evaluated in range loops
+s := []int{0, 1, 2}
+for range s {
+s = append(s, 10)
+}
+To understand this question, we should know that
+when using a range loop, the provided expression is
+evaluated only once, before the beginning of the
+loop. In this context, “evaluated” means the provided
+expression is copied to a temporary variable, and
+then range iterates over this variable. In this exam-
+ple, when the s expression is evaluated, the result is a
+slice copy, as shown in figure 4.1.
+ The range loop uses this temporary variable. The
+original slice s is also updated during each iteration.
+Hence, after three iterations, the state is as shown in
+figure 4.2.
+Each step results in appending a new element. However, after three steps, we have
+gone over all the elements. Indeed, the temporary slice used by range remains a
+three-length slice. Hence, the loop completes after three iterations.
+ The behavior is different with a classic for loop:
+s := []int{0, 1, 2}
+for i := 0; i < len(s); i++ {
+s = append(s, 10)
+}
+In this example, the loop never ends. The len(s) expression is evaluated during each
+iteration, and because we keep adding elements, we will never reach a termination
+state. It’s essential to keep this difference in mind to use Go loops accurately.
+ Coming back to the range operator, we should know that the behavior we
+described (expression evaluated only once) also applies to all the data types provided.
+0
+1
+2
+ptr
+len
+3
+cap
+3
+s
+ptr
+len
+3
+cap
+3
+range copy
+Figure 4.1
+s is copied to a 
+temporary variable used by range.
+0
+1
+2
+ptr
+len
+6
+cap
+6
+s
+ptr
+len
+3
+cap
+3
+range copy
+10
+10
+10
+Figure 4.2
+The temporary variable remains a 
+three-length slice; hence, the iteration completes.

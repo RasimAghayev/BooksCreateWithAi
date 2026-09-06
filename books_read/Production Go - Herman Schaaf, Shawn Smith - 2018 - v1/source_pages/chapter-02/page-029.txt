@@ -1,0 +1,57 @@
+Basics
+23
+1
+func ishex(c byte) bool {
+2
+switch {
+3
+case '0' <= c && c <= '9':
+4
+return true
+5
+case 'a' <= c && c <= 'f':
+6
+return true
+7
+case 'A' <= c && c <= 'F':
+8
+return true
+9
+}
+10
+return false
+11
+}
+This switch statement has no condition, meaning it is functionally equivalent to switch true.
+A switch with a condition looks like this (taken from Go’s fmt/print.go):
+1
+func (p *pp) fmtBool(v bool, verb rune) {
+2
+switch verb {
+3
+case 't', 'v':
+4
+p.fmt.fmt_boolean(v)
+5
+default:
+6
+p.badVerb(verb)
+7
+}
+8
+}
+and we can also declare a variable in the condition and switch on that:
+1
+switch err := err.(type) {
+2
+case NotFoundError:
+3
+...
+4
+}
+Arrays
+An array of a specific length can be declared like so:
+1
+var x [3]int
+In Go, however, arrays are rarely used unless you have a specific need for them. Slices are more
+common, which we’ll cover in the next section.

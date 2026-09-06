@@ -1,0 +1,20 @@
+79
+10 
+LESSON
+CONVERTING BETWEEN TYPES
+After reading lesson 10, you’ll be able to
+Convert between numeric, string, and Boolean types
+Previous lessons covered Booleans, strings, and a dozen different numeric types. If you 
+have variables of different types, you must convert the values to the same type before 
+they can be used together.
+Consider this Say you’re at the grocery store with a shopping list from your spouse.
+The first item is milk, but should you get cow’s milk, almond, or soy? Should it be
+organic, skim, 1%, 2%, whole, evaporated, or condensed? How many gallons? Do you
+call your spouse to ask or just pick something?
+Your spouse may get annoyed if you keep calling to ask for each detail. Iceberg or
+romaine lettuce? Russet or red potatoes? Oh, and was that 5 lbs. or 10? On the other
+hand, if you “think for yourself” and return with chocolate milk and french fries, that may
+not go over so well.
+If your spouse is a programmer and you’re a compiler in this scenario, what do you
+think Go’s approach would be?
+ 

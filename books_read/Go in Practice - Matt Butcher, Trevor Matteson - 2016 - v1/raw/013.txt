@@ -1,0 +1,56 @@
+CONTENTS
+xii
+TECHNIQUE 62
+Reusing connections
+238
+TECHNIQUE 63
+Faster JSON marshal and unmarshal
+241
+Moving beyond REST
+244
+TECHNIQUE 64
+Using protocol buffers
+244
+TECHNIQUE 65
+Communicating over RPC with protocol 
+buffers
+247
+10.3
+Summary
+252
+11 Reflection and code generation
+253
+11.1
+Three features of reflection
+254
+TECHNIQUE 66
+Switching based on type and kind
+254
+TECHNIQUE 67
+Discovering whether a value implements an 
+interface
+258
+TECHNIQUE 68
+Accessing fields on a struct
+262
+11.2
+Structs, tags, and annotations
+266
+Annotating structs
+266
+■Using tag annotations
+267
+TECHNIQUE 69
+Processing tags on a struct
+268
+11.3
+Generating Go code with Go code
+274
+TECHNIQUE 70
+Generating code with go generate
+275
+11.4
+Summary
+280
+index
+281

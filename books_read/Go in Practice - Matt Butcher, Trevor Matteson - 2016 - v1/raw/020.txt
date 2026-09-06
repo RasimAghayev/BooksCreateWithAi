@@ -1,0 +1,26 @@
+ABOUT THIS BOOK
+xix
+ There are 70 techniques explored in the book, each with its own Problem, Solu-
+tion, and Discussion sections.
+Code conventions and downloads
+All source code in the book is presented in a mono-spaced typeface like this, which
+sets it off from the surrounding text. In many listings, the code is annotated to point
+out key concepts, and numbered bullets are sometimes used in the text to provide
+additional information about the code.
+ Source code for the examples in the book is available for download from the pub-
+lisher’s website at www.manning.com/books/go-in-practice and from GitHub at
+github.com/Masterminds/go-in-practice.
+Author Online Forum
+The purchase of Go in Practice includes free access to a private web forum run by Man-
+ning Publications, where you can make comments about the book, ask technical ques-
+tions, and receive help from the authors and from other users. To access the forum and
+subscribe to it, point your web browser to www.manning.com/books/go-in-practice.
+This page provides information on how to get on the forum after you’re registered,
+what kind of help is available, and the rules of conduct on the forum. 
+ Manning’s commitment to our readers is to provide a venue where a meaningful
+dialogue between individual readers and between readers and the authors can take
+place. It’s not a commitment to any specific amount of participation on the part of the
+authors, whose contribution to the forum remains voluntary (and unpaid). We sug-
+gest you try asking the authors some challenging questions lest their interest stray!
+ The Author Online forum and the archives of previous discussions will be accessi-
+ble from the publisher’s website as long as the book is in print.

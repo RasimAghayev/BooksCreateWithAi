@@ -1,0 +1,43 @@
+28
+CHAPTER 2
+Go ChitChat
+To redirect the root URL to a handler function, you use the HandleFunc function:
+mux.HandleFunc("/", index)
+HandleFunc takes the URL as the first parameter, and the name of the handler func-
+tion as the second parameter, so when a request comes for the root URL (/), it’s redi-
+rected to a handler function named index. You don’t need to provide the parameters
+to the handler function because all handler functions take ResponseWriter as the first
+parameter and a pointer to Request as the second parameter.
+ Notice that I’ve done some sleight-of-hand when talking about handlers. I started
+off talking about handlers and then switched to talking about handler functions. This
+is intentional; handlers and handler functions are not the same, though they provide
+the same results in the end. We’ll talk more about them in chapter 3, but for now let’s
+move on.
+2.4.2
+Serving static files
+Besides redirecting to the appropriate handler, you can use the multiplexer to serve
+static files. To do this, you use the FileServer function to create a handler that will
+serve files from a given directory. Then you pass the handler to the Handle function of
+the multiplexer. You use the StripPrefix function to remove the given prefix from
+the request URL’s path.
+files := http.FileServer(http.Dir("/public"))
+mux.Handle("/static/", http.StripPrefix("/static/", files))
+In this code, you’re telling the server that for all request URLs starting with /static/,
+strip off the string /static/ from the URL, and then look for a file with the name
+starting at the public directory. For example, if there’s a request for the file http://
+localhost/static/css/bootstrap.min.css the server will look for the file 
+<application root>/css/bootstrap.min.css
+When it’s found, the server will serve it as it is, without processing it first.
+2.4.3
+Creating the handler function
+In a previous section you used HandleFunc to redirect the request to a handler func-
+tion. Handler functions are nothing more than Go functions that take a Response-
+Writer as the first parameter and a pointer to a Request as the second, shown next.  
+func index(w http.ResponseWriter, r *http.Request) {  
+  files := []string{"templates/layout.html", 
+                    "templates/navbar.html", 
+                    "templates/index.html",}
+  templates := template.Must(template.ParseFiles(files...))  
+  threads, err := data.Threads(); if err == nil {
+Listing 2.2
+The index handler function in main.go

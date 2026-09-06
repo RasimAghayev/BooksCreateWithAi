@@ -1,0 +1,47 @@
+101
+TECHNIQUE 20
+Recovering from panics
+ 
+package main
+import (
+     "errors"
+     "fmt"
+)
+func main() {
+     defer func() {
+            if err := recover(); err != nil {
+                    fmt.Printf("Trapped panic: %s (%T)\n", err, err)
+            }
+     }()
+     yikes()
+}
+func yikes() {
+     panic(errors.New("Something bad happened."))
+}
+This program illustrates what’s probably the most common pattern for panic recovery.
+To catch the panic that yikes raises, you write a deferred closure function that checks
+for a panic and recovers if it finds one.
+ In Go, when you defer a closure, you’re defining a function and then marking it to
+be called (in this case, with an empty argument list). The general form is defer
+func(){ /* body */ }(). Note that although it looks like it’s defined and called at
+once, Go’s runtime won’t call the function until it’s appropriate for a deferred func-
+tion to execute. In a moment, you’ll see how the separation between defining the clo-
+sure and then executing it later impacts the scope of the closure in a useful way.
+ The recover function in Go returns a value (interface{}) if a panic has been
+raised, but in all other cases it returns nil. The value returned is whatever value was
+passed into the panic. Running the preceding code returns this:
+$ go run recover_panic.go
+Trapped panic: Something bad happened. (*errors.errorString)
+Notice that because you add the %T to the formatting string, you also get information
+about the type of err, which is the error type created by errors.New.
+ Now you can take things one step further and look at how to use this clo-
+sure/recover combination to recover from a panic. Closures inherit the scope of their
+parent. Deferred closures, like the preceding one, inherit whatever is in scope before
+they’re declared. For instance, the following listing works fine.
+Listing 4.13
+Recovering from a panic
+Provides a deferred closure to
+handle panic recovery
+Calls a function that panics
+Emits a panic with an 
+error for a body

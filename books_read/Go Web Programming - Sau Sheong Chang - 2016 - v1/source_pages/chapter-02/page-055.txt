@@ -1,0 +1,48 @@
+34
+CHAPTER 2
+Go ChitChat
+the template to be included is the data passed into the template. For example, listing
+2.7 has {{ template "navbar" . }}, which indicates that the template named navbar
+should be included at that position, and the data passed into the layout template
+should be passed on to the navbar template too. 
+ The navbar template in the public.navbar.html template file is shown next. The
+navbar template doesn’t have any actions other than defining the template itself
+(actions aren’t strictly necessary in template files).
+{{ define "navbar" }}
+<div class="navbar navbar-default navbar-static-top" role="navigation">
+  <div class="container">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle collapsed" 
+    ➥ data-toggle="collapse" data-target=".navbar-collapse">
+        <span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="/">
+        <i class="fa fa-comments-o"></i>
+        ChitChat
+      </a>
+    </div>
+    <div class="navbar-collapse collapse">
+      <ul class="nav navbar-nav">
+        <li><a href="/">Home</a></li>
+      </ul>
+      <ul class="nav navbar-nav navbar-right">
+        <li><a href="/login">Login</a></li>
+      </ul>
+    </div>
+  </div>
+</div>
+{{ end }}
+Let’s look at the content template in last template file, index.html, in the following
+listing. Notice that the name of the template doesn’t necessary need to match the
+name of the template file, even though that has been the case for the past two files. 
+{{ define "content" }}
+<p class="lead">
+  <a href="/thread/new">Start a thread</a> or join one below!
+</p>
+Listing 2.8
+navbar.html template file
+Listing 2.9
+index.html template

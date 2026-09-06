@@ -1,0 +1,20 @@
+type CustomTemplate struct {
+*template.Template }
+func (ct *CustomTemplate) Render(w io.Writer, name string, data interface{},
+ctx echo.Context) error {
+return ct.ExecuteTemplate(w, name, data) }
+const RemindersTmpl = `
+<html>
+<head>
+<title>{{.Title}}</title> </head>
+<body>
+<table>
+<th>
+<td>Reminder Name</td> <td>Reminder ID</td> <td>Reminder Due</td>
+</th>
+{{ range .Reminders }}
+<tr>
+<td>{{ .Name }}</td> <td>{{ .ID }}</td> <td>{{ .Due }}</td> </tr>
+{{ else }}
+<tr>
+<td colspan=3>No rows!</td> </tr>

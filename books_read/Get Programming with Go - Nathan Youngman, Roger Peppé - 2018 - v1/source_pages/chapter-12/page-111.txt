@@ -1,0 +1,35 @@
+96
+Lesson 12  Functions
+The result returned by Unix is of the type Time. Thanks to type inference, the code that 
+calls Unix doesn’t need to specify the result type, which would be more verbose.
+NOTE Lesson 13 demonstrates how to declare new types like time.Time and big.Int.
+The time package declares and exports the Time type, which begins with an uppercase let-
+ter, just like the Unix function. By using capitalization to indicate what’s exported, it’s 
+apparent that the Time type is accessible from other packages.
+The Unix function accepts two parameters of the same type, documented as follows:
+func Unix(sec int64, nsec int64) Time
+But when parameters are listed in a function declaration, you only need to specify the 
+type when it changes, so it could have been written like this:
+func Unix(sec, nsec int64) Time
+This shortcut is optional, but it’s used elsewhere, such as the Contains function in the 
+strings package, which accepts two parameters of type string:
+func Contains(s, substr string) bool
+TIP The documentation at golang.org/pkg sometimes has examples that can be
+expanded, and you’ll find additional examples at gobyexample.com. If you’re forging ahead on
+your own projects while learning Go, these examples can be invaluable.
+Many programming languages have functions that accept multiple parameters, but Go 
+functions can also return multiple results. First shown in lesson 10, the Atoi function 
+converts a string to a number and returns two results, which are assigned to countdown 
+and err here:
+countdown, err := strconv.Atoi("10")
+The documentation for the strconv package declares Atoi like this:
+func Atoi(s string) (i int, err error)
+Two results are specified between parentheses, much like the parameter list, with a 
+name followed by a type for each result. In function declarations you can also list the 
+result types without names:
+func Atoi(s string) (int, error)
+NOTE The error type is a built-in type for errors, which lesson 28 covers in depth.
+A function you’ve been using since the beginning of this book is Println. It’s a rather 
+unique function in that it can accept one parameter, or two, or more. It can also accept 
+parameters of different types, including integers and strings:
+ 

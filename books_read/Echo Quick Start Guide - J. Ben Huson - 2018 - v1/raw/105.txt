@@ -1,0 +1,7 @@
+Maintaining the context through middleware and handlers
+Extending the context interface with custom implementations
+Request data binding capabilities
+Response rendering capabilities
+We will conclude this chapter with some example code that will show best
+practices for working with custom context implementations, as well as request
+data binding and response rendering using the Echo framework.

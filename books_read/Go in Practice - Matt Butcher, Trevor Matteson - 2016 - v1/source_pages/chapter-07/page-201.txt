@@ -1,0 +1,49 @@
+178
+CHAPTER 7
+Serving and receiving assets and forms
+know that this command uses os.Walk, which doesn’t walk symlinks. The go build
+command builds a binary normally. This binary will include the rice-built Go files
+containing the virtual filesystem.
+TIP
+Using minification techniques on the files being embedded, such as
+removing unneeded whitespace from CSS and JavaScript files, can reduce the
+size of the Go binary that’s generated.
+The go.rice package can be used with templates. The following listing provides an
+example of loading a template from a box.
+box := rice.MustFindBox("templates")
+templateString, err := box.String("example.html")
+if err != nil {
+    log.Fatal(err)
+}
+The go.rice package provides other helpers for the process of working with embed-
+ded files. The documentation at https://github.com/GeertJohan/go.rice gets into
+the specifics of what you can do with the helper functionality.
+TECHNIQUE 43
+Serving from an alternative location
+At times you’ll want to store and serve the files separately from the application. A com-
+mon example is serving a web application’s JavaScript, CSS, and other assets from a
+content delivery network (CDN). 
+PROBLEM
+Instead of serving files through the same server as your application, you want to serve
+files through an alternative location. The alternative location needs to work with mul-
+tiple environments such as your production, testing, and development environments.
+SOLUTION
+Serve the files from alternative locations, such as a CDN in production. For each envi-
+ronment, manage the deployment of files alongside the application and pass the loca-
+tion into the application as configuration. Use the location within your template files
+to tell browsers where to get the files from.
+DISCUSSION
+In each environment, you’ll want to have a copy or a representative copy of the appli-
+cation’s assets. Although these files may be served separately from the application
+pages, they shouldn’t be used from a single source for all environments. This clean
+separation, illustrated in figure 7.2, allows any testing environments to be full testing
+environments, allows developers to be creative in development environments, and
+Listing 7.8
+Templates as embedded files
+Retrieves the template, which can be
+used with template Parse functions,
+as a string from the box
+Gets a box
+pointing to a
+templates
+directory

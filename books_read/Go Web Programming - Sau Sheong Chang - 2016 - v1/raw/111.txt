@@ -1,0 +1,45 @@
+90
+CHAPTER 4
+Processing requests
+It doesn’t make too much of a difference, though you should take note that you need
+to pass in the cookies by reference instead.
+4.4.3
+Getting cookies from the browser
+Now that you can set a cookie, you want to also retrieve that cookie from the client.
+This listing demonstrates how. 
+package main
+import (
+    "fmt"
+    "net/http"
+)
+func setCookie(w http.ResponseWriter, r *http.Request) {
+    c1 := http.Cookie{
+        Name:     "first_cookie",
+        Value:    "Go Web Programming",
+        HttpOnly: true,
+    }
+    c2 := http.Cookie{
+        Name:     "second_cookie",
+        Value:    "Manning Publications Co",
+        HttpOnly: true,
+    }
+    http.SetCookie(w, &c1)
+    http.SetCookie(w, &c2)
+}
+func getCookie(w http.ResponseWriter, r *http.Request) {
+    h := r.Header["Cookie"]
+    fmt.Fprintln(w, h)
+}
+func main() {
+    server := http.Server{
+        Addr: "127.0.0.1:8080",
+    }
+    http.HandleFunc("/set_cookie", setCookie)
+    http.HandleFunc("/get_cookie", getCookie)
+    server.ListenAndServe()
+}
+After you recompile and start the server, when you go to http://127.0.0.1:8080/
+get_cookie you’ll see this in the browser:
+[first_cookie=Go Web Programming; second_cookie=Manning Publications Co]
+Listing 4.15
+Getting cookies from the header

@@ -1,0 +1,12 @@
+This way, we will be able to support more content types without any additional
+code out of the box. Content negotiation is valuable to you as an API developer
+as it makes your application more accessible. By offering your API in multiple
+content types, you open up your API to more potential integration.
+With request binding capabilities, Echo comes out of the box with request
+binding validation. Request binding validation as a feature of a web application
+framework gives you the ability to create a common scheme by which all of your
+API request inputs are validated so that you do not have to clutter your
+application handler functions with the minutia of how inputs are going to be
+validated. With the Context.Validate functionality, which is realized in the
+following example, we are able to create validation on our request input. In order
+to create a validation scheme where we can clearly define validation code as a

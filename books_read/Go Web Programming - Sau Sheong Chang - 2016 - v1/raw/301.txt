@@ -1,0 +1,24 @@
+280
+CHAPTER 10
+Deploying Go
+10.6
+Summary
+■
+The most simple way to deploy a Go web service is to place the binary execut-
+able file(s) directly on a server, either a VM or an actual physical server, and
+configure Upstart to start it and keep it running continually.
+■
+Deploying to Heroku, which is one of the simplest PaaSes around, is straightfor-
+ward and involves only minor modifications, generating local dependencies
+using Godep and creating a Procfile. Pushing these all to Heroku’s Git reposi-
+tory will deploy the web application.
+■
+Deploying to GAE, Google’s powerful but sandboxed PaaS, is a bit more
+involved, but this is compensated for by the fact that the web service deployed is
+very scalable. There are a number of limitations with GAE, mostly involving
+using services that are outside the GAE sandbox.
+■
+Docker is a new and powerful way of deploying web services and applications.
+But compared to other solutions, it’s much more involved. You need to docker-
+ize your Go web service into a container, deploy it to a local Docker host, and
+then deploy it to a remote Docker host on the cloud.

@@ -1,0 +1,56 @@
+170
+CHAPTER 8
+Concurrency: Foundations
+middle := len(s) / 2
+sequentialMergesort(s[:middle])
+sequentialMergesort(s[middle:])
+merge(s, middle)
+}
+func merge(s []int, middle int) {
+// ...
+}
+This algorithm has a structure that makes it open to concurrency. Indeed, as each
+sequentialMergesort operation works on an independent set of data that doesn’t
+need to be fully copied (here, an independent view of the underlying array using slic-
+ing), we could distribute this workload among the CPU cores by spinning up each
+sequentialMergesort operation in a different goroutine. Let’s write a first parallel
+implementation:
+func parallelMergesortV1(s []int) {
+if len(s) <= 1 {
+return
+}
+middle := len(s) / 2
+var wg sync.WaitGroup
+wg.Add(2)
+go func() {
+defer wg.Done()
+parallelMergesortV1(s[:middle])
+}()
+go func() {
+defer wg.Done()
+parallelMergesortV1(s[middle:])
+}()
+wg.Wait()
+merge(s, middle)
+}
+In this version, each half of the workload is handled in a separate goroutine. The par-
+ent goroutine waits for both parts by using sync.WaitGroup. Hence, we call the Wait
+method before the merge operation.
+NOTE
+If you’re not yet familiar with sync.WaitGroup, we will look at it in
+more detail in mistake #71, “Misusing sync.WaitGroup.” In a nutshell, it
+allows us to wait for n operations to complete: usually goroutines, as in the
+previous example.
+We now have a parallel version of the merge sort algorithm. Therefore, if we run a
+benchmark to compare this version against the sequential one, the parallel version
+should be faster, correct? Let’s run it on a four-core machine with 10,000 elements:
+First half
+Second half
+Merges the 
+two halves
+Spins up the first half of 
+the work in a goroutine
+Spins up the second half of 
+the work in a goroutine
+Merges 
+the halves

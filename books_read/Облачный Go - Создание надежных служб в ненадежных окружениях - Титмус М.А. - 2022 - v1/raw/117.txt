@@ -1,0 +1,45 @@
+Шаблоны конкуренции  117
+Структура InnerFuture  используется внутри реализации для поддержки 
+конкуренции. В этом примере она удовлетворяет интерфейсу Future, но с та-
+ким же успехом можно было бы выбрать, например, io.Reader , присоединив 
+к нему метод Read :
+type InnerFuture struct {
+    once sync.Once
+    wg sync.WaitGroup
+    res string
+    err error
+    resCh <-chan string
+    errCh <-chan error
+}
+func (f *InnerFuture) Result() (string, error) {
+    f.once.Do(func() {
+        f.wg.Add(1)
+        defer f.wg.Done()
+        f.res = <-f.resCh
+        f.err = <-f.errCh
+    })
+    f.wg.Wait()
+    return f.res, f.err
+}
+В этой реализации сама структура содержит канал и переменную для каж -
+дого значения, возвращаемого методом Result . При первом вызове Result  
+пытается прочитать результаты из каналов и сохранить их в структуре In-
+nerFuture , чтобы последующие вызовы могли сразу вернуть кешированные 
+значения.
+Обратите внимание на использование экземпляров sync.Once  и sync.Wait-
+Group . Первый делает то, о  чем говорит его имя: гарантирует ровно один 
+вызов указанной функции. WaitGroup  обеспечивает безопасность вызова 
+функции в многопоточном окружении: любые вызовы после первого будут 
+блокироваться на wg.Wait , пока не завершится чтение канала.
+SlowFunction  – это обертка для указанной функции, которую требуется вы-
+полнить асинхронно. Ее задача – создать каналы результатов, запустить за-
+данную функцию в сопрограмме, а также создать и вернуть реализацию Fu-
+ture  (InnerFuture  в этом примере):
+func SlowFunction(ctx context.Context) Future {
+    resCh := make(chan string)
+    errCh := make(chan error)
+    go func() {
+        select {
+        case <-time.After(time.Second * 2):
+            resCh <- "I slept for 2 seconds"
+            errCh <- nil

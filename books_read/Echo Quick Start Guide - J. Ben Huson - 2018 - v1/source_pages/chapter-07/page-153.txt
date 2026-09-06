@@ -1,0 +1,35 @@
+standard library HTTP facilities, handlers in Go take in as a parameter an
+http.ResponseWriter type, to which you can write a response to the caller. This
+httptest.ResponseRecorder is an implementation of http.ResponseWriter which will
+record the status code, headers, and response body. It also provides helpful
+functions we will see later in this example to retrieve that data.
+After the Echo framework runs the request, we need to start asserting that we get
+back what we expect from the handler code to the client. We have three things to
+check for at this point: the correct response status code; the ability to decode the
+JSON correctly; and the response data matches what we expect from the handler.
+With the httptest.ResponseRecorder, you can create an *http.Response structure by
+calling Result() off of the httptest.ResponseRecorder. From the *http.Response, we are
+able to read the status code for our first assertion. Then we can take the Body off
+of the response and feed it into a JSON decoder to validate the JSON is well
+formed, and finally we can validate the message matches what we expect. When
+we run this test from the project root as shown, we get the following result:
+go test -v ./handlers -cover
+=== RUN   TestHealthCheck
+--- PASS: TestHealthCheck (0.00s)
+PASS
+coverage: 7.9% of statements
+ok      github.com/PacktPublishing/Echo-Essentials/chapter7/handlers  0.006s  coverage: 
+As you can see, unit testing in Go is fairly easy, in that you are just writing code
+that calls the functions you wish to test within the application. Unit testing will
+provide a lot of value so long as you are able to structure your code in a way that
+is easy to write tests. Where unit testing becomes difficult is when you write
+code without a mechanism for abstracting out the integration specific
+functionality. There are a few mechanisms that can help with these integration
+specific problems, mocking and monkey patching.
+Mocking is useful, and tragically brittle all at the same time. Given that Go
+provides interface types, it is easy to create an interface that defines the particular
+methods that can be implemented by third-party dependencies. For an example
+of this, consider the sql.DB type. For unit testing, you do not want to have to run a
+full instance of a SQL database, complete with appropriate schema and fixture
+data. That would be considered an integration test, as you are at that point of not
+just testing your code, but also testing a database integration. What if we created

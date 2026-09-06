@@ -1,0 +1,45 @@
+82
+CHAPTER 4
+Processing requests
+ If you’re trying to get the JSON data from a POST request sent by an Angular client
+and you’re calling the ParseForm method to get the data, you won’t be able to. At the
+same time, other JavaScript libraries like JQuery allow you to do so. What gives?
+ Client frameworks encode their POST requests differently. JQuery encodes POST
+requests like an HTML form with application/x-www-form-urlencoded (that is, it
+sets the request header Content-Type to application/x-www-form-urlencoded);
+Angular encodes POST requests with application/json. Go’s ParseForm method only
+parses forms and so doesn’t accept application/json. If you call the ParseForm
+method, you won’t get any data at all!
+ The problem doesn’t lie with the implementation of any of the libraries. It lies in
+the lack of sufficient documentation (although there will arguably never be enough
+documentation) and the programmer making certain assumptions based on their
+dependency on frameworks. 
+ Frameworks help programmers by hiding the underlying complexities and imple-
+mentation details. As a programmer you should be using frameworks. But it’s also
+important to understand how things work and what the framework simplifies for you
+because eventually there will be cases where the framework’s seams show at the joints.
+ We’ve covered quite a lot on processing requests. Now let’s look at sending
+responses to the user.
+4.3
+ResponseWriter
+If you were thinking that sending a response to the client would involve creating a
+Response struct, setting up the data in it, and sending it out, then you’d be wrong.
+The correct interface to use when sending a response from the server to the client is
+ResponseWriter.
+ResponseWriter is an interface that a handler uses to create an HTTP response.
+The actual struct backing up ResponseWriter is the nonexported struct
+http.response. Because it’s nonexported, you can’t use it directly; you can only use it
+through the ResponseWriter interface. 
+Why do we pass ResponseWriter into ServeHTTP by value?
+Having read the earlier part of this chapter, you might wonder why the ServeHTTP func-
+tion takes two parameters—the ResponseWriter interface and a pointer to a Request
+struct. The reason why it’s a pointer to Request is simple: changes to Request by
+the handler need to be visible to the server, so we’re only passing it by reference in-
+stead of by value. But why are we passing in a ResponseWriter by value? The server
+needs to know the changes to ResponseWriter too, doesn’t it? 
+If you dig into the net/http library code, you’ll find that ResponseWriter is an interface
+to a nonexported struct response, and we’re passing the struct by reference (we’re
+passing in a pointer to response) and not by value.
+In other words, both the parameters are passed in by reference; it’s just that the meth-
+od signature takes a ResponseWriter that’s an interface to a pointer to a struct, so
+it looks as if it’s passed in by value.

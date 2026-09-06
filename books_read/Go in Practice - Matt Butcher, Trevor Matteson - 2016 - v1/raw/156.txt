@@ -1,0 +1,47 @@
+133
+TECHNIQUE 28
+Verifying interfaces with canary tests
+When you rely on external interfaces, and those interfaces change (even
+though by convention, they shouldn’t).
+When use of that interface is restricted to type assertions. (We give an example
+of this next.)
+SOLUTION
+Write type-assertion “canary” tests that will fail quickly if you made a mistake on your
+interface definition.
+DISCUSSION
+When you’re writing interfaces or implementations of interfaces—especially in
+cases where type information is resolved at runtime—it’s helpful to write simple type-
+assertion canary tests that will explode at compile time.
+ Say you’re writing a customer writer that implements io.Writer. You’re exporting
+this in your library so that other code may use it. Your implementation looks like the
+following listing.
+type MyWriter struct{
+     // …
+}
+func (m *MyWriter) Write([]byte) error {
+     // Write data somewhere…
+     return nil
+}
+This code looks pretty straightforward, and at a quick glance, it looks like it imple-
+ments io.Writer. Now imagine using this code with a type assertion, as shown in the
+next listing.
+func main() {
+     m := map[string]interface{}{
+            "w": &MyWriter{},
+     }
+}
+func doSomething(m map[string]interface{}) {
+     w := m["w"].(io.Writer)
+}
+This code compiles just fine. And if your test coverage is thorough, it might even pass
+that, too. But something is wrong.
+ You can write a quick canary test to see this. A canary test (deriving its name from
+the “canary in the coal mine” story) is a test designed to alert you of basic failures in
+your assumptions. The next listing shows a canary test for whether MyWriter is an
+io.Writer.
+Listing 5.15
+MyWriter 
+Listing 5.16
+Asserting a writer
+This generates a 
+runtime exception.

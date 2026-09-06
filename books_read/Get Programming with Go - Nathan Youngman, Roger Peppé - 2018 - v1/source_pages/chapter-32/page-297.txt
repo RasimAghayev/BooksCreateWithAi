@@ -1,0 +1,23 @@
+282
+32
+LESSON
+CAPSTONE: LIFE ON MARS
+32.1 A grid to rove on
+Make a grid that the rover can drive around on by implementing a MarsGrid type. You’ll 
+need to use a mutex to make it safe for use by multiple goroutines at once. It should look 
+something like the following: 
+// MarsGrid represents a grid of some of the surface
+// of Mars. It may be used concurrently by different
+// goroutines.
+type MarsGrid struct {
+    // To be done.
+}
+// Occupy occupies a cell at the given point in the grid. It
+// returns nil if the point is already occupied or the point is
+// outside the grid. Otherwise it returns a value that can be
+// used to move to different places on the grid.
+func (g *MarsGrid) Occupy(p image.Point) *Occupier
+// Occupier represents an occupied cell in the grid.
+// It may be used concurrently by different goroutines.
+type Occupier struct {
+ 

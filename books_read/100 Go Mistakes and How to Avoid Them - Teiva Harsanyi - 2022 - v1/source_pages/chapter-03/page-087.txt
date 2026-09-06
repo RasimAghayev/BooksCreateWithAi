@@ -1,0 +1,81 @@
+67
+3.4
+#20: Not understanding slice length and capacity
+First, s1 is created as a three-length,
+six-capacity slice. When s2 is created by
+slicing s1, both slices reference the
+same backing array. However, s2 starts
+from a different index, 1. Therefore, its
+length and capacity (a two-length, five-
+capacity slice) differ from s1. If we
+update s1[1] or s2[0], the change is
+made to the same array, hence, visible
+in both slices, as figure 3.7 shows.
+ Now, what happens if we append an
+element to s2? Does the following code
+change s1 as well?
+s2 = append(s2, 2)
+The shared backing array is modified,
+but only the length of s2 changes. Fig-
+ure 3.8 shows the result of appending
+an element to s2.
+ s1 remains a three-length, six-
+capacity slice. Therefore, if we print s1
+and s2, the added element is only visi-
+ble for s2:
+s1=[0 1 0], s2=[1 0 2]
+It’s important to understand this
+behavior so that we don’t make wrong
+assumptions while using append.
+NOTE
+In these examples, the backing array is internal and not available
+directly to the Go developer. The only exception is when a slice is created
+from slicing an existing array.
+One last thing to note: what if we keep appending elements to s2 until the backing
+array is full? What will the state be, memory-wise? Let’s add three more elements so
+that the backing array will not have enough capacity:
+s2 = append(s2, 3)
+s2 = append(s2, 4)
+s2 = append(s2, 5)
+This code leads to creating another backing array. Figure 3.9 displays the results in
+memory.
+ 
+0
+1
+0
+ptr
+len
+3
+cap
+6
+s1
+ptr
+len
+2
+cap
+5
+s2
+Figure 3.7
+Because s1 and s2 are backed by the 
+same array, updating a common element makes 
+the change visible in both slices.
+Figure 3.8
+Appending an element to s2
+At this stage, the backing 
+array is already full.
+0
+1
+0
+ptr
+len
+3
+cap
+6
+s1
+ptr
+len
+3
+cap
+5
+s2
+2

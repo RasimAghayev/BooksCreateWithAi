@@ -1,0 +1,58 @@
+219
+Unit testing
+The for range loop on line 31 in listing 9.10 allows the test to iterate over the table
+and run the test code for each different URL. The original code from the basic unit
+test is the same except for the use of the table values.
+35
+resp, err := http.Get(u.url)
+36
+if err != nil {
+37
+t.Fatal("\t\tShould be able to Get the url.",
+38
+ballotX, err)
+39
+}
+40
+t.Log("\t\tShould be able to Get the url",
+41
+checkMark)
+42
+43
+defer resp.Body.Close()
+44
+45
+if resp.StatusCode == u.statusCode {
+46
+t.Logf("\t\tShould have a \"%d\" status. %v",
+47
+u.statusCode, checkMark)
+48
+} else {
+49
+t.Errorf("\t\tShould have a \"%d\" status %v %v",
+50
+u.statusCode, ballotX, resp.StatusCode)
+51
+}
+52
+}
+53
+}
+54
+}
+55 }
+Listing 9.11 shows how, on line 35, the code uses the u.url field for the URL to call.
+On line 45 the u.statusCode field is used to compare the actual status code from the
+response. In the future, new URLs and status codes can be added to the table and the
+core of the test doesn’t need to change. 
+9.1.3
+Mocking calls
+The unit tests we wrote are great, but they do have a couple of flaws. First, they require
+access to the internet in order for the tests to run successfully. Figure 9.4 shows what
+happens when we run the basic unit test again without an internet connection—the
+test fails.
+Listing 9.11
+listing08_test.go: lines 35–55
+Figure 9.4
+Failed test due to having no internet connection

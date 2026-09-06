@@ -1,0 +1,44 @@
+Итерация 2: долговременное хранение ресурса  159
+type PostgresDBParams struct {
+    dbName   string
+    host     string
+    user     string
+    password string
+}
+В отличие от подхода «большой мешок строк», эта структура невелика, 
+удобочитаема и легко расширяется. Для работы с ней можно создать пере-
+менную PostgresDBParams  и передать ее своей функции. Вот как это выглядит:
+logger, err = NewPostgresTransactionLogger(PostgresDBParams{
+    host:     "localhost",
+    dbName:   "kvs",
+    user:     "test",
+    password: "hunter2"
+})
+Вот как выглядит новая функция, конструирующая экземпляр Post-
+gresTransactionLogger :
+func NewPostgresTransactionLogger(config PostgresDBParams) 
+    (TransactionLogger, error) {
+    connStr := fmt.Sprintf("host=%s dbname=%s user=%s password=%s",
+        config.host, config.dbName, config.user, config.password)
+    db, err := sql.Open("postgres", connStr)
+    if err != nil {
+        return nil, fmt.Errorf("failed to open db: %w", err)
+    }
+    err = db.Ping()     // Проверка соединения с базой данных
+    if err != nil {
+        return nil, fmt.Errorf("failed to open db connection: %w", err)
+    }
+    logger := &PostgresTransactionLogger{db: db}
+    exists, err := logger.verifyTableExists()
+    if err != nil {
+        return nil, fmt.Errorf("failed to verify table exists: %w", err)
+    }
+    if !exists {
+        if err = logger.createTable(); err != nil {
+            return nil, fmt.Errorf("failed to create table: %w", err)
+        }
+    }
+    return logger, nil
+}
+Она делает довольно много, но принципиально не сильно отличается от 
+NewFileTransactionLogger .

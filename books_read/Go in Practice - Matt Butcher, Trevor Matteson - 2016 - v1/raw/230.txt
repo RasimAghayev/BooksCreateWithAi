@@ -1,0 +1,59 @@
+207
+TECHNIQUE 53
+Parsing JSON without knowing the schema
+SOLUTION
+Parse the JSON into an interface{} instead of a struct. After the JSON is in an inter-
+face, you can inspect the data and use it.
+DISCUSSION
+A little-known feature of the encoding/json package is the capability to parse arbi-
+trary JSON into an interface{}. Working with JSON parsed into an interface{} is
+quite different from working with JSON parsed into a known structure, because of the
+Go type system. The following listing contains an example of parsing JSON this way.
+package main
+import (
+     "encoding/json"
+     "fmt"
+     "os"
+)
+var ks = []byte(`{
+"firstName": "Jean",
+"lastName": "Bartik",
+"age": 86,
+"education": [
+     {
+            "institution": "Northwest Missouri State Teachers College",
+            "degree": "Bachelor of Science in Mathematics"
+     },
+     { 
+            "institution": "University of Pennsylvania",
+            "degree": "Masters in English"
+     }
+],
+"spouse": "William Bartik",
+"children": [
+     "Timothy John Bartik",
+     "Jane Helen Bartik",
+     "Mary Ruth Bartik"
+] 
+}`)
+func main() {
+     var f interface{}
+     err := json.Unmarshal(ks, &f)
+     if err != nil {
+            fmt.Println(err)
+            os.Exit(1)
+     }
+     fmt.Println(f)
+}
+Listing 8.10
+Parse JSON into an interface{}
+A JSON document to be
+parsed and unmarshaled
+A variable instance of type 
+interface{} to hold the JSON data
+Parses the JSON data and puts it 
+into the interface{} type variable
+Handles any errors, 
+such as invalid JSON
+Accesses the JSON data 
+now on the interface{}

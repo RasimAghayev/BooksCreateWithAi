@@ -1,0 +1,47 @@
+189
+Logging
+Ltime
+// microsecond resolution: 01:23:23.123123. assumes Ltime
+Lmicroseconds
+// full file name and line number: /a/b/c/d.go:23
+Llongfile
+// final file name element and line number: d.go:23
+// overrides Llongfile
+Lshortfile
+// initial values for the standard logger
+LstdFlags = Ldate | Ltime
+)
+Listing 8.5 comes right out of the source code for the log package. These flags are
+declared as constants, and the first constant in this block is called Ldate, which is
+declared with special syntax.
+// the date: 2009/01/23
+Ldate = 1 << iota
+The iota keyword has a special purpose when it comes to declaring a block of con-
+stants. It instructs the compiler to duplicate the expression for every constant until the
+block ends or an assignment statement is found. Another function of the iota key-
+word is that the value of iota for each preceding constant gets incremented by 1, with
+an initial value of 0. Let’s look at this more closely.
+const (
+Ldate = 1 << iota
+// 1 << 0 = 000000001 = 1
+Ltime
+// 1 << 1 = 000000010 = 2
+Lmicroseconds
+// 1 << 2 = 000000100 = 4
+Llongfile
+// 1 << 3 = 000001000 = 8
+Lshortfile
+// 1 << 4 = 000010000 = 16
+...
+)
+Listing 8.7 shows what’s happening behind the scenes with the constant declarations.
+The << operator performs a left bitwise shift of the bits represented by the value on
+the left side of the operator. In each case the bit pattern for the value of 1 is shifted to
+the left iota position. This has the effect of giving each constant its own unique bit
+position, which you’ll see is perfect when working with flags. 
+ The LstdFlags constant shows the purpose behind giving each constant its own
+unique bit position.
+Listing 8.6
+Declaration of the Ldate constant
+Listing 8.7
+Use of the keyword iota

@@ -1,0 +1,53 @@
+230
+CHAPTER 9
+Concurrency: Practice
+And here’s the implementation:
+func handler(ctx context.Context, circles []Circle) ([]Result, error) {
+results := make([]Result, len(circles))
+g, ctx := errgroup.WithContext(ctx)
+for i, circle := range circles {
+i := i
+circle := circle
+g.Go(func() error {
+result, err := foo(ctx, circle)
+if err != nil {
+return err
+}
+results[i] = result
+return nil
+})
+}
+if err := g.Wait(); err != nil {
+return nil, err
+}
+return results, nil
+}
+First, we create an *errgroup.Group by providing the parent context. In each iteration,
+we use g.Go to trigger a call in a new goroutine. This method takes a func() error as
+an input, with a closure wrapping the call to foo and handling the result and error. As
+the main difference from our first implementation, if we get an error, we return it from
+this closure. Then, g.Wait allows us to wait for all the goroutines to complete.
+ This solution is inherently more straightforward than the first one (which was par-
+tial, as we didn’t handle the error). We don’t have to rely on extra concurrency primi-
+tives, and the errgroup.Group is sufficient to tackle our use case.
+ Another benefit that we haven’t tackled yet is the shared context. Let’s imagine we
+have to trigger three parallel calls:
+The first returns an error in 1 millisecond.
+The second and third calls return a result or an error in 5 seconds.
+We want to return an error, if any. Hence, there’s no point in waiting until the second
+and third calls are complete. Using errgroup.WithContext creates a shared context
+used in all the parallel calls. Because the first call returns an error in 1 millisecond, it
+will cancel the context and thus the other goroutines. So, we won’t have to wait 5 sec-
+onds to return an error. This is another benefit when using errgroup.
+NOTE
+The process invoked by g.Go must be context aware. Otherwise, cancel-
+ing the context won’t have any effect.
+In summary, when we have to trigger multiple goroutines and handle errors plus con-
+text propagation, it may be worth considering whether errgroup could be a solution.
+Creates an *errgroup.Group 
+given the parent context
+Calls Go to spin up the logic of 
+handling the error and aggregating 
+the results in a new goroutine
+Calls Wait to wait 
+for all the goroutines

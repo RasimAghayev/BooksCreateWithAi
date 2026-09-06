@@ -1,0 +1,73 @@
+103
+TECHNIQUE 20
+Recovering from panics
+ 
+package main
+import (
+     "errors"
+     "fmt"
+     "io"
+     "os"
+)
+func main() {
+     var file io.ReadCloser  
+file, err := OpenCSV("data.csv")
+     if err != nil {
+            fmt.Printf("Error: %s", err)
+            return
+     }
+     defer file.Close()
+     // Do something with file.
+}
+func OpenCSV(filename string) (file *os.File, err error) {
+     defer func() {
+            if r := recover(); r != nil {
+                    file.Close()
+                    err = r.(error)
+            }
+     }()
+     file, err = os.Open(filename)
+     if err != nil {
+            fmt.Printf("Failed to open file\n")
+            return file, err
+     }
+     RemoveEmptyLines(file)
+     return file, err
+}
+func RemoveEmptyLines(f *os.File) {
+     panic(errors.New("Failed parse"))
+}
+Again, the problem in the preceding code is that your RemoveEmptyLines function
+always panics. If you were to implement this function, it would check to see whether
+the leading lines of the file were empty, and if they were, it would advance the reader
+past those lines.
+ Listing 4.16 uses deferred functions in two places. In the main function, you use a
+deferred function to ensure that your file is closed. This is considered good practice
+when you’re working with files, network connections, database handles, and other
+resources that need to be closed to prevent side effects or leaks. The second deferred
+Listing 4.16
+Cleanup
+Runs OpenCSV and handles any 
+errors. This implementation 
+always returns an error.
+Uses a deferred 
+function to ensure 
+that a file gets closed
+Normally,
+you’d do
+more
+with the
+file here.
+OpenCSV opens and 
+preprocesses your 
+file. Note the named 
+return values.
+The main deferred error 
+handling happens here.
+Opens the data file and 
+handles any errors (such 
+as file not found)
+Runs our intentionally broken 
+RemoveEmptyLines function
+Instead of stripping empty 
+lines, you always fail here.

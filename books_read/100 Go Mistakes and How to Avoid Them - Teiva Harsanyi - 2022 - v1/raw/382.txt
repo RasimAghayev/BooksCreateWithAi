@@ -1,0 +1,106 @@
+INDEX
+362
+periodic scavengers 348
+pointers 81–84, 91, 102–105, 141–142
+pprof endpoint 338
+printAlloc function 82
+println built-in function 325
+Producer side interface 25
+productivity, lack of 6
+profiling 337–344
+blocks 343
+CPUs 338–340
+enabling pprof 338
+goroutines 342–343
+heaps 340–342
+mutexes 343–344
+R
+-race flag 174, 231, 266–268
+race problems 174–181
+data races vs. race conditions 174–179
+range expression 100
+range loops 31, 95–98, 100, 106, 117–118
+arguments evaluated in 98–102
+array 100–102
+channels 100
+elements copied in
+concepts 96
+value copy 96–98
+pointer elements in 102–105
+range operator 99–101, 103, 116–117
+Read method 19, 331
+readability 5
+receivers 126–129
+redis package 50
+reflect package 91
+reflect.DeepEqual function 91
+reflection 91
+regexp package 145
+Reset method 237
+ResetTimer method 286
+return statement 135, 138, 159, 234, 255–256, 325, 
+329
+-run flag 273
+runes 113–115, 123
+runnable state 166
+runtime.GOMAXPROCS(int) function 184
+runtime/trace package 346–347
+S
+Scan error 160
+scheduling 166–169
+select statement 109–110, 200–204, 207, 209–210
+set index 309
+set-associative cache option 308
+SetConnMaxIdleTime parameter 245
+SetConnMaxLifetime parameter 245
+SetMaxIdleConns parameter 245
+SetMaxOpenConns parameter 245
+setters 17–18
+sharing down 329
+sharing up 329
+-short flag 265–266
+-shuffle flag 268, 270
+SIGPROF signal 338
+simplicity of Go 3
+slice capacity 68
+slice length 68
+slices
+copies of 76–77
+empty slices
+not properly checking for 74–76
+vs. nil 71–74
+initialization of 68–71
+length and capacity of 64–68
+memory leaks and 80–84
+leaking capacity 80–81
+slice and pointers 81–84
+slice append 77–79
+sort package 21, 34
+sort.Float64s function 35
+sort.Interface interface 34
+sort.Ints function 35
+sort.Sort(sort.Interface) function 35
+SQL mistakes 244–249
+forgetting about connections pooling
+245–246
+forgetting sql.Open doesn't necessarily establish 
+connections to database 244–245
+mishandling null values 247–248
+not handling row iteration errors 248–249
+not using prepared statements 246–247
+sql.ErrNoRows sentinel error 153
+sql.NullBool wrapper 248
+sql.NullFloat64 248
+sql.NullInt32 wrapper 248
+sql.NullInt64 248
+sql.NullString wrapper 248
+sql.NullTime 248
+sql.NullXXX types 248
+sql.Rows 252–253
+stability 2
+stack vs. heap 324–330
+standard library
+HTTP client 256–258
+HTTP server 259–260
+JSON-handling mistakes 238–244
+JSON and monotonic clock 240–243

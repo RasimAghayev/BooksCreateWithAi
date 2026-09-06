@@ -1,0 +1,38 @@
+167
+Encoding structures to JSON
+   
+21.6 Encoding structures to JSON
+JavaScript Object Notation, or JSON (json.org), is a standard data format popularized by 
+Douglas Crockford. It’s based on a subset of the JavaScript language but it’s widely sup-
+ported in other programming languages. JSON is commonly used for web APIs (Appli-
+cation Programming Interfaces), including the MAAS API (github.com/ingenology/ 
+mars_weather_api) that provides weather data from the Curiosity rover.
+The Marshal function from the json package is used in listing 21.9 to encode the data in 
+location into JSON format. Marshal returns the JSON data as bytes, which can be sent over 
+the wire or converted to a string for display. It may also return an error, a topic that’s 
+covered in lesson 28.
+package main
+import (
+    "encoding/json"
+    "fmt"
+    "os"
+)
+func main() {
+    type location struct {
+        Lat, Long float64
+     }
+    curiosity := location{-4.5895, 137.4417}
+    bytes, err := json.Marshal(curiosity)
+    exitOnError(err)
+    fmt.Println(string(bytes))
+ }
+Listing 21.9 Marshalling location: json.go
+Quick check 21.5 What is the danger of using multiple interrelated slices?
+QC 21.5 answer It’s easy to end up with data misaligned across slices.
+Fields must begin 
+with an uppercase 
+letter.
+Prints 
+{"Lat":-4.5895,
+"Long":137.4417}
+ 

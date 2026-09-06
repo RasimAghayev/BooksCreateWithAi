@@ -1,0 +1,45 @@
+123
+5.6
+#41: Substrings and memory leaks
+The bytes package also has a TrimSpace function to trim all the leading and trail-
+ing white spaces. Then, calling the sanitize function doesn’t require any extra
+conversions:
+return sanitize(b), nil
+As we mentioned, most I/O is done with []byte, not strings. When we’re wondering
+whether we should work with strings or []byte, let’s recall that working with []byte
+isn’t necessarily less convenient. Indeed, all the exported functions of the strings
+package also have alternatives in the bytes package: Split, Count, Contains, Index,
+and so on. Hence, whether we’re doing I/O or not, we should first check whether we
+could implement a whole workflow using bytes instead of strings and avoid the price
+of additional conversions.
+ The last section of this chapter discusses how the substring operation can some-
+times lead to memory leak situations. 
+5.6
+#41: Substrings and memory leaks
+In mistake #26, “Slices and memory leaks,” we saw how slicing a slice or array may lead
+to memory leak situations. This principle also applies to string and substring opera-
+tions. First, we will see how substrings are handled in Go to prevent memory leaks.
+ To extract a subset of a string, we can use the following syntax:
+s1 := "Hello, World!"
+s2 := s1[:5] // Hello
+s2 is constructed as a substring of s1. This example creates a string from the first five
+bytes, not the first five runes. Hence, we shouldn’t use this syntax in the case of runes
+encoded with multiple bytes. Instead, we should convert the input string into a []rune
+type first:
+s1 := "Hêllo, World!"
+s2 := string([]rune(s1)[:5]) // Hêllo
+Now that we have refreshed our minds regarding the substring operation, let’s look at
+a concrete problem to illustrate possible memory leaks.
+ We will receive log messages as strings. Each log will first be formatted with a uni-
+versally unique identifier (UUID; 36 characters) followed by the message itself. We
+want to store these UUIDs in memory: for example, to keep a cache of the latest n
+UUIDs. We should also note that these log messages can potentially be quite heavy
+(up to thousands of bytes). Here is our implementation:
+func (s store) handleLog(log string) error {
+if len(log) < 36 {
+return errors.New("log is not correctly formatted")
+}
+uuid := log[:36]
+s.store(uuid)
+// Do something
+}

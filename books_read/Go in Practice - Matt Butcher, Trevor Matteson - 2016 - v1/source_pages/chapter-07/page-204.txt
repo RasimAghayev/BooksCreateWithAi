@@ -1,0 +1,49 @@
+181
+Handling form posts
+func exampleHandler(w http.ResponseWriter, r *http.Request) {
+     name := r.FormValue("name")
+}
+Behind this call to FormValue, a lot is going on. FormValue starts by parsing the form
+data into a Go data structure. In this case, it’s looking to parse text form data and mul-
+tipart form data, such as files. After the data is parsed, it looks up the key (form field
+name) and returns the first value for the key, if one exists. If there’s nothing with this
+key, an empty string is returned.
+ Although this case makes it look easy, a lot is going on that you may not want, and
+there are features that you can’t access here. For example, what if you want to skip
+looking for multipart form data and trying to parse it because you know it won’t be
+present? Or what if a form field has multiple values, and you want to get at all of them?
+ The first step to work with form data is to parse it (see listing 7.10). Inside a request
+handler are two methods on the Request object that can parse form data into a Go
+data structure. The ParseForm method parses fields that contain text. If you need to
+work with binary data or files from the form, you need to use ParseMultipartForm. As
+its name suggests, this method works on multipart form data (a form containing con-
+tent with different MIME content types). ParseMultipartForm is called by FormValue
+in the preceding example if parsing hasn’t happened yet.
+ The form data is parsed into two locations:
+The Form property on the Request object will contain the values from the URL
+query along with the values submitted as a POST or PUT body. Each key on Form
+is an array of values. The FormValue method on Request can be used to get the
+first value for a key. That’s the value sitting in the 0 key of the array on Form.
+When you want the values from the POST or PUT body without those from the
+URL query, you can use the PostForm property on the Request object. Like
+FormValue, the PostFormValue method can retrieve the first value from Post-
+Form for a key.
+func exampleHandler(w http.ResponseWriter, r *http.Request) {
+     err := r.ParseForm()
+     if err != nil {
+            fmt.Println(err)
+     }
+     name := r.FormValue("name")
+}
+This listing contains the handling for a simple form. This simple example works for
+forms with only text fields. If a file field were present, it wouldn’t be parsed or accessi-
+ble. And it works only for form values that have a single response. HTML forms allow
+for multiple responding values. Both of these are covered in the following techniques.
+Listing 7.10
+Parsing a simple form response
+Parses a simple form containing 
+only text-based fields
+Handles any errors that 
+occurred parsing the form
+Gets the first value for the
+name field from the form

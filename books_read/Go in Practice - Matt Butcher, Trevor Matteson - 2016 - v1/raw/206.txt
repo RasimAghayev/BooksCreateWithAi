@@ -1,0 +1,55 @@
+183
+TECHNIQUE 45
+Uploading a single file
+7.2.2
+Working with files and multipart submissions
+After you move from text handling into file handling and multipart submissions that
+contain more than one type of content, the way you handle the processing changes. In
+its simplest form, you can see this when you upload a file via an online form. The file
+has a content type, such as an image, and the other text fields on the form. That’s at
+least two types of content that need different handling.
+ In this section, you’ll explore the handling of multipart submissions often thought
+of as file handling. These submissions can come in via simple and fast file uploads or
+large files that need special handling.
+TECHNIQUE 45
+Uploading a single file
+Working with files is different from working with the input from text fields. Each file is
+a binary file with surrounding metadata.
+PROBLEM
+When a file is uploaded with a form, how to you process and save it?
+SOLUTION
+When a file is uploaded, process the form as a multipart form by using Process-
+MultipartForm on the Request object. This picks up the file parts. Then use the
+FormFile method on the Request object to access and file fields, uploading a single
+file. For each file, you can access the metadata and a file object that’s similar to File
+objects from the os package.
+DISCUSSION
+Handling a file is nearly as straightforward as handling text form data. The difference
+lies in the binary file and the metadata surrounding it, such as the filename. The fol-
+lowing listing presents a simple file-upload form.
+<!doctype html>
+<html>
+  <head>
+    <title>File Upload</title>
+  </head>
+  <body>
+    <form action="/" method="POST" enctype="multipart/form-data">
+      <label for="file">File:</label>
+      <input type="file" name="file" id="file">
+      <br>
+      <button type="submit" name="submit">Submit</button>
+    </form>
+  </body>
+</html>
+This form has some important parts. The form method is POST, and its encoding is
+in multipart. Being multipart allows the text part of the form to be uploaded and
+Listing 7.12
+A form with a single-value file-upload field
+The form must be
+multipart for file uploads.
+A single-
+value file 
+field with the 
+name “file”
+A button is needed
+to submit the form.

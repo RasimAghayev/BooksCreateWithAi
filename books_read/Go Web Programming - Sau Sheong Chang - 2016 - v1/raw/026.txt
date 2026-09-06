@@ -1,0 +1,46 @@
+5
+Using Go for web applications 
+ Just like any other web applications, Go can scale well horizontally as well as by lay-
+ering a proxy above a number of instances of a Go web app. Go web applications are
+compiled as static binaries, without any dynamic dependencies, and can be distributed
+to systems that don’t have Go built in. This allows you to deploy Go web applications eas-
+ily and consistently.
+1.1.2
+Modular web applications and Go
+Large-scale web applications should be built with components that work interchange-
+ably. This approach allows you to add, remove, or modify features easily and gives you
+the flexibility to meet the changing needs of the application. It also allows you to
+lower software development costs by reusing modular components.
+ Although Go is statically typed, it has an interface mechanism that describes behav-
+ior and allows dynamic typing. Functions can take interfaces, which means you can
+introduce new code into the system and still be able to use existing functions by imple-
+menting methods required by that interface. Also, with a function that takes an empty
+interface, you can put any value as the parameter because all types implement the
+empty interface. Go implements a number of features usually associated with func-
+tional programming, including function types, functions as values, and closures.
+These features allow you to build more modular code by providing the capability of
+building functions out of other functions. 
+ Go is also often used to create microservices. In microservice architecture large-scale
+applications can be created by composing smaller independent services. These services
+are interchangeable and organized around capabilities (for example, a systems-level
+service like logging or an application-level service such as billing or risk analysis). By
+creating multiple small Go services and composing them into a single web application,
+you enable these capabilities to be swappable and therefore more modular. 
+1.1.3
+Maintainable web applications and Go
+Like any large and complex applications, having an easily maintainable codebase is
+important for large-scale web applications. It’s important because large-scale applica-
+tions often need to grow and evolve and therefore you need to revisit and change the
+code regularly. Complex, unwieldy code takes a long time to change and is fraught
+with risk of something breaking, so it makes sense to keep the source code well orga-
+nized and maintainable. 
+ Go was designed to encourage good software engineering practices. It has a clean
+and simple syntax that’s very readable. Go’s package system is flexible and unambigu-
+ous, and there’s a good set of tools to enhance the development experience and help
+programmers to write more readable code. An example is the Go source code format-
+ter (gofmt) which standardizes the formatting of Go code.
+ Go expects documentation to evolve along with the code. The Go documentation
+tool (godoc) parses Go source code, including comments, and creates documentation
+in a variety of formats such as HTML and plain text. It’s very easy to use—just write the
+documentation above the source code itself and godoc will extract it along with the
+code to generate the documentation.

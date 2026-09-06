@@ -1,0 +1,66 @@
+55
+TECHNIQUE 8
+URL pattern matching
+SOLUTION
+The built-in path package enables simple path-matching schemes, but sometimes you
+may need to match complex paths or have intimate control over the path. For those
+cases, you can use regular expressions to match your paths. You’ll combine Go’s built-
+in regular expressions with the HTTP handler and build a fast but flexible URL path
+matcher.
+DISCUSSION
+In the next listing you’ll walk through using paths and a resolver based on regular
+expressions.
+package main
+import (
+     "fmt"
+     "net/http"
+     "regexp"
+     "strings"
+)
+func main() {
+     rr := newPathResolver()
+     rr.Add("GET /hello", hello)
+     rr.Add("(GET|HEAD) /goodbye(/?[A-Za-z0-9]*)?", goodbye)
+     http.ListenAndServe(":8080", rr)}
+func newPathResolver() *regexResolver {
+     return &regexResolver{
+            handlers: make(map[string]http.HandlerFunc),
+            cache:    make(map[string]*regexp.Regexp),
+     }
+}
+type regexResolver struct {
+     handlers map[string]http.HandlerFunc
+     cache    map[string]*regexp.Regexp
+}
+func (r *regexResolver) Add(regex string, handler http.HandlerFunc) {
+     r.handlers[regex] = handler
+     cache, _ := regexp.Compile(regex)
+     r.cache[regex] = cache
+}
+func (r *regexResolver) ServeHTTP(res http.ResponseWriter, req *http.Request) 
+{
+     check := req.Method + " " + req.URL.Path
+     for pattern, handlerFunc := range r.handlers {
+            if r.cache[pattern].MatchString(check) == true {
+                   handlerFunc(res, req)
+                   return
+            }
+     }
+     http.NotFound(res, req)
+}
+Listing 2.18
+Resolve URLs using regular expressions: regex_handlers.go
+Imports the regular 
+expression package
+Registers paths 
+to functions
+B
+Stores compiled regular 
+expressions for reuse
+Looks up and 
+executes the 
+handler function
+C
+If no path matches, 
+returns a Page Not 
+Found error

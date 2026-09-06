@@ -1,0 +1,42 @@
+78
+CHAPTER 4
+Processing requests
+What happened here? You only get the URL query key-value pairs this time and not
+the form key-value pairs, because the PostForm field only supports application/
+x-www-form-urlencoded. To get multipart key-value pairs from the body, you must use
+the MultipartForm field.
+4.2.3
+MultipartForm
+Instead of using the ParseForm method on the Request struct and then using the
+Form field on the request, you have to use the ParseMultipartForm method and then
+use the MultipartForm field on the request. The ParseMultipartForm method also
+calls the ParseForm method when necessary.
+r.ParseMultipartForm(1024)
+fmt.Fprintln(w, r.MultipartForm)
+You need to tell the ParseMultipartForm method how much data you want to extract
+from the multipart form, in bytes. Now let’s see what happens:
+&{map[hello:[sau sheong] post:[456]] map[]}
+This time you see the form key-value pairs but not the URL key-value pairs. This is
+because the MultipartForm field contains only the form key-value pairs. Notice that
+the returned value is no longer a map but a struct that contains two maps. The first
+map has keys that are strings and values that are slices of string; the second map is
+empty. It’s empty because it’s a map with keys that are strings but values that are files,
+which we’re going to talk about in the next section.
+ There’s one last set of methods on Request that allows you to access the key-value
+pairs even more easily. The FormValue method lets you access the key-value pairs just
+like in the Form field, except that it’s for a specific key and you don’t need to call the
+ParseForm or ParseMultipartForm methods beforehand—the FormValue method
+does that for you. 
+ Taking our previous example, this means if you do this in your handler function:
+fmt.Fprintln(w, r.FormValue("hello"))
+and set the client’s form enctype attribute to application/x-www-form-urlencoded,
+you’ll get this:
+sau sheong
+That’s because the FormValue method retrieves only the first value, even though you
+actually have both values in the Form struct. To prove this, let’s add another line below
+the earlier line of code, like this:
+fmt.Fprintln(w, r.FormValue("hello"))
+fmt.Fprintln(w, r.Form)
+This time you’ll see
+sau sheong
+map[post:[456] hello:[sau sheong world] thread:[123]]

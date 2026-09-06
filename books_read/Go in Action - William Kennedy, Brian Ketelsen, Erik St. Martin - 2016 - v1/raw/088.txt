@@ -1,0 +1,44 @@
+67
+Slice internals and fundamentals
+// Create a slice of integers.
+// Contains a length and capacity of 3 elements.
+slice := []int{10, 20, 30}
+When using a slice literal, you can set the initial length and capacity. All you need to
+do is initialize the index that represents the length and capacity you need. The follow-
+ing syntax will create a slice with a length and capacity of 100 elements.
+// Create a slice of strings.
+// Initialize the 100th element with an empty string.
+slice := []string{99: ""}
+Remember, if you specify a value inside the [ ] operator, you’re creating an array. If
+you don’t specify a value, you’re creating a slice.   
+// Create an array of three integers.
+array := [3]int{10, 20, 30}
+// Create a slice of integers with a length and capacity of three.
+slice := []int{10, 20, 30}
+NIL AND EMPTY SLICES
+Sometimes in your programs you may need to declare a nil slice. A nil slice is created
+by declaring a slice without any initialization.
+// Create a nil slice of integers.
+var slice []int
+A nil slice is the most common way you create slices in Go. They can be used with
+many of the standard library and built-in functions that work with slices. They’re use-
+ful when you want to represent a slice that doesn’t exist, such as when an exception
+occurs in a function that returns a slice (see figure 4.10).
+Listing 4.20
+Declaring a slice with index positions
+Listing 4.21
+Declaration differences between arrays and slices
+Listing 4.22
+Declaring a nil slice
+nil
+Pointer
+0
+Length
+0
+Capacity
+nil slice:
+Length of zero
+Capacity of zero
+var slice []int
+Figure 4.10
+The representation of a nil slice

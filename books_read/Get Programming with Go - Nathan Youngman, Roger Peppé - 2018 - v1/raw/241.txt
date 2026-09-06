@@ -1,0 +1,34 @@
+226
+Lesson 27  Much ado about nil
+An empty slice and a nil slice aren’t equivalent, but they can often be used interchange-
+ably. The following listing passes nil to a function that accepts a slice, skipping the step 
+of making an empty slice.
+func main() {
+    soup := mirepoix(nil)
+    fmt.Println(soup)
+}
+func mirepoix(ingredients []string) []string {
+    return append(ingredients, "onion", "carrot", "celery")
+}
+Whenever you write a function that accepts a slice, ensure that a nil slice has the same 
+behavior as an empty slice.   
+27.5 Nil maps
+As with slices, a map declared without a composite literal or the make built-in has a value 
+of nil. Maps can be read even when nil, as shown in the following listing, though writ-
+ing to a nil map will panic.
+var soup map[string]int
+fmt.Println(soup == nil)
+measurement, ok := soup["onion"]
+if ok {
+    fmt.Println(measurement)
+}
+Listing 27.8 Start with nil: mirepoix.go
+Listing 27.9 Reading a map: map.go
+Prints [onion 
+carrot celery]
+Quick check 27.4 Which actions are safe to perform on a nil slice?
+QC 27.4 answer The built-ins len, cap, and append are safe to use with a nil slice, as is the range key-
+word. As with an empty slice, directly accessing an element of a nil slice (soup[0]) will panic with index out
+of range.
+Prints true
+ 

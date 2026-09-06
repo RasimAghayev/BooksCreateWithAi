@@ -1,0 +1,41 @@
+49
+TECHNIQUE 6
+Matching paths to content
+2.3.2
+Routing web requests
+One of the fundamental tasks of any HTTP server is to receive a given request and map
+it to an internal function that can then return a result to the client. This routing of a
+request to a handler is important; do it well, and you can build web services that are
+easily maintainable and flexible enough to fit future needs. This section presents vari-
+ous routing scenarios and solutions for each. 
+ We start with simple scenarios and provide simple solutions. But we encourage you
+to plan ahead. The simple solution we talk about first is great for direct mappings, but
+may not provide the flexibility that a contemporary web application needs. 
+TECHNIQUE 6
+Matching paths to content
+Web applications and servers providing a REST API typically execute different func-
+tionality for different paths. Figure 2.3 illustrates the path portion of the URL com-
+pared to the other components. In the Hello World example from chapter 1, listing
+1.16 uses a single function to handle all possible paths. For a simple Hello World
+application, this works. But a single function doesn’t handle multiple paths well and
+doesn’t scale to real-world applications. This section covers multiple techniques to
+handle differentiating paths and, in some cases, different HTTP methods (sometimes
+referred to as verbs).
+PROBLEM
+To correctly route requests, a web server needs to be able to quickly and efficiently
+parse the path portion of a URL.
+SOLUTION: MULTIPLE HANDLERS
+To expand on the method used in listing 1.16, this technique uses a handler function
+for each path. This technique, presented in the guide “Writing Web Applications”
+(http://golang.org/doc/articles/wiki/), uses a simple pattern that can be great for
+web apps with only a few simple paths. This technique has nuances that you’ll see in a
+moment that may make you consider one of the techniques following it.
+DISCUSSION
+Let’s start with a simple program that illustrates using multiple handlers, shown in the
+following listing.
+The path portion
+of the URL
+http://example.com/foo#bar?baz=quo
+Figure 2.3
+The path portion of the 
+URL used in routing requests

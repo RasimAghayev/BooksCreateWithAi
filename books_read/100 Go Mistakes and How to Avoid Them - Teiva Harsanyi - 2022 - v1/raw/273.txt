@@ -1,0 +1,50 @@
+253
+10.5
+#79: Not closing transient resources
+Forgetting to close the rows means a connection leak, which prevents the database
+connection from being put back into the connection pool.
+ We can handle the closure as a defer function following the if err != nil block:
+// Open connection
+rows, err := db.Query("SELECT * FROM CUSTOMERS")
+if err != nil {
+return err
+}
+defer func() {
+if err := rows.Close(); err != nil {
+log.Printf("failed to close rows: %v\n", err)
+}
+}()
+// Use rows
+Following the Query call, we should eventually close rows to prevent a connection leak
+if it doesn’t return an error.
+NOTE
+As discussed in the previous section, the db variable (*sql.DB type)
+represents a pool of connections. It also implements the io.Closer interface.
+But as the documentation suggests, it is rare to close an sql.DB because it’s
+meant to be long-lived and shared among many goroutines.
+Next, let’s discuss closing resources while working with files. 
+10.5.3 os.File
+os.File represents an open file descriptor. Like sql.Rows, it must be closed
+eventually:
+f, err := os.OpenFile(filename, os.O_APPEND|os.O_WRONLY, os.ModeAppend)
+if err != nil {
+return err
+}
+defer func() {
+if err := f.Close(); err != nil {
+log.Printf("failed to close file: %v\n", err)
+}
+}()
+In this example, we use defer to defer the call to the Close method. If we don’t even-
+tually close an os.File, it will not lead to a leak per se: the file will be closed automat-
+ically when os.File is garbage collected. However, it’s better to call Close explicitly
+because we don’t know when the next GC will be triggered (unless we manually run it).
+ There’s another benefit of calling Close explicitly: to actively monitor the error
+that is returned. For example, this should be the case with writable files.
+Performs an 
+SQL query
+Closes 
+the rows
+Opens the file
+Closes the file 
+descriptor

@@ -1,0 +1,12 @@
+Middleware
+Sometimes, there are use cases where the same application logic needs to be
+applied to a multitude of resources within an application. A prime example of
+this type of logic is protecting resources behind an authentication mechanism.
+Some resources such as the login or static resources typically do not need this
+authentication logic, but other resources such as our reminder creation, snoozing,
+need to be protected by authentication. We can accomplish this feat with the use
+of middleware.
+A middleware can be thought of as a wrapper for the handlers we create. An
+Echo middleware is defined as a function that takes the next function to call as a
+parameter, and returns an Echo handler. By having the parameter be the next
+handler function to call, we are able to build a chain of handlers:

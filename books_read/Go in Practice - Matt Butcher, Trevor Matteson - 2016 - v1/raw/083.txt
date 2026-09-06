@@ -1,0 +1,45 @@
+60
+CHAPTER 3
+Concurrency in Go
+have two or more tasks that run independently of each other, at about the same time,
+but remain part of the same program.
+ Popular programming languages such as Java and Python implement concurrency
+by using threads. Go takes a different route. Following a model proposed by the
+renowned computer scientist Tony Hoare, Go uses the concurrency model called Com-
+municating Sequential Processes (CSP). This chapter covers the practical aspects of work-
+ing with Go’s concurrency model, though we suggest reading a little about the theory
+behind CSP and Go at golang.org.
+ Two crucial concepts make Go’s concurrency model work:
+Goroutines—A goroutine is a function that runs independently of the function
+that started it. Sometimes Go developers explain a goroutine as a function that
+runs as if it were on its own thread.
+Channels—A channel is a pipeline for sending and receiving data. Think of it as
+a socket that runs inside your program. Channels provide a way for one gorou-
+tine to send structured data to another.
+The techniques in this chapter use goroutines and channels. We won’t spend time on
+the theory or underpinnings of the goroutine and channel systems, but will stick to
+practical use of these two concepts.
+ Concurrency in Go is cheap and easy. Therefore, you’ll frequently see it used in
+libraries and tools. In fact, you’ll see it used frequently throughout this book. This
+chapter introduces several concurrency topics, with emphasis on how Go’s model dif-
+fers from that of other popular languages. It also focuses on best practices. Goroutines
+and channels are one of the few places in the Go language where programmers can
+introduce memory leaks. You can remedy this situation by following certain patterns,
+which we introduce in this chapter. 
+3.2
+Working with goroutines
+When it comes to syntax, a goroutine is any function that’s called after the special key-
+word go. Almost any function could, in theory, be called as a goroutine, though there
+are plenty of functions you probably wouldn’t want to call as goroutines. One of the
+most frequent uses of goroutines is to run a function “in the background” while the
+main part of your program goes on to do something else. As an example, let’s write a
+short program that echoes back any text you type in, but only for 30 seconds, as shown
+in the next listing. After that, it exits on its own.
+package main
+import (
+     "fmt"
+     "io"
+     "os"
+     "time"
+Listing 3.1
+Using a goroutine to run a task

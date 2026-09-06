@@ -1,0 +1,44 @@
+147
+Declaring a map
+19.1 Declaring a map
+The keys of maps can be nearly any type, unlike arrays 
+and slices, which have sequential integers for keys. You 
+must specify a type for the keys and values in Go. To 
+declare a map with keys of type string and values of type 
+int, the syntax is map[string]int, as shown in figure 19.1.
+The temperature map declared in listing 19.1 contains aver-
+age temperatures from the Planetary Fact Sheet 
+(nssdc.gsfc.nasa.gov/planetary/factsheet/). You can declare and initialize maps with 
+composite literals, much like other collection types. For each element, specify a key and 
+value of the appropriate type. Use square brackets [] to look up values by key, to assign 
+over existing values, or to add values to the map.
+temperature := map[string]int{
+    "Earth": 15,
+    "Mars":  -65,
+}
+temp := temperature["Earth"]
+fmt.Printf("On average the Earth is %vº C.\n", temp)
+temperature["Earth"] = 16 
+temperature["Venus"] = 464
+fmt.Println(temperature)
+Listing 19.1 Average temperature map: map.go
+Consider this Maps associate a key with a value, which is handy for an index. If you
+know the title of a book, iterating through every book in an array could take some time,
+just like looking through every shelf of every aisle of a library or bookstore. A map keyed
+by book title is faster for that purpose.
+What are some other situations in which a map from keys to values could be useful?
+key type
+value type
+map[string]int
+Figure 19.1 A map with
+string keys and integer values
+Composite literals 
+are key-value pairs 
+for maps.
+Prints On average 
+the Earth is 15º C.
+A little climate 
+change
+Prints map[Venus:464 
+Earth:16 Mars:-65]
+ 

@@ -1,0 +1,13 @@
+Summary
+At this point, we are ready to start diving into creating web applications using
+the Echo framework. Within this chapter, it has been shown how the base Go
+net/http standard library represents HTTP request and response types, web
+request handlers, as well as how the built-in Go web server works. Due to the
+minimalist implementation of Go's standard library, there exists the need for
+using a web application framework for handling common tasks, and increasing
+developer efficiencies. This chapter has also covered some basic environmental
+setup, as well as installation of a version-pinned Echo dependency.
+The following chapters will go into depth about the features of the Echo
+framework, and include real-world examples of how Echo will allow you to
+create services efficiently and effectively that excel in performance and ease of
+development.

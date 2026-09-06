@@ -1,0 +1,11 @@
+Setting up a project in echo and
+organizing code
+The best way to learn is by example in my opinion, so, to that end, we will walk
+through the initial creation of an application to best showcase the Echo
+framework. The source code for our sample project for this chapter is located
+here: https://github.com/PacktPublishing/Echo-Essentials/tree/master/chapter2. The
+following is a preliminary use-case diagram showing the interactions we will be
+creating, which will help us develop this project:
+Regardless of the particulars of the project, organization of code is paramount
+for the success of the project. When we are developing a Go web application
+with Echo, it helps to start your project with a strong directory structure. A well-

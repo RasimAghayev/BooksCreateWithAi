@@ -1,0 +1,44 @@
+61
+3.3
+#19: Not understanding floating points
+the multiplication result by b. If the result isn’t equal to the original factor (a), it
+means an integer overflow occurred.
+ In summary, integer overflows (and underflows) are silent operations in Go. If we
+want to check for overflows to avoid sneaky errors, we can use the utility functions
+described in this section. Also remember that Go provides a package to deal with large
+numbers: math/big. This might be an option if an int isn’t enough.
+ We continue talking about basic Go types in the next section with floating points. 
+3.3
+#19: Not understanding floating points
+In Go, there are two floating-point types (if we omit imaginary numbers): float32
+and float64. The concept of a floating point was invented to solve the major problem
+with integers: their inability to represent fractional values. To avoid bad surprises, we
+need to know that floating-point arithmetic is an approximation of real arithmetic.
+Let’s examine the impact of working with approximations and how to increase accu-
+racy. For that, we’ll look at a multiplication example:
+var n float32 = 1.0001
+fmt.Println(n * n)
+We may expect this code to print the result of 1.0001 * 1.0001 = 1.00020001, right?
+However, running it on most x86 processors prints 1.0002, instead. How do we explain
+that? We need to understand the arithmetic of floating points first.
+ Let’s take the float64 type as an example. Note that there’s an infinite number of
+real values between math.SmallestNonzeroFloat64 (the float64 minimum) and
+math.MaxFloat64 (the float64 maximum). Conversely, the float64 type has a finite
+number of bits: 64. Because making infinite values fit into a finite space isn’t possible,
+we have to work with approximations. Hence, we may lose precision. The same logic
+goes for the float32 type.
+ Floating points in Go follow the IEEE-754 standard, with some bits representing a
+mantissa and other bits representing an exponent. A mantissa is a base value, whereas
+an exponent is a multiplier applied to the mantissa. In single-precision floating-point
+types (float32), 8 bits represent the exponent, and 23 bits represent the mantissa. In
+double-precision floating-point types (float64), the values are 11 and 52 bits, respec-
+tively, for the exponent and the mantissa. The remaining bit is for the sign. To convert
+a floating point into a decimal, we use the following calculation:
+sign * 2^exponent * mantissa
+Figure 3.1 illustrates the representation of 1.0001 as a float32. The exponent uses the
+8-bit excess/bias notation: the 01111111 exponent value means 2^0, whereas the man-
+tissa is equal to 1.000100016593933. (Note that the scope of this section isn’t to
+explain how conversions work.) Hence, the decimal value equals 1 × 2^0 ×
+1.000100016593933. Thus, what we store in a single-precision floating-point value isn’t
+1.0001 but 1.000100016593933. A lack of precision affects the accuracy of the value
+stored.

@@ -1,0 +1,36 @@
+347
+12.9
+#99: Not understanding how the GC works
+In the previous section, we discussed the kinds of information we can get from CPU
+profiling. What are the main differences compared to the data we can get from user-
+level traces?
+CPU profiling:
+– Sample-based.
+– Per function.
+– Doesn’t go below the sampling rate (10 ms by default).
+User-level traces:
+– Not sample-based.
+– Per-goroutine execution (unless we use the runtime/trace package).
+– Time executions aren’t bound by any rate.
+In summary, the execution tracer is a powerful tool for understanding how an applica-
+tion performs. As we have seen with the merge sort example, we can identify poorly
+parallelized execution. However, the tracer’s granularity remains per goroutine unless
+we manually use runtime/trace compared to a CPU profile, for example. We can use
+both profiling and the execution tracer to get the most out of the standard Go diag-
+nostics tools when optimizing an application.
+ The next section discusses how the GC works and how to tune it. 
+12.9
+#99: Not understanding how the GC works
+The garbage collector (GC) is a critical piece of the Go language that simplifies the
+lives of developers. It allows us to track and free heap allocations that are no longer
+needed. Because we can’t replace every heap allocation with a stack allocation, under-
+standing how the GC works should be part of the Go developer’s toolset to optimize
+applications.
+12.9.1 Concepts
+A GC keeps a tree of object references. The Go GC is based on the mark-and-sweep
+algorithm, which relies on two stages:
+Mark stage—Traverses all the objects of the heap and marks whether they are
+still in use
+Figure 12.43
+Distribution of 
+user-level tasks

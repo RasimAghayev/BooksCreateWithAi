@@ -1,0 +1,54 @@
+207
+Test doubles and dependency injection 
+Next, let the Post struct implement the Text interface and make one of the fields in
+the Post struct a pointer to sql.DB. Post will implement the Text interface as long as
+it implements all the methods that Text has (which is already does, since you’re sim-
+ply reverse-engineering Text out of Post, shown in this listing).
+type Post struct {
+  Db      *sql.DB
+  Id      int    `json:"id"`
+  Content string `json:"content"`
+  Author  string `json:"author"`
+}
+This solves the problem of passing the sql.DB directly into handleRequest. Instead of
+passing sql.DB, you can pass an instance of the Post struct. The various Post methods
+will use the sql.DB that’s a field in the struct instead. Because you’re passing a Post
+struct into handleRequest, the function signature needs to be changed. The next list-
+ing shows the changes in the handleRequest function.
+func handleRequest(t Text) http.HandlerFunc {   
+  return func(w http.ResponseWriter, r *http.Request) {  
+    var err error
+    switch r.Method {
+    case "GET":
+      err = handleGet(w, r, t)    
+    case "POST":
+      err = handlePost(w, r, t)
+    case "PUT":
+      err = handlePut(w, r, t)
+    case "DELETE":
+      err = handleDelete(w, r, t)
+    }
+    if err != nil {
+      http.Error(w, err.Error(), http.StatusInternalServerError)
+      return
+    }
+  }
+}
+As you can see, handleRequest no longer follows the ServeHTTP method signature
+and is no longer a handler function. This is a problem—you can no longer attach it to
+a URL using the HandleFunc function. 
+ To get around this, you can use the same technique first discussed in the section
+on handler chaining in chapter 3: get handleRequest to return a http.HandlerFunc
+function. 
+Listing 8.13
+The new Post struct
+Listing 8.14
+The new handleRequest function
+Passes in Text 
+interface 
+Returns
+function
+with correct
+signature
+Passes on Text interface 
+to actual handlers

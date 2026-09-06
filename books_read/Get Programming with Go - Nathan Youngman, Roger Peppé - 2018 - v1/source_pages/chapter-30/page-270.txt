@@ -1,0 +1,35 @@
+255
+Starting a goroutine
+package main
+import (
+    "fmt"
+    "time"
+)
+func main() {
+    go sleepyGopher()
+    time.Sleep(4 * time.Second)
+}
+func sleepyGopher() {
+    time.Sleep(3 * time.Second)
+    fmt.Println("... snore ...")
+}
+   
+Listing 30.1 Sleepy gopher: sleepygopher.go
+The goroutine is 
+started.
+Waiting for the 
+gopher to snore
+When we get here, all the 
+goroutines are stopped.
+The gopher sleeps.
+Quick check 30.1 
+1
+What would you use in Go if you wanted to do more than one thing at the same time?
+2
+What keyword is used to start a new independently running task?
+QC 30.1 answer 
+1
+A goroutine.
+2
+go.
+ 

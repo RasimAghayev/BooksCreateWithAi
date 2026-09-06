@@ -1,0 +1,56 @@
+79
+Slice internals and fundamentals
+4.2.4
+Multidimensional slices
+Like arrays, slices are one-dimensional, but they can be composed to create multidi-
+mensional slices for the same reasons we discussed earlier.
+ 
+// Create a slice of a slice of integers.
+slice := [][]int{{10}, {100, 200}}
+We now have an outer slice of two elements that contain an inner slice of integers.
+The values for our slice of a slice of integers will look like figure 4.20. 
+ In figure 4.20 you can see how composition is working to embed slices into slices.
+The outer slice contains two elements, each of which are slices. The slice in the first
+element is initialized with the single integer 10 and the slice in the second element
+contains two integers, 100 and 200. 
+ Composition allows you to create very complex and powerful data structures. All of
+the rules you learned about the built-in function append still apply.
+// Create a slice of a slice of integers.
+slice := [][]int{{10}, {100, 200}}
+// Append the value of 20 to the first slice of integers.
+slice[0] = append(slice[0], 20)
+The append function and Go are elegant in how they handle growing and assigning the
+new slice of integers back into the first element of the outer slice. When the operation
+Listing 4.42
+Declaring a multidimensional slice
+Listing 4.43
+Composing slices of slices
+[ 0 ]
+[ 1 ]
+slice := [][]int{{10}, {100, 200}}
+[ 0 ]
+10
+[ 0 ]
+100
+[ 1 ]
+200
+addr
+Pointer
+2
+Length
+2
+Capacity
+addr
+Pointer
+2
+Length
+2
+Capacity
+addr
+Pointer
+1
+Length
+1
+Capacity
+Figure 4.20
+Values for our slice of a slice of integers

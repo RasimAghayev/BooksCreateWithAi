@@ -1,0 +1,46 @@
+130
+CHAPTER 6
+Storing data
+Writing to a file uses WriteFile, passing in the name of the file, the data to be written,
+and a number representing the permissions to set for the file. Reading from a file sim-
+ply uses ReadFile with the filename. The data that’s passed to both WriteFile and
+read from ReadFile is byte slices.
+ Writing to and reading from a file using a File struct is more verbose but gives you
+more flexibility. To write a file, you first create it using the Create function in the os
+package, passing it the name of the file you want to create. It’s good practice to use
+defer to close the file so that you won’t forget. A defer statement pushes a function
+call on a stack. The list of saved calls is then executed after the surrounding func-
+tion returns. In our example, this means at the end of the main function file2 will be
+closed, followed by file1. Once you have the File struct, you can write to it using the
+Write method. There are a number of other methods you can call on the File struct
+to write data to a file.
+ Reading a file with the File struct is similar. You need to use the Open function in
+the os package, and then use the Read method on the File struct, or any of the other
+methods to read the data. Reading data using the File struct is much more flexible
+because File has several other methods you can use to locate the correct part of the
+file you want to read from.
+ When you execute the program, you should see two files being created: data1 and
+data2, both containing the text “Hello World!”.
+6.2.1
+Reading and writing CSV files
+The CSV format is a file format in which tabular data (numbers and text) can be easily
+written and read in a text editor. CSV is widely supported, and most spreadsheet pro-
+grams, such as Microsoft Excel and Apple Numbers, support CSV. Consequently, many
+programming languages, including Go, come with libraries that produce and con-
+sume the data in CSV files.
+ In Go, CSV is manipulated by the encoding/csv package. The next listing shows
+code for reading and writing CSV. 
+package main
+import (
+    "encoding/csv"
+    "fmt"
+    "os"
+    "strconv"
+)
+type Post struct {
+    Id     int
+    Content string
+    Author  string
+}
+Listing 6.3
+Reading and writing CSV

@@ -1,0 +1,50 @@
+112
+CHAPTER 4
+Control structures
+ Another approach could be to make the readFile function a closure:
+func readFiles(ch <-chan string) error {
+for path := range ch {
+err := func() error {
+// ...
+defer file.Close()
+// ...
+}()
+if err != nil {
+return err
+}
+}
+return nil
+}
+But intrinsically, this remains the same solution: adding another surrounding function
+to execute the defer calls during each iteration. The plain old function has the advan-
+tage of probably being a bit clearer, and we can also write a specific unit test for it.
+ When using defer, we must remember that it schedules a function call when the
+surrounding function returns. Hence, calling defer within a loop will stack all the
+calls: they won’t be executed during each iteration, which may cause memory leaks if
+the loop doesn’t terminate, for example. The most convenient approach to solving
+this problem is introducing another function to be called during each iteration. But if
+performance is crucial, one downside is the overhead added by the function call. If we
+have such a case and we want to prevent this overhead, we should get rid of defer and
+handle the defer call manually before looping. 
+Summary
+The value element in a range loop is a copy. Therefore, to mutate a struct, for
+example, access it via its index or via a classic for loop (unless the element or
+the field you want to modify is a pointer).
+Understanding that the expression passed to the range operator is evaluated
+only once before the beginning of the loop can help you avoid common mis-
+takes such as inefficient assignment in channel or slice iteration.
+Using a local variable or accessing an element using an index, you can prevent
+mistakes while copying pointers inside a loop.
+To ensure predictable outputs when using maps, remember that a map data
+structure
+– Doesn’t order the data by keys
+– Doesn’t preserve the insertion order
+– Doesn’t have a deterministic iteration order
+– Doesn’t guarantee that an element added during an iteration will be pro-
+duced during this iteration
+Using break or continue with a label enforces breaking a specific statement.
+This can be helpful with switch or select statements inside loops.
+Extracting loop logic inside a function leads to executing a defer statement at
+the end of each iteration.
+Runs the 
+provided closure

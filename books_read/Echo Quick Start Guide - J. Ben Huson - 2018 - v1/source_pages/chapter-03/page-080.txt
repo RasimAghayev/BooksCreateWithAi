@@ -1,0 +1,3 @@
+particular implementation considerations for target path routers and attempt to
+shed some light on the positives and negatives related to different
+implementations.

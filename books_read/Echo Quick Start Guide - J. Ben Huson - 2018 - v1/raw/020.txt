@@ -1,0 +1,11 @@
+Who this book is for
+Software developers who are fairly new to Go and are looking to employ a high-
+performance web application or backend API will be most rewarded by this
+book. Developers who have a performance requirement for their APIs and
+developers who have some Go experience, as well as experience with web
+application frameworks in general but not with Echo, will also benefit.
+We assume that the reader will be well-versed in web technologies, with a basic
+understanding of the HTTP protocol and REST API design concepts. We further
+assume that the reader will have worked with another backend web application
+framework before and understands the processing pipelines that are common in
+web frameworks.

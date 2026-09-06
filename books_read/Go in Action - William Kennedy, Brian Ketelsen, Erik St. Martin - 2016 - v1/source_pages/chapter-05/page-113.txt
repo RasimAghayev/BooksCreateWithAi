@@ -1,0 +1,52 @@
+92
+CHAPTER 5
+Go’s type system
+acting at the base type, it doesn’t mean Go considered them to be the same. Duration
+and int64 are two distinct and different types. 
+ To better clarify what this means, look at this small program that doesn’t compile.
+01 package main
+02
+03 type Duration int64
+04
+05 func main() {
+06
+var dur Duration
+07
+dur = int64(1000)
+08 }
+The program in listing 5.9 declares a type on line 03 called Duration. Then on line
+06, a variable named dur of type Duration is declared and set to its zero value. Then
+on line 07, we write code that produces the following compiler error when the pro-
+gram is built.
+prog.go:7: cannot use int64(1000) (type int64) as type Duration
+in assignment
+The compiler is clear as to what the problem is. Values of type int64 can’t be used as
+values of type Duration. In other words, even though type int64 is the base type for
+Duration, Duration is still its own unique type. Values of two different types can’t be
+assigned to each other, even if they’re compatible. The compiler doesn’t implicitly
+convert values of different types. 
+5.2
+Methods
+Methods provide a way to add behavior to user-defined types. Methods are really func-
+tions that contain an extra parameter that’s declared between the keyword func and
+the function name. 
+01 // Sample program to show how to declare methods and how the Go
+02 // compiler supports them.
+03 package main
+04
+05 import (
+06
+"fmt"
+07 )
+08
+09 // user defines a user in the program.
+10 type user struct {
+11
+name
+string
+Listing 5.9
+Compiler error assigning value of different types
+Listing 5.10
+Actual compiler error
+Listing 5.11
+listing11.go

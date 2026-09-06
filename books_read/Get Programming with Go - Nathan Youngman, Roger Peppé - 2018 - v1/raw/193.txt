@@ -1,0 +1,21 @@
+178
+Lesson 23  Composition and forwarding
+23.1 Composing structures
+A weather report includes a variety of data, such as the high and low temperatures, cur-
+rent day (sol), and location. A naive solution is to define all the necessary fields in a sin-
+gle report structure like the following listing.
+type report struct {
+    sol       int
+    high, low float64
+    lat, long float64
+}
+Listing 23.1 Without composition: unorganized.go
+Consider this Designing hierarchies can be difficult. A hierarchy of the animal king-
+dom would attempt to group animals with the same behaviors. Some mammals walk on
+land while others swim, yet blue whales also nurse their young. How would you organize
+them? It can be difficult to change hierarchies too, as even a small change can have a
+wide impact.
+Composition is a far simpler and more flexible approach: implement walking, swimming,
+nursing, and other behaviors and associate the appropriate ones with each animal.
+As a bonus, if you design a robot, the walking behavior can be reused.
+ 

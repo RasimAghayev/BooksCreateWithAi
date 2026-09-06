@@ -1,0 +1,28 @@
+Performing Logging and Error
+Handling
+Logging and error handling in a web application drastically aids in the
+troubleshooting of the application by operations team members. Reliable and
+deterministic error handling is essential to creating robust and reliable
+applications. The ability to provide team members the relevant information
+about the state of the running service is also important. By providing logging and
+tracing patterns within your service, you will be able to quickly isolate what is
+happening based on the logged information.
+So much time is dedicated in application development to working out the
+functionality of the success case. This makes sense, as the service or application
+needs to function in the first place. It is very often easy to overlook the not-so-
+successful cases. By not handling errors well, your application will likely not be
+resilient, or fail with grace.
+In this chapter, we will be covering two often overlooked, but critically
+important, aspects of web application development. We will start by looking at
+how logging can be accomplished within the confines of the Echo framework.
+We will then look at how we can use Echo to capture the handler function and
+middleware errors before they are broadcast to the consumers of your service. In
+this chapter, we will explore the following topics:
+Logging
+Echo's Logger interface, and how to extend the logger
+Typical use cases of the logger within your application
+Log levels and the appropriate use of log levels.
+Introducing to the logging middleware
+Error handling
+The error-handling function and capabilities built into Echo
+How to customize error handling with Echo

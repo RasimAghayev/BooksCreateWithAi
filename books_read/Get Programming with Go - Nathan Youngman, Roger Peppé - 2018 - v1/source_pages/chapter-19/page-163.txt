@@ -1,0 +1,47 @@
+148
+Lesson 19  The ever-versatile map
+If you access a key that doesn’t exist in the map, the result is the zero value for the 
+type (int):
+moon := temperature["Moon"]
+fmt.Println(moon)
+Go provides the comma, ok syntax, which you can use to distinguish between the "Moon" 
+not existing in the map versus being present in the map with a temperature of 0 C:
+if moon, ok := temperature["Moon"]; ok {
+     fmt.Printf("On average the moon is %vº C.\n", moon)
+} else {
+    fmt.Println("Where is the moon?")
+}
+The moon variable will contain the value found at the "Moon" key or the zero value. The 
+additional ok variable will be true if the key is present, or false otherwise.
+NOTE When using the comma, ok syntax you can use any variable names you like:
+temp, found := temperature["Venus"]   
+Prints 0 
+The comma, 
+ok syntax
+Prints Where 
+is the moon?
+Quick check 19.1 
+1
+What type would you use to declare a map with 64-bit floating-point keys and integer values?
+2
+If you modify listing 19.1 so that the "Moon" key is present with a value of 0, what’s the
+result of using the comma, ok syntax?
+QC 19.1 answer 
+1
+The map type is map[float64]int.
+2
+The value of ok will be true:
+temperature := map[string]int{
+    "Earth": 15,
+    "Mars":  -65,
+    "Moon":  0,
+}
+if moon, ok := temperature["Moon"]; ok {
+    fmt.Printf("On average the moon is %vº C.\n", moon)
+} else {
+    fmt.Println("Where is the moon?")
+}
+Prints On 
+average the 
+moon is 0º C.
+ 

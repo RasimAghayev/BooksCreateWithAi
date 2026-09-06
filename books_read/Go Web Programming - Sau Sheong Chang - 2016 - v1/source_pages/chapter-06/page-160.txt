@@ -1,0 +1,45 @@
+139
+Go and SQL
+Create function. Before we get into the Create function, though, we’ll discuss how
+you want to create posts. 
+ You’ll begin by creating a Post struct, with the Content and Author fields filled in.
+Note that you’re not filling in the Id field because it’ll be populated by the database
+(as an auto-incremented primary key). 
+post := Post{Content: "Hello World!", Author: "Sau Sheong"}
+If you pause here and insert a fmt.Println statement to debug, you’ll see that the Id
+field is set to 0:
+fmt.Println(post)  
+Now, let’s create this post as a database record:
+post.Create()
+The Create method should return an error if something goes wrong, but for brevity’s
+sake, let’s ignore that. Let’s print out the value in the variable again:
+fmt.Println(post) 
+This time you’ll see that the Id field should be set to 1. Now that you know what you
+want the Create function to do, let’s dive into the code.
+func (post *Post) Create() (err error) {
+    statement := "insert into posts (content, author) values ($1, $2) 
+    ➥ returning id "
+    stmt, err := db.Prepare(statement)
+    if err != nil {
+          return
+    }
+    defer stmt.Close()
+    err = stmt.QueryRow(post.Content, post.Author).Scan(&post.Id)
+    if err != nil {
+          return
+    }
+    return
+}
+The Create function is a method to the Post struct. You can see that because when
+you’re defining the Create function, you place a reference to a Post struct between
+the func keyword and the name of the function, Create. The reference to a Post
+struct, post, is also called the receiver of the method and can be referred to without
+the ampersand (&) within the method.
+ You start the method by getting defining an SQL prepared statement. A prepared
+statement is an SQL statement template, where you can replace certain values during
+execution. Prepared statements are often used to execute statements repeatedly.
+statement := "insert into posts (content, author) values ($1, $2) returning id"
+Listing 6.8
+Creating a post
+{0 Hello World! Sau Sheong}
+{1 Hello World! Sau Sheong}

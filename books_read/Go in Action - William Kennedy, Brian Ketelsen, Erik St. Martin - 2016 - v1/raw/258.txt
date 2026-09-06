@@ -1,0 +1,67 @@
+237
+Symbols
+_ (blank identifier) 44
+:= (short variable declaration operator) 17, 90
+A
+AddInt64 function 143
+anonymous functions 20
+API, testing endpoints for 223–228
+append function 38, 71–72, 79
+archive files 186
+arrays
+accessing elements in 60
+copying 61–62
+declaring 58–59
+internals of 58
+multidimensional 62–64
+of pointers 60–61
+passing between functions 64–65
+atomic functions 142–145
+B
+basic tests 212–216
+-bench option 233
+BenchmarkFormat function
+235
+benchmarking 232–236
+BenchmarkItoa function 235
+-benchmem option 236
+-benchtime option 234
+blank identifier ( _ ) 44
+bool type 88
+BSON (Binary JavaScript Object Notation) 196
+Buffer type 206
+buffered channels 153–156
+build command 41, 46
+built-in types 96–97
+bytes package 206
+C
+C/C++ 2, 6–7
+chan keyword 147
+channels
+buffered 153–156
+defined 129
+overview 4–5, 147–148
+unbuffered 148–153
+Chdir method 101
+clean command 46
+CLI (command-line interface) 187
+close method 25
+comments 50
+communicating sequential processes. See CSP
+compilation 3
+composition 5
+concrete types 104
+concurrency
+channels 4–5
+buffered 153–156
+overview 147–148
+unbuffered 148–153
+goroutines 3–4, 132–139
+locking shared resources
+atomic functions 142–145
+mutexes 145–147
+overview 3
+parallelism vs. 129–132
+patterns for
+pool package 167–177
+ index

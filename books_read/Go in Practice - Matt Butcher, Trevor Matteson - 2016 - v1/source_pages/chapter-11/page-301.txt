@@ -1,0 +1,74 @@
+278
+CHAPTER 11
+Reflection and code generation
+ 
+func main() {
+     tt := template.Must(template.New("queue").Parse(tpl))
+     for i := 1; i < len(os.Args); i++ { 
+            dest := strings.ToLower(os.Args[i]) + "_queue.go"
+            file, err := os.Create(dest)
+            if err != nil {
+                   fmt.Printf("Could not create %s: %s (skip)\n", dest, err)
+                   continue
+            }
+            vals := map[string]string{
+                   "MyType":  os.Args[i],
+                   "Package": os.Getenv("GOPACKAGE"),
+            }
+            tt.Execute(file, vals)
+            file.Close()
+     }
+}
+Because you want to accept multiple types at the command line, you start out by loop-
+ing through os.Args. For each one, you automatically generate an output file with the
+name TYPE_queue.go. Though to be consistent with the Go file-naming conventions,
+you should lowercase the type name.
+ Your template had only two variables. One is the Go type that you want to handle.
+But the other is the package. One nice thing that the go generate command does for
+you is populate a few environment variables with useful information about the loca-
+tion of the generator file. The $GOPACKAGE environment variable is set to the name of
+the package where the go:generate header was found.
+ When the template is executed, the vals map is used to populate the template,
+and a complete Go file is generated.
+ To run this, you need to place the go:generate header in an appropriate file, as
+shown in the next listing.
+//go:generate ./queue MyInt
+package main
+import "fmt"
+type MyInt int
+func main() {
+     var one, two, three MyInt = 1, 2, 3
+     q := NewMyIntQueue()
+     q.Insert(one)
+     q.Insert(two)
+     q.Insert(three)
+     fmt.Printf("First value: %d\n", q.Remove())
+}
+Listing 11.20
+The main queue generator
+Listing 11.21
+Using the generator
+Compiles the
+generator
+template
+Loops through the 
+args, making a file 
+named 
+TYPE_queue.go 
+for each
+Sets .MyType to the 
+type specified in the 
+passed-in argument
+Sets .Package to 
+the value of the 
+environment 
+variable 
+$GOPACKAGE
+Executes the
+template,
+sending the
+results to the file
+The generate header generates 
+a queue for type MyInt
+Defines the MyInt type
+Uses the MyIntQueue

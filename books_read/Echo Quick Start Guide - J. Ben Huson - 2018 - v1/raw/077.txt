@@ -1,0 +1,11 @@
+then think that this resource doesn't exist and send back a 404 Not Found
+response. The correct behavior is to send back a 405 Method Not Allowed
+response code, as the resource does indeed exist; it just doesn't allow the POST
+HTTP request method.
+Ultimately, Echo was changed for the better by altering the node data structure to
+include a methodHandler structure, which contained the per method handler
+mappings within each node of the tree. With this in place, Echo can maintain a
+single Radix Tree data structure for all methods. When a node is found, Echo can
+either respond back to the user that the method is not allowed if there is no
+handler associated with that particular request method, or perform the handler
+function associated with that resource and method.

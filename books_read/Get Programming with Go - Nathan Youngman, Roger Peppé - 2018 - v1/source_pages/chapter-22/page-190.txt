@@ -1,0 +1,38 @@
+175
+The class alternative
+Cosines to understand how this works. Mars isn’t a perfect sphere, but this formula 
+achieves a “good enough” approximation for our purposes:
+// distance calculation using the Spherical Law of Cosines.
+func (w world) distance(p1, p2 location) float64 {
+    s1, c1 := math.Sincos(rad(p1.lat))
+    s2, c2 := math.Sincos(rad(p2.lat))
+    clong := math.Cos(rad(p1.long - p2.long))
+    return w.radius * math.Acos(s1*s2+c1*c2*clong)
+}
+If your eyes just glazed over, don’t worry. The math is needed in a program that calcu-
+lates distance, but as long as distance returns the correct results, fully understanding 
+how all the math works is optional (though a good idea).
+Speaking of results, to see distance in action, declare some locations and use the mars vari-
+able declared earlier:
+spirit := location{-14.5684, 175.472636}
+opportunity := location{-1.9462, 354.4734}
+dist := mars.distance(spirit, opportunity)
+fmt.Printf("%.2f km\n", dist)
+If you get a different result, go back to ensure the code is typed exactly as shown. One 
+missing rad will result in incorrect calculations. If all else fails, download the code from 
+github.com/nathany/get-programming-with-go and resign yourself to copy and paste.
+The distance method was adopted from formulas for Earth, but using the radius of Mars. 
+By declaring distance as a method on the world type, you can calculate distance for other 
+worlds, such as Earth. The radius for each planet is found in table 22.2, as provided by 
+the Planetary Fact Sheet (nssdc.gsfc.nasa.gov/planetary/factsheet/).   
+Uses the world’s 
+radius field
+Uses the distance 
+method on mars
+Prints 9669.71 km
+Quick check 22.3 How is it beneficial to declare a distance method on the world type com-
+pared to a less object-oriented approach?
+QC 22.3 answer It provides a clean way to calculate distance for different worlds, and there’s no
+need to pass the volumetric mean radius into the distance method, because it already has access to
+w.radius.
+ 

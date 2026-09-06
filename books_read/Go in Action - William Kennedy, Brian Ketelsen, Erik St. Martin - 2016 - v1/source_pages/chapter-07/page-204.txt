@@ -1,0 +1,51 @@
+183
+Summary
+54
+wg.Done()
+55
+}()
+56
+}
+57
+}
+58
+59
+wg.Wait()
+60
+61
+// Shutdown the work pool and wait for all existing work
+62
+// to be completed.
+63
+p.Shutdown()
+64 }
+On line 36 in listing 7.36, the New function from the work package is called to create
+the work pool. The number 2 is passed into the call, indicating the pool should only
+contain two goroutines. On lines 38 and 39 a WaitGroup is declared and initialized to
+each goroutine that will be created. In this case, a goroutine for each name in the
+names slice will be created 100 times. This is to create a lot of goroutines competing to
+submit work to the pool. 
+ On lines 41 and 43 inner and outer for loops are declared to create all the gorou-
+tines. Inside each iteration of the inner loop, a value of type namePrinter is created
+and provided with a name to print. Then, on line 50, an anonymous function is
+declared and created as a goroutine. The goroutine calls the Run method against the
+work pool to submit the namePrinter value to the pool. Once a goroutine from the
+work pool receives the value, the call to Run returns. This in turn causes the goroutine
+to decrement the WaitGroup count and terminate. 
+ Once all the goroutines are created, the main function calls Wait on the Wait-
+Group. The function will wait until all the goroutines that were created submit their
+work. Once Wait returns, the work pool is shut down by calling the Shutdown method.
+This method won’t return until all the work is complete. In our case, there would be
+only two outstanding pieces of work by this time. 
+7.4
+Summary
+You can use channels to control the lifetime of programs.
+A select statement with a default case can be used to attempt a nonblocking
+send or receive on a channel.
+Buffered channels can be used to manage a pool of resources that can be
+reused.
+The coordination and synchronization of channels is taken care of by the
+runtime.
+Create a pool of goroutines to perform work using unbuffered channels.
+Any time an unbuffered channel can be used to exchange data between two
+goroutines, you have guarantees you can count on.

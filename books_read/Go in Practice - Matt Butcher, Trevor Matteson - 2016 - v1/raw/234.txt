@@ -1,0 +1,45 @@
+211
+TECHNIQUE 55
+API version in content type
+techniques for handling multiple HTTP methods being mapped to the same URL in
+chapter 2.
+ Although this is an easy method for passing an API version, it’s not technically
+semantic. A URL doesn’t represent an object. Instead, it represents accessing an object
+within a version of an API. The trade-off is developer ease. Specifying an API version in
+the URL is easier for developers consuming the API.
+TECHNIQUE 55
+API version in content type
+Although the previous technique focused on a method that was easy for developers,
+the method wasn’t semantic. Part of the original theory of REST was that a URL repre-
+sented something. That could be an object, list, or something else. Based on the
+details in the request, such as the requested content type or HTTP method, the
+response or action to that object would be different. 
+PROBLEM
+How can API versions be handled in a semantic manner?
+SOLUTION
+Instead of referencing JSON in the request and response, use a custom content type
+that includes the version. For example, instead of working with application/json,
+use a custom content type such as application/vnd.mytodo.v1.json or application/
+vnd.mytodo.json; version=1.0. These custom types specify the intended schema for
+the data.
+DISCUSSION
+To handle multiple API versions at a single path, as seen in figure 8.2, the handling
+needs to take into account the content type in addition to any other characteristics.
+Listing 8.13 showcases one method for detecting the content type and using that to
+generate the response.
+https://example.com/api/v1/todos
+The URL prefix to the APIs
+API version
+Path to specific API
+https://example.com/todos
+Path to specific API
+The URL prefix to the APIs
+An API-specific path 
+with the API version 
+in the URL.
+A single URL represents a resource
+or group of resources. HTML pages,
+JSON listing, and API call are all 
+available at this URL.
+Figure 8.2
+Differences between semantic URLs and API version in URL

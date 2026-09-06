@@ -1,0 +1,59 @@
+283
+11.7
+#88: Not using testing utility packages
+slow to execute. The other option is to use httptest.NewServer to create a local
+HTTP server based on a handler that we will provide. Once the server is up and run-
+ning, we can pass its URL to GetDuration:
+func TestDurationClientGet(t *testing.T) {
+srv := httptest.NewServer(
+http.HandlerFunc(
+func(w http.ResponseWriter, r *http.Request) {
+_, _ = w.Write([]byte(`{"duration": 314}`))
+},
+),
+)
+defer srv.Close()
+client := NewDurationClient()
+duration, err :=
+client.GetDuration(srv.URL, 51.551261, -0.1221146, 51.57, -0.13)
+if err != nil {
+t.Fatal(err)
+}
+if duration != 314*time.Second {
+t.Errorf("expected 314 seconds, got %v", duration)
+}
+}
+In this test, we create a server with a static handler returning 314 seconds. We could
+also make assertions based on the request sent. Furthermore, when we call Get-
+Duration, we provide the URL of the server that’s started. Compared to testing a han-
+dler, this test performs an actual HTTP call, but it executes in only a few milliseconds.
+ We can also start a new server using TLS with httptest.NewTLSServer and create
+an unstarted server with httptest.NewUnstartedServer so that we can start it lazily.
+ Let’s remember how helpful httptest is when working in the context of HTTP
+applications. Whether we’re writing a server or a client, httptest can help us create
+efficient tests. 
+11.7.2 The iotest package
+The iotest package (https://pkg.go.dev/testing/iotest) implements utilities for test-
+ing readers and writers. It’s a convenient package that Go developers too often forget.
+ When implementing a custom io.Reader, we should remember to test it using
+iotest.TestReader. This utility function tests that a reader behaves correctly: it accu-
+rately returns the number of bytes read, fills the provided slice, and so on. It also tests
+different behaviors if the provided reader implements interfaces such as io.ReaderAt.
+ Let’s assume we have a custom LowerCaseReader that streams lowercase letters
+from a given input io.Reader. Here’s how to test that this reader doesn’t misbehave:
+func TestLowerCaseReader(t *testing.T) {
+err := iotest.TestReader(
+&LowerCaseReader{reader: strings.NewReader("aBcDeFgHiJ")},
+Starts the 
+HTTP server
+Registers the
+handler to serve
+the response
+Shuts down 
+the server
+Provides the
+server URL
+Verifies the 
+response
+Provides an
+io.Reader

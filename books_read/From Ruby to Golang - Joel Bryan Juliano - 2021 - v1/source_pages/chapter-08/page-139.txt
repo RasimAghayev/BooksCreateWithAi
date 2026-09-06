@@ -1,0 +1,51 @@
+Glossary
+133
+Heredoc
+In computing, a here document
+(here-document, here-text, heredoc,
+hereis, here-string or here-script) is a file
+literal or input stream literal: it is a
+section of a source code file that is
+treated as if it were a separate file. The
+term is also used for a form of multiline
+string literals that use similar syntax,
+preserving line breaks and other
+whitespace (including indentation) in the
+text.
+High-level and low-level
+High-level and low-level, as technical
+terms, are used to classify, describe and
+point to specific goals of a systematic
+operation; and are applied in a wide
+range of contexts, such as, for instance,
+in domains as widely varied as computer
+science and business administration.
+High-level
+describe those operations that are more
+abstract in nature; wherein the overall
+goals and systemic features are typically
+more concerned with the wider, macro
+system as a whole.
+Hint
+A clue
+Hold
+To grasp or grip
+HTML
+Hypertext Markup Language (HTML) is
+the standard markup language for
+documents designed to be displayed in a
+web browser. It can be assisted by
+technologies such as Cascading Style
+Sheets (CSS) and scripting languages
+such as JavaScript.
+Idiomatically
+In an idiomatic manner
+If
+Supposing that, assuming that, in the
+circumstances that; used to introduce a
+condition or choice
+Implementation (generic)
+is the realization of an application, or
+execution of a plan, idea, model, design,
+specification, standard, algorithm, or
+policy.

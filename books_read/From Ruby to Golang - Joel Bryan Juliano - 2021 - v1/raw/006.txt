@@ -1,0 +1,9 @@
+CONTENTS
+Organizing your Functions using Interface . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 101
+Interface as a Self-Documenting API Reference . . . . . . . . . . . . . . . . . . . . . . . . . . 102
+Interface as Type contract . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 106
+Satisfying Return Values . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 108
+Chapter Questions . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 111
+Glossary . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 112
+Acknowledgments . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 159
+Credits . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 160

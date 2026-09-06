@@ -1,0 +1,51 @@
+276
+Lesson 31  Concurrent state
+func worker() {
+    n := 0
+    next := time.After(time.Second)
+    for {
+        select {
+        case <-next:
+            n++
+            fmt.Println(n) 
+            next = time.After(time.Second)
+        }
+    }
+}
+NOTE We don’t need to use a select statement in this example. A select with only one
+case is the same as using the channel operation on its own. But we’re using select here
+because later in this lesson, we’ll change the code to wait for more than just a timer. Other-
+wise, we could avoid the After call entirely and use time.Sleep.
+Now that we’ve got a worker that can act of its own accord, let’s make it a little more 
+rover-like by updating a position instead of a number. Conveniently, Go’s image package 
+provides a Point type that we can use to represent the rover’s current position and direc-
+tion. A Point is a structure holding X and Y coordinates with appropriate methods. For 
+example, the Add method adds one point to another.
+Let’s use the X axis to represent east-west and the Y axis to represent north-south. To use 
+Point, we must first import the image package:
+import "image"
+Every time we receive a value on the timer channel, we add the point representing the 
+current direction to the current position, as shown in the next listing. Right now, the 
+rover will always start at the same place [10, 10] and proceed East, but we’ll address that 
+shortly.
+func worker() {
+    pos := image.Point{X: 10, Y: 10} 
+    direction := image.Point{X: 1, Y: 0}
+    next := time.After(time.Second)
+    for {
+Listing 31.4 Number printing worker: printworker.go
+Listing 31.5 Position updating worker: positionworker.go
+Makes initial 
+timer channel
+Waits for the 
+timer to fire
+Prints the number
+Makes another timer 
+channel for another 
+event
+The current position 
+(initially [10, 10])
+The current direction 
+(initially [1, 0], 
+traveling east)
+ 

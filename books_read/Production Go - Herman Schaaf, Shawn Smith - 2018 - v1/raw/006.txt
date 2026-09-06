@@ -1,0 +1,31 @@
+Introduction
+Why Go in Production?
+If you are reading this book, we assume you are interested in running Go in a production
+environment. Maybe you dabble in Go on your side projects, but are wondering how you can use it
+at work. Or perhaps you’ve read a company blog post about converting their codebase to Go, which
+now has 3 times less code and response times one tenth of what they were before. Your mileage will
+vary when it comes to gains in productivity and efficiency, but we think they will be positive gains.
+Our goal in writing this book is to provide the knowledge to write a production-ready service in Go.
+This means not only writing the initial implementation, but also reliably deploying it, monitoring
+its performance, and iterating on improvements.
+Go is a language that allows for fast iteration, which goes well with continuous deployment.
+Although Go is a statically typed language, it compiles quickly and can often be used as a
+replacement for scripting languages like Python. And many users report that when writing Go,
+once a program works, it continues to “just work”. We suspect that this is due to the simple design
+of the language, and the focus on readability rather than clever constructs.
+In one project, we replaced existing APIs in PHP with equivalent functionality in Go. We saw
+performance improvements, including an order of magnitude reduction in response times, which
+led to both higher user retention and a reduction in server costs. We also saw developer happiness
+increase, because the safety guarantees in Go reduced the number of production-breaking bugs.
+This book is not meant for beginner programmers. We expect our audience to be knowledgeable of
+basic computer science topics and software engineering practices. Over the years, we have helped
+ramp up countless engineers who had no prior experience writing Go. Ideally this will be the book
+that people recommend to engineers writing Go for the first time, and who want to better understand
+the “right way” to write Go.
+We hope this book will help guide you on your journey to running Go in production. It will cover
+all important aspects of running a production system, including advanced topics like profiling the
+memory usage of a Go program, deploying and monitoring apps written in Go, and writing idiomatic
+tests.
+Feel free to skip around to chapters that seem more relevant to your immediate concerns or interests.
+We will do our best to keep the chapters fairly independent of one another in order to make that
+possible.

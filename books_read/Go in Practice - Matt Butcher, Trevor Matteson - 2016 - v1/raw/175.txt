@@ -1,0 +1,46 @@
+152
+CHAPTER 6
+HTML and email template patterns
+Rather than referencing an external file, this HTML template is stored as a string in a
+variable. Inside the template, the data in Date is passed through the template function
+dateFormat with a specified format string before becoming part of the output. It’s
+important to know that the piping mechanism passes the output from one item in the
+pipeline into the next item in the pipeline as the last argument.
+ Because dateFormat isn’t one of the core template functions, it needs to be made
+available to the template. Making custom functions available in templates requires two
+steps. First, a map needs to be created in which names to be used inside the template
+are mapped to functions in Go. Here the function dateFormat is mapped to the name
+dateFormat. Although the same name is used for both the Go function and name avail-
+able inside the template, that doesn’t have to be the case. They can be different names.
+ When a new template.Template instance is created, the function map (here,
+named funcMap) needs to be passed into Funcs to make the new function mapping
+available to templates. After this happens, templates can use the functions. Before
+using the template, the final step is to parse the template into template.Template.
+ From here, the template instance is used normally. The data structure is defined,
+in this case, by an anonymous struct, with the data to pass in as a key-value mapping.
+The data structure is passed into Execute along with the io.Writer to output the ren-
+dered template. In this case, when dateFormat is encountered in the template, the
+format of Jan 2, 2006 is passed in, followed by the time.Time instance. The instance
+of time.Time is converted to a string following this format.
+NOTE
+The date and time used in format strings needs to be specific and is
+detailed in the package documentation at http://golang.org/pkg/time
+/#Time.Format.
+If you’re going to apply the same function set to numerous templates, you can use a
+Go function to create your templates and add your template functions each time:
+func parseTemplateString(name, tpl string) *template.Template {
+     t:= template.New(name)
+     t.Funcs(funcMap)
+     t = template.Must(t.Parse(tpl))
+     return t
+}
+This function could be repeatedly used to create a new template object from a tem-
+plate string with your custom template functions included. In listing 6.3, this could be
+used inside the serveTemplate function instead of parsing the template and adding
+the template functions there. Using a Go function to configure your templates for you
+could be done with files as well.
+6.1.3
+Limiting template parsing
+Parsing templates that were originally in text into type instances is a bit of work for a
+Go application. Parsing a template turns a string of characters into an object model
+with a variety of nodes and node types that Go knows how to use. The parser in the

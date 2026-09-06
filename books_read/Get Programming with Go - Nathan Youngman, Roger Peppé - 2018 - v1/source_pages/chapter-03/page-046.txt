@@ -1,0 +1,31 @@
+31
+Repetition with loops
+    fmt.Println("The water is freezing cold.")
+}
+The previous listing will produce the following output:
+The ice seems solid enough.
+The water is freezing cold.
+NOTE Falling through happens by default in C, Java, and JavaScript, whereas Go takes a
+safer approach, requiring an explicit fallthrough keyword.   
+3.6
+Repetition with loops
+Rather than type the same code multiple times, the for 
+keyword repeats code for you. Listing 3.8 loops around 
+until count equals 0.
+Before each iteration, the expression count > 0 is evalu-
+ated to produce a Boolean value. If the value is false 
+(count = 0), the loop terminates—otherwise, it runs the 
+body of the loop (the code between { and }).
+Quick check 3.5 Modify listing 3.7 to use the more concise form of switch, as
+every comparison is with room.
+QC 3.5 answer 
+switch room {
+case "cave":
+    fmt.Println("You find yourself in a dimly lit cavern.")
+case "lake":
+    fmt.Println("The ice seems solid enough.")
+    fallthrough
+case "underwater":
+    fmt.Println("The water is freezing cold.")
+}
+ 

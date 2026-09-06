@@ -1,0 +1,51 @@
+259
+TECHNIQUE 67
+Discovering whether a value implements an interface
+fmt package defines an interface called Stringer that describes a thing capable of
+representing itself as a string:
+type Stringer interface {
+        String() string 
+}
+Any type that provides a String() method that takes no arguments and returns a
+string is ipso facto a fmt.Stringer.
+PROBLEM
+Given a particular type, you want to find out whether that type implements a defined
+interface.
+SOLUTION
+There are two ways to accomplish this. One is with a type assertion, and the other uses
+the reflect package. Use the one that best meets your needs.
+DISCUSSION
+Go’s view of interfaces differs from that of object-oriented languages like Java. In Go, a
+thing isn’t declared to fulfill an interface. Instead, an interface is a description against
+which a type can be compared. And interfaces are themselves types. That is why when
+you write types in Go, you don’t declare which interfaces they satisfy. In fact, as you
+saw in chapter 4, it’s common to write interfaces to match existing code.
+ One easy way to conceptualize this is by considering how we, as humans, often gen-
+eralize and categorize. If I were to ask you, “What do a swan, a snow drift, and a cloud
+have in common?” you would answer, “All are white.” This doesn’t mean that the three
+things have a common ancestor (the object-oriented approach). Instead, it means
+that all three share a commonality: whiteness. This is the way types work in Go. They
+express commonality, not inheritance.
+ Go makes it easy to determine whether a given interface matches another inter-
+face type. Determining the answer to this question can be done at the same time as
+converting that type, as shown in the next listing.
+package main
+import (
+     "bytes"
+     "fmt"
+)
+func main() {
+     b := bytes.NewBuffer([]byte("Hello"))
+     if isStringer(b) {
+            fmt.Printf("%T is a stringer\n", b)
+     }
+     i := 123
+     if isStringer(i) {
+Listing 11.4
+Checking and converting a type
+Tests whether a 
+*bytes.Buffer is a 
+fmt.Stringer. It is.
+Tests whether an 
+integer is a 
+fmt.Stringer. It’s not.

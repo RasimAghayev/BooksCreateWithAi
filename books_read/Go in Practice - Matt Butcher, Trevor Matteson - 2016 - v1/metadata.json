@@ -1,0 +1,37 @@
+{
+  "📘 title_original": "Go in Practice",
+  "🔤 filename_safe": "Go in Practice - Matt Butcher, Trevor Matteson - 2016 - v1",
+  "📚 book": {
+    "📖 title": "Go in Practice: Includes 70 Techniques",
+    "🧑‍💻 author": "Matt Butcher, Trevor Matteson",
+    "📅 year": 2016,
+    "📖 version": 1,
+    "📄 pages": 314,
+    "🔢 isbn": "9781633430075",
+    "🏢 publisher": "Manning Publications Co.",
+    "📚 series": "In Practice"
+  },
+  "🎯 classification": {
+    "💻 primary_language": "Go",
+    "🎯 level": 4,
+    "📛 level_name": "Advanced",
+    "🌟 level_icon": "🔥",
+    "🌐 domains": ["Backend Development", "Web Development", "Cloud Computing", "DevOps", "Microservices"]
+  },
+  "🛠️ technologies": ["Go", "net/http", "flag", "html/template", "JSON", "Protocol Buffers", "RPC", "Docker", "Cloud (AWS/GCE/Azure)", "Reflection", "go generate", "syslog", "mutex", "channels"],
+  "🏷️ tags": ["#go", "#golang", "#best_practices", "#techniques", "#cloud", "#micro_services", "#reflection", "#testing", "#concurrency", "#performance", "#webdev", "#production"],
+  "📑 chapters": [
+    {"chapter": 1, "title": "Getting into Go", "pages": "3-25", "pdf_pages": "26-48"},
+    {"chapter": 2, "title": "A solid foundation", "pages": "27-58", "pdf_pages": "50-81"},
+    {"chapter": 3, "title": "Concurrency in Go", "pages": "59-83", "pdf_pages": "82-106"},
+    {"chapter": 4, "title": "Handling errors and panics", "pages": "87-111", "pdf_pages": "110-134"},
+    {"chapter": 5, "title": "Debugging and testing", "pages": "113-143", "pdf_pages": "136-166"},
+    {"chapter": 6, "title": "HTML and email template patterns", "pages": "147-166", "pdf_pages": "170-189"},
+    {"chapter": 7, "title": "Serving and receiving assets and forms", "pages": "168-193", "pdf_pages": "191-212"},
+    {"chapter": 8, "title": "Working with web services", "pages": "194-213", "pdf_pages": "217-236"},
+    {"chapter": 9, "title": "Using the cloud", "pages": "217-234", "pdf_pages": "240-257"},
+    {"chapter": 10, "title": "Communication between cloud services", "pages": "235-252", "pdf_pages": "258-275"},
+    {"chapter": 11, "title": "Reflection and code generation", "pages": "253-280", "pdf_pages": "276-303"}
+  ],
+  "page_offset": 23
+}

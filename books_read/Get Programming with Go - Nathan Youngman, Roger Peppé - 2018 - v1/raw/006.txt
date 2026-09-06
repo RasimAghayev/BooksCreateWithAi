@@ -1,0 +1,80 @@
+v
+Contents
+Preface vii
+Acknowledgments viii
+About this book x
+About the authors xiii
+Unit 0
+GETTING STARTED
+Lesson 1
+Get ready, get set, Go 3
+Unit 1
+IMPERATIVE PROGRAMMING
+Lesson 2
+A glorified calculator 13
+Lesson 3
+Loops and branches 23
+Lesson 4
+Variable scope 34
+Lesson 5
+Capstone: Ticket to Mars 41
+Unit 2
+TYPES
+Lesson 6
+Real numbers 45
+Lesson 7
+Whole numbers 53
+Lesson 8
+Big numbers 62
+Lesson 9
+Multilingual text 68
+Lesson 10
+Converting between types 79
+Lesson 11
+Capstone: The Vigenère cipher 88
+Unit 3
+BUILDING BLOCKS
+Lesson 12
+Functions 93
+Lesson 13
+Methods 101
+Lesson 14
+First-class functions 108
+Lesson 15
+Capstone: Temperature tables 117
+Unit 4
+COLLECTIONS
+Lesson 16
+Arrayed in splendor 121
+Lesson 17
+Slices: Windows into arrays 130
+Lesson 18
+A bigger slice 138
+Lesson 19
+The ever-versatile map 146
+Lesson 20
+Capstone: A slice of life 155
+Unit 5
+STATE AND BEHAVIOR
+Lesson 21
+A little structure 161
+Lesson 22
+Go’s got no class 170
+Lesson 23
+Composition and forwarding 177
+Lesson 24
+Interfaces 186
+Lesson 25
+Capstone: Martian animal 
+sanctuary 196
+Unit 6
+DOWN THE GOPHER HOLE
+Lesson 26
+A few pointers 201
+Lesson 27
+Much ado about nil 220
+Lesson 28
+To err is human 230
+Lesson 29
+Capstone: Sudoku rules 248
+ 

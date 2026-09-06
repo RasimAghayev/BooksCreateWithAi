@@ -1,0 +1,18 @@
+56
+Data types
+Dealing with data types is a frequent operation for software engineers. This chapter
+delves into the most common mistakes related to basic types, slices, and maps. The
+only data type that we omit is strings because a later chapter deals with this type
+exclusively.
+3.1
+#17: Creating confusion with octal literals
+Let’s first look at a common misunderstanding with octal literal representation,
+which can lead to confusion or even bugs. What do you believe should be the out-
+put of the following code?
+sum := 100 + 010
+fmt.Println(sum)
+This chapter covers
+Common mistakes related to basic types
+Fundamental concepts for slices and maps to 
+prevent possible bugs, leaks, or inaccuracies
+Comparing values

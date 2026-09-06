@@ -1,0 +1,47 @@
+148
+CHAPTER 6
+Concurrency
+When receiving a value or pointer from a channel, the <- operator is attached to the
+left side of the channel variable, as seen in listing 6.19. 
+ Unbuffered and buffered channels behave a bit differently. Understanding the dif-
+ferences will help you determine when to prefer one over the other, so let’s look at
+each type separately. 
+6.5.1
+Unbuffered channels
+An unbuffered channel is a channel with no capacity to hold any value before it’s
+received. These types of channels require both a sending and receiving goroutine to
+be ready at the same instant before any send or receive operation can complete. If the
+two goroutines aren’t ready at the same instant, the channel makes the goroutine that
+performs its respective send or receive operation first wait. Synchronization is inher-
+ent in the interaction between the send and receive on the channel. One can’t hap-
+pen without the other. 
+ In figure 6.6, you see an example of two goroutines sharing a value using an unbuf-
+fered channel. In step 1 the two goroutines approach the channel, but neither have
+issued a send or receive yet. In step 2 the goroutine on the left sticks its hand into the
+channel, which simulates a send on the channel. At this point, that goroutine is locked
+Channel
+1
+GR
+GR
+Channel
+2
+GR
+GR
+GR
+Channel
+GR
+GR
+GR
+3
+Channel
+GR
+GR
+5
+Channel
+6
+Channel
+4
+GR
+GR
+Figure 6.6
+Synchronization between goroutines using an unbuffered channel

@@ -1,0 +1,48 @@
+33
+2.9
+#9: Being confused about when to use generics
+type customConstraint interface {
+~int | ~string
+}
+func getKeys[K customConstraint,
+V any](m map[K]V) []K {
+// Same implementation
+}
+First, we define a customConstraint interface to restrict the types to be either int or
+string using the union operator | (we will discuss the use of ~ a bit later). K is now a
+customConstraint instead of a comparable as before.
+ The signature of getKeys enforces that we can call it with a map of any value type,
+but the key type has to be an int or a string—for example, on the caller side:
+m = map[string]int{
+"one":
+1,
+"two":
+2,
+"three": 3,
+}
+keys := getKeys(m)
+Note that Go can infer that getKeys is called with a string type argument. The previ-
+ous call is equivalent to this:
+keys := getKeys[string](m)
+~int vs. int
+What’s the difference between a constraint using ~int or one using int? Using int
+restricts it to that type, whereas ~int restricts all the types whose underlying type is
+an int. To illustrate, let’s imagine a constraint where we would like to restrict a type
+to any int type implementing the String() string method:
+type customConstraint interface {
+~int
+String() string
+}
+Using this constraint restricts type arguments to custom types. For example,
+type customInt int
+func (i customInt) String() string {
+return strconv.Itoa(int(i))
+}
+Because customInt is an int and implements the String() string method, the
+customInt type satisfies the defined constraint. However, if we change the con-
+straint to contain an int instead of an ~int, using customInt leads to a compilation
+error because the int type doesn’t implement String() string.
+Defines a custom type that 
+restricts types to int and string
+Changes the type parameter K 
+to be a customConstraint type

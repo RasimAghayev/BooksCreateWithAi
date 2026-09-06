@@ -1,0 +1,47 @@
+273
+Mutexes
+func (v *Visited) VisitLink(url string) int {
+    v.mu.Lock() 
+    defer v.mu.Unlock()
+    count := v.visited[url]
+    count++
+    v.visited[url] = count
+    return count
+}
+The Go playground isn’t a good place to experiment with race conditions because it’s 
+kept deliberately deterministic and race-free. But you can experiment by inserting calls 
+to time.Sleep between statements.
+Try modifying listing 31.3 to use the techniques introduced at the beginning of lesson 30 
+to start several goroutines that all call VisitLink with different values and experiment 
+with inserting Sleep statements in different places. Also try deleting the Lock and Unlock 
+calls to see what happens.
+With a small and well-defined piece of state to guard, a mutex is quite straightforward 
+to use and is an essential tool when writing methods that you want to be usable from 
+multiple goroutines at once.   
+31.1.1 Mutex pitfalls
+In listing 31.2, when the mutex is locked, we only do a very simple thing: we update a 
+map. The more we do while the lock is held, the more we need to be careful. If we block 
+to wait for something when we’ve locked the mutex, we may be locking others out for a 
+Locks the mutex
+Ensures that the 
+mutex is unlocked
+Updates the map
+Quick check 31.1 
+1
+What might happen if two goroutines try to change the same value at the same time?
+2
+What happens if you try to lock the mutex again before unlocking it?
+3
+What happens if you unlock it without locking it?
+4
+Is it safe to call methods on the same type from different goroutines at the same time?
+QC 31.1 answer 
+1
+It’s undefined. The program may crash or anything else may happen.
+2
+It will block forever.
+3
+It will panic: unlock of unlocked mutex.
+4
+No, not unless specifically documented as such.
+ 

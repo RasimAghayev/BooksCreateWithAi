@@ -1,0 +1,27 @@
+x
+About this book
+Who should read this book
+Go is suitable for programmers with a wide range of skill levels—a necessity for any 
+large project. Being a relatively small language, with minimal syntax and few concep-
+tual hurdles, Go could be the next great language for beginners.
+Unfortunately, many resources for learning Go presume a working knowledge of the C 
+programming language. Get Programming with Go exists to fill the gap for scripters, hob-
+byists, and newcomers looking for a direct path to Go. To make it easier to get started, 
+every code listing and exercise in this book can run inside the Go Playground (play 
+.golang.org), so there’s nothing to install!
+If you’ve ever used a scripting language like JavaScript, Lua, PHP, Perl, Python, or Ruby, 
+you’re ready to learn Go. If you’ve used Scratch or Excel formulas, or written HTML, 
+you’re not alone in choosing Go as your first “real” programming language (see the 
+video “A Beginner’s Mind” featuring Audrey Lim at youtu.be/fZh8uCInEfw). Mastering 
+Go will take patience and effort, but we hope Get Programming with Go is a helpful 
+resource in your quest.
+How this book is organized: A roadmap
+Get Programming with Go gradually explains the concepts needed to use Go effectively 
+and provides a plethora of exercises to hone your skills. This is a beginner’s guide to Go, 
+intended to be read from cover to cover, with each lesson building on the last. It isn’t a 
+complete specification (golang.org/ref/spec) of every language feature, but it covers 
+most of the language and touches on advanced topics like object-oriented design and 
+concurrency.
+Whether you go on to write massively concurrent web services or small scripts and sim-
+ple tools, this book will help you establish a solid foundation.
+ 

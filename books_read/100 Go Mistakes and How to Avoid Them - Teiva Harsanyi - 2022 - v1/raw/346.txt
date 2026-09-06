@@ -1,0 +1,66 @@
+326
+CHAPTER 12
+Optimizations
+The previous stack frame (main) contains addresses that are still considered valid.
+We can’t access a and b directly; but if we had a pointer on a, for example, it would be
+valid. We discuss pointers shortly.
+ Let’s move to the last statement of the main function: println. We exited the sum-
+Value function, so what happens to its stack frame? See figure 12.28.
+Figure 12.28
+The sumValue stack frame was deleted and replaced by 
+variables from main. In this example, x has been erased by c, while 
+y and z are still allocated in memory but unreachable.
+The sumValue stack frame wasn’t completely erased from memory. When a function
+returns, Go doesn’t take time to deallocate the variables to reclaim free space. But
+these previous variables can no longer be accessed, and when new variables from the
+parent function are allocated to the stack, they replace earlier allocations. In a sense, a
+stack is self-cleaning; it doesn’t require an additional mechanism such as a GC.
+ Now, let’s make a slight change to understand the stack’s limitations. Instead of
+returning an int, the function will return a pointer:
+func main() {
+a := 3
+b := 2
+func main() {
+   a := 3
+   b := 2
+   c := sumValue(a, b)
+   println(c)
+}
+func sumValue(x, y int) int {
+   z := x + y
+   return z
+}
+sumValue
+x = 3
+y = 2
+z = 5
+Stack 
+main
+a = 3
+b = 2
+Valid
+Invalid
+Figure 12.27
+Calling 
+sumValue creates a 
+new stack frame.
+func main() {
+   a := 3
+   b := 2
+   c := sumValue(a, b)
+   println(c)
+}
+func sumValue(x, y int) int {
+   z := x + y
+   return z
+}
+Stack 
+i = 3
+y = 2
+z = 5
+main
+a = 3
+b = 2
+c = 5
+Valid
+Invalid

@@ -1,0 +1,8 @@
+26
+CHAPTER 1
+Getting into Go
+arguments, and flags? Does a web service need to gracefully shut down? Answering
+questions like these provides the foundation for production-ready applications.
+ The rest of the book explores practical aspects of building and working with Go
+applications. Chapters build on each other, culminating in putting the practices
+together to build a well-rounded application.

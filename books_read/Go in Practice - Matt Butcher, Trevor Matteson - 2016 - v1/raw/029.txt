@@ -1,0 +1,55 @@
+6
+CHAPTER 1
+Getting into Go
+ Although the core of the language is fairly simple, the Go built-in package system
+enables you to add many aspects. Many of the missing elements can be built as a third-
+party package and incorporated into applications via the package system.
+ The minimal size and complexity has benefits. The language can be learned
+quickly and easily retained. This turns out to be quite a benefit when quickly crafting
+and iterating over a codebase.
+1.2
+Noteworthy aspects of Go
+Because Go is designed around practical situations, it has several noteworthy features.
+These useful characteristics, when used together, provide the building blocks for Go
+applications.
+1.2.1
+Multiple return values
+One of the first things you’ll learn in Go is that functions and methods can return
+multiple values. Most programming languages support returning a single value from a
+function. When you need to return multiple values, they’re shoehorned into a tuple,
+hash, or other type, and that value is returned. Go is one of the few languages natively
+supporting multiple return values. This feature is regularly used, and something you’ll
+see in virtually every part of Go and the libraries and applications written in it. For
+example, consider the following function that returns two string names.
+package main
+import (
+    "fmt"
+)
+func Names() (string, string) {
+    return "Foo", "Bar"
+}
+func main() {
+    n1, n2 := Names()
+    fmt.Println(n1, n2)
+    n3, _ := Names()
+    fmt.Println(n3)
+}
+TIP
+Imported packages used in this chapter, such as fmt, bufio, net, and
+others, are part of the standard library. More details, including their APIs and
+how they work, can be found at https://golang.org/pkg.
+In this example, each return is defined in the function definition after the arguments
+B. In this case, there are two string values. When return is called, it returns two
+strings C to match the definition. When the Names function is called, you need to
+have a variable for each return to capture the value D. But if you want to ignore one
+Listing 1.1
+Multiple returns: returns.go
+Two strings defined for return
+B
+Two strings are returned.
+C
+Variables get two values 
+and print them.
+D
+Gets first return value and skips second
+E

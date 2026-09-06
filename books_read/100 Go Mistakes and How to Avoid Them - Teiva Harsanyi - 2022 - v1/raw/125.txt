@@ -1,0 +1,51 @@
+105
+4.4
+#33: Making wrong assumptions during map iterations
+s.m[current.ID] = &current
+}
+}
+In this example, we don’t store a pointer referencing customer; instead, we store a
+pointer referencing current. current is a variable referencing a unique Customer
+during each iteration. Therefore, following the loop, we have stored different point-
+ers referencing different Customer structs in the map. The other solution is to store a
+pointer referencing each element using the slice index:
+func (s *Store) storeCustomers(customers []Customer) {
+for i := range customers {
+customer := &customers[i]
+s.m[customer.ID] = customer
+}
+}
+In this solution, customer is now a pointer. Because it’s initialized during each itera-
+tion, it has a unique address. Therefore, we store different pointers in the maps.
+ When iterating over a data structure using a range loop, we must recall that all the
+values are assigned to a unique variable with a single unique address. Therefore, if we
+store a pointer referencing this variable during each iteration, we will end up in a situ-
+ation where we store the same pointer referencing the same element: the latest one.
+We can overcome this issue by forcing the creation of a local variable in the loop’s
+scope or creating a pointer referencing a slice element via its index. Both solutions
+are fine. Also note that we took a slice data structure as an input, but the problem
+would be similar with a map.
+ In the next section, we see common mistakes related to map iteration. 
+4.4
+#33: Making wrong assumptions during map iterations
+Iterating over a map is a common source of misunderstanding and mistakes, mostly
+because developers make wrong assumptions. In this section, we discuss two different
+cases:
+Ordering
+Map update during an iteration
+We will see two common mistakes based on wrong assumptions while iterating over a
+map.
+4.4.1
+Ordering
+Regarding ordering, we need to understand a few fundamental behaviors of the map
+data structure:
+It doesn’t keep the data sorted by key (a map isn’t based on a binary tree).
+It doesn’t preserve the order in which the data was added. For example, if we
+insert pair A before pair B, we shouldn’t make any assumptions based on this
+insertion order.
+Stores this pointer 
+in the map
+Assigns to customer a 
+pointer of the i element
+Stores the 
+customer pointer

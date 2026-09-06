@@ -1,0 +1,49 @@
+228
+CHAPTER 9
+Concurrency: Practice
+repeatedly send notifications to multiple goroutines, sync.Cond is a solution. This
+primitive is based on condition variables that set up containers of threads waiting for a
+specific condition. Using sync.Cond, we can broadcast signals that wake all the gorou-
+tines waiting on a condition.
+ Let’s extend our knowledge of concurrency primitives using golang.org/x and
+the errgroup package. 
+9.13
+#73: Not using errgroup
+Regardless of the programming language, reinventing the wheel is rarely a good idea.
+It’s also pretty common for codebases to reimplement how to spin up multiple gorou-
+tines and aggregate the errors. But a package in the Go ecosystem is designed to sup-
+port this frequent use case. Let’s look at it and understand why it should be part of the
+toolset of Go developers.
+ golang.org/x is a repository providing extensions to the standard library. The
+sync sub-repository contains a handy package: errgroup.
+ Suppose we have to handle a function, and we receive as an argument some data
+that we want to use to call an external service. Due to constraints, we can’t make a sin-
+gle call; we make multiple calls with a different subset each time. Also, these calls are
+made in parallel (see figure 9.13).
+Figure 9.13
+Each circle results in a parallel call.
+In case of one error during a call, we want to return it. In case of multiple errors, we
+want to return only one of them. Let’s write the skeleton of the implementation using
+only the standard concurrency primitives:
+func handler(ctx context.Context, circles []Circle) ([]Result, error) {
+results := make([]Result, len(circles))
+wg := sync.WaitGroup{}
+wg.Add(len(results))
+for i, circle := range circles {
+i := i
+circle := circle
+Client
+Handler
+Request
+External call
+External call
+External call
+Aggregate results
+Creates a wait group to 
+wait for all the goroutines 
+that we spin up
+Creates a new i variable used in the goroutine 
+(see mistake #63, “Not being careful with 
+goroutines and loop variables”)
+Same for
+circle

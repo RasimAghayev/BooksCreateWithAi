@@ -1,0 +1,26 @@
+func (e *Echo) Add(method, path string, handler HandlerFunc, middleware
+...MiddlewareFunc) *Route {
+const (
+MethodGet = "GET"
+MethodHead = "HEAD"
+MethodPost = "POST"
+MethodPut = "PUT"
+MethodPatch = "PATCH" // RFC 5789
+MethodDelete = "DELETE"
+MethodConnect = "CONNECT"
+MethodOptions = "OPTIONS"
+MethodTrace = "TRACE"
+)
+func (e *Echo) CONNECT(path string, h HandlerFunc, m ...MiddlewareFunc)
+*Route func (e *Echo) DELETE(path string, h HandlerFunc, m
+...MiddlewareFunc) *Route func (e *Echo) GET(path string, h HandlerFunc, m
+...MiddlewareFunc) *Route func (e *Echo) HEAD(path string, h HandlerFunc,
+m ...MiddlewareFunc) *Route func (e *Echo) OPTIONS(path string, h
+HandlerFunc, m ...MiddlewareFunc) *Route func (e *Echo) PATCH(path string,
+h HandlerFunc, m ...MiddlewareFunc) *Route func (e *Echo) POST(path string,
+h HandlerFunc, m ...MiddlewareFunc) *Route func (e *Echo) PUT(path string, h
+HandlerFunc, m ...MiddlewareFunc) *Route func (e *Echo) TRACE(path string,
+h HandlerFunc, m ...MiddlewareFunc) *Route
+func (e *Echo) Any(path string, handler HandlerFunc, middleware
+...MiddlewareFunc) []*Route
+e.POST(“/reminder”, handlers.CreateReminder) e.Any(“/reminder”,

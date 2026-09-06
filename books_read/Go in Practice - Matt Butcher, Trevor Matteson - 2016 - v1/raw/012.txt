@@ -1,0 +1,88 @@
+CONTENTS
+xi
+TECHNIQUE 51
+Custom HTTP error passing
+201
+Reading and using custom errors
+203
+TECHNIQUE 52
+Reading custom errors
+204
+8.3
+Parsing and mapping JSON
+206
+TECHNIQUE 53
+Parsing JSON without knowing the schema
+206
+8.4
+Versioning REST APIs
+209
+TECHNIQUE 54
+API version in the URL
+209
+TECHNIQUE 55
+API version in content type
+211
+8.5
+Summary
+213
+PART 4
+TAKING YOUR APPLICATIONS 
+TO THE CLOUD..............................................215
+9 Using the cloud
+217
+9.1
+What is cloud computing?
+218
+The types of cloud computing
+218
+■Containers and cloud-native 
+applications
+220
+9.2
+Managing cloud services
+222
+Avoiding cloud provider lock-in
+222
+TECHNIQUE 56
+Working with multiple cloud providers
+222
+Dealing with divergent errors
+225
+TECHNIQUE 57
+Cleanly handling cloud provider errors
+225
+9.3
+Running on cloud servers
+227
+Performing runtime detection
+227
+TECHNIQUE 58
+Gathering information on the host
+227
+TECHNIQUE 59
+Detecting dependencies
+229
+ Building for the cloud
+230
+TECHNIQUE 60
+Cross-compiling
+230
+Performing runtime monitoring
+232
+TECHNIQUE 61
+Monitoring the Go runtime
+233
+9.4
+Summary
+234
+10 Communication between cloud services
+235
+10.1
+Microservices and high availability
+236
+10.2
+Communicating between services
+237
+Making REST faster
+237

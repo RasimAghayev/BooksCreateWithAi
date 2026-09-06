@@ -1,0 +1,44 @@
+243
+10.3
+#77: Common JSON-handling mistakes
+In summary, the marshaling/unmarshaling process isn’t always symmetric, and we
+faced this case with a struct containing a time.Time. We should keep this principle in
+mind so we don’t, for example, write erroneous tests. 
+10.3.3 Map of any
+When unmarshaling data, we can provide a map instead of a struct. The rationale is
+that when the keys and values are uncertain, passing a map gives us some flexibility
+instead of a static struct. However, there’s a rule to bear in mind to avoid wrong
+assumptions and possible goroutine panics.
+ Let’s write an example that unmarshals a message into a map:
+b := getMessage()
+var m map[string]any
+err := json.Unmarshal(b, &m)
+if err != nil {
+return err
+}
+Let’s provide the following JSON to the previous code:
+{
+"id": 32,
+"name": "foo"
+}
+Because we use a generic map[string]any, it parses all the different fields
+automatically:
+map[id:32 name:foo]
+time.Time and location
+Let’s also note that each time.Time is associated with a time.Location that rep-
+resents the time zone. For example:
+t := time.Now() // 2021-01-10 17:13:08.852061 +0100 CET
+Here, the location is set to CET because I used time.Now(), which returns my cur-
+rent local time. The JSON marshaling result depends on the location. To prevent this,
+we can stick to a particular location:
+location, err := time.LoadLocation("America/New_York")
+if err != nil {
+return err
+}
+t := time.Now().In(location) // 2021-05-18 22:47:04.155755 -0500 EST
+Alternatively, we can get the current time in UTC:
+t := time.Now().UTC() // 2021-05-18 22:47:04.155755 +0000 UTC
+Gets the current location
+for America/New_York
+Provides 
+a map pointer

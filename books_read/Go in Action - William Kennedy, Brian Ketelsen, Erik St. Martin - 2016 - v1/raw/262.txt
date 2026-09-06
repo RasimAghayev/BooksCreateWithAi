@@ -1,0 +1,61 @@
+241
+INDEX
+testing, unit testing (continued)
+mocks 219–223
+overview 212
+table tests 216–219
+testing package 214, 233
+threads 129
+three-index slices 72–76
+time package 91, 99
+Time type 99–100
+Trim function 97
+type embedding 111–119
+type keyword 89
+type system
+built-in types 96–97
+exporting and unexporting identifiers in 
+packages 119–127
+interfaces 6–7
+implementing 104
+method sets 105–109
+polymorphic behavior using 109–111
+in standard library 102–104
+methods 92–96
+overview 5–6
+reference types 97–98
+simplicity of 6
+struct types 98–101
+type embedding 111–119
+user-defined types 89–92
+U
+unbuffered channels 148–153
+unexporting identifiers 119–127
+unit testing
+API endpoints 223–228
+basic tests 212–216
+mocks 219–223
+overview 212
+table tests 216–219
+Unlock function 146
+Unmarshal function 199–200
+user-defined types 89–92
+V
+-v option 213–214
+values 88
+var keyword 14, 37, 89–90
+vendored code 55
+verbose output 213
+vet command 47–48
+W
+Wait method 31
+WaitGroup 18, 134
+when clause 215
+work package 177–183
+Writer interface
+functions implementing
+205–208
+overview 203–204
+WriteTo method 206–208
+X
+xml package 36, 196, 202

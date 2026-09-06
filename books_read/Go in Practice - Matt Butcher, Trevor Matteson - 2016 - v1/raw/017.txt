@@ -1,0 +1,27 @@
+xvi
+acknowledgments
+We’ve spent about two years writing this book, but none of the effort would have been
+possible without the commitment of our families. They’ve supported us through the
+early mornings, late nights, and weekends when we were focused on writing. They
+were there as we were fixated on solving problems, even when we weren’t sitting down
+to write.
+ Good code is never created in a vacuum. We’re also grateful to the women and
+men of the Go community who have so generously given their time to create a great
+language, great libraries, and a thriving ecosystem. It has been exciting to be a part of
+such a diverse, burgeoning community of developers. In particular, Rob Pike, Brian
+Ketelsen, and Dave Cheney all reached out to us early in our Go learning process.
+They’re admirable ambassadors of the language. Special thanks to Brian for contrib-
+uting the foreword to the book and for endorsing our work.
+ We appreciate the many individuals who gave time and effort to the creation of
+this book. It has been an arduous process, and thanks to many careful readers, includ-
+ing our MEAP readers, we found and corrected numerous mistakes. 
+ We’d like to thank everyone at Manning, especially our development editor,
+Susanna Kline; our technical development editors, Ivan Kirkpatrick, Kim Shrier,
+Glenn Burnside, and Alain Couniot; and our technical proofreader, James Frasché; as
+well as everyone who worked on our book behind the scenes. Thanks also to the many
+reviewers who took the time to read our manuscript at various stages of its develop-
+ment and who provided invaluable feedback: Anthony Cramp, Austin Riendeau,
+Brandon Titus, Doug Sparling, Ferdinando Santacroce, Gary A. Stafford, Jim
+Amrhein, Kevin Martin, Nathan Davies, Quintin Smith, Sam Zaydel, and Wes Shaddix.
+ Finally, we owe a debt of gratitude to the Glide community, which has grown with us
+as we worked to build a top-tier package manager for Go. Thank you for your support.

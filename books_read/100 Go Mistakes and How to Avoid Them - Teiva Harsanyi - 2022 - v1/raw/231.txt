@@ -1,0 +1,45 @@
+211
+9.7
+#67: Being puzzled about channel size
+9.7
+#67: Being puzzled about channel size
+When we create a channel using the make built-in function, the channel can be either
+unbuffered or buffered. Related to this topic, two mistakes happen fairly frequently:
+being confused about when to use one or the other; and, if we use a buffered channel,
+what size to use. Let’s examine these points.
+ First, let’s remember the core concepts. An unbuffered channel is a channel with-
+out any capacity. It can be created by either omitting the size or providing a 0 size:
+ch1 := make(chan int)
+ch2 := make(chan int, 0)
+Using an unbuffered channel (sometimes called a synchronous channel), the sender will
+block until the receiver receives data from the channel.
+ Conversely, a buffered channel has a capacity, and it must be created with a size
+greater than or equal to 1:
+ch3 := make(chan int, 1)
+With a buffered channel, a sender can send messages while the channel isn’t full.
+Once the channel is full, it will block until a receiver goroutine receives a message. For
+example:
+ch3 := make(chan int, 1)
+ch3 <-1
+ch3 <-2
+The first send isn’t blocking, whereas the second one is, as the channel is full at this
+stage.
+ Let’s take a step back and discuss the fundamental differences between these two
+channel types. Channels are a concurrency abstraction to enable communication
+among goroutines. But what about synchronization? In concurrency, synchronization
+means we can guarantee that multiple goroutines will be in a known state at some
+point. For example, a mutex provides synchronization because it ensures that only
+one goroutine can be in a critical section at the same time. Regarding channels:
+An unbuffered channel enables synchronization. We have the guarantee that
+two goroutines will be in a known state: one receiving and another sending a
+message.
+A buffered channel doesn’t provide any strong synchronization. Indeed, a pro-
+ducer goroutine can send a message and then continue its execution if the
+channel isn’t full. The only guarantee is that a goroutine won’t receive a mes-
+sage before it is sent. But this is only a guarantee because of causality (you don’t
+drink your coffee before you prepare it).
+It’s essential to keep in mind this fundamental distinction. Both channel types enable
+communication, but only one provides synchronization. If we need synchronization,
+we must use unbuffered channels. Unbuffered channels may also be easier to reason
+Non-blocking
+Blocking

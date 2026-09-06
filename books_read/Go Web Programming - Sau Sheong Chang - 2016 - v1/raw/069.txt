@@ -1,0 +1,41 @@
+48
+CHAPTER 3
+Handling requests
+3.1
+The Go net/http library 
+Although using a mature and sophisticated web application framework to write web
+applications is usually easy and fast, the same frameworks often impose their own
+conventions and patterns. Many assume that these conventions and patterns are best
+practices, but best practices have a way of growing into cargo cult programming when
+they aren’t understood properly. Programmers following these conventions without
+understanding why they’re used often follow them blindly and reuse them when it’s
+unnecessary or even harmful.
+The reason data is persisted as cookies in the client and sessions in the server is
+because HTTP is a connection-less protocol, and each call to the server has no stored
+knowledge of the previous call. Without this understanding, using cookies and ses-
+sions seems a convoluted way of persisting information between connections. Using a
+framework to get around this complexity is smart because a framework normally hides
+the complexity and presents a uniform interface for persistence between connections.
+As a result, a new programmer would simply assume all it takes to persist data between
+connections is to use this interface. This uniform interface is based on the conven-
+tions of a specific framework, though, and such practices might or might not be con-
+sistent across all frameworks. What’s worse, the same interface name might be used in
+different frameworks, with different implementations and different names, adding to
+the confusion. This means that the web application that’s developed is now tied to the
+Cargo cult programming
+During World War II, the Allied forces set up air bases on islands in the Pacific to help
+with the war efforts. Large amounts of supplies and military equipment were air-
+dropped to troops and islanders supporting the troops, drastically changing their lives.
+For the first time, the islanders saw manufactured clothes, canned food, and other
+goods. When the war ended, the bases were abandoned and the cargo stopped arriv-
+ing. So the islanders did a very natural thing—they dressed themselves up as air traffic
+controllers, soldiers, and sailors, waved landing signals using sticks on the airfields,
+and performed parade ground drills in an attempt to get cargo to continue falling by
+parachute from planes. 
+These cargo cultists gave their names to the practice of cargo cult programming. While
+not exactly waving landing signals, cargo cult programmers copy and paste code they
+either inherit or find on the internet (often, StackOverflow) without understanding why
+it works, only that it works. As a result, they’re often unable to extend or make changes
+to code. Similarly, cargo cult programmers often use web frameworks without under-
+standing why the framework uses certain patterns or conventions, as well as the trade-
+offs that are being made.

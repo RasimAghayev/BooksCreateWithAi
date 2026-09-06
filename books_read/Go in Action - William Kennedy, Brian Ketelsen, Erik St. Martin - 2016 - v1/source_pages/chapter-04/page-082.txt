@@ -1,0 +1,62 @@
+61
+Array internals and fundamentals
+An array is a value in Go. This means you can use it in an assignment operation. The
+variable name denotes the entire array and, therefore, an array can be assigned to
+other arrays of the same type. 
+// Declare a string array of five elements.
+var array1 [5]string
+// Declare a second string array of five elements.
+// Initialize the array with colors.
+array2 := [5]string{"Red", "Blue", "Green", "Yellow", "Pink"}
+// Copy the values from array2 into array1.
+array1 = array2
+After the copy, you have two arrays with identical values, as shown in figure 4.6.
+The type of an array variable includes both the length and the type of data that can be
+stored in each element. Only arrays of the same type can be assigned. 
+// Declare a string array of four elements.
+var array1 [4]string
+// Declare a second string array of five elements.
+// Initialize the array with colors.
+array2 := [5]string{"Red", "Blue", "Green", "Yellow", "Pink"}
+// Copy the values from array2 into array1.
+array1 = array2
+Compiler Error:
+cannot use array2 (type [5]string) as type [4]string in assignment
+Copying an array of pointers copies the pointer values and not the values that the
+pointers are pointing to.
+Listing 4.7
+Assigning one array to another of the same type
+Listing 4.8
+Compiler error assigning arrays of different types
+Red
+String
+Red
+String
+[ 0 ]
+Blue
+String
+[ 1 ]
+Green
+String
+[ 2 ]
+Yellow
+String
+[ 3 ]
+Pink
+String
+[ 4 ]
+[ 0 ]
+[ 1 ]
+[ 2 ]
+[ 3 ]
+[ 4 ]
+Blue
+String
+Green
+String
+Yellow
+String
+Pink
+String
+Figure 4.6
+Both arrays after the copy

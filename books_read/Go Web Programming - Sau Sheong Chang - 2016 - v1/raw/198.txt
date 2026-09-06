@@ -1,0 +1,56 @@
+177
+Parsing and creating JSON with Go
+You want to map the value of the key id to the Post struct’s Id field, so we append the
+struct tag `json:"id"` after the field. This is pretty much what you need to do to map
+the structs to the JSON data. Notice that you nest the structs (a post can have zero or
+more comments) through slices. As before in XML parsing, unmarshaling is done with
+a single line of code—simply a function call.
+ Let’s run our JSON parsing code and see the results. Run this at the console:
+go run json.go
+You should see the following results:
+{1 Hello World! {2 Sau Sheong} [{3 Have a great day! Adam} {4 How are you 
+today? Betty}]}
+We looked at unmarshaling using the Unmarshal function. As in XML parsing, you can
+also use Decoder to manually decode JSON into the structs for streaming JSON data.
+This is shown in figure 7.8 and listing 7.11.  
+jsonFile, err := os.Open("post.json")
+if err != nil {
+  fmt.Println("Error opening JSON file:", err)
+  return
+}
+defer jsonFile.Close()
+decoder := json.NewDecoder(jsonFile)    
+for {   
+  var post Post
+  err := decoder.Decode(&post)   
+  if err == io.EOF {
+    break
+  }
+  if err != nil {
+    fmt.Println("Error decoding JSON:", err)
+    return
+  }
+  fmt.Println(post)
+}
+Here you use NewDecoder, passing in an io.Reader containing the JSON data, to cre-
+ate a new decoder. When a reference to the post struct is passed into the Decode
+method, the struct will be populated with the data and will be ready for use. Once the
+Listing 7.11
+Parsing JSON using Decoder
+Iterate through
+JSON and decode
+into structs
+Create decoder
+for decoding
+JSON
+Create structs to
+store JSON
+Figure 7.8
+Parse XML with Go by decoding JSON into structs 
+Creates decoder
+from JSON data
+Iterates until EOF
+is detected
+Decodes
+JSON data
+into struct

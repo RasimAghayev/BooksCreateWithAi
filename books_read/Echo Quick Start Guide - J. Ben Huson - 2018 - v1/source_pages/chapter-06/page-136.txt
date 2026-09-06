@@ -1,0 +1,34 @@
+Error handling
+As mentioned in the Go language blog Error handling and Go, error handling is
+important: "The language's design and conventions encourage you to explicitly
+check for errors where they occur (as distinct from the convention in other
+languages of throwing exceptions and sometimes catching them)". Within the
+Echo framework, you may have noticed that every single handler function
+returns an error. In the following code, we will explore what happens when a
+handler returns an error. In this case, we will make a new handler in
+$GOPATH/src/github.com/PacktPublishing/Echo-Essentials/chapter6/handlers/err.go, which
+looks like the following:
+package handlers
+import (
+        "errors"
+        "github.com/labstack/echo"
+)
+// Error - Example Error Handler
+func Error(c echo.Context) error {
+        return errors.New("failure!")
+}
+When we perform a web service call on the endpoint that routes to this handler
+code, we get the following:
+curl localhost:8080/error -D -
+HTTP/1.1 500 Internal Server Error
+Content-Type: application/json; charset=UTF-8
+Date: Wed, 28 Mar 2018 02:22:04 GMT
+Content-Length: 35
+{"message":"Internal Server Error"}
+Echo is actually interpreting the error we are returning from our handler, and
+sending an Internal Server Error back to the caller. This is done with the
+Echo.HTTPErrorHandler method definition on the Echo instance. This error handler
+takes in an error as a parameter and a context parameter, and performs the
+conversion from the error from the handler or middleware and converts it to a
+legitimate response for the user. Within Echo, this method is completely
+replaceable. By default, it uses the echo.DefaultHTTPErrorHandler, as can be seen at ht

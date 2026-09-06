@@ -1,0 +1,44 @@
+Настройка приложения  337
+функцию startListening , которая будет следить за появлением данных в ка-
+нале updates :
+func startListening(updates <-chan string, errors <-chan error) {
+    for {
+        select {
+        case filepath := <-updates:
+            c, err := loadConfiguration(filepath)
+            if err != nil {
+                log.Println("error loading config:", err)
+                continue
+            }
+            config = c
+        case err := <-errors:
+            log.Println("error watching config:", err)
+        }
+    }
+}
+Как видите, startListening  принимает два канала: updates , через который 
+поступает имя изменившегося файла (предположительно конфигурацион-
+ного файла), и канал errors .
+Она наблюдает за обоими каналами в  инструкции select  внутри беско-
+нечного цикла, поэтому, если конфигурационный файл изменится, в канал 
+updates  будет отправлено его имя и затем передано функции, загружающей 
+конфигурацию. Если loadConfiguration  не вернет ошибку, отличную от nil, то 
+возвращаемый ею экземпляр Config  заменит текущий.
+Теперь перейдем на уровень выше. У нас есть функция init, которая извле-
+кает каналы из функции watchConfig  и передает их в функцию startListening , 
+которая запускается как сопрограмма:
+func init() {
+    updates, errors, err := watchConfig("config.yaml")
+    if err != nil {
+        panic(err)
+    }
+    go startListening(updates, errors)
+}
+Но что это за функция watchConfig ? Подробностей мы пока не знаем, но мы 
+разберемся с этим в следующих нескольких разделах. Пока известно только, 
+что она реализует некоторую логику наблюдения за конфигурацией и имеет 
+следующую сигнатуру:
+func watchConfig(filepath string) (<-chan string, <-chan error, error)
+Функция watchConfig , независимо от фактической реализации, возвраща-
+ет два канала – строковый канал updates , через который она посылает путь 
+к изменившемуся конфигурационному файлу, и канал errors  для уведомле-

@@ -1,0 +1,61 @@
+68
+CHAPTER 3
+Concurrency in Go
+The following listing is an example of a program with a race condition. This simple
+program reads any number of files and tallies the number of occurrences for each
+word it finds. At the end of its execution, it prints a list of words that appear more
+than once.
+package main
+import (
+     "bufio"
+     "fmt"
+     "os"
+     "strings"
+     "sync"
+)
+func main() {
+     var wg sync.WaitGroup 
+     w := newWords()
+     for _, f := range os.Args[1:] {
+            wg.Add(1)
+            go func(file string) {
+                   if err := tallyWords(file, w); err != nil {
+                           fmt.Println(err.Error())
+                   }
+                   wg.Done()
+            }(f)
+     }
+     wg.Wait()
+     fmt.Println("Words that appear more than once:")
+     for word, count := range w.found {
+            if count > 1 {
+                   fmt.Printf("%s: %d\n", word, count)
+            }
+     }
+}
+type words struct {
+     found map[string]int
+}
+func newWords() *words {
+     return &words{found: map[string]int{}}
+}
+Listing 3.5
+Word counter with race condition
+(continued)
+Later in the chapter, you’ll work with channels. On occasion, you may find that code
+already using channels can better handle locking with channels. This is fine (we’ll
+show you how to do it). But in general, there’s no practical reason for implementing
+your own locking library.
+Again, you’ll use a wait 
+group to monitor a 
+group of goroutines.
+The main loop
+uses the pattern
+in technique 12.
+At the end of the 
+program, you print 
+what you found.
+You track words in a struct. You could 
+use a map type, but using a struct 
+here makes the next refactor easier.
+Creates a new words instance

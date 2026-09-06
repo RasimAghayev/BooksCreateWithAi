@@ -1,0 +1,2 @@
+impact in your development team.
+This book is referenced as Echo Essentials in the GitHub repository and code videos.

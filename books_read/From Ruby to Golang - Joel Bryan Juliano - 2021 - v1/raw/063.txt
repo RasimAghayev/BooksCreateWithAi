@@ -1,0 +1,40 @@
+Arrays and Slices
+57
+Fixed Array
+If you have a box with partitions, you can only put a certain number of items in that box, which
+you can retrieve if you know on which part of the partition it is stored. This is how a Fixed Array
+works, this type of array in Go uses a fixed array size where you can specify the maximum size of
+the array. The following example is the Go rewrite of the Ruby example above. We have declared
+an array variable with a string type, with a max array size of 2. Then we store the strings "foo" and
+"bar" to the variable.
+Fixed Array Size in Go
+1
+const MAX_ARRAY_SIZE = 2
+2
+3
+var array [MAX_ARRAY_SIZE]string
+4
+5
+array[0] = "foo"
+6
+array[1] = "bar"
+7
+8
+fmt.Println(array[0])
+9
+fmt.Println(array[1])
+10
+fmt.Println(array)
+Questions
+1. What have we learned?
+We learned that we can use a fixed array to store a certain number of items.
+2. Why do you want to use a fixed array?
+If you know the maximum size of the array, you can allocate the memory for the array in
+advance.
+3. When not to use a Fixed Array?
+If you don’t know the maximum size of the array, you can use a dynamic array.
+4. How do you create a Fixed Array variable in Go?
+You can create a fixed array variable by declaring the array variable with the type of the
+array and the size of the array.
+5. What is a syntax of creating a Fixed Array variable in Go?
+The syntax of creating a fixed array variable in Go is var array [MAX_ARRAY_SIZE]string.

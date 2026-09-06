@@ -1,0 +1,53 @@
+117
+TECHNIQUE 22
+Logging to an arbitrary writer
+$ cat log.txt
+example 2015/05/12 08:42:51 outfile.go:16: This is a regular message.
+example 2015/05/12 08:42:51 outfile.go:17: This is a fatal error.
+As before, only two of the three logger.Log calls succeed because the second one also
+generates a fatal error. But you can see from the file how the Go logger logs the data.
+Roughly speaking, you can break a log message into three parts: the prefix, the auto-
+matically generated information, and the log message itself, as shown in figure 5.1.
+You can control the prefix field with the second argument to log.New. As you may
+have noticed, when we created our logger, the prefix had a trailing whitespace (after
+example). That wasn’t an accident. By default, the logger doesn’t put any space
+between the prefix and the generated data.
+ When it comes to the generated information, you don’t have direct control over
+the information, but you have some degree of indirect control. For example,
+although you can’t format the date and time fields exactly as you’d like, you can set
+flags that determine how specific the log message is. When creating the log.Logger,
+the third argument is a bitmask of flags. As you saw in this example, we passed in the
+flags log.LstdFlags | log.Lshortfile. This sets the date format and then instructs
+the logger to show the file and line info. (You might notice that those are also high-
+lighted bold in figure 5.1.)
+ For the most part, only two pieces of information are automatically generated for
+you: information about when the event happened and information about where it hap-
+pened. With the date and time information, you can set the precision of the timestamp:
+
+Ldate controls printing the date.
+
+Ltime prints the timestamp.
+
+Lmicrosends adds microsecond precision to the time. This automatically results
+in the time being printed, even if Ltime isn’t set.
+
+LstdFlags turns on both Ldate and Ltime.
+Then a pair of flags deals with the location information:
+
+Llongfile shows a full file path and then the line number: /foo/bar/baz.go:123.
+
+Lshortifle shows just the filename and the line number: baz.go:123.
+Prefix
+Generated Message Data
+Message
+example 2015/05/12 08:42:51
+outfile.go:16:
+This is a regular message.
+Ldate
+Ltime
+Lmicroseconds
+LstdFlags
+Llongfile
+Lshortfile
+Figure 5.1
+Components of a log file

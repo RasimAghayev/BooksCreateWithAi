@@ -1,0 +1,44 @@
+30
+CHAPTER 2
+Code and project organization
+understand how to use these methods. Hence, accepting or returning an any type
+doesn’t convey meaningful information. Also, because there is no safeguard at com-
+pile time, nothing prevents a caller from calling these methods with whatever data
+type, such as an int:
+s := store.Store{}
+s.Set("foo", 42)
+By using any, we lose some of the benefits of Go as a statically typed language. Instead,
+we should avoid any types and make our signatures explicit as much as possible. Regard-
+ing our example, this could mean duplicating the Get and Set methods per type:
+func (s *Store) GetContract(id string) (Contract, error) {
+// ...
+}
+func (s *Store) SetContract(id string, contract Contract) error {
+// ...
+}
+func (s *Store) GetCustomer(id string) (Customer, error) {
+// ...
+}
+func (s *Store) SetCustomer(id string, customer Customer) error {
+// ...
+}
+In this version, the methods are expressive, reducing the risk of incomprehension.
+Having more methods isn’t necessarily a problem because clients can also create their
+own abstraction using an interface. For example, if a client is interested only in the
+Contract methods, it could write something like this:
+type ContractStorer interface {
+GetContract(id string) (store.Contract, error)
+SetContract(id string, contract store.Contract) error
+}
+What are the cases when any is helpful? Let’s take a look at the standard library and
+see two examples where functions or methods accept any arguments. The first exam-
+ple is in the encoding/json package. Because we can marshal any type, the Marshal
+function accepts an any argument:
+func Marshal(v any) ([]byte, error) {
+// ...
+}
+Another example is in the database/sql package. If the query is parameterized (for
+example, SELECT * FROM FOO WHERE id = ?), the parameters could be any kind. Hence,
+it also uses any arguments:
+func (c *Conn) QueryContext(ctx context.Context, query string,
+args ...any) (*Rows, error) {

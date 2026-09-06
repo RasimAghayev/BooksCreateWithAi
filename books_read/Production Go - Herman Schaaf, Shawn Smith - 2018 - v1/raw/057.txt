@@ -1,0 +1,55 @@
+Style and Error Handling
+51
+1
+// lineCount returns the number of lines in a given file
+2
+func lineCount(filepath string) (int, error) {
+3
+out, err := exec.Command("wc", "-l", filepath).Output()
+4
+if err != nil {
+5
+return 0, fmt.Errorf("could not run wc -l: %s", err)
+6
+}
+7
+// wc output is like: 999 filename.go
+8
+count, err := strconv.Atoi(strings.Fields(string(out))[0])
+9
+if err != nil {
+10
+return 0, fmt.Errorf("could not convert wc -l output to integer: %s", err)
+11
+}
+12
+13
+return count, nil
+14
+}
+Just make sure not to capitalize the error string unless beginning with proper nouns or acronyms,
+because the error will be logged in the caller with something like this:
+1
+filepath := "/home/gopher/somefile.txt"
+2
+lines, err := lineCount(filepath)
+3
+if err != nil {
+4
+log.Printf("ERROR: lineCount(%q): %s", filepath, err)
+5
+}
+and the error line will flow better without a capital letter appearing in the middle of the log line:
+2017/09/21 03:57:55 ERROR: lineCount("/home/gopher/somefile.txt"): Could not run wc -l
+vs.
+2017/09/21 03:57:55 ERROR: lineCount("/home/gopher/somefile.txt"): could not run wc -l
+Wrapping Up
+Compared to most languages, Go is very opinionated about proper style. It can take getting used to,
+but the advantage is that Go projects all follow the same style. This reduces mental overhead and
+lets you focus on the logic of the program. For more examples of idiomatic Go code, we recommend
+reading the Go source code¹⁶ itself. One way to do this is to browse Go standard library’s godoc
+documentation¹⁷. Clicking on a function name on godoc.org will take you to a page which displays
+the source containing that function. Don’t be afraid to read the source - it is very approachable and,
+partly due to it being run through gofmt, very readable.
+¹⁶https://github.com/golang/go
+¹⁷https://godoc.org/-/go

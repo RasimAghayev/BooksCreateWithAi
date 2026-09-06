@@ -1,0 +1,12 @@
+Summary
+Resource target routing is a complicated problem that can be solved in many
+different ways. When creating a web application with Echo, you can rest assured
+that the routing will allow you the flexibility you need to nest your logical
+groupings of routes. You can also take solace in the fact that the overhead related
+to the routing of your API will be very low, both in performance and allocations
+per request.
+Within the next chapter, we will discover the benefits of having a built-in
+middleware chaining solution within the Echo framework. We will also take a
+look at all of the excellent contributed middleware functions that are included
+with the web framework that will help with logging, error handling, and
+authentication and authorization mechanisms.

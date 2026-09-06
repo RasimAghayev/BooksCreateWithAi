@@ -1,0 +1,48 @@
+269
+Deploying to Google App Engine
+■
+Move the handler registration statement(s) into an init function.
+■
+Use a MySQL database driver instead of PostgreSQL.
+■
+Change the SQL queries to MySQL format.
+Because GAE will take over your entire application, you won’t have control over how
+it’s started or which port it runs on. In fact, you’re not going to be writing a stand-
+alone application at all—what you’ll be writing is simply a package to be deployed on
+GAE. As a result, you’ll need to change the package name to something other than
+main (main is only for standalone Go programs). 
+ Next, remove the main function and move your code into an init function. In other
+words, the main function we had earlier
+func main() {
+  server := http.Server{
+    Addr: ":8080",
+  }
+  http.HandleFunc("/post/", handlePost)
+  server.ListenAndServe()
+}
+should be modified and its processing logic placed in an init function:
+func init() {
+  http.HandleFunc("/post/", handlePost)
+}
+Notice that the code that specifies the starting address and port, as well as the code
+that starts up the web server, is no longer needed. 
+ Switch to a MySQL database driver instead of a PostgreSQL driver. In data.go you
+need to import a MySQL database driver and use the correct data connection string:
+import (
+  "database/sql"
+  _ "github.com/ziutek/mymysql/godrv"
+)
+func init() {
+  var err error
+  Db, err = sql.Open("mymysql", "cloudsql:<app ID>:<instance name>*<database 
+name>/<user name>/<password>")
+  if err != nil {
+    panic(err)
+  }
+}
+In addition, you’ll need to switch to the correct MySQL SQL queries. Although the syn-
+tax is similar, there’s enough difference between MySQL and PostgreSQL such that it
+won’t work without any changes. For example, instead of using $1, $2, and so on to
+represent the replaced variables, you have  to use ?. So, instead of (code in bold)
+func retrieve(id int) (post Post, err error) {
+  post = Post{}

@@ -1,0 +1,67 @@
+116
+CHAPTER 5
+Go’s type system
+51 // sendNotification accepts values that implement the notifier
+52 // interface and sends notifications.
+53 func sendNotification(n notifier) {
+54
+n.notify()
+55 }
+On line 08 in listing 5.57, we have the declaration of the notifier interface. Then on
+line 53, we have the sendNotification function that accepts an interface value of
+type notifier. We know from the code before that the user type has declared a
+method named notify that implements the notifier interface with a pointer
+receiver. Therefore, we can move on to the changes made to the main function. 
+35 func main() {
+36
+// Create an admin user.
+37
+ad := admin{
+38
+user: user{
+39
+name:
+"john smith",
+40
+email: "john@yahoo.com",
+41
+},
+42
+level: "super",
+43
+}
+44
+45
+// Send the admin user a notification.
+46
+// The embedded inner type's implementation of the
+47
+// interface is "promoted" to the outer type.
+48
+sendNotification(&ad)
+49 }
+This is where things get interesting. On line 37 in listing 5.58, we create the admin
+outer type variable ad. Then on line 48, we pass the address of the outer type variable
+to the sendNotification function. The compiler accepts the assignment of the outer
+type pointer as a value that implements the notifier interface. But if you look at the
+entire sample program, you won’t see the admin type implement the interface. 
+ Thanks to inner type promotion, the implementation of the interface by the inner
+type has been promoted up to the outer type. That means the outer type now imple-
+ments the interface, thanks to the inner type’s implementation. When we run this
+sample program, we get the following output.
+Output:
+Sending user email to john smith<john@yahoo.com>
+20 // notify implements a method that can be called via
+21 // a value of type user.
+22 func (u *user) notify() {
+23
+fmt.Printf("Sending user email to %s<%s>\n",
+24
+u.name,
+25
+u.email)
+26 }
+Listing 5.58
+listing56.go: lines 35–49
+Listing 5.59
+Output for listing56.go

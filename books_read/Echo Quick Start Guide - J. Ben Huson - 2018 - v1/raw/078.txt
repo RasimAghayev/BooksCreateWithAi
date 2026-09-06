@@ -1,0 +1,33 @@
+Group routing
+Alluded to earlier, there exists a grouping capability for defined routes within the
+Echo framework. Grouping of routes allows for simple logical groupings of sets
+of resources with a base prefix. A great example that works well with grouped
+routes is when you wish to have a target resource path versioned API, such as
+providing /v1/login and /v1/logout, as well as /v2/login and /v2/logout. This happens
+to be a very common way in which developers can prevent breakage of their API
+from major changes to the API. Typically, if the schema of the request or
+response changes, it is a best practice to create a new version of those resource
+targets. This helps identify to developers integrating with your API that there is a
+breaking change between the two APIs.
+In this example, we would create a /v1/ and a /v2 group with the Group method,
+which is declared in the following code within Echo:
+func (e *Echo) Group(prefix string, m ...MiddlewareFunc) (g *Group) {
+Within this Group method call, we must provide a prefix string as well as an
+optional middleware chain that is applicable to this group of resources. The Group
+return value contains a number of methods; most importantly are exactly the
+same route mapping functions that we are given with Echo: Add, Any, GET, POST, PUT,
+and so on. The following is a more fleshed out example based on our example
+project, which can be seen in the $GOPATH/src/github.com/PacktPublishing/Echo-
+Essentials/chapter3/cmd/service/main.go file:
+// V1 Routes
+v1 := e.Group("/v1")
+// V1 Authentication routes
+v1.POST("/login", handlers.Login)
+v1.POST("/logout", handlers.Logout)
+// V1 Reminder Routes
+v1Reminders := v1.Group("/reminder", middleware.JWT(signingKey))
+v1Reminders.POST("", handlers.CreateReminder)
+As you can see, grouping allows flexibility in defining responsible API resource
+target paths. First off, we create our main Echo instance group with the prefix of
+/v1, upon which we are adding /login and /logout. A very handy feature within the
+framework is the ability to create groups within groups. You can see that our

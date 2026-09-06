@@ -1,0 +1,35 @@
+80
+Lesson 10  Converting between types
+10.1 Types don’t mix
+A variable’s type establishes the behavior that’s appropriate for it. Numbers can be 
+added, strings can be joined. To join two strings together, use the plus operator:
+countdown := "Launch in T minus " + "10 seconds."
+If you try to join a number to a string, the Go compiler will report an error:
+countdown := "Launch in T minus " + 10 + " seconds."
+Another example of mismatched types occurs when attempting a calculation with a mix 
+of integer and floating-point types. Real numbers like 365.2425 are represented with a 
+floating-point type, and Go infers that whole numbers are integers:
+Invalid operation: 
+mismatched types 
+string and int
+Mixing types in other languages
+When presented with two or more different types, some programming languages make
+a best effort to guess the programmer’s intentions. Both JavaScript and PHP can sub-
+tract 1 from the string "10":
+"10" - 1
+The Go compiler rejects "10" - 1 with a mismatched types error. In Go, you first need to
+convert "10" to an integer. The Atoi function in the strconv package will do the conversion,
+but it will return an error if the string doesn’t contain a valid number. By the time you
+handle errors, the Go version is four lines long, which isn’t exactly convenient.
+That said, if "10" is user input or came from an external source, the JavaScript and PHP
+versions should check whether it’s a valid number too.
+In languages that coerce types, the code’s behavior is less predictable to anyone who
+hasn’t memorized a myriad of implicit behaviors. The plus operator (+) in both Java and
+JavaScript coerces numbers to strings to be joined, whereas PHP coerces the values to
+numbers and does the math:
+"10" + 2
+Once again, Go would report a mismatched types error.
+9 in JavaScript and PHP
+“102” in JavaScript 
+or Java, 12 in PHP
+ 

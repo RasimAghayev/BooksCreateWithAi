@@ -1,0 +1,67 @@
+151
+TECHNIQUE 32
+Extending templates with functions
+separated by a |. This is the same idea as using pipes from a UNIX-based command-
+line interface (CLI). Go provides an API to add commands to the set available to a
+template. The limited set of commands that comes out of the box doesn’t need to be
+the only set available to your templates. The following listing takes a template and
+adds the capability to display formatted dates.
+package main
+import (
+     "html/template"
+     "net/http"
+     "time"
+)
+var tpl = `<!DOCTYPE HTML>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>Date Example</title>
+  </head>
+  <body>
+       <p>{{.Date | dateFormat "Jan 2, 2006"}}</p>
+  </body>
+</html>`
+var funcMap = template.FuncMap{
+     "dateFormat": dateFormat,
+}
+func dateFormat(layout string, d time.Time) string {
+     return d.Format(layout)
+}
+func serveTemplate(res http.ResponseWriter, req *http.Request) {
+     t := template.New("date")
+     t.Funcs(funcMap)
+     t.Parse(tpl)
+     data := struct{ Date time.Time }{
+            Date: time.Now(),
+     }  
+     t.Execute(res, data)
+}
+func main() {
+     http.HandleFunc("/", serveTemplate)
+     http.ListenAndServe(":8080", nil)
+}
+Listing 6.3
+Add template functions: date_command.go
+An HTML template 
+as a string
+Pipes Date through the 
+dateFormat command
+Maps Go functions to 
+template functions
+Function to convert a time 
+to a formatted string
+Creates a new template.Template instance
+Passes additional functions in 
+map into template engine
+Parses the template string 
+into the template engine
+Creates a
+dataset to
+pass into
+template
+to display
+Sends template with data 
+to output response
+Serves the template and 
+dataset using a web server

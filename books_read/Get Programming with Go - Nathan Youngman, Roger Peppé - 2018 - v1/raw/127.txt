@@ -1,0 +1,27 @@
+112
+Lesson 14  First-class functions
+14.3 Declaring function types
+It’s possible to declare a new type for a function to condense and clarify the code that 
+refers to it. You used the kelvin type to convey a unit of temperature rather than the 
+underlying representation. The same can be done for functions that are being passed 
+around:
+type sensor func() kelvin
+Rather than a function that accepts no parameters and returns a kelvin value, the code is 
+about sensor functions. This type can be used to condense other code, so the declaration
+func measureTemperature(samples int, s func() kelvin)
+can now be written like this:
+func measureTemperature(samples int, s sensor)
+In this example, it may not seem like an improvement, as you now need to know what 
+sensor is when looking at this line of code. But if sensor were used in several places, or if 
+the function type had multiple parameters, using a type would significantly reduce the 
+clutter.   
+14.4 Closures and anonymous functions
+An anonymous function, also called a function literal  in Go, is a function without a name. 
+Unlike regular functions, function literals are closures because they keep references to 
+variables in the surrounding scope.
+Quick check 14.3 Rewrite the following function signature to use a function type:
+func drawTable(rows int, getRow func(row int) (string, string))
+QC 14.3 answer  
+type getRowFn func(row int) (string, string)
+func drawTable(rows int, getRow getRowFn)
+ 

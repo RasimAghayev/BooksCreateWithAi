@@ -1,0 +1,33 @@
+231
+Handling errors
+This lesson explores a few ways to handle errors and delves into how errors are made. 
+It closes by contrasting Go’s style of error handling with that of other programming 
+languages.
+28.1 Handling errors
+In programming languages of the past, the limitation of a single return value made error 
+handling somewhat obscure. Functions would overload the same return value to indi-
+cate both an error or a successful value, or require a side channel to communicate the 
+error, such as a global errno variable. Worse still, the mechanism to communicate errors 
+was inconsistent from function to function.
+Go has multiple return values, as mentioned in lesson 12. Though not specific to error 
+handling, multiple return values provide a simple and consistent mechanism to return 
+errors to calling functions. If a function can return an error, the convention is to use the 
+last return value for errors. The caller should check if an error occurred immediately after 
+calling a function. If no errors occurred, the error value will be nil.
+To demonstrate error handling, listing 28.1 calls the ReadDir function. If an error occurs, 
+the err variable won’t be nil, causing the program to print the error and exit immedi-
+ately. The nonzero value passed to os.Exit informs the operating system that an error 
+occurred.
+If ReadDir is successful, files will be assigned to a slice of os.FileInfo, providing informa-
+tion on the files and directories at the specified path. In this case, a dot is specified for 
+the path, indicating the current directory.
+Consider this In the early 18th century, Alexander Pope penned a poem containing a
+now well-known phrase: to err is human. Take a moment to consider this phrase and
+how it might relate to computer programming.
+To err is human; to forgive, divine.
+—Alexander Pope, “An Essay on Criticism: Part 2”
+Here’s our take: everyone makes mistakes. Systems fail. Errors happen all the time.
+Errors aren’t exceptional, so you should expect that things could go wrong. What’s
+important is how you choose to respond. Acknowledge errors, don’t ignore them. Work
+to resolve issues and move on.
+ 

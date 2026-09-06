@@ -1,0 +1,63 @@
+255
+TECHNIQUE 66
+Switching based on type and kind
+PROBLEM
+You want to write a function that takes generic values (interface{}s), and then does
+something useful with them based on underlying types. 
+SOLUTION
+Go provides various methods for learning this information, ranging from the type
+switch to the reflect.Type and reflect.Kind types. Each has subtle strong points.
+Here, you’ll look at type switches and then employ the reflect package to build a
+kind switch.
+DISCUSSION
+Say you want to write a function with the signature sum(…interface{}) float64. You
+want this function to take any number of arguments of various types. And you want it
+to convert the values to float64 and then sum them.
+ The most convenient tool that Go provides for doing this is the type switch. With
+this special case of the switch control structure, you can perform operations based on
+the type of a value, instead of the data contained in a value. As you read through com-
+mon Go libraries, you’ll frequently encounter type switches (though using kinds and
+switches, which you’ll see later in this section, is rare). Let’s start with a simple
+(though incomplete) example in the next listing.
+package main
+import (
+     "fmt"
+     "strconv"
+)
+func main() {
+     var a uint8 = 2
+     var b int = 37
+     var c string = "3.2"
+     res := sum(a, b, c)
+     fmt.Printf("Result: %f\n", res)
+}
+func sum(v ...interface{}) float64 {
+     var res float64 = 0
+     for _, val := range v {
+            switch val.(type) {
+            case int:
+                   res += float64(val.(int))
+            case int64:
+                   res += float64(val.(int64))
+            case uint8:
+                   res += float64(val.(uint8))
+            case string:
+                   a, err := strconv.ParseFloat(val.(string), 64)
+                   if err != nil {
+                          panic(err)
+Listing 11.1
+Sum with type switch
+Sums a uint8, an int, 
+and a string
+Loops through all of the values 
+given, and switches over them 
+based on type
+For each type that you 
+support (int, int64, uint8, 
+string), converts to float64 
+and sum
+For a string, you
+use the strconv
+library to convert
+the string to a
+float64

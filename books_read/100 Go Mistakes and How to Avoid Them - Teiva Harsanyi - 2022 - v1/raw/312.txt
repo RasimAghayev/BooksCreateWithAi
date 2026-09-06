@@ -1,0 +1,60 @@
+292
+CHAPTER 11
+Testing
+For the sake of optimizations, we also want to determine whether varying the number
+of columns has an impact, so we also implement a second function with 513 columns.
+The implementation is the following:
+func calculateSum512(s [][512]int64) int64 {
+var sum int64
+for i := 0; i < len(s); i++ {
+for j := 0; j < 8; j++ {
+sum += s[i][j]
+}
+}
+return sum
+}
+func calculateSum513(s [][513]int64) int64 {
+// Same implementation as calculateSum512
+}
+We iterate over each row and then over the first eight columns, and we increment a
+sum variable that we return. The implementation in calculateSum513 remains the
+same.
+ We want to benchmark these functions to decide which one is the most perfor-
+mant given a fixed number of rows:
+const rows = 1000
+var res int64
+func BenchmarkCalculateSum512(b *testing.B) {
+var sum int64
+s := createMatrix512(rows)
+b.ResetTimer()
+for i := 0; i < b.N; i++ {
+sum = calculateSum512(s)
+}
+res = sum
+}
+func BenchmarkCalculateSum513(b *testing.B) {
+var sum int64
+s := createMatrix513(rows)
+b.ResetTimer()
+for i := 0; i < b.N; i++ {
+sum = calculateSum513(s)
+}
+res = sum
+}
+We want to create the matrix only once, to limit the footprint on the results. There-
+fore, we call createMatrix512 and createMatrix513 outside of the loop. We may
+expect the results to be similar as again we only want to iterate on the first eight col-
+umns, but this isn’t the case (on my machine):
+Iterates over 
+each row
+Iterates over the 
+first eight columns
+Increments sum
+Creates a matrix 
+of 512 columns
+Calculates 
+the sum
+Creates a matrix 
+of 513 columns
+Calculates 
+the sum

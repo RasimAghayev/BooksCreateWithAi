@@ -1,0 +1,40 @@
+334
+Appendix Solutions
+                }
+            }
+            log.Printf("%s new direction %v", r.name, direction)
+        case <-nextMove:
+            nextMove = time.After(updateInterval)
+            newPos := r.occupier.Pos().Add(direction)
+            if r.occupier.MoveTo(newPos) {
+                log.Printf("%s moved to %v", r.name, newPos)
+                r.checkForLife()
+                break
+            }
+            log.Printf("%s blocked trying to move from %v to %v", r.name, 
+➥r.occupier.Pos(), newPos)
+            // Pick one of the other directions randomly.
+            // Next time round, we'll try to move in the new
+            // direction.
+            dir := rand.Intn(3) + 1
+            for i := 0; i < dir; i++ {
+                direction = image.Point{
+                    X: -direction.Y,
+                    Y: direction.X,
+                }
+            }
+            log.Printf("%s new random direction %v", r.name, direction)
+        }
+    }
+}
+func (r *RoverDriver) checkForLife() {
+    // Successfully moved to new position.
+    sensorData := r.occupier.Sense()
+    if sensorData.LifeSigns < 900 {
+        return
+    }
+    r.radio.SendToEarth(Message{
+        Pos:       r.occupier.Pos(),
+        LifeSigns: sensorData.LifeSigns,
+        Rover:     r.name,
+ 

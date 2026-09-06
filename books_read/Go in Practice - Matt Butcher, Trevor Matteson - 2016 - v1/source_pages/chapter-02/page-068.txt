@@ -1,0 +1,43 @@
+45
+Working with real-world web servers
+core part of the standard library and are commonly in use, simple web servers were
+introduced in chapter 1. This section moves beyond base web servers and covers some
+practical gotchas that come up when building applications. For more information on
+the http package, visit http://golang.org/pkg/net/http/.
+2.3.1
+Starting up and shutting down a server
+Starting a server in Go is fairly easy. Using the net or http packages, you can create a
+server, listen on a TCP port, and start responding to incoming connections and
+requests. But what happens when you want to shut down that server? What if you shut
+down the server while users are connected, or before all the data (such as logs or user
+information) has been written to disk?
+ The commands used to start and stop a server in the operating system should be
+handled by an initialization daemon. Using go run on a codebase is handy in develop-
+ment and may be used with some systems based on twelve-factor apps but isn’t typical
+or recommended. Manually starting an application is simple but isn’t designed to inte-
+grate nicely with operations tools or handle problems such as an unexpected system
+restart. Initialization daemons were designed for these cases and do them well.
+ Most systems have a default toolchain used for initialization. For example, systemd
+(https://freedesktop.org/wiki/Software/systemd/) is common on Linux distribu-
+tions such as Debian and Ubuntu systems. If a script is used with systemd, you’ll be
+able to use commands like those in the following listing.
+$ systemctl start myapp.service
+$ systemctl stop myapp.service
+A wide variety of initialization daemons are available. They vary depending on your
+flavor of operating system, and numerous ones exist for the various versions of Linux.
+You may be familiar with some of their names, including upstart, init, and launchd.
+Because configuration scripts and commands can vary widely among these systems, we
+don’t cover them here. These tools are well documented, and many tutorials and
+examples are available.
+NOTE
+We recommend that you don’t write your applications as daemons
+but rather use an initialization daemon to manage the execution of the
+application.
+A COMMON ANTIPATTERN: A CALLBACK URL
+A simple pattern (or rather antipattern) for development is to have a URL such as
+/kill or /shutdown, that will shut down the server when called. The following listing
+showcases a simple version of this method.
+Listing 2.13
+Start and stop applications with upstart
+Starts the application myapp
+Stops the running application myapp

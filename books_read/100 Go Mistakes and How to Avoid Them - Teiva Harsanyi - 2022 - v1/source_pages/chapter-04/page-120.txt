@@ -1,0 +1,56 @@
+100
+CHAPTER 4
+Control structures
+As an example, let’s look at the implication of this behavior with two other types:
+channels and arrays.
+4.2.1
+Channels
+Let’s see a concrete example based on iterating over a channel using a range loop. We
+create two goroutines, both sending elements to two distinct channels. Then, in the
+parent goroutine, we implement a consumer on one channel using a range loop that
+tries to switch to the other channel during the iteration:
+ch1 := make(chan int, 3)
+go func() {
+ch1 <- 0
+ch1 <- 1
+ch1 <- 2
+close(ch1)
+}()
+ch2 := make(chan int, 3)
+go func() {
+ch2 <- 10
+ch2 <- 11
+ch2 <- 12
+close(ch2)
+}()
+ch := ch1
+for v := range ch {
+fmt.Println(v)
+ch = ch2
+}
+In this example, the same logic applies regarding how the range expression is evalu-
+ated. The expression provided to range is a ch channel pointing to ch1. Hence, range
+evaluates ch, performs a copy to a temporary variable, and iterates over elements from
+this channel. Despite the ch = ch2 statement, range keeps iterating over ch1, not ch2:
+0
+1
+2
+The ch = ch2 statement isn’t without effect, though. Because we assigned ch to the
+second variable, if we call close(ch) following this code, it will close the second chan-
+nel, not the first.
+ Let’s now see the impact of the range operator evaluating each expression only
+once when used with an array. 
+4.2.2
+Array
+What’s the impact of using a range loop with an array? Because the range expression
+is evaluated before the beginning of the loop, what is assigned to the temporary loop
+Creates a first channel that will 
+contain elements 0, 1, and 2
+Creates a second channel that will 
+contain elements 10, 11, and 12
+Assigns the first 
+channel to ch
+Creates a channel consumer 
+by iterating over ch
+Assigns the second 
+channel to ch

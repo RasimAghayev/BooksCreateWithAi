@@ -1,0 +1,53 @@
+Concurrency
+72
+Channel usage
+1
+package main
+2
+3
+import "fmt"
+4
+5
+func main() {
+6
+ch := make(chan string)
+7
+8
+go func(ch chan string) {
+9
+ch <- "hello, world 1"
+10
+}(ch)
+11
+12
+go func(ch chan string) {
+13
+ch <- "hello, world 2"
+14
+}(ch)
+15
+16
+// go func(ch chan string) {
+17
+//
+ch <- "hello, world 3"
+18
+// }(ch)
+19
+20
+a, b, c := <-ch, <-ch, <-ch
+21
+22
+fmt.Println(a)
+23
+fmt.Println(b)
+24
+fmt.Println(c)
+25
+}
+$ go run main.go
+fatal error: all goroutines are asleep - deadlock!
+goroutine 1 [chan receive]:
+main.main()
+/Users/gopher/foo.go:20 +0xf2
+exit status 2

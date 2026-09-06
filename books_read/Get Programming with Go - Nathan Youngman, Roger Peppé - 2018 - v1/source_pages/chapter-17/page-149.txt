@@ -1,0 +1,30 @@
+134
+Lesson 17  Slices: windows into arrays
+Slicing an array is one way to create a slice, but you can also declare a slice directly. A 
+slice of strings has the type []string, with no value between the brackets. This differs 
+from an array declaration, which always specifies a fixed length or ellipsis between the 
+brackets.
+In the following listing, dwarfs is a slice initialized with the familiar composite literal syn-
+tax.
+dwarfs := []string{"Ceres", "Pluto", "Haumea", "Makemake", "Eris"}
+There is still an underlying array. Behind the scenes, Go declares a five-element array 
+and then makes a slice that views all of its elements.   
+17.3 The power of slices
+What if there were a way to fold 
+the fabric of space-time, bring-
+ing worlds together for instanta-
+neous travel? Using the Go 
+standard library and some inge-
+nuity, the hyperspace function in  
+listing 17.4 modifies a slice of 
+worlds, removing the (white) 
+space between them.
+Listing 17.3 Start with a slice: dwarf-slice.go
+Quick check 17.3 Use the %T format verb to compare the types of dwarfArray and the
+dwarfs slice.
+QC 17.3 answer 
+fmt.Printf("array %T\n", dwarfArray)
+fmt.Printf("slice %T\n", dwarfs)
+Prints array [5]string
+Prints slice []string
+ 

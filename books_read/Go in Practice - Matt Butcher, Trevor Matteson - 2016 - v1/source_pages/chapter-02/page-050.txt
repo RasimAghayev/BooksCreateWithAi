@@ -1,0 +1,20 @@
+27
+A solid foundation
+The foundation an application is built upon can be as important as any feature.
+Handling the way an application shuts down so you don’t lose data or create a bad
+user experience is an example of a step you take when building a strong foundation.
+ This chapter covers four foundational areas. You’ll start with console applica-
+tions, also known as CLI applications. You’ll learn about handling command-line
+options, sometimes called flags or getopts, in a way that’s consistent with modern
+applications on Linux and other POSIX systems. As part of this, you’ll explore a
+setup that enables you to focus on application code rather than structure while
+developing console applications.
+ You’ll follow that up by looking at several ways to pass configuration into an
+application. This includes various popular file and content formats used to store
+configuration.
+This chapter covers
+Working with command-line flags, options, and 
+arguments
+Passing configuration into an application
+Starting and gracefully stopping a web server
+Path routing for web and API servers

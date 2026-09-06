@@ -1,0 +1,58 @@
+96
+CHAPTER 4
+Handling errors and panics
+4.2.1
+Differentiating panics from errors
+The first thing to understand about panics is how they differ conceptually from errors.
+An error indicates that an event occurred that might violate expectations about what
+should have happened. A panic, in contrast, indicates that something has gone wrong
+in such a way that the system (or the immediate subsystem) can’t continue to function. 
+ Go assumes that errors will be handled by you, the programmer. If an error occurs
+and you ignore it, Go doesn’t do anything on your behalf. Not so with panics. When a
+panic occurs, Go unwinds the stack, looking for handlers for that panic. If no handler
+is found, Go eventually unwinds all the way to the top of the function stack and stops
+the program. An unhandled panic will kill your application.
+ Let’s look at an example that illustrates this difference in the following listing.
+package main
+import (
+     "errors"
+     "fmt"
+)
+var ErrDivideByZero = errors.New("Can't divide by zero")
+func main() {
+     fmt.Println("Divide 1 by 0")
+     _, err := precheckDivide(1, 0)
+     if err != nil {
+            fmt.Printf("Error: %s\n", err)
+     }
+     fmt.Println("Divide 2 by 0")
+     divide(2, 0)
+}
+func precheckDivide(a, b int) (int, error) {
+     if b == 0 {
+            return 0, ErrDivideByZero
+     }
+     return divide(a, b), nil
+}
+func divide(a, b int) int {
+     return a / b
+}
+Here, you define two functions. The divide function performs a division operation.
+But it doesn’t handle that one well-known case of dividing by 0. In contrast, the
+precheckDivide function explicitly checks the divisor and returns an error if the divi-
+sor is 0. You’re interested in seeing how Go behaves under these two conditions, so in
+main you test first with the precheckDivide function and then again with the plain old
+divide function.
+Listing 4.9
+Error and panic
+First you divide using the 
+precheckDivide function, 
+which returns an error.
+Then you run a similar division, 
+but with the divide function.
+The precheckDivide 
+function returns an error 
+if the divisor is 0.
+The regular divide function 
+wraps the division operator 
+with no checks.

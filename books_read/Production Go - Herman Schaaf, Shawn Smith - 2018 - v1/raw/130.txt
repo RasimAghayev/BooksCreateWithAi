@@ -1,0 +1,37 @@
+Tooling
+124
+Previous read at 0x00c4200f2340 by goroutine 6:
+main.EntryPostHandler()
+/Users/gopher/mygo/src/github.com/gopher/country_journal/server.go:68 +\
+0x439
+net/http.HandlerFunc.ServeHTTP()
+/Users/gopher/go/src/net/http/server.go:1918 +0x51
+net/http.(*ServeMux).ServeHTTP()
+/Users/gopher/go/src/net/http/server.go:2254 +0xa2
+net/http.serverHandler.ServeHTTP()
+/Users/gopher/go/src/net/http/server.go:2619 +0xbc
+net/http.(*conn).serve()
+/Users/gopher/go/src/net/http/server.go:1801 +0x83b
+Goroutine 8 (running) created at:
+main.EntryPostHandler()
+/Users/gopher/mygo/src/github.com/gopher/country_journal/server.go:64 +\
+0x41c
+net/http.HandlerFunc.ServeHTTP()
+/Users/gopher/go/src/net/http/server.go:1918 +0x51
+net/http.(*ServeMux).ServeHTTP()
+/Users/gopher/go/src/net/http/server.go:2254 +0xa2
+net/http.serverHandler.ServeHTTP()
+/Users/gopher/go/src/net/http/server.go:2619 +0xbc
+net/http.(*conn).serve()
+/Users/gopher/go/src/net/http/server.go:1801 +0x83b
+Goroutine 6 (running) created at:
+net/http.(*Server).Serve()
+/Users/gopher/go/src/net/http/server.go:2720 +0x37c
+net/http.(*Server).ListenAndServe()
+/Users/gopher/go/src/net/http/server.go:2636 +0xc7
+net/http.ListenAndServe()
+/Users/gopher/go/src/net/http/server.go:2882 +0xfe
+main.main()
+/Users/gopher/mygo/src/github.com/gopher/country_journal/server.go:75 +\
+0x14f
+==================

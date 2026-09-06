@@ -1,0 +1,75 @@
+Organizing your Functions using Interface
+109
+1
+type Item struct {
+2
+Name
+string
+3
+}
+4
+5
+func (i Item) Flavour() string {
+6
+flavour := GetFlavour(i.Name)
+7
+8
+return fmt.Sprintf("Item %s flavour is: %s\n", i.Name,
+9
+flavour)
+10
+}
+11
+12
+func (i Item) Kind() string {
+13
+kind := GetKind(i.Name)
+14
+15
+return fmt.Sprintf("Item %s is a %s\n", i.Name, kind)
+16
+}
+And here is our complete implementation. We can use our implementations like so,
+1
+package main
+2
+3
+import (
+4
+"fmt"
+5
+)
+6
+7
+type Produce interface {
+8
+Flavour() string
+9
+Kind() string
+10
+}
+11
+12
+type Item struct {
+13
+Name string
+14
+}
+15
+16
+func (i Item) Flavour() string {
+17
+flavour := map[string]string{
+18
+"Apple": `It's a little sour and bitter, mostly sweet,
+19
+not salty, juicy in general`,
+20
+"Kale": `It boasts deep, earthy flavors that can range
+21
+from rich, herbaceous and slightly bitter`,
+22
+}
+23
+24
+return fmt.Sprintf("Item %s flavour is: %s\n", i.Name, flavour[i.Name])

@@ -1,0 +1,31 @@
+281
+appendix
+Installing and setting up Go
+Installing Go
+Before you can write your first line of Go code, you’ll need to set up the environ-
+ment. Let’s start off with installing Go. The latest version of Go as of this writing is
+Go 1.6. To install Go, you can either download or use the official binary distribu-
+tions, or you can install Go from source. 
+ Official binary distributions are available for FreeBSD (release 8 and above),
+Linux (2.6.23 and above), Mac OS X (Snow Leopard and above), and Windows (XP
+and above). Both 32-bt (386) and 64-bit (amd64) x86 processor architectures are
+supported. For FreeBSD and Linux, ARM processor architecture is also supported.
+ To install Go, download the distribution package from https://golang.org/dl/
+ Choose the file appropriate for your platform. Once you have the distribution
+package, install Go according to your platform of choice. Note that although Go
+doesn’t have a dependency on any source code versioning system, some Go tools
+like go get need it, so to make your life a bit easier you should download and install
+them as you’re installing Go. 
+ You can get the following source code versioning systems here:
+■
+Mercurial—http://mercurial.selenic.com
+■
+Subversion—http://subversion.apache.org
+■
+Git—http://git-scm.com
+■
+Bazaar—http://bazaar.canonical.com
+Linux/FreeBSD
+To install on Linux or FreeBSD, you’d likely download go<VERSION>.<OS>-<ARCHI-
+TECTURE>.tar.gz. The latest Go for Linux on a 64-bit architecture is go1.3.3.linux-
+amd64.tar.gz.

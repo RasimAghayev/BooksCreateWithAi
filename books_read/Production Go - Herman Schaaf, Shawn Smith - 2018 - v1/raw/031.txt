@@ -1,0 +1,37 @@
+Basics
+25
+1
+var x []int
+2
+fmt.Println(x == nil)
+true
+To append to a slice, we use the builtin append function:
+1
+x := []int{}
+2
+x = append(x, 1)
+3
+x = append(x, 2, 3)
+4
+y := []int{4, 5}
+5
+x = append(x, y...)
+6
+fmt.Println(x)
+Notice the y... on line 5: append is a variadic function. The first argument is a slice, and the second
+is 0 or more arguments of the same type as the slice’s values. Running the above code will give us
+the following output:
+[1 2 3 4 5]
+Use copy to copy the contents of a slice:
+1
+x := []int{1, 2, 3}
+2
+y := make([]int, 3)
+3
+copy(y, x)
+4
+fmt.Println(x, y)
+[1 2 3] [1 2 3]
+Note that we’re using make to create the slice y, with a size argument of 3. This is to ensure that y
+has enough capacity to copy x into it. If we had used an empty y with 0 capacity, for example, our
+y would have remained empty:

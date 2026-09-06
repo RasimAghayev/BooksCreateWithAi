@@ -1,0 +1,45 @@
+58
+CHAPTER 3
+Data types
+3.2.1
+Concepts
+Go provides a total of 10 integer types. There are four signed integer types and four
+unsigned integer types, as the following table shows.
+The other two integer types are the most commonly used: int and uint. These two
+types have a size that depends on the system: 32 bits on 32-bit systems or 64 bits on 64-
+bit systems.
+ Let’s now discuss overflow. Suppose we want to initialize an int32 to its maximum
+value and then increment it. What should be the behavior of this code?
+var counter int32 = math.MaxInt32
+counter++
+fmt.Printf("counter=%d\n", counter)
+This code compiles and doesn’t panic at run time. However, the counter++ statement
+generates an integer overflow:
+counter=-2147483648
+An integer overflow occurs when an arithmetic operation creates a value outside the
+range that can be represented with a given number of bytes. An int32 is represented
+using 32 bits. Here is the binary representation of the maximum int32 value
+(math.MaxInt32):
+01111111111111111111111111111111
+|------31 bits set to 1-------|
+Because an int32 is a signed integer, the bit on the left represents the integer’s sign: 0
+for positive, 1 for negative. If we increment this integer, there is no space left to repre-
+sent the new value. Hence, this leads to an integer overflow. Binary-wise, here’s the
+new value:
+10000000000000000000000000000000
+|------31 bits set to 0-------|
+As we can see, the bit sign is now equal to 1, meaning negative. This value is the small-
+est possible value for a signed integer represented with 32 bits.
+NOTE
+The smallest possible negative value isn’t 111111111111111111111111
+11111111. Indeed, most systems rely on the two’s complement operation to
+Signed integers
+Unsigned integers
+int8 (8 bits)
+uint8 (8 bits)
+int16 (16 bits)
+uint16 (16 bits)
+int32 (32 bits)
+uint32 (32 bits)
+int64 (64 bits)
+uint64 (64 bits)

@@ -1,0 +1,49 @@
+127
+TECHNIQUE 26
+Capturing stack traces
+PROBLEM
+You want to fetch a stack trace at a critical point in the application.
+SOLUTION
+Use the runtime package, which has several tools.
+DESCRIPTION
+Generating stack dumps in Go isn’t a particularly difficult exercise when you know
+how to do it. But how to get one seems to be a commonly asked question. If all you
+need is a trace for debugging, you can easily send one to Standard Output by using
+the runtime/debug function PrintStack, as the next listing shows.
+package main
+import (
+     "runtime/debug"
+)
+func main() {
+     foo()
+}
+func foo() {
+     bar()
+}
+func bar() {
+     debug.PrintStack()
+}
+Running the code prints a stack trace like this:
+$ go run trace.go
+/Users/mbutcher/Code/go-in-practice/chapter5/stack/trace.go:20 (0x205b)
+     bar: debug.PrintStack()
+/Users/mbutcher/Code/go-in-practice/chapter5/stack/trace.go:13 (0x203b)
+     foo: bar()
+/Users/mbutcher/Code/go-in-practice/chapter5/stack/trace.go:9 (0x201b)
+     main: foo()
+/usr/local/Cellar/go/1.4.2/libexec/src/runtime/proc.go:63 (0x12983)
+     main: main_main()
+/usr/local/Cellar/go/1.4.2/libexec/src/runtime/asm_amd64.s:2232 (0x37711)
+     goexit:
+This can be helpful for simple debugging cases. But if you want to capture the trace to
+send it somewhere else, you need to do something slightly more sophisticated. You
+can use the runtime package’s Stack function, shown in the next listing.
+package main
+import (
+Listing 5.7
+Print stack to Standard Output
+Listing 5.8
+Using the Stack function
+Defines a few functions so you 
+have something to trace
+Prints the trace

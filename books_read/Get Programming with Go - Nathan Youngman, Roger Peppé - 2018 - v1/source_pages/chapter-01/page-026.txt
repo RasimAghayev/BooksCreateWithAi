@@ -1,0 +1,16 @@
+11
+UNIT
+1
+Imperative programming
+Most computer programs are a series of steps, like 
+the directions for your mom’s stroganoff. Tell a 
+computer precisely how to accomplish a task, and it 
+can do all sorts of things. Writing down these 
+instructions is known as imperative programming. If 
+only computers could cook!
+In unit 1, you’ll review Go fundamentals and start 
+learning the syntax Go uses to instruct your com-
+puter. Each lesson builds up the knowledge you’ll 
+need to tackle your first challenge: an app that lists 
+ticket prices for a vacation to Mars.
+ 

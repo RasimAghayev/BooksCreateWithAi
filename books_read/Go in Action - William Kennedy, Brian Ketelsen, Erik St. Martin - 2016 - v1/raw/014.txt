@@ -1,0 +1,27 @@
+xiii
+preface
+Back in October 2013 after writing the GoingGo.net blog for a few months, I received
+a call from Brian Ketelsen and Erik St. Martin. They were in the process of writing this
+book and asked if I would be a part of it. I jumped at the opportunity and started writ-
+ing. I was still very new to Go at the time, so this was a great chance to learn more
+about the language, work with Brian and Erik and share what I learned at a greater
+scale than the blog.
+ After we finished the first four chapters, we released the book under the Manning
+Early Access Program (MEAP). Soon after, we received an email from a member of
+the language team. This person provided a review that contained a detailed set of
+changes plus a wealth of knowledge, advice, encouragement, and support. From
+there, we decided to rewrite chapter 2 from scratch and performed a major overhaul
+of chapter 4. We learned that rewriting chapters was not going to be the exception
+but the norm. That experience also taught us that it was going to take the help of the
+community to write this book, and we needed to make that happen immediately.
+ Ever since then, this book has been a community effort. We have tried to put a proper
+amount of time in researching each chapter, developing code samples, and working with
+the community to review, discuss, and edit the material and code. We have done our best
+to make sure this book is technically correct, shows only idiomatic code, and teaches you
+Go the way the community feels it should be written and thought about. We do have
+some of our own thoughts, practices, and guidelines sprinkled in as well.
+ We hope this book helps you learn Go and you find it a useful resource today and
+for many years to come. Brian, Erik, and I are always online and available to help any-
+one who reaches out to us. If you purchased the book, thank you, and don’t be shy
+about saying “hi.”
+ WILLIAM KENNEDY

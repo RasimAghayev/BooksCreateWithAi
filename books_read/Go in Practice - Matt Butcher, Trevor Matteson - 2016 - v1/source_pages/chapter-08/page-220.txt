@@ -1,0 +1,48 @@
+197
+TECHNIQUE 49
+Detecting timeouts
+move between locations and to be updated in place. When you’re working with HTTP
+connections, it’s useful to detect problems, report them, and try to fix them automati-
+cally when possible.
+TECHNIQUE 49
+Detecting timeouts
+Connection timeouts are a common problem and useful to detect. For example, if a
+timeout error occurs, especially if it’s in the middle of a connection, retrying the oper-
+ation might be worthwhile. On retry, the server you were connected to may be back
+up, or you could be routed to another working server.
+ To detect timeouts in the net package, the errors returned by it have a Timeout()
+method that’s set to true in the case of a timeout. Yet, in some cases, a timeout occurs
+and Timeout() doesn’t return true, or the error you’re working with comes from
+another package, such as url, and doesn’t have the Timeout() method.
+ Timeouts are typically detected by the net package when a timeout is explicitly set,
+such as in listing 8.3. When a timeout is set, the request needs to complete in the time-
+out period. Reading the body is included in the timeout window. But a timeout can
+also happen when one isn’t set. In this case, a timeout in the network occurs while the
+timeout checking isn’t actively looking for it.
+PROBLEM
+How can network timeouts be reliably detected?
+SOLUTION
+When timeouts occur, a small variety of errors occurs. Check the error for each of
+these cases to see if it was a timeout.
+DISCUSSION
+When an error is returned from a net package operation or a package that takes
+advantage of net, such as http, check the error against known cases showing a time-
+out error. Some of these will be for the explicit cases where a timeout was set and
+cleanly detected. Others will be for the cases where a timeout wasn’t set but a timeout
+occurred.
+ The following listing contains a function that looks at a variety of error situations
+to detect whether the error was caused by a timeout.
+func hasTimedOut(err error) bool {
+     switch err := err.(type) {
+     case *url.Error:
+            if err, ok := err.Err.(net.Error); ok && err.Timeout() {
+                   return true
+            }
+Listing 8.4
+Detect a network timeout from error
+A function whose response is true or false if 
+a network timeout caused the error
+Uses a type switch to detect 
+the type of underlying error
+A url.Error may be caused by an underlying net 
+error that can checked for a timeout.

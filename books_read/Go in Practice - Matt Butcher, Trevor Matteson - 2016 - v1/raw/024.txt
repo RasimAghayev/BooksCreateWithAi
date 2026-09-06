@@ -1,0 +1,12 @@
+Part 1
+Background and
+fundamentals
+This opening part of the book provides some background about Go and a
+foundation for building applications. Chapter 1 starts with an overview of Go for
+those not already familiar with it.
+ Chapters 2 and 3 move into base components for an application. Chapter 2
+provides the foundation for building an application, including working with
+console applications and servers, and handling configuration. Chapter 3 focuses
+on using goroutines. Goroutines are one of the more powerful and useful ele-
+ments in Go. They’re regularly used in Go applications, and you’ll see them
+through the rest of this book.

@@ -1,0 +1,41 @@
+173
+8.3
+#57: Being puzzled about when to use channels or mutexes
+8.3
+#57: Being puzzled about when to use channels or 
+mutexes
+Given a concurrency problem, it may not always be clear whether we can implement a
+solution using channels or mutexes. Because Go promotes sharing memory by com-
+munication, one mistake could be to always force the use of channels, regardless of
+the use case. However, we should see the two options as complementary. This section
+clarifies when we should favor one option over the other. The goal is not to discuss
+every possible use case (that would probably take an entire chapter) but to give gen-
+eral guidelines that can help us decide.
+ First, a brief reminder about channels in Go: channels are a communication mech-
+anism. Internally, a channel is a pipe we can use to send and receive values and that
+allows us to connect concurrent goroutines. A channel can be either of the following:
+Unbuffered—The sender goroutine blocks until the receiver goroutine is ready.
+Buffered—The sender goroutine blocks only when the buffer is full.
+Let’s get back to our initial problem. When should we use channels or mutexes? We
+will use the example in figure 8.8 as a backbone. Our example has three different
+goroutines with specific relationships:
+G1 and G2 are parallel goroutines. They may be two goroutines executing the
+same function that keeps receiving messages from a channel, or perhaps two
+goroutines executing the same HTTP handler at the same time.
+On the other hand, G1 and G3 are concurrent goroutines, as are G2 and G3.
+All the goroutines are part of an overall concurrent structure, but G1 and G2
+perform the first step, whereas G3 does the next step.
+In general, parallel goroutines have to synchronize: for example, when they need to
+access or mutate a shared resource such as a slice. Synchronization is enforced with
+mutexes but not with any channel types (not with buffered channels). Hence, in gen-
+eral, synchronization between parallel goroutines should be achieved via mutexes.
+G1
+G2
+G3
+Parallel goroutines
+Concurrent goroutines
+Concurrent goroutines
+Figure 8.8
+Goroutines G1 and 
+G2 are parallel, whereas G2 and 
+G3 are concurrent.

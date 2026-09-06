@@ -1,0 +1,50 @@
+Basics
+42
+Nil interfaces example
+1
+package main
+2
+3
+import (
+4
+"fmt"
+5
+)
+6
+7
+func main() {
+8
+var i interface{}
+9
+fmt.Println(i == nil)
+10
+fmt.Printf("%T, %v\n", i, i)
+11
+12
+var s *string
+13
+fmt.Println("s == nil:", s == nil)
+14
+15
+i = s
+16
+fmt.Println("i == nil:", i == nil)
+17
+fmt.Printf("%T, %v\n", i, i)
+18
+19
+}
+true
+<nil>, <nil>
+s == nil: true
+i == nil: false
+*string, <nil>
+Note how our s variable is nil, but when we set our interface i to s then check if i is nil, i is not
+considered nil. This is because our interface has an underlying concrete type, and interfaces are
+only nil when both the concrete type and the value are nil.
+Error Handling
+Functions in Go often return an error value as the final return argument. When the function does
+not encounter any error conditions, we return nil. The error type is a builtin interface type that we
+can create with functions like errors.New and fmt.Errorf. As an example, let’s make a function that
+parses a string and returns the boolean value that string represents. This function is inspired by the
+ParseBool function in the Go standard library’s strconv package:

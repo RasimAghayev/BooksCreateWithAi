@@ -1,0 +1,47 @@
+162
+CHAPTER 7
+Go web services
+<?xml version="1.0"?>
+<soap:Envelope
+xmlns:soap="http://www.w3.org/2001/12/soap-envelope"
+soap:encodingStyle="http://www.w3.org/2001/12/soap-encoding">
+<soap:Body xmlns:m="http://www.chitchat.com/forum">
+  <m:GetCommentRequest>
+    <m:CommentId>123</m:CommentId>
+  </m:GetCommentRequest >
+</soap:Body>
+</soap:Envelope>
+That’s because you’re using the GET HTTP method as the verb to get the resource (in
+this case, a blog post comment). You can return the same SOAP response earlier and
+it can still be considered a RESTful response because REST is concerned only about
+the design of the API and not the message that’s sent. SOAP is all about the format of
+the messages. It’s much more common to have REST APIs return JSON or at least a
+much simpler XML than SOAP messages. SOAP messages are so much more onerous
+to construct!
+ Like WSDL for SOAP, REST-based web services have WADL (Web Application
+Description Language) that describes REST-based web services, and even generate cli-
+ents to access those services. But unlike WSDL, WADL isn’t widely used, nor is it stan-
+dardized. Also, WADL has competition in other tools like Swagger, RAML (Restful API
+Modeling Language), and JSON-home. 
+ If you’re looking at REST for the first time, you might be thinking that it’s all well
+and good if we’re only talking about a simple CRUD application. What about more
+complex services, or where you have to model some process or action? 
+ How do you activate a customer account? REST doesn’t allow you to have arbitrary
+actions on the resources, and you’re more or less restricted to the list of available
+HTTP methods, so you can’t have a request that looks like this:
+ACTIVATE /user/456 HTTP/1.1
+There are ways of getting around this problem; here are the two most common:
+1
+Reify the process or convert the action to a noun and make it a resource.
+2
+Make the action a property of the resource.
+7.3.1
+Convert action to a resource
+Using the same example, you can convert the activate action to a resource activation.
+Once you do that, you can apply your HTTP methods to this resource. For example, to
+activate a user you can use this:
+POST /user/456/activation HTTP/1.1
+{ "date": "2015-05-15T13:05:05Z" }
+This code will create an activation resource that represents the activation state of the
+user. Doing this also gives the added advantage of giving the activation resource addi-
+tional properties. In our example you’ve added a date to the activation resource.

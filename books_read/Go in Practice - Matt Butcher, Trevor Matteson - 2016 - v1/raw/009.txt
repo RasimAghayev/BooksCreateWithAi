@@ -1,0 +1,99 @@
+CONTENTS
+viii
+2 A solid foundation
+27
+2.1
+Working with CLI applications, the Go way
+28
+Command-line flags
+28
+TECHNIQUE 1
+GNU/UNIX-style command-line arguments
+31
+Command-line frameworks
+33
+TECHNIQUE 2
+Avoiding CLI boilerplate code
+33
+2.2
+Handling configuration
+38
+TECHNIQUE 3
+Using configuration files
+39
+TECHNIQUE 4
+Configuration via environment variables
+43
+2.3
+Working with real-world web servers
+44
+Starting up and shutting down a server
+45
+TECHNIQUE 5
+Graceful shutdowns using manners
+46
+Routing web requests
+49
+TECHNIQUE 6
+Matching paths to content
+49
+TECHNIQUE 7
+Handling complex paths with wildcards
+52
+TECHNIQUE 8
+URL pattern matching
+54
+TECHNIQUE 9
+Faster routing (without the work)
+57
+2.4
+Summary
+58
+3 Concurrency in Go
+59
+3.1
+Understanding Go’s concurrency model
+59
+3.2
+Working with goroutines
+60
+TECHNIQUE 10
+Using goroutine closures
+61
+TECHNIQUE 11
+Waiting for goroutines
+63
+TECHNIQUE 12
+Locking with a mutex
+67
+3.3
+Working with channels
+72
+TECHNIQUE 13
+Using multiple channels
+73
+TECHNIQUE 14
+Closing channels
+76
+TECHNIQUE 15
+Locking with buffered channels
+80
+3.4
+Summary
+82
+PART 2
+WELL-ROUNDED APPLICATIONS ........................85
+4 Handling errors and panics
+87
+4.1
+Error handling
+88
+TECHNIQUE 16
+Minimize the nils
+90
+TECHNIQUE 17
+Custom error types
+92
+TECHNIQUE 18
+Error variables
+93

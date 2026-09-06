@@ -1,0 +1,99 @@
+340
+Index
+characters (continued)
+manipulating with ROT13 74–75
+overview 70–72
+ciphering text 90
+closures 112–115
+cloud computing 3
+code duplication 39
+code points 70–72
+code smell 39
+coerce types 80
+communicating sequential processes. See CSP
+comparison operators 25
+composite literals
+for arrays 124
+for maps 147
+for slices 133–134
+for structures 164–165
+composition, composing structures with 
+178–180
+concurrency 253–254
+concurrent state
+long-lived tasks 274–280
+mutexes 270–274
+constants
+const keyword 17–18, 21, 66
+large numbers 66
+constructor functions 172–173, 249
+Contains function 96
+CSP (communicating sequential 
+processes) 220
+CSS (Cascading Style Sheets) 56–57
+curly braces ({ }) 8–9, 27, 124
+D
+dangling pointers 202
+deadlocks 262–263, 274
+decimal degrees 162
+DecodeRuneInString function 76
+default keyword 30
+defer keyword 235–236, 272
+delegation 184
+delete function 149
+dereference operator (*) 202–203
+dictionaries (maps) 146
+dot notation 106, 162
+double precision floating-point numbers 47
+duplicated code 39
+dynamic typing 85
+E
+ellipsis (...) 97, 144
+embedding 177
+empty interface{} 97
+equality operator 27
+Error() method 241
+errors
+creating new error values 238–244
+and type assertions 243–244
+distinguishing between errors 240–241
+multiple errors 242–243
+file writing errors 233–235
+and defer keyword 235–236
+graceful error handling 236–238
+handling 231–238
+panic mechanism 244–246
+exceptions in other languages 245
+recover 246
+errors package 173, 238
+New constructor 241
+escape sequences 69
+event loops 275
+F
+fallthrough keyword 30
+false constant 24–25
+Fields function 268
+file.Close() method 235
+file.IsDir() function 232
+floating-point numbers 45, 49
+accuracy of 49
+converting 82
+declaring 46
+float32 type (single precision) 47
+zero value 47
+displaying 48–49
+fmt (format) package 7, 41, 156, 193
+Print function 15
+Printf function 15–16, 57
+Println function 1, 15, 97
+Sprintf function 84
+for loop
+for keyword 31
+range keyword 76, 89, 125, 128, 137, 151
+format verbs 16, 48, 55–57, 71, 165, 227
+forwarding methods 181–183
+functions
+anonymous 112–115
+assigning to variables 109–110
+declaring 7, 94–97
+ 

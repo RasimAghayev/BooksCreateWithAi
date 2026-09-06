@@ -1,0 +1,54 @@
+296
+CHAPTER 11
+Testing
+func TestCustomer(t *testing.T) {
+customer, err := createCustomer("foo")
+if err != nil {
+t.Fatal(err)
+}
+// ...
+}
+func createCustomer(someArg string) (Customer, error) {
+// Create customer
+if err != nil {
+return Customer{}, err
+}
+return customer, nil
+}
+We create a customer using the createCustomer utility function, and then we perform
+the rest of the test. However, in the context of testing functions, we can simplify error
+management by passing the *testing.T variable to the utility function:
+func TestCustomer(t *testing.T) {
+customer := createCustomer(t, "foo")
+// ...
+}
+func createCustomer(t *testing.T, someArg string) Customer {
+// Create customer
+if err != nil {
+t.Fatal(err)
+}
+return customer
+}
+Instead of returning an error, createCustomer fails the test directly if it can’t create a
+Customer. This makes TestCustomer smaller to write and easier to read.
+ Let’s remember this practice regarding error management and testing to improve
+our tests. 
+11.9.4 Setup and teardown
+In some cases, we may have to prepare a testing environment. For example, in integra-
+tion tests, we spin up a specific Docker container and then stop it. We can call setup
+and teardown functions per test or per package. Fortunately, in Go, both are possible.
+ To do so per test, we can call the setup function as a preaction and the teardown
+function using defer:
+func TestMySQLIntegration(t *testing.T) {
+setupMySQL()
+defer teardownMySQL()
+// ...
+}
+It’s also possible to register a function to be executed at the end of a test. For example,
+let’s assume TestMySQLIntegration needs to call createConnection to create the
+Creates a customer 
+and checks for errors
+Calls the utility 
+function and provides t
+Fails the test directly if we 
+can’t create a customer

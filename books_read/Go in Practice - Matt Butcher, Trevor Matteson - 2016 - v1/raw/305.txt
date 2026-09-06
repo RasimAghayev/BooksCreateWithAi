@@ -1,0 +1,161 @@
+282
+INDEX
+cloud computing (continued)
+platform as service 219
+software as service 219–220
+cloud file storage 223
+cloud provider errors 225
+cloud provider interface 224
+cloud provider lock-in, 
+avoiding 222–225
+cloud services
+microservices 236–237
+REST
+alternatives to 244–252
+making faster 237–243
+cloud-native applications, con-
+tainers and 220–222
+code coverage 16
+code generation 274–280
+codec package 242
+CodecDecodeSelf 242
+CodecEncodeSelf 242
+codecgen command 242
+command-line flags
+gnuflag package 31–32
+go-flags 32–33
+overview 28–33
+command-line frameworks
+33–38
+commands and 
+subcommands 36
+overview 33
+simple console application
+34–36
+command-line interface.
+See CLI
+Commands property 38
+Common Gateway Interface. 
+See CGI
+Communicating Sequential 
+Processes. See CSP
+communication
+between cloud services
+235–252
+with protocol buffers 247
+compressing files 65
+Concat function 89–92
+ConcatError type 92
+Concise Binary Object Repre-
+sentation. See CBOR
+concurrency 59–83
+channels 72–83
+goroutines 60–72
+overview 9–13
+conf variable 40
+configuration 38–44
+configuration struct 40
+connection timeouts 197
+containers
+cloud-native applications 
+and 220–222
+overview 221
+content delivery network.
+See CDN
+Content property 164
+content types 181, 187–188
+Content-Type field 187
+context package 249–250
+count function 11
+-cover flag 16
+Critical log level 123
+cross-compiling 230
+cross-site scripting. See XSS
+cryptography 9
+CSP (Communicating Sequen-
+tial Processes) 60
+CSRF (cross-site request forg-
+ery) token 182
+CSS (Cascading Style Sheets)
+168
+ctx.Err() function 251
+custom errors
+generating 201–203
+passing 201
+reading and using 203–205
+D
+dash character 272
+data encoding 9
+Data Encryption Standard.
+See DES
+dateFormat function 152
+Debug log level 123
+debugging
+information 123
+locating bugs 114
+logging 114–126
+log package 115–122
+system loggers 123–126
+with stack traces 126–128
+deep info. See stack dumps
+default flag behavior 29
+default statement 73, 75
+defer block 119
+deferred functions 99, 102–104
+define directive 159
+DELETE request 54, 195–196
+dequeue method 276
+DES (Data Encryption 
+Standard) 9
+DetectContentType function
+188
+detecting dependencies 229
+Dial function 8
+directives 148
+DisableKeepAlives property
+239
+divide function 96
+done channel 80
+Done() function 251
+dot character 138
+double curly brackets 148, 150
+download function 199–200
+E
+Elem() function 262
+Email key 243
+email, using templates for
+164–167
+Emergency log level 123
+encoding/json package
+206–207, 241, 243
+encoding/xml package 267
+end directive 159
+enqueue method 276
+environment variables 23–24
+EOF (end of the file) 192
+err value 90
+err variable 104
+Error function 51, 92–93, 173, 
+201–202
+error handling 88–95
+error interface 204–205
+Error log level 123
+error messages 123
+error passing 201
+Error struct 202, 204–205
+error type 92
+Error() method 205
+errors
+cloud services 225–227
+differentiating from panics
+96–97
+passing and handling over 
+HTTP 200–205
+generating custom errors
+201–203
+reading and using custom 
+errors 203–205
+errors.New function 91, 101
+ErrRejected error 94
+ErrTimeout error 94
+etcd 40

@@ -1,0 +1,34 @@
+{
+  "📘 title_original": "Echo Quick Start Guide",
+  "🔤 filename_safe": "Echo Quick Start Guide - J. Ben Huson - 2018 - v1",
+  "📚 book": {
+    "📖 title": "Echo Quick Start Guide",
+    "🧑‍💻 author": "J. Ben Huson",
+    "📅 year": 2018,
+    "📖 version": 1,
+    "📄 pages": 180,
+    "🔢 isbn": "9781789340849",
+    "🏢 publisher": "Packt Publishing",
+    "📚 series": "Quick Start Guide"
+  },
+  "🎯 classification": {
+    "💻 primary_language": "Go",
+    "🎯 level": 2,
+    "📛 level_name": "Elementary",
+    "🌟 level_icon": "🌱",
+    "🌐 domains": ["Web Development", "Backend Development"]
+  },
+  "🛠️ technologies": ["Go", "Echo Framework", "net/http", "Middleware", "Template", "JSON", "UUID", "HTTP", "gorilla/context", "labstack/echo"],
+  "🏷️ tags": ["#go", "#golang", "#echo", "#webdev", "#backend", "#middleware", "#routing", "#rest", "#api", "#framework"],
+  "📑 chapters": [
+    {"chapter": 1, "title": "Understanding HTTP, Go, and Echo", "pages": "1-22", "pdf_pages": "30-47"},
+    {"chapter": 2, "title": "Developing Echo Projects", "pages": "23-48", "pdf_pages": "48-69"},
+    {"chapter": 3, "title": "Exploring Routing Capabilities", "pages": "49-68", "pdf_pages": "70-86"},
+    {"chapter": 4, "title": "Implementing Middleware", "pages": "69-88", "pdf_pages": "87-105"},
+    {"chapter": 5, "title": "Utilizing the Request Context and Data Bindings", "pages": "89-113", "pdf_pages": "106-125"},
+    {"chapter": 6, "title": "Performing Logging and Error Handling", "pages": "114-133", "pdf_pages": "126-141"},
+    {"chapter": 7, "title": "Testing Applications", "pages": "134-156", "pdf_pages": "142-161"},
+    {"chapter": 8, "title": "Providing Templates and Static Content", "pages": "157-173", "pdf_pages": "162-177"}
+  ],
+  "page_offset": 29
+}

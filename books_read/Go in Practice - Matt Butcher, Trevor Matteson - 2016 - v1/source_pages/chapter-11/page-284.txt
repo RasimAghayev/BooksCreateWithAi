@@ -1,0 +1,46 @@
+261
+TECHNIQUE 67
+Discovering whether a value implements an interface
+func implements(concrete interface{}, target interface{}) bool {
+     iface := reflect.TypeOf(target).Elem()
+     v := reflect.ValueOf(concrete)
+     t := v.Type()
+     if t.Implements(iface) {
+            fmt.Printf("%T is a %s\n", concrete, iface.Name())
+            return true
+     }
+     fmt.Printf("%T is not a %s\n", concrete, iface.Name())
+     return false
+}
+This example takes what may appear to be a roundabout method. The implements()
+function takes two values. It tests whether the first value (concrete) implements the
+interface of the second (target). If you were to run this code, you’d get the following
+output:
+$ go run implements.go
+*main.Name is a Stringer
+*main.Name is not a Writer
+Our Name type implements fmt.Stringer because it has a String() string method.
+But it doesn’t implement io.Writer because it doesn’t have a Write([]bytes) (int,
+error) method. 
+ The implements() function does assume that the target is a pointer to a value
+whose dynamic type is an interface. With a few dozen lines, you could check that by
+reflecting on the value and checking that it’s a pointer. As it stands now, it’d be possi-
+ble to cause implements() to panic by passing a target that doesn’t match that
+description.
+ To get to the point where you can test whether concrete implements the target
+interface, you need to get the reflect.Type of both the concrete and the target.
+There are two ways of doing this. The first uses reflect.TypeOf() to get a
+reflect.Type, and a call to Type.Elem() to get the type that the target pointer
+points to:
+iface := reflect.TypeOf(target).Elem()
+The second gets the value of concrete, and then gets the reflect.Type of that value.
+From there, you can test whether a thing of one type implements an interface type
+using the Type.Interface() method:
+v := reflect.ValueOf(concrete)
+t := v.Type()
+Gets a reflect.Type that describes 
+the target of the pointer
+Gets the reflect.Type of the 
+concrete type passed in
+Tests whether the concrete instance
+fulfills the interface of the target

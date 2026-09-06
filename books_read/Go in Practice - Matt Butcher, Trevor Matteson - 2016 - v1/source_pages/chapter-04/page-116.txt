@@ -1,0 +1,49 @@
+93
+TECHNIQUE 18
+Error variables
+SOLUTION
+Create a type that implements the error interface but provides additional functionality.
+DISCUSSION
+Imagine you’re writing a file parser. When the parser encounters a syntax error, it gen-
+erates an error. Along with having an error message, it’s generally useful to have infor-
+mation about where in the file the error occurred. You could build such an error as
+shown in the following listing.
+type ParseError struct {
+     Message    string
+     Line, Char int
+}
+func (p *ParseError) Error() string {
+     format := "%s o1n Line %d, Char %d"
+     return fmt.Sprintf(format, p.Message, p.Line, p.Char)
+}
+This new ParseError struct has three properties: Message, Line, and Char. You imple-
+ment the Error function by formatting all three of those pieces of information into
+one string. But imagine that you want to return to the source of the parse error and
+display that entire line, perhaps with the trouble-causing character highlighted. The
+ParseError struct makes that easy to do.
+ This technique is great when you need to return additional information. But what
+if you need one function to return different kinds of errors?
+TECHNIQUE 18
+Error variables
+Sometimes you have a function that performs a complex task and may break in a cou-
+ple of different, but meaningful, ways. The previous technique showed one way of
+implementing the error interface, but that method may be a little heavy-handed if
+each error doesn’t also need additional information. Let’s look at another idiomatic
+use of Go errors.
+PROBLEM
+One complex function may encounter more than one kind of error. And it’s useful to
+users to indicate which kind of error was returned so that the ensuing applications can
+appropriately handle each error case. But although distinct error conditions may
+occur, none of them needs extra information (as in technique 17).
+SOLUTION
+One convention that’s considered good practice in Go (although not in certain other
+languages) is to create package-scoped error variables that can be returned whenever
+a certain error occurs. The best example of this in the Go standard library comes in
+the io package, which contains errors such as io.EOF and io.ErrNoProgress.
+Listing 4.7
+Parse error
+The error message without 
+location information
+The location information
+Implements the 
+Error interface

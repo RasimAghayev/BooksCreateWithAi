@@ -1,0 +1,42 @@
+95
+The panic system
+ 
+Running the preceding program results in the following output:
+$ go run two_errors.go
+Timeout. Retrying.
+The request was rejected
+The first request to SendRequest returns a time-out, and the second call returns a
+rejection. If the second call had instead returned a time-out too, the program would
+have continued running until a call to SendRequest returned either a success or a
+rejection. It’s common to see patterns like this in network servers.
+ Software developers working in a language such as Java or Python would be likely
+to implement ErrTimeout and ErrRejected as classes, and then throw new instances
+of each class. The try/catch pattern used by many languages is built for dealing with
+error information encapsulated in error types. But as you’ve seen previously, Go
+doesn’t provide a try/catch block. You could use type matching (especially with a
+type switch statement) to provide the same functionality. But that’s not the Go way.
+Instead, idiomatic Go uses a method that’s both more efficient and simpler: create
+errors as package-scoped variables and reference those variables.
+ You can see in the preceding code that handling error variables is as simple as
+checking for equality. If the error is a time-out, you can retry sending the message
+repeatedly. But when the error is a rejection, you stop processing. And as before,
+returning a nil indicates that neither error occurs, and you handle that case accord-
+ingly. With a pattern like this, the same error variables are used repeatedly. This is effi-
+cient because errors are instantiated only once. It’s also conceptually simple. As long
+as your error doesn’t have special properties (as you saw in technique 16), you can cre-
+ate variables and then work with them as such.
+ There’s one more facet of error handling that you should look at, and that’s the
+Go panic.
+4.2
+The panic system
+In addition to the preceding error handling, Go provides a second way of indicating
+that something is wrong: the panic system. As the name indicates, a panic tells you
+that something has gone seriously awry. It should be used sparingly and intelligently.
+In this section, we explain how and when panics should be used and along the way tell
+you about some of our own failures.
+Not so random
+One interesting detail of listing 4.7 is found in the randomizer. Because you initialize
+the randomizer to a fixed value, it’ll always return the same sequence of “random”
+numbers. This is great for us because you can illustrate a known sequence. But in
+production applications, you shouldn’t use fixed integers to seed a source. One sim-
+ple alternative is to use time.Now as a seed source.

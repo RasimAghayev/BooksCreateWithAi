@@ -1,0 +1,74 @@
+200
+CHAPTER 8
+Standard library
+27
+}
+28 }`
+29
+30 func main() {
+31
+// Unmarshal the JSON string into our variable.
+32
+var c Contact
+33
+err := json.Unmarshal([]byte(JSON), &c)
+34
+if err != nil {
+35
+log.Println("ERROR:", err)
+36
+return
+37
+}
+38
+39
+fmt.Println(c)
+40 }
+In listing 8.27 we have an example that takes a JSON document inside of a string vari-
+able and uses the Unmarshal function to decode the JSON into a struct type value. If
+you run the program, you’ll get the following output.
+{Gopher programmer {415.333.3333 415.555.5555}}
+Sometimes it’s not possible to declare a struct type and you need more flexibility to
+work with the JSON document. In these cases you can decode or unmarshal the JSON
+document into a map variable.
+01 // This sample program demonstrates how to decode a JSON string.
+02 package main
+03
+04 import (
+05
+"encoding/json"
+06
+"fmt"
+07
+"log"
+08 )
+09
+10 // JSON contains a sample string to unmarshal.
+11 var JSON = `{
+12
+"name": "Gopher",
+13
+"title": "programmer",
+14
+"contact": {
+15
+"home": "415.333.3333",
+16
+"cell": "415.555.5555"
+17
+}
+18 }`
+19
+20 func main() {
+21
+// Unmarshal the JSON string into our map variable.
+22
+var c map[string]interface{}
+23
+err := json.Unmarshal([]byte(JSON), &c)
+24
+if err != nil {
+Listing 8.28
+Output for listing27.go
+Listing 8.29
+listing29.go

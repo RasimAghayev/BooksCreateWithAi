@@ -1,0 +1,50 @@
+176
+CHAPTER 8
+Concurrency: Foundations
+First, both goroutines read from i and get the value 0. Then, both increment it and
+write back their local result: 1, which isn’t the expected result.
+ This is a possible impact of a data race. If two goroutines simultaneously access the
+same memory location with at least one writing to that memory location, the result
+can be hazardous. Even worse, in some situations, the memory location may end up
+holding a value containing a meaningless combination of bits.
+NOTE
+In mistake #83, “Not enabling the -race flag,” we will see how Go can
+help us detect data races.
+How can we prevent a data race from happening? Let’s look at some different tech-
+niques. The scope here isn’t to present all the possible options (for example, we will
+omit atomic.Value) but to show the main ones.
+ The first option is to make the increment operation atomic, meaning it’s done in a
+single operation. This prevents entangled running operations.
+Even if the second goroutine runs before the first one, the result remains 2.
+ Atomic operations can be done in Go using the sync/atomic package. Here’s an
+example of how we can increment atomically an int64:
+var i int64
+go func() {
+atomic.AddInt64(&i, 1)
+}()
+go func() {
+atomic.AddInt64(&i, 1)
+}()
+Both goroutines update i atomically. An atomic operation can’t be interrupted, thus
+preventing two accesses at the same time. Regardless of the goroutines' execution
+order, i will eventually equal 2.
+NOTE
+The sync/atomic package provides primitives for int32, int64,
+uint32, and uint64 but not for int. This is why i is an int64 in this example.
+Another option is to synchronize the two goroutines with an ad hoc data structure like
+a mutex. Mutex stands for mutual exclusion; a mutex ensures that at most one goroutine
+accesses a so-called critical section. In Go, the sync package provides a Mutex type:
+Goroutine 1
+Goroutine 2
+Operation
+i
+0
+Read and increment
+<->
+1
+Read and increment
+<->
+2
+Increments i 
+atomically
+Same

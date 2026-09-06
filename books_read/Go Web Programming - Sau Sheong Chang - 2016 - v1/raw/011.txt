@@ -1,0 +1,104 @@
+CONTENTS
+x
+6.2
+File storage
+128
+Reading and writing CSV files
+130
+■The gob package
+132
+6.3
+Go and SQL
+134
+Setting up the database
+134
+■Connecting to the 
+database
+137
+■Creating a post
+138
+■Retrieving a 
+post
+140
+■Updating a post
+141
+■Deleting a post
+141
+Getting all posts
+142
+6.4
+Go and SQL relationships
+143
+Setting up the databases
+143
+■One-to-many relationship
+145
+6.5
+Go relational mappers
+147
+Sqlx
+148
+■Gorm
+149
+6.6
+Summary
+152
+ PART 3 BEING REAL ................................................. 153
+7 Go web services
+155
+7.1
+Introducing web services
+155
+7.2
+Introducing SOAP-based web services
+157
+7.3
+Introducing REST-based web services
+160
+Convert action to a resource
+162
+■Make the action a property 
+of the resource
+163
+7.4
+Parsing and creating XML with Go
+163
+Parsing XML
+163
+■Creating XML
+171
+7.5
+Parsing and creating JSON with Go
+174
+Parsing JSON
+175
+■Creating JSON
+178
+7.6
+Creating Go web services
+181
+7.7
+Summary
+188
+8 Testing your application
+190
+8.1
+Go and testing
+191
+8.2
+Unit testing with Go
+191
+Skipping test cases
+195
+■Running tests in parallel
+196
+Benchmarking 
+197
+8.3
+HTTP testing with Go
+200
+8.4
+Test doubles and dependency injection 
+204
+Dependency injection with Go
+205

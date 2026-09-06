@@ -1,0 +1,50 @@
+286
+CHAPTER 11
+Testing
+ Before discussing these traps, let’s briefly review how benchmarks work in Go. The
+skeleton of a benchmark is as follows:
+func BenchmarkFoo(b *testing.B) {
+for i := 0; i < b.N; i++ {
+foo()
+}
+}
+The function name starts with the Benchmark prefix. The function under test (foo) is
+called within the for loop. b.N represents a variable number of iterations. When run-
+ning a benchmark, Go tries to make it match the requested benchmark time. The
+benchmark time is set by default to 1 second and can be changed with the -benchtime
+flag. b.N starts at 1; if the benchmark completes in under 1 second, b.N is increased,
+and the benchmark runs again until b.N roughly matches benchtime:
+$ go test -bench=.
+cpu: Intel(R) Core(TM) i5-7360U CPU @ 2.30GHz
+BenchmarkFoo-4
+73
+16511228 ns/op
+Here, the benchmark took about 1 second, and foo was executed 73 times, for an
+average execution time of 16,511,228 nanoseconds. We can change the benchmark
+time using -benchtime:
+$ go test -bench=. -benchtime=2s
+BenchmarkFoo-4
+150
+15832169 ns/op
+foo was executed roughly twice more than during the previous benchmark.
+ Next, let’s look at some common traps.
+11.8.1 Not resetting or pausing the timer
+In some cases, we need to perform operations before the benchmark loop. These
+operations may take quite a while (for example, generating a large slice of data) and
+may significantly impact the benchmark results:
+func BenchmarkFoo(b *testing.B) {
+expensiveSetup()
+for i := 0; i < b.N; i++ {
+functionUnderTest()
+}
+}
+In this case, we can use the ResetTimer method before entering the loop:
+func BenchmarkFoo(b *testing.B) {
+expensiveSetup()
+b.ResetTimer()
+for i := 0; i < b.N; i++ {
+functionUnderTest()
+}
+}
+Resets the 
+benchmark timer

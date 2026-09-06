@@ -1,0 +1,47 @@
+Navigating your Arrays
+78
+1
+package main
+2
+3
+import (
+4
+"fmt"
+5
+)
+6
+7
+func main() {
+8
+fruits := [4]string{"Apple", "Mango", "Orange", "Banana"}
+9
+10
+for i, fruit := range fruits {
+11
+fmt.Println(i, fruit)
+12
+}
+13
+}
+1
+$ go run value_semantic_form_for_loop.go
+2
+3
+0 Apple
+4
+1 Mango
+5
+2 Orange
+6
+3 Banana
+Questions
+1. What have we learned?
+We can use the for-loop and range to iterate over the array.
+2. Why is iterating with a range useful in Go?
+It is useful because it is easy to read and understand.
+3. Why do we use for-loop with range together?
+The for-loop is used to iterate over a range of values, and the range keyword is used to create
+a range of values.
+Value Semantic Form with Muted Parameter
+Parameters can also be muted, in the example below, we can mute index by naming it as an _-
+underscore variable.

@@ -1,0 +1,44 @@
+146
+CHAPTER 6
+Storing data
+type Comment struct {
+    Id      int
+    Content string
+    Author  string
+    Post    *Post
+}
+Notice that Post has an additional field named Comments, which is a slice of Comment
+structs. Comment has a field named Post that’s a pointer to a Post struct. An astute
+reader might ask, why are we using a field that’s a pointer in Comment while we have a
+field that’s an actual struct in Post? We don’t. The Comments field in the Post struct
+is a slice, which is really a pointer to an array, so both are pointers. You can see why
+you’d want to store the relationship in the struct as a pointer; you don’t really want
+another copy of the same Post—you want to point to the same Post.
+ Now that you’ve built the relationship, let’s determine how you can use it. As men-
+tioned earlier, this is a one-to-many as well as a many-to-one relationship. When you
+create a comment, you also want to create the relationship between the comment and
+the post it’s meant for:
+comment := Comment{Content: "Good post!", Author: "Joe", Post: &post}
+comment.Create()
+As before, you create a Comment struct, and then call the Create method on it. The
+relationship should be built upon creation of the comment. This means if you retrieve
+the post now, the relationship should be established.
+readPost, _ := GetPost(post.Id)
+The readPost variable should now have your newly minted comment in its Comments
+field. Next let’s look at the Comment struct’s Create method, shown in this listing.
+func (comment *Comment) Create() (err error) {
+    if comment.Post == nil {
+        err = errors.New("Post not found")
+        return
+    }
+    err = Db.QueryRow("insert into comments (content, author, post_id) 
+    ➥ values ($1, $2, $3) returning id", comment.Content, comment.Author,
+    ➥ comment.Post.Id).Scan(&comment.Id)
+    return
+}
+Before you create the relationship between the comment and the post, you need to
+make sure that the Post exists! If it doesn’t, you’ll return an error. The rest of the
+code repeats what we discussed earlier, except that now you also have to include
+post_id. Adding post_id will create the relationship.
+Listing 6.15
+Creating the relationship

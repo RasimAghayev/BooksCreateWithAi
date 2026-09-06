@@ -1,0 +1,50 @@
+287
+11.8
+#89: Writing inaccurate benchmarks
+Calling ResetTimer zeroes the elapsed benchmark time and memory allocation
+counters since the beginning of the test. This way, an expensive setup can be dis-
+carded from the test results.
+ What if we have to perform an expensive setup not just once but within each loop
+iteration?
+func BenchmarkFoo(b *testing.B) {
+for i := 0; i < b.N; i++ {
+expensiveSetup()
+functionUnderTest()
+}
+}
+We can’t reset the timer, because that would be executed during each loop iteration.
+But we can stop and resume the benchmark timer, surrounding the call to expen-
+siveSetup:
+func BenchmarkFoo(b *testing.B) {
+for i := 0; i < b.N; i++ {
+b.StopTimer()
+expensiveSetup()
+b.StartTimer()
+functionUnderTest()
+}
+}
+Here, we pause the benchmark timer to perform the expensive setup and then
+resume the timer.
+NOTE
+There’s one catch to remember about this approach: if the function
+under test is too fast to execute compared to the setup function, the bench-
+mark may take too long to complete. The reason is that it would take much
+longer than 1 second to reach benchtime. Calculating the benchmark time is
+based solely on the execution time of functionUnderTest. So, if we wait a sig-
+nificant time in each loop iteration, the benchmark will be much slower than
+1 second. If we want to keep the benchmark, one possible mitigation is to
+decrease benchtime.
+We must be sure to use the timer methods to preserve the accuracy of a benchmark. 
+11.8.2 Making wrong assumptions about micro-benchmarks
+A micro-benchmark measures a tiny computation unit, and it can be extremely easy to
+make wrong assumptions about it. Let’s say, for example, that we aren’t sure whether to
+use atomic.StoreInt32 or atomic.StoreInt64 (assuming that the values we handle
+will always fit in 32 bits). We want to write a benchmark to compare both functions:
+func BenchmarkAtomicStoreInt32(b *testing.B) {
+var v int32
+for i := 0; i < b.N; i++ {
+atomic.StoreInt32(&v, 1)
+Pauses the 
+benchmark timer
+Resumes the 
+benchmark timer

@@ -1,0 +1,73 @@
+94
+CHAPTER 4
+Handling errors and panics
+DISCUSSION
+Before diving into the details of using error variables, let’s consider the problem and
+one obvious, but not particularly good, solution.
+ The problem you’d like to solve is being able to tell the difference between two
+errors. Let’s build a small program in the next listing that simulates sending a simple
+message to a receiver.
+package main
+import (
+     "errors"
+     "fmt"
+     "math/rand"
+)
+var ErrTimeout = errors.New("The request timed out")
+var ErrRejected = errors.New("The request was rejected")
+var random = rand.New(rand.NewSource(35))
+func main() {
+     response, err := SendRequest("Hello")
+     for err == ErrTimeout {
+            fmt.Println("Timeout. Retrying.")
+            response, err = SendRequest("Hello")
+     }
+     if err != nil {
+            fmt.Println(err)
+     } else {
+            fmt.Println(response)
+     }
+}
+func SendRequest(req string) (string, error) {
+     switch random.Int() % 3 {
+     case 0: 
+            return "Success", nil
+     case 1:
+            return "", ErrRejected
+     default:
+            return "", ErrTimeout
+     }
+}
+This listing exemplifies using variables as fixed errors. The code is designed to simu-
+late the basics of a sending function. But instead of sending anything anywhere, the
+SendRequest function randomly generates a response. The response could be a suc-
+cess or it could be one of our two errors, ErrTimeout or ErrRejected.
+Listing 4.8
+Handling two different errors
+The time-out error
+instance
+The rejection 
+error instance
+A random
+number
+generator
+with a fixed
+source
+Calls the stubbed-out 
+SendRequest function
+Handles the time-out 
+condition with retries
+Handles any other error as a failure
+If there’s no error, prints the result
+Defines a function that 
+superficially behaves like 
+a message sender
+Instead of sending a 
+message, randomly 
+generates behavior
+Handles the
+time-out
+condition
+with retries
+Instead of sending a message, 
+randomly generates behavior

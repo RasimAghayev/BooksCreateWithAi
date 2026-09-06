@@ -1,0 +1,24 @@
+159
+UNIT
+5
+State and behavior
+In Go, values represent state, such as whether a 
+door is opened or closed. Functions and methods 
+define behavior—actions on state, such as opening a 
+door.
+As programs grow larger, they become more diffi-
+cult to manage and maintain, unless you have the 
+right tools.
+If there are several doors that can independently be 
+opened or closed, it’s helpful to bundle the state and 
+behavior together. Programming languages also 
+allow you to express abstract ideas, such as things 
+that can be opened. Then on a hot summer day, you 
+can open everything that can be opened, whether 
+door or window.
+There are a lot of big words to describe these ideas: 
+object-orientation, encapsulation, polymorphism, 
+and composition. The lessons in this unit aim to 
+demystify the concepts and demonstrate Go’s 
+rather unique approach to object-oriented design.
+ 

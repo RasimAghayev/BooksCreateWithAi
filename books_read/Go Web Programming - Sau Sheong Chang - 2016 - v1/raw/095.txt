@@ -1,0 +1,46 @@
+74
+CHAPTER 4
+Processing requests
+ If you want to test this, you’ll need to send a POST request to the server with the
+appropriate message body, because GET requests don’t have message bodies. Remem-
+ber that you can’t normally send POST requests through a browser—you need an
+HTTP client. There are plenty of choices. You can use a desktop graphical HTTP cli-
+ent, a browser plug-in or extension, or even cURL from the command line.
+ Type this on your console:
+$ curl -id "first_name=sausheong&last_name=chang" 127.0.0.1:8080/body
+cURL will display the full, raw HTTP response, with the HTTP body after the blank line.
+This is what you should be getting:
+HTTP/1.1 200 OK
+Date: Tue, 13 Jan 2015 16:11:58 GMT
+Content-Length: 37
+Content-Type: text/plain; charset=utf-8
+first_name=sausheong&last_name=chang
+Normally you wouldn’t need to read the raw form of the body, though, because Go pro-
+vides methods such as FormValue and FormFile to extract the values from a POST form. 
+4.2
+HTML forms and Go
+Before we delve into getting form data from a POST request, let’s take a deeper look at
+HTML forms. Most often, POST requests come in the form (pun intended) of an
+HTML form and often look like this:
+<form action="/process" method="post">
+  <input type="text" name="first_name"/>
+  <input type="text" name="last_name"/>
+  <input type="submit"/>
+</form>
+Within the <form> tag, we place a number of HTML form elements including text
+input, text area, radio buttons, checkboxes, and file uploads. These elements allow
+users to enter data to be submitted to the server. Data is submitted to the server when
+the user clicks a button or somehow triggers the form submission.
+ We know the data is sent to the server through an HTTP POST request and is placed
+in the body of the request. But how is the data formatted? The HTML form data is always
+sent as name-value pairs, but how are these name-value pairs formatted in the POST
+body? It’s important for us to know this because as we receive the POST request from the
+browser, we need to be able to parse the data and extract the name-value pairs.
+ The format of the name-value pairs sent through a POST request is specified by the
+content type of the HTML form. This is defined using the enctype attribute like this:
+<form action="/process" method="post" enctype="application/x-www-
+➥ form-urlencoded">
+  <input type="text" name="first_name"/>
+  <input type="text" name="last_name"/>
+  <input type="submit"/>
+</form>

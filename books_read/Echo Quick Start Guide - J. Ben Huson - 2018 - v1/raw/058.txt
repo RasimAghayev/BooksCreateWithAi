@@ -1,0 +1,30 @@
+Dependency management
+One directory that we haven't mentioned so far is the vendor directory. The vendor
+directory in a Go project is a special directory. This is where dependency
+management for your project will be stored. For our book's long sample project,
+we will be using the dep tool. Concisely, dep is a dependency management tool
+that will allow you to version pin your dependencies to a project. It works by
+taking all of the imported packages that were retrieved with go get or git
+commands directly in your $GOPATH and copies the relevant source code needed by
+your project into this vendor directory within your project. The tool does this by
+reading your source code import statements and figuring out which packages you
+need. To get us started, we need to get the dep command with the following
+command:
+go get -u github.com/golang/dep/cmd/dep
+After we install the dep tool, we can initialize our project's vendor directory, as
+shown in the following code. When the dep tool initializes a project, it will take
+all of the dependencies you have imported and put the code in the vendor
+directory:
+dep init
+It is highly recommended that some form of dependency management is used
+within Go projects. There is nothing worse than a project build failure related to
+the removal of a dependency from the internet, such as the left-pad issue with
+NPM. You can avoid this type of issue by committing the vendor directory
+directly into your repository, and versioning it with the rest of your code. There
+are drawbacks to this approach—namely, that the size of pull and merge requests
+grow very large when there are significant changes to the dependencies of a
+project. It is the author's opinion, however, that these sorts of large dependency
+changes are indicative of possibly a larger workflow problem.
+With this strong structural foundation in place, we are ready to begin the process
+of creating our application. The remainder of this chapter will briefly touch on
+the major features within the Echo framework.

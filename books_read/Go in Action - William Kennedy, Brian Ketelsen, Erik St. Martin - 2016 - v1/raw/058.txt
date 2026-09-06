@@ -1,0 +1,76 @@
+37
+RSS matcher
+ 93
+})
+ 94
+}
+ 95
+ 96
+// Check the description for the search term.
+ 97
+matched, err = regexp.MatchString(searchTerm,
+channelItem.Description)
+ 98
+if err != nil {
+ 99
+return nil, err
+100
+ 
+}
+101
+102 
+// If we found a match save the result.
+103
+if matched {
+104
+results = append(results, &search.Result{
+105
+Field:
+"Description",
+106
+Content: channelItem.Description,
+107
+})
+108
+}
+109
+}
+110
+111
+return results, nil
+112 }
+We start on line 71 with the declaration of the results variable, which will be used to
+store and return any results that may be found.
+71
+var results []*search.Result
+We use the keyword var and declare a nil slice of pointers to Result type values. The
+declaration of the Result type can be found again on line 08 of the match.go code
+file. Next on line 76 we make a web call using the retrieve method we just reviewed.
+75
+// Retrieve the data to search.
+76
+document, err := m.retrieve(feed)
+77
+if err != nil {
+78
+return nil, err
+79
+}
+The call to the retrieve method returns a pointer to a value of type rssDocument and
+an error value. Then, as you’ve seen throughout the code, we check the error value
+for errors and return if there was an error. If no error exists, we then iterate through
+the results performing the match of the search term against the title and description
+of the retrieved RSS document.
+81
+for _, channelItem := range document.Channel.Item {
+82
+// Check the title for the search term.
+83
+matched, err := regexp.MatchString(searchTerm,
+channelItem.Title)
+Listing 2.55
+matchers/rss.go: line 71
+Listing 2.56
+matchers/rss.go: lines 75–79
+Listing 2.57
+matchers/rss.go: lines 81–86

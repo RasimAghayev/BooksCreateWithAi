@@ -1,0 +1,45 @@
+120
+CHAPTER 5
+Displaying content
+status or copyright or contact details. Other layouts include a left navigation bar or
+multilevel navigation menus. You can easily make the leap that layouts can be imple-
+mented with nested templates.
+ In an earlier section, you learned that templates can be nested using the include
+action. If you start writing a complicated web app, though, you’ll realize that you
+might end up with a lot of hardcoding in your handler and a lot of template files. 
+ Why is this so?
+ Remember that the syntax of the include action looks like this:
+{{ template "name" . }}
+where name is the name of the template and a string constant. This means that if you
+use the name of the file as the template name, it’ll be impossible to have one or two
+common layouts, because every page will have its own layout template file—which
+defeats the purpose of having layouts in the first place. As an example, the file shown
+in the next listing won’t work as a common layout template file.
+<html>
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <title>Go Web Programming</title>
+  </head>
+  <body>
+    {{ template "content.html" }}
+  </body>
+</html>
+The answer to this dilemma is that the Go template engine doesn’t work this way.
+Although we can have each template file define a single template, with the name of
+the template as the name of the file, we can explicitly define a template in a template
+file using the define action. This listing shows our layout.html now.
+{{ define "layout" }}
+<html>
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <title>Go Web Programming</title>
+  </head>
+  <body>
+    {{ template "content" }}
+  </body>
+</html>
+{{ end }}
+Listing 5.22
+An unworkable layout file
+Listing 5.23
+Defining a template explicitly

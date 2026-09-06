@@ -1,0 +1,80 @@
+287
+INDEX
+U
+UDP (User Datagram Protocol)
+7
+unbuffered channel 80–81
+unit testing 129–134
+UNIX variant 31
+unmarshal() method 269, 272
+unmarshaling 241
+User type 243
+user.html template 161
+user.proto file 244
+user_generated.go file 242
+V
+vals map 278
+Value property 36
+values
+discussion 255–259
+examining 263
+implementing 
+interfaces 258
+return of multiple 6–7
+switching 254
+values map 192
+varargs 89
+variable 254
+variable syntax 5
+variable-length argument 
+lists 89
+verbs 49
+version control 22
+versioning REST APIs 209–213
+VisitAll function 30
+VMs (virtual machines) 19, 220
+W
+WaitGroup 47–48
+walk() function 263–264
+Warn log level 123
+web servers, working with
+44–58
+overview 44
+routing web requests 49–58
+starting up and shutting 
+down server 45–48
+web services 194–213
+parsing and mapping 
+JSON 206–209
+passing and handling errors 
+over HTTP 200–205
+generating custom 
+errors 201–203
+reading and using custom 
+errors 203–205
+REST APIs 195–200
+faults 196–200
+using HTTP client
+195–196
+versioning 209–213
+wg.Done function 66
+wg.Wait function 66
+words struct 72
+words.add 70
+words.found map 70
+words.Lock method 72
+words.Unlock method 72
+workspace 23
+X
+X-Content-Type-Options 
+header 201
+XML (Extensible Markup 
+Language) 9
+xml tag 267
+XSS (cross-site scripting) 150
+Y
+YAML (YAML Ain’t Markup 
+Language) 41
+yaml package 41
+yikes function 101
+yum package manager 22

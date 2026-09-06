@@ -1,0 +1,41 @@
+36
+Lesson 4  Variable scope
+The count variable is declared within the function scope and is visible until the end of the 
+main function, whereas the num variable is declared within the scope of the for loop. After 
+the loop ends, the num variable goes out of scope.
+The Go compiler will report an error for any attempt to access num after the loop. You can 
+access the count variable after the for loop ends because it’s declared outside of the loop, 
+though there really is no reason to. In order to confine count to the scope of a loop, you’ll 
+need a different way to declare variables in Go.   
+4.2
+Short declaration
+Short declaration provides an alternative syntax for the var keyword. The following two 
+lines are equivalent:
+var count = 10
+count := 10
+It may not seem like much, but saving three characters makes short declaration far more 
+popular than var. More importantly, short declaration can go places where var can’t.
+The following listing demonstrates a variant of the for loop that combines initialization, 
+a condition, and a post statement that decrements count. When using this form of for 
+loops, the provided order is significant: initialize, condition, post.
+var count = 0
+for count = 10; count > 0; count-- {
+    fmt.Println(count)
+}
+fmt.Println(count)
+Listing 4.2 A condensed countdown: loop.go
+Quick check 4.1 
+1
+How does variable scope benefit you?
+2
+What happens to a variable when it goes out of scope? Modify listing 4.1 to access num
+after the loop and see what happens.
+QC 4.1 answer 
+1
+The same variable name can be used in multiple places without any conflicts. You only need to 
+think about the variables that are currently in scope.
+2
+The variable is no longer visible or accessible. The Go compiler reports an undefined: num error.
+count remains 
+in scope.
+ 

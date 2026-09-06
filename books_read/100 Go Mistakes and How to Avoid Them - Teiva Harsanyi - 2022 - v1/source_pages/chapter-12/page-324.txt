@@ -1,0 +1,67 @@
+304
+CHAPTER 12
+Optimizations
+matters and that we can easily be fooled by our gut feeling if we lack mechanical sym-
+pathy—in this case, for how CPUs cache data.
+ Let’s keep discussing locality of reference and see a concrete example of using spa-
+tial locality. 
+12.1.3 Slice of structs vs. struct of slices
+This section looks at an example that compares the execution time of two functions.
+The first takes as an argument a slice of structs and sums all the a fields:
+type Foo struct {
+a int64
+b int64
+}
+func sumFoo(foos []Foo) int64 {
+var total int64
+for i := 0; i < len(foos); i++ {
+total += foos[i].a
+}
+return total
+}
+sumFoo receives a slice of Foo and increments total by reading each a field.
+ The second function also computes a sum. But this time, the argument is a struct
+containing slices:
+type Bar struct {
+a []int64
+b []int64
+}
+func sumBar(bar Bar) int64 {
+var total int64
+for i := 0; i < len(bar.a); i++ {
+total += bar.a[i]
+}
+return total
+}
+sumBar receives a single Bar struct
+that contains two slices: a and b. It
+iterates over each element of a to
+increment total.
+ Do we expect any difference in
+terms of speed for these two func-
+tions? Before running a benchmark,
+let’s visually look at the differences
+in memory in figure 12.4. Both cases
+have the same amount of data: 16
+Receives a 
+slice of Foo
+Iterates over each Foo 
+and sums each a field
+a and b are 
+now slices.
+Receives a 
+single struct
+Iterates over each 
+element of a
+Increments 
+the total
+Slice of structs
+Struct of slices
+a b
+4 cache lines
+a b a b a b a b a b a b a b a b a b a b a b a b a b a b a b
+a a a a a a a a a a a a a a a a b b b b b b b b b b b b b b b b
+2 cache lines
+Figure 12.4
+A struct of slices is more compact and 
+therefore requires fewer cache lines to iterate over.

@@ -1,0 +1,48 @@
+56
+CHAPTER 2
+A solid foundation
+func hello(res http.ResponseWriter, req *http.Request) {
+     query := req.URL.Query()
+     name := query.Get("name")
+     if name == "" {
+            name = "Inigo Montoya"
+     }
+     fmt.Fprint(res, "Hello, my name is ", name)
+}
+func goodbye(res http.ResponseWriter, req *http.Request) {
+     path := req.URL.Path
+     parts := strings.Split(path, "/")
+     name := ""
+     if len(parts) > 2 {
+            name = parts[2]
+     }
+     if name == "" {
+            name = "Inigo Montoya"
+     }
+     fmt.Fprint(res, "Goodbye ", name)
+}
+The layout of the regular-expression-based path resolution (listing 2.18) is the same as
+the path resolution example (listing 2.17). The differences lie in the format of the
+path patterns registered for a function and in the ServeHTTP method handling the
+resolution.
+ Paths are registered as regular expressions B. The structure is the same as the
+path package technique, with an HTTP method followed by the path, separated by a
+space. Whereas GET /hello showcases a simple path, a more complicated example is
+(GET|HEAD) /goodbye(/?[A-Za-z0-9]*)?. This more complicated example accepts
+either a GET or HEAD HTTP method. The regular expression for the path will accept
+/goodbye, /goodbye/ (the trailing / matters), and /goodbye/ followed by letters and
+numbers.
+ In this case, ServeHTTP iterates over the regular expressions looking for a match C.
+When the first match is found, it will execute the handler function registered to that
+regular expression. If more than one regular expression matches an incoming path,
+the first one added would be the first one checked and used.
+NOTE
+Compiled versions of the regular expressions are built and cached at
+the time they’re added. Go provides a Match function in the regexp package
+that can check for matches. The first step for this function is to compile the
+regular expression. By compiling and caching the regular expression, you
+don’t need to recompile the regular expressions each time the server handles
+a request.
+Using regular-expression checking for paths provides a significant amount of power,
+allowing you to finely tune the paths you want to match. This flexibility is paired with
+the complicated nature of regular expressions that may not be easy to read, and you’ll

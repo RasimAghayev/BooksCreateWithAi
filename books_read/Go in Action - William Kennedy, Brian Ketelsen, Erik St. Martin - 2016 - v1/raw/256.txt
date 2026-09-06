@@ -1,0 +1,53 @@
+235
+Benchmarking
+Let’s look at the other two benchmark functions and then run all three benchmarks
+together to see what’s the fastest way to convert an integer value to a string.
+24 // BenchmarkFormat provides performance numbers for the
+25 // strconv.FormatInt function.
+26 func BenchmarkFormat(b *testing.B) {
+27
+number := int64(10)
+28
+29
+b.ResetTimer()
+30
+31
+for i := 0; i < b.N; i++ {
+32
+strconv.FormatInt(number, 10)
+33
+}
+34 }
+35
+36 // BenchmarkItoa provides performance numbers for the
+37 // strconv.Itoa function.
+38 func BenchmarkItoa(b *testing.B) {
+39
+number := 10
+40
+41
+b.ResetTimer()
+42
+43
+for i := 0; i < b.N; i++ {
+44
+strconv.Itoa(number)
+45
+}
+46 }
+Listing 9.32 shows the other two benchmark functions. The BenchmarkFormat func-
+tion benchmarks the use of the FormatInt function from the strconv package. The
+BenchmarkItoa function benchmarks the use of the Itoa function from the same
+strconv package. You can see the same pattern in these two other benchmark func-
+tions as in the BenchmarkSprintf function. The call is inside the for loop using b.N to
+control the number of iterations for each call. 
+ One thing we skipped over was the call to b.ResetTimer, which is used in all three
+benchmark functions. This method is useful to reset the timer when initialization is
+required before the code can start executing the loop. To have the most accurate
+benchmark times you can, use this method. 
+ When we run all the benchmark functions for a minimum of three seconds, we get
+the result shown in figure 9.16. 
+Listing 9.32
+listing28_test.go: lines 24–46
+Figure 9.16
+Running all three benchmarks

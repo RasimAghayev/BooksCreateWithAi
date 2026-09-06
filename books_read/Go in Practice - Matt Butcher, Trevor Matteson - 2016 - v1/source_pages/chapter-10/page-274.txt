@@ -1,0 +1,43 @@
+251
+TECHNIQUE 65
+Communicating over RPC with protocol buffers
+When the function this code is in ends, the cancel() function is called. This tells the
+context to cancel the work. This is communicated to the other service, even when
+hosted on an entirely different system. On the server, this cancellation can be seen
+through a channel, which is how it’s implemented in the client as well. For example,
+in an RPC function such as Say, there could be the following:
+select {
+case <-ctx.Done():
+     return nil, ctx.Err()
+}
+When a message is sent over the channel available from Done(), which happens when
+the cancel() function is called, it will be received here. The ctx.Err() function is
+aware of the type of cancelation that was set up. In this case, the error sent back will
+note that the work was canceled.
+ Contexts are a powerful tool for passing information over the course of a remote
+call—especially when the remote call will take a good amount of time.
+ When the client and server are using HTTP/2, as they are by default when both
+ends are using gRPC, the communications use the connection reuse and multiplexing
+described earlier in the chapter. This enables a fast, modern transport layer for trans-
+ferring the protocol buffer binary messages.
+ The advantages and disadvantages of RPC utilizing gRPC should be weighed before
+using them. The advantages include the following:
+Using protocol buffers, the payload size is smaller and faster to marshal or
+unmarshal than JSON or XML.
+The context allows for canceling, communicating timeouts or due dates, and
+other relevant information over the course of a remote call.
+The interaction is with a called procedure rather than a message that’s passed
+elsewhere.
+Semantics of the transport methodology—for example, HTTP verbs—don’t
+limit the communications over RPC.
+The disadvantages include the following:
+The transport payload isn’t human-readable as JSON or XML can be.
+Applications need to know the interface and details of the of the RPC calls.
+Knowing the semantics of the message isn’t enough.
+Integration is deeper than a message, such as you’d have with REST, because a
+remote procedure is being called. Exposing remote procedure access to
+untrusted clients may not be ideal and should be handled with care for security.
+In general, RPCs can be a good alternative for interactions between microservices you
+control that are part of a larger service. They can provide fast, efficient communica-
+tion and will even work across multiple programming languages. RPCs shouldn’t typi-
+cally be exposed to clients outside your control, such as a public API. The information

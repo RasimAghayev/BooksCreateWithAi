@@ -1,0 +1,56 @@
+200
+CHAPTER 9
+Concurrency: Practice
+ The second option no longer relies on a closure and instead uses an actual
+function:
+for _, i := range s {
+go func(val int) {
+fmt.Print(val)
+}(i)
+}
+We still execute an anonymous function within a new a goroutine (we don’t run go
+f(i), for example), but this time it isn’t a closure. The function doesn’t reference val
+as a variable from outside its body; val is now part of the function input. By doing so,
+we fix i in each iteration and make our application work as expected.
+ We have to be cautious with goroutines and loop variables. If the goroutine is a clo-
+sure that accesses an iteration variable declared from outside its body, that’s a prob-
+lem. We can fix it either by creating a local variable (for example, as we have seen
+using val := i before executing the goroutine) or by making the function no longer
+a closure. Both options work, and there isn’t one that we should favor over the other.
+Some developers may find the closure approach handier, whereas others may find the
+function approach more expressive.
+ What happens with a select statement on multiple channels? Let’s find out. 
+9.4
+#64: Expecting deterministic behavior using select 
+and channels
+One common mistake made by Go developers while working with channels is to make
+wrong assumptions about how select behaves with multiple channels. A false assump-
+tion can lead to subtle bugs that may be hard to identify and reproduce.
+ Let’s imagine that we want to implement a goroutine that needs to receive from
+two channels:
+
+messageCh for new messages to be processed.
+disconnectCh to receive notifications conveying disconnections. In that case,
+we want to return from the parent function.
+Of these two channels, we want to prioritize messageCh. For example, if a disconnection
+occurs, we want to ensure that we have received all the messages before returning.
+ We may decide to handle the prioritization like so:
+for {
+select {
+case v := <-messageCh:
+fmt.Println(v)
+case <-disconnectCh:
+fmt.Println("disconnection, return")
+return
+}
+}
+Executes a function that takes 
+an integer as an argument
+Calls this function and passes 
+the current value of i
+Uses the select statement to 
+receive from multiple channels
+Receives new 
+messages
+Receives 
+disconnections

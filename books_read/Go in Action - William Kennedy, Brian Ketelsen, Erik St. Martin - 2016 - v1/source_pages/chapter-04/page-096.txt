@@ -1,0 +1,39 @@
+75
+Slice internals and fundamentals
+If you attempt to set a capacity that’s larger than the available capacity, you’ll get a run-
+time error.
+// This slicing operation attempts to set the capacity to 4.
+// This is greater than what is available.
+slice := source[2:3:6]
+Runtime Error:
+panic: runtime error: slice bounds out of range
+As we’ve discussed, the built-in function append will use any available capacity first.
+Once that capacity is reached, it will allocate a new underlying array. It’s easy to forget
+which slices are sharing the same underlying array. When this happens, making
+changes to a slice can result in random and odd-looking bugs. Suddenly changes
+appear on multiple slices out of nowhere. 
+ By having the option to set the capacity of a new slice to be the same as the length,
+you can force the first append operation to detach the new slice from the underlying
+array. Detaching the new slice from its original source array makes it safe to change. 
+// Create a slice of strings.
+// Contains a length and capacity of 5 elements.
+source := []string{"Apple", "Orange", "Plum", "Banana", "Grape"}
+// Slice the third element and restrict the capacity.
+// Contains a length and capacity of 1 element.
+slice := source[2:3:3]
+// Append a new string to the slice.
+slice = append(slice, "Kiwi")
+Without this third index, appending Kiwi to our slice would’ve changed the value of
+Banana in index 3 of the underlying array, because all of the remaining capacity would
+still belong to the slice. But in listing 4.36, we restricted the capacity of the slice to 1.
+When we call append for the first time on the slice, it will create a new underlying
+array of two elements, copy the fruit Plum, add the new fruit Kiwi, and return a new
+slice that references this underlying array, as in figure 4.18. 
+ With the new slice now having its own underlying array, we’ve avoided potential
+problems. We can now continue to append fruit to our new slice without worrying if
+we’re changing fruit to other slices inappropriately. Also, allocating the new underly-
+ing array for the slice was easy and clean. 
+Listing 4.35
+Runtime error setting capacity larger than existing capacity
+Listing 4.36
+Benefits of setting length and capacity to be the same

@@ -1,0 +1,26 @@
+Testing
+95
+$ go test -coverprofile=coverage.out
+PASS
+coverage: 62.5% of statements
+ok
+github.com/gopher/validate 0.008s
+We can now get a breakdown of coverage percentages per function, although we only have one
+function so it’s not very interesting:
+go tool cover -func=coverage.out
+github.com/gopher/validate/validate.go:11: Username
+62.5%
+total:
+(statements)
+62.5%
+What we really want to see is a line-by-line breakdown. We can get this with the HTML report,
+which we’ll cover in the next section.
+HTML Coverage Reports
+We can generate an HTML coverage report using the same coverage.out file from before, by running
+the following command:
+go tool cover -html=coverage.out
+This should open up a browser and show us an HTML page like the following:
+Username test coverage
+Now we can see exactly where we need to improve our coverage. We need to cover the cases where
+the username length is either 0 or > 30, as well as the case where the username contains an invalid
+character. Let’s update our test for those cases:

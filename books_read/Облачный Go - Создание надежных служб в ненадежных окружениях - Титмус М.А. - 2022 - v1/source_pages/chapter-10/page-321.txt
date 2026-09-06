@@ -1,0 +1,44 @@
+Настройка приложения  321
+package main
+import (
+    "flag"
+    "fmt"
+)
+func main() {
+    // Объявить строковый флаг со значением по умолчанию "foo"
+    // и коротким описанием. Он возвращает указатель на строку.
+    strp := flag.String("string", "foo", "a string")
+    // Объявить числовой и логический флаги.
+    intp := flag.Int("number", 42, "an integer")
+    boolp := flag.Bool("boolean", false, "a boolean")
+    // Вызвать flag.Parse() для синтаксического анализа командной строки.
+    flag.Parse()
+    // Вывести значения флагов и конечные позиционные аргументы.
+    fmt.Println("string:", *strp)
+    fmt.Println("integer:", *intp)
+    fmt.Println("boolean:", *boolp)
+    fmt.Println("args:", flag.Args())
+}
+Как видно в предыдущем примере, пакет flag  позволяет регистрировать 
+флаги командной строки с типами, значениями по умолчанию и краткими 
+описаниями, а также присваивать их значения переменным. Увидеть описа-
+ние этих флагов можно, запустив программу с флагом -help :
+$ go run . -help
+Usage of /var/folders/go-build618108403/exe/main:
+  -boolean
+        a boolean
+  -number int
+        an integer (default 42)
+  -string string
+        a string (default "foo")
+В справке выводится список всех доступных флагов. Запустив программу 
+со всеми этими флагами, мы получим следующий результат:
+$ go run . -boolean -number 27 -string "A string." Other things.
+string: A string.
+integer: 27
+boolean: true
+args: [Other things.]
+Все прекрасно работает! Однако пакет flag  имеет пару проблем, ограни-
+чивающих его полезность.
+Во-первых, как вы могли заметить, синтаксис определения флагов вы-
+глядит несколько... нестандартно. Многие из нас ожидают, что интерфейс 

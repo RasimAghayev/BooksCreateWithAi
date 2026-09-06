@@ -1,0 +1,45 @@
+179
+8.4
+#58: Not understanding race problems
+ Let’s now examine the Go memory model and understand why it matters. 
+8.4.2
+The Go memory model
+The previous section discussed three main techniques to synchronize goroutines:
+atomic operations, mutexes, and channels. However, there are some core principles we
+should be aware of as Go developers. For example, buffered and unbuffered channels
+offer differ guarantees. To avoid unexpected races caused by a lack of understanding of
+the core specifications of the language, we have to look at the Go memory model.
+ The Go memory model (https://golang.org/ref/mem) is a specification that
+defines the conditions under which a read from a variable in one goroutine can be
+guaranteed to happen after a write to the same variable in a different goroutine. In
+other words, it provides guarantees that developers should keep in mind to avoid data
+races and force deterministic output.
+ Within a single goroutine, there’s no chance of unsynchronized access. Indeed,
+the happens-before order is guaranteed by the order expressed by our program.
+ However, within multiple goroutines, we should bear in mind some of these guar-
+antees. We will use the notation A < B to denote that event A happens before event B.
+Let’s examine these guarantees (some copied from the Go memory model):
+Creating a goroutine happens before the goroutine’s execution begins. There-
+fore, reading a variable and then spinning up a new goroutine that writes to this
+variable doesn’t lead to a data race:
+i := 0
+go func() {
+i++
+}()
+Conversely, the exit of a goroutine isn’t guaranteed to happen before any event.
+Thus, the following example has a data race:
+i := 0
+go func() {
+i++
+}()
+fmt.Println(i)
+Again, if we want to prevent the data race from happening, we should synchro-
+nize these goroutines.
+A send on a channel happens before the corresponding receive from that chan-
+nel completes. In the next example, a parent goroutine increments a variable
+before a send, while another goroutine reads it after a channel read:
+i := 0
+ch := make(chan struct{})
+go func() {
+<-ch
+fmt.Println(i)

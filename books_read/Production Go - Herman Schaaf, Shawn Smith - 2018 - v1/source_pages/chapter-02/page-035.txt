@@ -1,0 +1,42 @@
+Basics
+29
+Another important note is that the map type is not safe for concurrent use. If you need to use a map
+in a concurrent way, take a look at sync.Map⁹.
+Also, the iteration order of maps is not guaranteed, so you can’t rely on any specific order when
+looping over your map.
+Lastly, the following will make a nil map, which will panic when writing to it:
+var m map[string]string
+So avoid using this declaration style when making maps.
+For further reading, although it is slightly outdated as it doesn’t mention sync.Map, check Go maps
+in action¹⁰ on the Go blog.
+Loops
+Loops in Go are done with the for construct. There is no while in Go, but you can achieve the same
+effect with for:
+For loop
+1
+package main
+2
+3
+import (
+4
+"fmt"
+5
+)
+6
+7
+func main() {
+8
+x := 1
+9
+for x < 4 {
+10
+fmt.Println(x)
+11
+x++
+12
+}
+13
+}
+The above code outputs:
+⁹https://golang.org/pkg/sync/#Map
+¹⁰https://blog.golang.org/go-maps-in-action

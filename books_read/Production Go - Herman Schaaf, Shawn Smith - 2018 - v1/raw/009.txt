@@ -1,0 +1,50 @@
+Installing Go
+3
+1
+package main
+2
+3
+import (
+4
+"fmt"
+5
+"net/http"
+6
+7
+"github.com/gorilla/mux"
+8
+)
+9
+10
+func HomeHandler(w http.ResponseWriter, r *http.Request) {
+11
+fmt.Fprintf(w, "Hello, world")
+12
+}
+13
+14
+func main() {
+15
+r := mux.NewRouter()
+16
+r.HandleFunc("/", HomeHandler)
+17
+http.Handle("/", r)
+18
+http.ListenAndServe(":8080", r)
+19
+}
+Note the import of "github.com/gorilla/mux" at the top.
+Editor Integrations
+Since there are so many editors and IDEs out there, we will only briefly cover three common editors:
+Goland by JetBrains, vim and Sublime Text. We will link to relevant information for other popular
+editors at the end of the section.
+For all editors, we recommend running goimports on save. Similar to the gofmt command, goimports
+formats your Go code, but it also automatically adds or removes imports according to what is
+referenced in the code. If you reference mux.NewRouter in your code but have not yet imported
+github.com/gorilla/mux, goimports will find the package and import it. It also works for the standard
+library, which is especially useful for times when you want to call fmt.Println but don’t feel like
+importing fmt manually (or when you remove a fmt.Println and don’t feel like deleting the import).
+It is worthwhile exploring the plugins available for your editor to make sure this is working: it will
+greatly speed up your Go development process.
+Goimports can be installed with go get:

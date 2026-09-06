@@ -1,0 +1,47 @@
+13
+Search package
+This is a technique in Go to allow initialization from a package to occur, even if you
+don’t directly use any identifiers from the package. To make your programs more
+readable, the Go compiler won’t let you declare a package to be imported if it’s not
+used. The blank identifier allows the compiler to accept the import and call any init
+functions that can be found in the different code files within that package. For our
+program, this is required because the rss.go code file in the matchers package con-
+tains an init function to register the RSS matcher for use. We’ll come back to how all
+this works later. 
+ The main.go code file also has an init function that’s declared on lines 12
+through 15.
+11 // init is called prior to main.
+12 func init() {
+13
+// Change the device for logging to stdout.
+14
+log.SetOutput(os.Stdout)
+15 }
+All init functions in any code file that are part of the program will get called before
+the main function. This init function sets the logger from the standard library to
+write to the stdout device. By default, the logger is set to write to the stderr device.
+In chapter 7 we’ll talk more about the log package and other important packages
+from the standard library. 
+ Finally, let’s look at the one statement that the main function performs on line 20.
+19
+// Perform the search for the specified term.
+20
+search.Run("president")
+Here you see a call to the Run function that belongs to the search package. This func-
+tion contains the core business logic for the program, which requires a string for the
+search term. Once the Run function returns, the program will terminate. 
+ Now we can look at the code that belongs to the search package. 
+2.3
+Search package
+The search package contains the framework and business logic for the program. The
+package is organized into four different code files, each with a unique responsibility.
+As we continue to follow the logic of the program, we’ll explore each of these differ-
+ent code files. 
+ Let’s briefly talk about what a matcher is, since the entire program revolves around
+the execution of matchers. A matcher in our program is a value that contains specific
+intelligence for processing a feed type. In our program we have two matchers. The
+framework implements a default matcher that has no intelligence, and in the matchers
+Listing 2.6
+main.go: lines 11–15
+Listing 2.7
+main.go: lines 19–20

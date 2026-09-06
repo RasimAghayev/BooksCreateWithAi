@@ -1,0 +1,48 @@
+97
+4.1
+#30: Ignoring the fact that elements are copied in range loops
+ We create an account struct containing a single balance field:
+type account struct {
+balance float32
+}
+Next, we create a slice of account structs and iterate over each element using a range
+loop. During each iteration, we increment the balance of each account:
+accounts := []account{
+{balance: 100.},
+{balance: 200.},
+{balance: 300.},
+}
+for _, a := range accounts {
+a.balance += 1000
+}
+Following this code, which of the following two choices do you think shows the slice’s
+content?
+[{100} {200} {300}]
+[{1100} {1200} {1300}]
+The answer is [{100} {200} {300}]. In this example, the range loop does not affect
+the slice’s content. Let’s see why.
+ In Go, everything we assign is a copy:
+If we assign the result of a function returning a struct, it performs a copy of that
+struct.
+If we assign the result of a function returning a pointer, it performs a copy of the
+memory address (an address is 64 bits long on a 64-bit architecture).
+It’s crucial to keep this in mind to avoid common mistakes, including those related to
+range loops. Indeed, when a range loop iterates over a data structure, it performs a
+copy of each element to the value variable (the second item).
+ Coming back to our example, iterating over each account element results in a
+struct copy being assigned to the value variable a. Therefore, incrementing the bal-
+ance with a.balance += 1000 mutates only the value variable (a), not an element in
+the slice.
+ So, what if we want to update the slice elements? There are two main options. The
+first option is to access the element using the slice index. This can be achieved with
+either a classic for loop or a range loop using the index instead of the value variable:
+for i := range accounts {
+accounts[i].balance += 1000
+}
+for i := 0; i < len(accounts); i++ {
+accounts[i].balance += 1000
+}
+Uses the index variable to 
+access the element of the slice
+Uses the traditional 
+for loop

@@ -1,0 +1,54 @@
+123
+Exporting and unexporting identifiers
+ 
+01 // Package counters provides alert counter support.
+02 package counters
+03
+04 // alertCounter is an unexported type that
+05 // contains an integer counter for alerts.
+06 type alertCounter int
+07
+08 // New creates and returns values of the unexported
+09 // type alertCounter.
+10 func New(value int) alertCounter {
+11
+return alertCounter(value)
+12 }
+Listing 5.69 shows the changes we made to the counters package. The alertCounter
+type is still unexported, but now on line 10 we have a function called New. It’s a con-
+vention in Go to give factory functions the name of New. This New function does some-
+thing interesting: it creates a value of the unexported type and returns that value back
+to the caller. Let’s look at the main function from listing68.go.
+11 // main is the entry point for the application.
+12 func main() {
+13
+// Create a variable of the unexported type using the exported
+14
+// New function from the package counters.
+15
+counter := counters.New(10)
+16
+17
+fmt.Printf("Counter: %d\n", counter)
+18 }
+On line 15 in listing 5.70, you see a call to the New function from the counters pack-
+age. The value returned by the New function is then assigned to a variable named
+counter. This program compiles and runs, but why? The New function is returning a
+value of the unexported type alertCounter, yet main is able to accept that value and
+create a variable of the unexported type. 
+ This is possible for two reasons. First, identifiers are exported or unexported, not
+values. Second, the short variable declaration operator is capable of inferring the type
+and creating a variable of the unexported type. You can never explicitly create a vari-
+able of an unexported type, but the short variable declaration operator can. 
+ Let’s look at a new sample program that shows how fields from a struct type are
+affected by these visibility rules.
+entities/entities.go
+-----------------------------------------------------------------------
+01 // Package entities contains support for types of
+02 // people in the system.
+Listing 5.69
+counters/counters.go
+Listing 5.70
+listing68.go
+Listing 5.71
+listing71/

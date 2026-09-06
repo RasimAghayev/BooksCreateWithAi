@@ -1,0 +1,50 @@
+187
+8.6
+#60: Misunderstanding Go contexts
+are only interested in the latest position. We have at our disposal a publisher inter-
+face containing a single method:
+type publisher interface {
+Publish(ctx context.Context, position flight.Position) error
+}
+This method accepts a context and a position. We assume that the concrete imple-
+mentation calls a function to publish a message to a broker (such as using Sarama to
+publish a Kafka message). This function is context aware, meaning it can cancel a
+request once the context is canceled.
+ Assuming we don’t receive an existing context, what should we provide to the Pub-
+lish method for the context argument? We have mentioned that the applications are
+interested only in the latest position. Hence, the context that we build should convey
+that after 4 seconds, if we haven’t been able to publish a flight position, we should
+stop the call to Publish:
+type publishHandler struct {
+pub publisher
+}
+func (h publishHandler) publishPosition(position flight.Position) error {
+ctx, cancel := context.WithTimeout(context.Background(), 4*time.Second)
+defer cancel()
+return h.pub.Publish(ctx, position)
+}
+This code creates a context using the context.WithTimeout function. This function
+accepts a timeout and a context. Here, as publishPosition doesn’t receive an exist-
+ing context, we create one from an empty context with context.Background. Mean-
+while, context.WithTimeout returns two variables: the context created and a
+cancellation func() function that will cancel the context once called. Passing the con-
+text created to the Publish method should make it return in at most 4 seconds.
+ What’s the rationale for calling the cancel function as a defer function? Inter-
+nally, context.WithTimeout creates a goroutine that will be retained in memory for 4
+seconds or until cancel is called. Therefore, calling cancel as a defer function means
+that when we exit the parent function, the context will be canceled, and the goroutine
+created will be stopped. It’s a safeguard so that when we return, we don’t leave
+retained objects in memory.
+ Let’s now move to the second aspect of Go contexts: cancellation signals. 
+8.6.2
+Cancellation signals
+Another use case for Go contexts is to carry a cancellation signal. Let’s imagine that
+we want to create an application that calls CreateFileWatcher(ctx context.Context,
+filename string) within another goroutine. This function creates a specific file
+watcher that keeps reading from a file and catches updates. When the provided con-
+text expires or is canceled, this function handles it to close the file descriptor.
+Creates the context that will
+time out after 4 seconds
+Defers the 
+cancellation
+Passes the created context

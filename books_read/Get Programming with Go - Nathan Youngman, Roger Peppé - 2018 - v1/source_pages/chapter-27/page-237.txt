@@ -1,0 +1,15 @@
+222
+Lesson 27  Much ado about nil
+so, considering all the software written in the past 50 years, the number of accidental nil 
+pointer dereferences could be fairly costly for users and programmers alike. The exis-
+tence of nil does burden the programmer with more decisions. Should the code check 
+for nil, and if so, where should the check be? What should the code do if a value is nil? 
+Does all this make nil a bad word?
+There’s no need to cover your ears or avoid nil altogether. In truth, nil can be quite use-
+ful, as the remainder of this lesson demonstrates. Additionally, nil pointers in Go are 
+less prevalent than null pointers are in some other languages, and there are ways to 
+avoid their use when appropriate.   
+“We shall say nil to you … if you do not appease us.”—The Knights Who Say nil
+Quick check 27.1 What’s the zero value for the type *string?
+QC 27.1 answer The zero value for a pointer is nil.
+ 

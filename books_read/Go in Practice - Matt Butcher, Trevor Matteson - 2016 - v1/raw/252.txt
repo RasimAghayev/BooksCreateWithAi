@@ -1,0 +1,47 @@
+229
+TECHNIQUE 59
+Detecting dependencies
+TECHNIQUE 59
+Detecting dependencies
+In addition to communicating with the kernel or base operating system, Go applica-
+tions can call other applications on the system. This is typically accomplished with the
+os/exec package from the standard library. But what happens if the application being
+called isn’t installed? Assuming that a dependency is present can lead to unexpected
+behavior, and a failure to detect any issues in a reportable way makes detecting the
+problem in your application more difficult.
+PROBLEM
+How can you ensure that it’s okay to execute an application before calling it?
+SOLUTION
+Prior to calling a dependent application for the first time, detect whether the applica-
+tion is installed and available for you to use. If the application isn’t present, log an
+error to help with troubleshooting.
+DISCUSSION
+We’ve already talked about how Go applications can run on a variety of operating sys-
+tems. For example, if an application is compiled for Linux, it could be running on a
+variety of distributions with different applications installed. If your application relies
+on another application, it may or may not be installed. This becomes more compli-
+cated with the number of distributions available and used in the cloud. Some special-
+ized Linux distributions for the cloud are small, with limited or virtually no commands
+installed.
+ Anytime a cloud application relies on another application being installed, it
+should validate that dependency and log the absence of the missing component. This
+is relatively straightforward to do with the os/exec package. The following listing pro-
+vides a function to perform detection.
+func checkDep(name string) error {
+     if _, err := exec.LookPath(name); err != nil {
+            es := "Could not find '%s' in PATH: %s"
+            return fmt.Errorf(es, name, err)
+     }
+     return nil
+}
+This function can be used within the flow of an application to check whether a depen-
+dency exists. The following snippet shows an example of checking and acting on an
+error:
+Listing 9.7
+Function to check whether the application is available
+Checks whether the passed-in dependency is in one of
+the PATHs. When not present, an error is generated.
+Returns an error when the 
+dependency isn’t found
+Returning nil if 
+there was no error

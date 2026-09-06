@@ -1,0 +1,48 @@
+143
+Go and SQL relationships
+    return
+}
+You use the Query method on the sql.DB struct, which returns a Rows interface. The
+Rows interface is an iterator. You can call a Next method on it repeatedly and it’ll
+return sql.Row until it runs out of rows, when it returns io.EOF.
+ For each iteration, you create a Post struct and scan the row into the struct, and
+then append it to the slice that you’ll be returning to the caller.
+6.4
+Go and SQL relationships
+One of the reasons relational databases are so popular for storing data is because
+tables can be related. This allows pieces of data to be related to each other in a consis-
+tent and easy-to-understand way. There are essentially four ways of relating a record to
+other records.
+■
+One to one (has one)—A user has one profile, for example.
+■
+One to many (has many)—A user has many forum posts, for example.
+■
+Many to one (belongs to)—Many forum posts belong to one user, for example.
+■
+Many to many—A user can participate in many forum threads, while a forum
+thread can also have many users contributing to it, for example.
+We’ve discussed the standard CRUD for a single database table, but now let’s look at
+how we can do the same for two related tables. For this example, we’ll use a one-to-
+many relationship where a forum post has many comments. As you may realize, many-
+to-one is the inverse of one-to-many, so we’ll see how that works as well.
+6.4.1
+Setting up the databases
+Before we start, let’s set up our database again, this time with two tables. You’ll use the
+same commands on the console as before, but with a slightly different setup.sql script,
+shown in this listing. 
+drop table posts cascade if exists;
+drop table comments if exists;
+create table posts (
+  id     serial primary key,
+  content text,
+  author  varchar(255)
+);
+create table comments (
+  id     serial primary key,
+  content text,
+  author  varchar(255),
+  post_id integer references posts(id)
+);
+Listing 6.13
+ Setting up two related tables

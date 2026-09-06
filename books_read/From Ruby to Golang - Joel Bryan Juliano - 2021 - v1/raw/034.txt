@@ -1,0 +1,25 @@
+Setter/Getters, Attribute Accessors and Structs
+28
+Chapter Questions
+1. How do you create a function in Go?
+You use the keyword func followed by the function name, a list of parameters in parentheses,
+and the function body.
+2. How do you create a variable in Go?
+You use the keyword var followed by the variable name and the type.
+3. How do you create a pointer in Go?
+You use the keyword * followed by the type of the pointer and the variable name.
+4. What is a struct?
+A struct is a collection of fields.
+5. What is a field?
+A field is a variable that is part of a struct.
+6. How do you create a struct in Go?
+You use the keyword struct followed by the struct name, a list of fields in curly braces, and
+the body.
+7. What does capitalizing a struct, variable and function in Go does?
+It makes it publicly accessible outside the package.
+8. What is an anonymous struct?
+An anonymous struct is a struct without a name.
+9. Why use an anonymous struct?
+Anonymous structs are useful when you want to create a struct on the fly.
+10. Why do you modularized a struct?
+Modularisation makes it easier to reuse the data structure defined in a struct.

@@ -1,0 +1,40 @@
+Необычные особенности функций: переменное число параметров и замыкания  71
+Если вызвать такую функцию, она выведет:
+goodbye
+cruel world
+Чтобы продемонстрировать более сложный пример, создадим пустой файл 
+и  попытаемся записать в  него. Функция closeFile  предназначена для за -
+крытия файла по окончании работы с ним. Однако если просто вызвать ее 
+в конце функции main, то в случае ошибки closeFile  никогда не будет вызвана, 
+и файл останется открытым. Поэтому мы используем defer , чтобы гаранти-
+ровать вызов функции closeFile  перед возвратом из функции main :
+func main() {
+    file, err := os.Create("/tmp/foo.txt") // Создать пустой файл
+    defer closeFile(file)                  // Гарантировать вызов closeFile(file)
+    if err != nil {
+        return
+    }
+    _, err = fmt.Fprintln(file, "Your mother was a hamster")
+    if err != nil {
+        return
+    }
+    fmt.Println("File written to successfully")
+}
+func closeFile(f *os.File) {
+    if err := f.Close(); err != nil {
+        fmt.Println("Error closing file:", err.Error())
+    } else {
+        fmt.Println("File closed successfully")
+    }
+}
+Эта функция main  выведет:
+File written to successfully
+File closed successfully
+Если в функции используется несколько ключевых слов defer , они помеща-
+ются в стек и по завершении вмещающей функции выполняются в обратном 
+порядке, по принципу «последним пришел – первым ушел». Например:
+func main() {
+    defer fmt.Println("world")
+    defer fmt.Println("cruel")
+    defer fmt.Println("goodbye")
+}

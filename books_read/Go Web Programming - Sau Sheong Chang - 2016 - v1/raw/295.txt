@@ -1,0 +1,62 @@
+274
+CHAPTER 10
+Deploying Go
+or they can be hosted in a Docker registry, a repository of Docker images. You can run
+your own private Docker registry or use Docker Hub (https://hub.docker.com) as your
+registry. Docker Hub hosts both public and private Docker images, though the latter
+usually requires a subscription.
+ If you install Docker on a Linux OS like Ubuntu, the Docker daemon and the
+Docker client are installed in the same machine. With other types of OSes, Docker can
+install the client on one type of OS (for example, OS X or Windows), and the daemon
+will be installed somewhere else, usually in a VM sitting in that OS. An example of this
+is when you install Docker on OS X, the Docker client is installed in OS X and the
+Docker daemon will be installed in a VM inside VirtualBox (an x86-based hypervisor). 
+ Docker containers are run from Docker images and run on the Docker host.
+ Now that you have an overall understanding of Docker, let’s see how you can
+deploy a simple Go web service into a Docker container. We’ll be using the same sim-
+ple web service we’ve used in the previous three sections.
+10.4.4 Dockerizing a Go web application
+Despite the plethora of technologies, dockerizing a Go web application is surprisingly
+easy. There’s no need for messing with the code because the web service will have full
+access to the whole container, so the only work is entirely in the configuration and use
+of Docker. Figure 10.7 shows a high-level overview of the steps for dockerizing your
+web application and deploying it both locally and to a cloud provider.
+Figure 10.7
+Steps to dockerize and deploy a Go web application locally and to a cloud provider. To dockerize an 
+application locally, use a Dockerfile to create the image and then start a container from the image. To move the 
+image to the cloud, create a Docker host in the cloud provider, and then connect to it, build the image in the remote 
+host, and start a container from it.
+For this section, we’ll use the name ws-d as the name of the web service. First, shown in
+the next listing, create a Dockerfile file in the root application directory. 
+FROM golang                              
+ADD . /go/src/github.com/sausheong/ws-d    
+WORKDIR /go/src/github.com/sausheong/ws-d
+Listing 10.7
+Dockerfile for simple web service
+Create Docker
+container from
+Docker image
+Create
+Dockerfile
+Create Docker
+host in cloud
+provider
+Connect to
+remote
+Docker host
+Build Docker
+image in
+remote host
+Start Docker
+container in
+remote host
+Build Docker
+image with
+Dockerfile
+Deploy to local
+Deploy to cloud provider
+Starts from a Debian image 
+with Go installed and a 
+GOPATH configured at /go.
+Copies the local package files 
+to the container’s workspace.

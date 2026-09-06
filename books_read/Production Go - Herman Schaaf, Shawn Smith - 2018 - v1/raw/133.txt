@@ -1,0 +1,35 @@
+Tooling
+127
+74
+}
+75
+76
+func main() {
+77
+http.HandleFunc("/entries", EntryPostHandler)
+78
+79
+log.Printf("Running on %s ...", *addr)
+80
+log.Fatal(http.ListenAndServe(*addr, nil))
+81
+}
+You can see that we now have a sync.WaitGroup, onto which we add a delta of 1 to the counter. Inside
+the goroutine we decrement the counter with defer wg.Done(), then we block until the counter is
+zero with wg.Wait(). Since we’re blocking until the goroutine finishes, there is no longer a data race:
+$ go run -race server.go
+2017/09/24 20:08:36 Running on 127.0.0.1:8000 ...
+$ curl --data '{"country": "enGLaND", "text": "A country that is part of the \
+United Kingdom"}' localhost:8000/entries
+2017/09/24 20:08:44 INFO: received Entry {England A country that is part of t\
+he United Kingdom}
+and we see that our country is normalized now to “England”.
+Go Report Card
+Full disclosure: we are the authors of this free and open source tool.
+Go Report Card⁴¹ is a web application that takes a go get path to a package and gives the package
+a grade based on how well it scores with various linters and tools. It is a popular application in the
+open source community, with thousands of projects using the generated badge to indicate the code
+quality and link to known quality issues from the project’s GitHub repository. You can try it on
+goreportcard.com if your source code is open source, or run the server locally to make use of the
+tool on your internal network or private repositories.
+⁴¹https://goreportcard.com/

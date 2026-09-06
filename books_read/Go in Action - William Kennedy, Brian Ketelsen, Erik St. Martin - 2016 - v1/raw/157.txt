@@ -1,0 +1,70 @@
+136
+CHAPTER 6
+Concurrency
+24
+go printPrime("A")
+25
+go printPrime("B")
+26
+27
+// Wait for the goroutines to finish.
+28
+fmt.Println("Waiting To Finish")
+29
+wg.Wait()
+30
+31
+fmt.Println("Terminating Program")
+32 }
+33
+34 // printPrime displays prime numbers for the first 5000 numbers.
+35 func printPrime(prefix string) {
+36
+// Schedule the call to Done to tell main we are done.
+37
+defer wg.Done()
+38
+39 next:
+40
+for outer := 2; outer < 5000; outer++ {
+41
+for inner := 2; inner < outer; inner++ {
+42
+if outer%inner == 0 {
+43
+continue next
+44
+}
+45
+}
+46
+fmt.Printf("%s:%d\n", prefix, outer)
+47
+}
+48
+fmt.Println("Completed", prefix)
+49 }
+The program in listing 6.4 creates two goroutines that print any prime numbers
+between 1 and 5,000 that can be found. Finding and displaying the prime numbers
+take a bit of time and will cause the scheduler to time-slice the first running goroutine
+before it finishes finding all the prime numbers it’s looking for. 
+ When the program starts, it declares a WaitGroup variable on line 12 and then sets
+the value of the WaitGroup to 2 on line 20. Two goroutines are created on lines 24 and
+25 by specifying the name of the function printPrime after the keyword go. The first
+goroutine is given the prefix A and the second goroutine is given the prefix B. Like
+any calling function, parameters can be passed into the function being created as a
+goroutine. Return parameters aren’t available when the goroutine terminates. When
+you look at the output in listing 6.5, you can see the swapping of the first goroutine by
+the scheduler.
+Create Goroutines
+Waiting To Finish
+B:2
+B:3
+...
+B:4583
+B:4591
+A:3             ** Goroutines Swapped
+A:5
+...
+Listing 6.5
+Output for listing04.go

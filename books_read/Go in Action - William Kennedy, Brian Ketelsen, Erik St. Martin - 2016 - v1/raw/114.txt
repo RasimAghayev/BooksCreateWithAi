@@ -1,0 +1,72 @@
+93
+Methods
+12
+email string
+13 }
+14
+15 // notify implements a method with a value receiver.
+16 func (u user) notify() {
+17
+fmt.Printf("Sending User Email To %s<%s>\n",
+18
+u.name,
+19
+u.email)
+20 }
+21
+22 // changeEmail implements a method with a pointer receiver.
+23 func (u *user) changeEmail(email string) {
+24
+u.email = email
+25 }
+26
+27 // main is the entry point for the application.
+28 func main() {
+29
+// Values of type user can be used to call methods
+30
+// declared with a value receiver.
+31
+bill := user{"Bill", "bill@email.com"}
+32
+bill.notify()
+33
+34
+// Pointers of type user can also be used to call methods
+35
+// declared with a value receiver.
+36
+lisa := &user{"Lisa", "lisa@email.com"}
+37
+lisa.notify()
+38
+39
+// Values of type user can be used to call methods
+40
+// declared with a pointer receiver.
+41
+bill.changeEmail("bill@newdomain.com")
+42
+bill.notify()
+43
+44
+// Pointers of type user can be used to call methods
+45
+// declared with a pointer receiver.
+46
+lisa.changeEmail("lisa@comcast.com")
+47
+lisa.notify()
+48 }
+Lines 16 and 23 of listing 5.11 show two different methods. The parameter between
+the keyword func and the function name is called a receiver and binds the function to
+the specified type. When a function has a receiver, that function is called a method.
+When you run the program, you get the following output.
+Sending User Email To Bill<bill@email.com>
+Sending User Email To Lisa<lisa@email.com>
+Sending User Email To Bill<bill@newdomain.com>
+Sending User Email To Lisa<lisa@comcast.com>
+Let’s examine what the program is doing. On line 10, the program declares a struct
+type named user and then declares a method named notify.
+Listing 5.12
+Output for listing11.go

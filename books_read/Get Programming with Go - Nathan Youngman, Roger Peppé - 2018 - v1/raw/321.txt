@@ -1,0 +1,33 @@
+306
+Appendix Solutions
+    for i := 0; i < 300; i++ {
+        Step(a, b)
+        a.Show()
+        time.Sleep(time.Second / 30)
+        a, b = b, a // Swap universes
+    }
+}
+Unit 5
+Lesson 21
+type location struct {
+    Name string  `json:"name"`
+    Lat  float64 `json:"latitude"`
+    Long float64 `json:"longitude"`
+}
+locations := []location{
+    {Name: "Bradbury Landing", Lat: -4.5895, Long: 137.4417},
+    {Name: "Columbia Memorial Station", Lat: -14.5684, Long: 175.472636},
+    {Name: "Challenger Memorial Station", Lat: -1.9462, Long: 354.4734},
+}
+bytes, err := json.MarshalIndent(locations, "", "  ")
+if err != nil {
+    fmt.Println(err)
+    os.Exit(1)
+}
+fmt.Println(string(bytes))
+Lesson 22
+package main
+import "fmt"
+Experiment: landing.go
+Experiment: landing.go
+ 

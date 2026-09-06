@@ -1,0 +1,46 @@
+22
+CHAPTER 1
+Getting into Go
+a package is fetched, metadata about the package is received from the central reposi-
+tory, and the package is downloaded from its source location.
+ As we touched on earlier, Go has a package-handling system. Unlike Node.js,
+which has metadata and content in a central repository, Go has no central repository,
+and packages are fetched from their source location.
+1.4
+Getting up and running in Go
+You have a few options for getting into Go, depending on your level of commitment.
+ The easiest way to get started with Go is through a tour at http://tour.golang.org, which
+walks you through using some of its main features. What separates the Go tour from typical
+tutorials is in how the examples work. You can execute the examples right in your browser.
+If you want to change them and execute your changes, you can do that as well.
+ If you want to try executing simple Go applications, you can do that through the
+Go Playground at https://play.golang.org. The Go Playground is what enables the
+tour examples to be executable. Here you can test code and share a link to it. The
+examples in this book that represent a program can be executed in the Playground.
+1.4.1
+Installing Go
+Installing Go is a fairly straightforward process. Everything you need to know about
+getting and installing Go is documented at http://golang.org/doc/install. This
+includes the operating systems supported, the hardware architectures that can be tar-
+geted for these systems, and more.
+ For Microsoft Windows and Mac OS X, installers take care of the installation. It’s as
+easy as installing any other program. Users of Homebrew on OS X can install Go by
+using the command brew install go.
+ Installing Go on Linux includes a wider variety of options. You can install go using
+built-in package managers, such as apt-get and yum. The version available is usually
+an older version, and newer versions are faster or contain new features. Through the
+Go install instructions, you can download the most recent version of Go, put it on
+your system, and add the Go executables to your path. On versions of Linux that sup-
+port the Debian package system, such as Ubuntu, you can use the godeb tool to install
+the latest version of Go. The author of godeb explains the process at http://blog.labix
+.org/2013/06/15/in-flight-deb-packages-of-go.
+1.4.2
+Working with Git, Mercurial, and version control
+To work with packages and external imports stored in version-control systems, Go
+expects these systems to be installed on the local system. Go doesn’t reimplement any
+software configuration management (SCM) tools; rather, it knows about them and
+takes advantage of them when installed.
+ Two of the dominant version-control systems used by Go developers for packages
+are Git and Mercurial (hg). Git is widely popular and is used by numerous Google
+developers and by the packages they release to GitHub. You’ll need to have Git
+installed, but Go doesn’t require a specific version. Any recent version should do.

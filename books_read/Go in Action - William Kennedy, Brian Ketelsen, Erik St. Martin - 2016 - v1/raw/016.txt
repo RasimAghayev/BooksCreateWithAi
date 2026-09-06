@@ -1,0 +1,32 @@
+ACKNOWLEDGMENTS
+xv
+ We would also like to recognize Cory Jacobson, Jeffery Lim, Chetan Conikee, and
+Nan Xiao, who consistently provided time for reviews, opinions, and guidance.
+Thanks to Gabriel Aszalos, Fatih Arslan, Kevin Gillette, and Jason Waldrip for help
+with sample code and reviews. And special thanks to Steve Francia for contributing
+the foreword and endorsing our work.
+ We end by sincerely thanking our families and friends. Anything that takes this
+level of commitment and time always has an effect on the ones you love.
+WILLIAM KENNEDY
+I would like to thank Lisa, my beautiful wife, and my five children: Brianna, Melissa,
+Amanda, Jarrod, and Thomas. Lisa, I know you and the kids spent way too many days,
+nights, and weekends without your husband and father. Thank you for letting me take
+all the time I needed to work on the book: I love each and every one of you.
+ I would also like to thank my business partner Ed Gonzalez, creative director Erick
+Zelaya, and the entire team at Ardan Studios. Ed, thanks for supporting me from the
+beginning. I could not have done this without you. You are more than just a business
+partner, you are a friend and brother: thank you. Erick, thanks for everything you do
+to support me and the company. Not sure what we would do without you.
+BRIAN KETELSEN
+I would like to thank my family for their patience during this four-year-long process of
+producing a book.  Christine, Nathan, Lauren, and Evelyn: thank you for putting up
+with me as I wrote chapters in a lounge chair by the pool while you were swimming.
+ Thank you for believing that this book could and would be published.
+ERIK ST. MARTIN
+I would like to thank my fiancée Abby, and my three children Halie, Wyatt, and Allie
+for being so patient and understanding how much time writing a book and organizing
+conferences demand. I love you all so very much and am lucky to have you.
+ I would also like to thank Bill Kennedy for the tremendous effort he has poured
+into this book—we asked him to help us write it, and he steered the ship most of the
+way due to the demands of our jobs and organizing GopherCon. I also want to thank
+the community for all their reviews and words of encouragement.

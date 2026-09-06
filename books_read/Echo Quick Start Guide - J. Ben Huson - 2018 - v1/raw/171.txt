@@ -1,0 +1,20 @@
+{{ end }}
+</body>
+</html>
+`
+t, err := template.New("reminders").Parse(handlers.RemindersTmpl) if err != nil
+{
+panic(err.Error()) }
+e.Renderer = &handlers.CustomTemplate{t}
+func RenderReminders(c echo.Context) error {
+reminders := []Reminder{
+Reminder{
+ID: uuid.NewV4(),
+Name: "Oil Change", Due: time.Now().Add(30 * 3 * 24 * time.Hour), },
+Reminder{
+ID: uuid.NewV4(),
+Name: "Birthday Party", Due: mustTime(time.Parse("2006-01-02", "2020-01-
+01")), },
+}
+tmplData := struct {
+Reminders []Reminder Title string

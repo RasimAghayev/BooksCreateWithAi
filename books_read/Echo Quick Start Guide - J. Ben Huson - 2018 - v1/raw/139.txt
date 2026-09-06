@@ -1,0 +1,21 @@
+Handling application panics
+Application panics are unfortunate, but how you recover from an application
+panic is very important. Echo comes with a Recover middleware that is actually
+able to catch application panics using the Go recover built-n function to catch an
+application panic. This is possible because, if you recall, middleware functions
+effectively just wrap our handler functions. Since that is the case, the Recover
+middleware is able to do the following:
+defer func() {
+        if r := recover(); r != nil {
+            //...
+        }
+    }()
+With the preceding code in place, any application panic that befalls a running
+request handling goroutine will be caught. I strongly recommend reading the Go
+blog Defer, Panic and Recover for more information on how this built-in
+function works. The following diagram explains what Echo is able to do to catch
+panics and recover gracefully. If a panic is encountered within the handler
+function, or any nested middleware, the Recover middleware will catch the panic
+and return a generic error to the Echo framework, which will cause Echo to
+respond to the caller with the default error handler, which we discussed earlier in
+this chapter:

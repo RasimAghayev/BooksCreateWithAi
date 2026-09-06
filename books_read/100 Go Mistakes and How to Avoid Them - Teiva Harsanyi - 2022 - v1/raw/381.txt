@@ -1,0 +1,105 @@
+INDEX
+361
+mantissas 61
+maps
+initialization 84–87
+iterations 105–108
+map insert during 107–108
+ordering 105–107
+memory leaks and 87–89
+Marshal function 30
+Marshaler interface 239
+MarshalJSON function 239
+MarshalJSON method 240
+Martin, Robert C. 5
+math package 59
+math.MinInt integer 60
+mechanical sympathy 300
+memory fence 222
+memory leaks
+maps and 87–89
+slices and 80–84
+leaking capacity 80–81
+slice and pointers 81–84
+memory-bound workload 181
+MESI (Modified, Exclusive, Shared, or 
+Invalid) 314
+methods. See functions and methods
+Mutex profile 338
+mutexes 173–174, 176
+mutual exclusion 176
+profiling 343–344
+using inaccurately with slices and maps
+218–221
+N
+named result parameters 129–133
+NaN (Not-a-Number) 62
+nanoseconds 235
+nested code 9–12
+net package 47
+net.Dialer.Timeout 257
+Network Time Protocol (NTP) 240
+nil error 132
+nil receiver, returning 133–136
+nil vs. empty slices 71–74
+non-unit stride 307
+Not-a-Number (NaN) 62
+notification channels 204–205
+now dependency 280
+NTP (Network Time Protocol) 240
+O
+octal literals 56–57
+off-die 301
+on-die 300
+optimizations
+allocations, reducing 331–334
+API changes 331
+compiler optimizations 332
+sync.Pool 332–334
+concurrent code that leads to false sharing
+312–315
+CPU caches 300–312
+cache line 301–304
+cache placement policy 307–312
+CPU architecture 300–301
+predictability 305–307
+slice of structs vs. struct of slices 304–305
+data alignment 321–324
+GC (garbage collector) 347–352
+concepts 347–349
+examples 349–352
+Go diagnostics tooling 337–347
+execution tracer 344–347
+profiling 337–344
+inlining 334–337
+instruction-level parallelism 315–321
+running Go in Docker and Kubernetes
+352–354
+stack vs. heap 324–330
+organization of code and project
+code documentation 51–53
+getters and setters 17–18
+init functions 12–17
+interfaces
+interface pollution 18–24
+on producer side 25–27
+returning 27–28
+nested code 9–12
+package name collisions 50–51
+project misorganization 46–48
+package organization 47–48
+project structure 46–47
+suboptimal or unidiomatic 5
+suboptimal organization of code 5
+utility packages 48–50
+variable shadowing 7–9
+os.File 253–255
+P
+package name collisions 50–51
+package organization 47–48
+padding 314
+-parallel flag 268–269
+parallel merge sort 169–172
+parallel threads 166
+parallelism 163–166, 315–321
+perflock tool 288

@@ -1,0 +1,47 @@
+130
+CHAPTER 6
+Functions and methods
+ When we return parameters in a function or a method, we can attach names to
+these parameters and use them as regular variables. When a result parameter is
+named, it’s initialized to its zero value when the function/method begins. With
+named result parameters, we can also call a naked return statement (without argu-
+ments). In that case, the current values of the result parameters are used as the
+returned values.
+ Here’s an example that uses a named result parameter b:
+func f(a int) (b int) {
+b = a
+return
+}
+In this example, we attach a name to the result parameter: b. When we call return
+without arguments, it returns the current value of b.
+ When is it recommended that we use named result parameters? First, let’s consider
+the following interface, which contains a method to get the coordinates from a given
+address:
+type locator interface {
+getCoordinates(address string) (float32, float32, error)
+}
+Because this interface is unexported, documentation isn’t mandatory. Just by reading
+this code, can you guess what these two float32 results are? Perhaps they are a lati-
+tude and a longitude, but in which order? Depending on the conventions, latitude
+isn’t always the first element. Therefore, we have to check the implementation to
+understand the results.
+ In that case, we should probably use named result parameters to make the code
+easier to read:
+type locator interface {
+getCoordinates(address string) (lat, lng float32, err error)
+}
+With this new version, we can understand the meaning of the method signature by
+looking at the interface: latitude first, longitude second.
+ Now, let’s pursue the question of when to use named result parameters with the
+method implementation. Should we also use named result parameters as part of the
+implementation itself?
+func (l loc) getCoordinates(address string) (
+lat, lng float32, err error) {
+// ...
+}
+In this specific case, having an expressive method signature can also help code read-
+ers. Hence, we probably want to use named result parameters as well.
+Names the int 
+result parameter b
+Returns the 
+current value of b

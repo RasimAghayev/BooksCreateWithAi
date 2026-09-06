@@ -1,0 +1,31 @@
+216
+Lesson 26  A few pointers
+An explicit pointer to a slice is only useful when modifying the slice itself: the length, 
+capacity, or starting offset. In the following listing, the reclassify function modifies the 
+length of the planets slice. The calling function (main) wouldn’t see this change if reclassify 
+didn’t utilize a pointer.
+func reclassify(planets *[]string) {
+    *planets = (*planets)[0:8]
+}
+func main() {
+    planets := []string{
+        "Mercury", "Venus", "Earth", "Mars",
+        "Jupiter", "Saturn", "Uranus", "Neptune",
+        "Pluto",
+    }
+    reclassify(&planets)
+    fmt.Println(planets)
+}
+Instead of mutating the passed slice as in listing 26.18, an arguably cleaner approach is 
+to write the reclassify function to return a new slice.   
+26.5 Pointers and interfaces
+The following listing demonstrates that both martian and a pointer to martian satisfy the 
+talker interface.
+Listing 26.18 Modifying a slice: slice.go
+Prints [Mercury Venus 
+Earth Mars Jupiter 
+Saturn Uranus Neptune]
+Quick check 26.11 Functions and methods wanting to mutate the data they receive will
+require a pointer for which two data types?
+QC 26.11 answer Structures and arrays.
+ 

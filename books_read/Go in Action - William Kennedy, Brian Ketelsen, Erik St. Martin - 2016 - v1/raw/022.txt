@@ -1,0 +1,19 @@
+1
+Introducing Go
+Computers have evolved, but programming languages haven’t kept up the same
+pace of evolution. The cell phones we carry might have more CPU cores than the
+first computer we used. High-powered servers now have 64, 128, or even more cores,
+but we’re still programming using the techniques we were using for a single core. 
+ The art of programming has evolved too. Most programs aren’t written by a sin-
+gle developer any more: they’re written by teams of people sitting in different time
+zones and working at different times of the day. Large projects are broken up into
+smaller pieces and assigned to programmers who then deliver their work back to
+the team in the form of a library or package that can be used across an entire suite
+of applications.
+ Today’s programmers and companies believe more than ever in the power of
+open source software. Go is a programming language that makes sharing code easy.
+Go ships with tools that make it simple to use packages written by others, and Go
+makes it easy to share our own packages too. 
+In this chapter
+Solving modern computing challenges with Go
+Using the Go tools 

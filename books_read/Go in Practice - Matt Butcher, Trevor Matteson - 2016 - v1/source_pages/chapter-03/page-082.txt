@@ -1,0 +1,19 @@
+59
+Concurrency in Go
+This chapter presents Go’s concurrency model. Unlike many recent procedural
+and object-oriented languages, Go doesn’t provide a threading model for concur-
+rency. Instead, it uses goroutines and channels. Concurrency is cheap (resource-
+wise) and much easier to manage than traditional thread pools. This chapter first
+focuses on goroutines, functions capable of running concurrently. Then it dives
+into channels, Go’s mechanism for communicating between goroutines.
+3.1
+Understanding Go’s concurrency model
+Roughly speaking, concurrency is a program’s ability to do multiple things at the same
+time. In practice, when we talk about concurrent programs, we mean programs that
+This chapter covers
+Understanding Go’s concurrency model
+Using goroutines for concurrent processing
+Locking and waiting
+Using channels for communication between 
+goroutines
+Strategically closing channels

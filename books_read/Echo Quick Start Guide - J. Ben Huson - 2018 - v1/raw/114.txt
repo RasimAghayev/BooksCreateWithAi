@@ -1,0 +1,34 @@
+Echo context
+The echo.Context interface defines the following methods which provide the
+developer with helper functions to retrieve various information about the request
+that is made, as well as manipulate the state of the context. The following is a
+shortened list of important methods available on the context, along with a short
+description of what each method provides:
+Param(name string) string:
+Returns the value of the URL parameter that is mapped to by name
+This is the primary interface by which you retrieve URL parameters
+within your handler and middleware functions
+The name parameter provided to this function is the string that was used
+within the routing path definition
+QueryParam(name string) string:
+Returns the value of the URL query parameter that is mapped to by
+name
+This allows you to access the query parameter by parameter name
+instead of using the standard library's http.Request URL to access the
+Query method
+Designed as a helper function to access query string parameters
+FormValue(name string) string:
+Returns the value of the form payload parameter that is mapped to by
+name
+This will return the value of a submitted form's attribute defined by
+name
+FormFile(name string) (*multipart.FileHeader, error):
+Returns the multi-part form file that is mapped to by name
+Cookie(name string) (*http.Cookie, error):
+Returns the cookie that is mapped to by name from the request
+SetCookie(cookie *http.Cookie):
+Adds a Set-Cookie response header, which is useful for setting cookie
+values
+Get(key string) interface{}:
+Retrieves an arbitrary value from the context that is mapped to by key
+This is useful for retrieving the state that was set by middleware and

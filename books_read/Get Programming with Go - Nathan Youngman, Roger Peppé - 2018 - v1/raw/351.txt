@@ -1,0 +1,39 @@
+336
+Appendix Solutions
+    }
+    for y := range grid.cells {
+        grid.cells[y] = make([]cell, size.X)
+        for x := range grid.cells[y] {
+            cell := &grid.cells[y][x]
+            cell.groundData.LifeSigns = rand.Intn(1000)
+        }
+    }
+    return grid
+}
+// Size returns a Point representing the size of the grid.
+func (g *MarsGrid) Size() image.Point {
+    return g.bounds.Max
+}
+// Occupy occupies a cell at the given point in the grid. It
+// returns nil if the point is already occupied or the point is outside
+// the grid. Otherwise it returns a value that can be used
+// to move to different places on the grid.
+func (g *MarsGrid) Occupy(p image.Point) *Occupier {
+    g.mu.Lock()
+    defer g.mu.Unlock()
+    cell := g.cell(p)
+    if cell == nil || cell.occupier != nil {
+        return nil
+    }
+    cell.occupier = &Occupier{
+        grid: g,
+        pos:  p,
+    }
+    return cell.occupier
+}
+func (g *MarsGrid) cell(p image.Point) *cell {
+    if !p.In(g.bounds) {
+        return nil
+    }
+    return &g.cells[p.Y][p.X]
+ 

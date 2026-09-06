@@ -1,0 +1,49 @@
+254
+CHAPTER 10
+The standard library
+ Writing to a file descriptor isn’t a synchronous operation. For performance con-
+cerns, data is buffered. The BSD manual page for close(2) mentions that a closure
+can lead to an error in a previously uncommitted write (still living in a buffer)
+encountered during an I/O error. For that reason, if we want to write to a file, we
+should propagate any error that occurs while closing the file:
+func writeToFile(filename string, content []byte) (err error) {
+// Open file
+defer func() {
+closeErr := f.Close()
+if err == nil {
+err = closeErr
+}
+}()
+_, err = f.Write(content)
+return
+}
+In this example, we use named arguments and set the error to the response of
+f.Close if the write succeeds. This way, clients will be aware if something goes wrong
+with this function and can react accordingly.
+ Furthermore, success while closing a writable os.File doesn’t guarantee that the
+file will be written on disk. The write can still live in a buffer on the filesystem and not
+be flushed on disk. If durability is a critical factor, we can use the Sync() method to
+commit a change. In that case, errors coming from Close can be safely ignored:
+func writeToFile(filename string, content []byte) error {
+// Open file
+defer func() {
+_ = f.Close()
+}()
+_, err = f.Write(content)
+if err != nil {
+return err
+}
+return f.Sync()
+}
+This example is a synchronous write function. It ensures that the content is written to
+disk before returning. But its downside is an impact on performance.
+ To summarize this section, we’ve seen how important it is to close ephemeral
+resources and thus avoid leaks. Ephemeral resources must be closed at the right time
+and in specific situations. It’s not always clear up front what has to be closed. We can
+only acquire this information by carefully reading the API documentation and/or
+Returns the close error 
+if the write succeeds
+Ignores possible 
+errors
+Commits the write 
+to the disk

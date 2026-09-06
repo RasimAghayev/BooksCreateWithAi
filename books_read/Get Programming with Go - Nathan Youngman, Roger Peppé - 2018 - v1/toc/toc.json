@@ -1,0 +1,230 @@
+{
+  "book": "Get Programming with Go",
+  "page_offset": 15,
+  "chapters": [
+    {
+      "chapter": 1,
+      "title": "Get ready, get set, Go",
+      "book_pages": "3-11",
+      "start_pdf_page": 18,
+      "end_pdf_page": 26
+    },
+    {
+      "chapter": 2,
+      "title": "A glorified calculator",
+      "book_pages": "13-22",
+      "start_pdf_page": 28,
+      "end_pdf_page": 37
+    },
+    {
+      "chapter": 3,
+      "title": "Loops and branches",
+      "book_pages": "23-33",
+      "start_pdf_page": 38,
+      "end_pdf_page": 48
+    },
+    {
+      "chapter": 4,
+      "title": "Variable scope",
+      "book_pages": "34-40",
+      "start_pdf_page": 49,
+      "end_pdf_page": 55
+    },
+    {
+      "chapter": 5,
+      "title": "Capstone: Ticket to Mars",
+      "book_pages": "41-42",
+      "start_pdf_page": 56,
+      "end_pdf_page": 57
+    },
+    {
+      "chapter": 6,
+      "title": "Real numbers",
+      "book_pages": "45-52",
+      "start_pdf_page": 60,
+      "end_pdf_page": 67
+    },
+    {
+      "chapter": 7,
+      "title": "Whole numbers",
+      "book_pages": "53-59",
+      "start_pdf_page": 68,
+      "end_pdf_page": 74
+    },
+    {
+      "chapter": 8,
+      "title": "Big numbers",
+      "book_pages": "62-67",
+      "start_pdf_page": 77,
+      "end_pdf_page": 82
+    },
+    {
+      "chapter": 9,
+      "title": "Multilingual text",
+      "book_pages": "68-78",
+      "start_pdf_page": 83,
+      "end_pdf_page": 93
+    },
+    {
+      "chapter": 10,
+      "title": "Converting between types",
+      "book_pages": "79-87",
+      "start_pdf_page": 94,
+      "end_pdf_page": 102
+    },
+    {
+      "chapter": 11,
+      "title": "Capstone: The Vigenère cipher",
+      "book_pages": "88-91",
+      "start_pdf_page": 103,
+      "end_pdf_page": 106
+    },
+    {
+      "chapter": 12,
+      "title": "Functions",
+      "book_pages": "93-100",
+      "start_pdf_page": 108,
+      "end_pdf_page": 115
+    },
+    {
+      "chapter": 13,
+      "title": "Methods",
+      "book_pages": "101-107",
+      "start_pdf_page": 116,
+      "end_pdf_page": 122
+    },
+    {
+      "chapter": 14,
+      "title": "First-class functions",
+      "book_pages": "108-116",
+      "start_pdf_page": 123,
+      "end_pdf_page": 131
+    },
+    {
+      "chapter": 15,
+      "title": "Capstone: Temperature tables",
+      "book_pages": "117-119",
+      "start_pdf_page": 132,
+      "end_pdf_page": 134
+    },
+    {
+      "chapter": 16,
+      "title": "Arrayed in splendor",
+      "book_pages": "121-129",
+      "start_pdf_page": 136,
+      "end_pdf_page": 144
+    },
+    {
+      "chapter": 17,
+      "title": "Slices: Windows into arrays",
+      "book_pages": "130-137",
+      "start_pdf_page": 145,
+      "end_pdf_page": 152
+    },
+    {
+      "chapter": 18,
+      "title": "A bigger slice",
+      "book_pages": "138-145",
+      "start_pdf_page": 153,
+      "end_pdf_page": 160
+    },
+    {
+      "chapter": 19,
+      "title": "The ever-versatile map",
+      "book_pages": "146-154",
+      "start_pdf_page": 161,
+      "end_pdf_page": 169
+    },
+    {
+      "chapter": 20,
+      "title": "Capstone: A slice of life",
+      "book_pages": "155-158",
+      "start_pdf_page": 170,
+      "end_pdf_page": 173
+    },
+    {
+      "chapter": 21,
+      "title": "A little structure",
+      "book_pages": "161-169",
+      "start_pdf_page": 176,
+      "end_pdf_page": 184
+    },
+    {
+      "chapter": 22,
+      "title": "Go's got no class",
+      "book_pages": "170-176",
+      "start_pdf_page": 185,
+      "end_pdf_page": 191
+    },
+    {
+      "chapter": 23,
+      "title": "Composition and forwarding",
+      "book_pages": "177-185",
+      "start_pdf_page": 192,
+      "end_pdf_page": 200
+    },
+    {
+      "chapter": 24,
+      "title": "Interfaces",
+      "book_pages": "186-195",
+      "start_pdf_page": 201,
+      "end_pdf_page": 210
+    },
+    {
+      "chapter": 25,
+      "title": "Capstone: Martian animal sanctuary",
+      "book_pages": "196-199",
+      "start_pdf_page": 211,
+      "end_pdf_page": 214
+    },
+    {
+      "chapter": 26,
+      "title": "A few pointers",
+      "book_pages": "201-214",
+      "start_pdf_page": 216,
+      "end_pdf_page": 229
+    },
+    {
+      "chapter": 27,
+      "title": "Much ado about nil",
+      "book_pages": "220-229",
+      "start_pdf_page": 235,
+      "end_pdf_page": 244
+    },
+    {
+      "chapter": 28,
+      "title": "To err is human",
+      "book_pages": "230-247",
+      "start_pdf_page": 245,
+      "end_pdf_page": 262
+    },
+    {
+      "chapter": 29,
+      "title": "Capstone: Sudoku rules",
+      "book_pages": "248-251",
+      "start_pdf_page": 263,
+      "end_pdf_page": 266
+    },
+    {
+      "chapter": 30,
+      "title": "Goroutines and concurrency",
+      "book_pages": "253-267",
+      "start_pdf_page": 268,
+      "end_pdf_page": 282
+    },
+    {
+      "chapter": 31,
+      "title": "Concurrent state",
+      "book_pages": "269-281",
+      "start_pdf_page": 284,
+      "end_pdf_page": 296
+    },
+    {
+      "chapter": 32,
+      "title": "Capstone: Life on Mars",
+      "book_pages": "282-284",
+      "start_pdf_page": 297,
+      "end_pdf_page": 299
+    }
+  ]
+}

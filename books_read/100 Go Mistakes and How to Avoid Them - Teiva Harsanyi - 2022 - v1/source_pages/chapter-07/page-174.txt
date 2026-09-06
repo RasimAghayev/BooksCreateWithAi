@@ -1,0 +1,56 @@
+154
+CHAPTER 7
+Error management
+if errors.Is(err, sql.ErrNoRows) {
+// ...
+} else {
+// ...
+}
+}
+Using errors.Is instead of the == operator allows the comparison to work even if the
+error is wrapped using %w.
+ In summary, if we use error wrapping in our application with the %w directive and
+fmt.Errorf, checking an error against a specific value should be done using
+errors.Is instead of ==. Thus, even if the sentinel error is wrapped, errors.Is can
+recursively unwrap it and compare each error in the chain against the provided value.
+ Now it’s time to discuss one of the most important aspects of error handling: not
+handling an error twice. 
+7.5
+#52: Handling an error twice
+Handling an error multiple times is a mistake made frequently by developers, not spe-
+cifically in Go. Let’s understand why this is a problem and how to handle errors
+efficiently.
+ To illustrate the problem, let’s write a GetRoute function to get the route from a
+pair of sources to a pair of target coordinates. Let’s assume this function will call an
+unexported getRoute function that contains the business logic to calculate the best
+route. Before calling getRoute, we have to validate the source and target coordinates
+using validateCoordinates. We also want the possible errors to be logged. Here’s a
+possible implementation:
+func GetRoute(srcLat, srcLng, dstLat, dstLng float32) (Route, error) {
+err := validateCoordinates(srcLat, srcLng)
+if err != nil {
+log.Println("failed to validate source coordinates")
+return Route{}, err
+}
+err = validateCoordinates(dstLat, dstLng)
+if err != nil {
+log.Println("failed to validate target coordinates")
+return Route{}, err
+}
+return getRoute(srcLat, srcLng, dstLat, dstLng)
+}
+func validateCoordinates(lat, lng float32) error {
+if lat > 90.0 || lat < -90.0 {
+log.Printf("invalid latitude: %f", lat)
+return fmt.Errorf("invalid latitude: %f", lat)
+}
+if lng > 180.0 || lng < -180.0 {
+log.Printf("invalid longitude: %f", lng)
+Logs and returns 
+the error
+Logs and returns 
+the error
+Logs and returns 
+the error
+Logs and returns 
+the error

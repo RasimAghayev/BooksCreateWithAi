@@ -1,0 +1,33 @@
+Calling Echo from templates
+There are times when it is handy to access functionality and methods of the web
+framework from within a template being rendered. A primary use case of this is
+to figure out reverse URLs for rendering links within a page. Luckily, due to the
+fact that Go allows for functions as variables, we are able to do this quite easily.
+The first thing we have to do is formalize the tmplData anonymous struct to
+include a method that we would want to call from within the template. Go's
+template library supports execution of methods by name which allows us to call
+methods off of the data struct that is passed into the execute. With this in mind,
+we will expose a Reverse function in our template data struct in which we can pass
+in Echo’s Reverse function. The following code is located at
+$GOPATH/src/github.com/PacktPublishing/Echo-Essentials/chapter8/handlers/reminder.go:
+type TmplData struct {
+        Reminders []Reminder
+        Title     string
+        rev       func(name string, params ...interface{}) string
+}
+func (td TmplData) Reverse(name string, params ...interface{}) string {
+        return td.rev(name, params...)
+}
+We are able to take this type now and populate it with any reverse function we
+want as seen here:
+data := TmplData{reminders, "Reminders Page", c.Echo().Reverse}
+        return c.Render(http.StatusOK, "reminders", data)
+Now that we have our template being rendered with a Reverse method built into
+the template data structure we can use this new functionality to have our
+templates figure out URL link reversals. This is extremely beneficial when you
+need to have links generated from within a template. In order to perform this we
+need to name the routes we wish to have URL reversals for explicitly as shown
+below in cmd/service/main.go
+e.POST("/login", handlers.Login).Name = "login"
+After we have this route name in place, we need to update our template to add a
+link to the login named route. Below is the modified rendered template, which

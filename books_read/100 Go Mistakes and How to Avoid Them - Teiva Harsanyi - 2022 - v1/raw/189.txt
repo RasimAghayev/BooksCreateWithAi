@@ -1,0 +1,74 @@
+169
+8.2
+#56: Thinking concurrency is always faster
+ Now that we understand the fundamentals of scheduling in Go, let’s look at a con-
+crete example: implementing a merge sort in a parallel manner. 
+8.2.2
+Parallel merge sort
+First, let’s briefly review how the merge sort algorithm works. Then we will implement
+a parallel version. Note that the objective isn’t to implement the most efficient version
+but to support a concrete example showing why concurrency isn’t always faster.
+ The merge sort algorithm works by breaking a list repeatedly into two sublists until
+each sublist consists of a single element and then merging these sublists so that the
+result is a sorted list (see figure 8.7). Each split operation splits the list into two sub-
+lists, whereas the merge operation merges two sublists into a sorted list.
+Figure 8.7
+Applying the merge sort algorithm repeatedly breaks each list into two 
+sublists. Then the algorithm uses a merge operation such that the resulting list is sorted.
+Here is the sequential implementation of this algorithm. We don’t include all of the
+code as it’s not the main point of this section:
+func sequentialMergesort(s []int) {
+if len(s) <= 1 {
+return
+}
+6
+5
+12
+10
+9
+1
+6
+5
+12
+10
+9
+1
+6
+5
+12
+5
+12
+6
+6
+5
+12
+5
+6
+12
+9
+1
+10
+10
+10
+9
+1
+1
+9
+1
+9
+10
+1
+5
+6
+9
+10
+12
+Merge
+Merge
+Merge
+Merge
+Merge
+Split
+Split
+Split
+Split

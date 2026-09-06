@@ -1,0 +1,46 @@
+Hash and Maps
+32
+Questions
+1. What have we learned?
+We learned that we can declare a map variable and initialize it via make.
+2. Why this is useful?
+This is useful because we can initialize a map with a hint size, which is useful for performance
+and resource reasons.
+3. Why do you want to use map initialization by make?
+You want to use map initialization by make when you want to initialize your map with a
+hint size.
+4. Do you always need to set a hint size?
+No, you don’t need to set a hint size. The hint size is automatically handled by Go.
+5. How does Go allocate and initialize a map hint size?
+Go allocates and initializes a map hint size by using the size of the key type.
+Initialization by Literal Type Assignment
+You can also create a variable by declaration and initialize its content at the same time by setting
+the type of the variable to map[keyType]valueType. Here the general form of maps by declaration
+and initialization in one line.
+Maps by Declaration And Initialization in One Line
+1
+var variable = map[keyType]valueType{keyName: Value}
+2
+3
+println(variable[keyName]) // Value
+And here’s a much specific example. In this example, we have assigned a map value to the declared
+car and set it’s content to {"Tesla":"Model 3"}.
+1
+package main
+2
+3
+import (
+4
+"fmt"
+5
+)
+6
+7
+func main() {
+8
+var car = map[string]string{"Tesla": "Model 3"}
+9
+10
+fmt.Println(car["Tesla"])
+11
+}

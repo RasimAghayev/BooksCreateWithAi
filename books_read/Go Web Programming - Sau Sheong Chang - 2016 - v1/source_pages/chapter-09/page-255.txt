@@ -1,0 +1,52 @@
+234
+CHAPTER 9
+Leveraging Go concurrency
+  
+package main
+import "fmt"
+import "time"
+func printNumbers2(w chan bool) {
+  for i := 0; i < 10; i++ {
+    time.Sleep(1 * time.Microsecond)
+    fmt.Printf("%d ", i)
+  }
+  w <- true                                           
+}
+func printLetters2(w chan bool) {
+  for i := 'A'; i < 'A'+10; i++ {
+    time.Sleep(1 * time.Microsecond)
+    fmt.Printf("%c ", i)
+  }
+  w <- true                                          
+}
+func main() {
+  w1, w2 := make(chan bool), make(chan bool)
+  go printNumbers2(w1)
+  go printLetters2(w2)
+  <-w1                                           
+  <-w2                              
+}
+Let’s look at the main function first. You created two channels of type bool: w1 and w2.
+Then, you ran both printNumbers2 and printLetters2 as goroutines, passing them
+the channel. As soon the goroutines are launched, you try to remove something from
+the channel w1. Because there’s nothing in this channel, the program will block here.
+Before the function printNumbers2 completes, though, you place a true value into
+the channel w1. This results in the program unblocking and continuing to the second
+channel, w2. A similar thing happens and w2 gets a true value in printLetters2,
+resulting in w2 being unblocked, and the program exits.
+ Notice that you took out the value from w1 and w2 but they aren’t used, because
+you’re only interested in unblocking the program once the goroutines complete. 
+ This is a simple example. You can see that the goroutines aren’t communicating
+with each other—you only used the channels to synchronize them. Let’s look at
+another example, this time with a message passing between goroutines.
+9.3.2
+Message passing with channels
+The following listing has two functions running as independent goroutines: a thrower
+and a catcher. The thrower throws a number in sequence by sending the number to a
+channel that’s being passed into the goroutine. The catcher catches by receiving from
+the same channel and printing it out.
+Listing 9.7
+Synchronizing goroutines using channels
+Places Boolean value 
+into channel to unblock
+Channel blocks until something’s in it

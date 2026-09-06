@@ -1,0 +1,38 @@
+v
+brief contents
+1
+■
+Introducing Go
+1
+2
+■
+Go quick-start
+9
+3
+■
+Packaging and tooling
+39
+4
+■
+Arrays, slices, and maps
+57
+5
+■
+Go’s type system
+88
+6
+■
+Concurrency
+128
+7
+■
+Concurrency patterns
+158
+8
+■
+Standard library
+184
+9
+■
+Testing and benchmarking
+211

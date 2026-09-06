@@ -1,0 +1,47 @@
+131
+6.2
+#43: Never using named result parameters
+NOTE
+If we need to return multiple results of the same type, we can also
+think about creating an ad hoc struct with meaningful field names. However,
+this isn’t always possible: for example, when satisfying an existing interface
+that we can’t update.
+Next, let’s consider another function signature that allows us to store a Customer type
+in a database:
+func StoreCustomer(customer Customer) (err error) {
+// ...
+}
+Here, naming the error parameter err isn’t helpful and doesn’t help readers. In this
+case, we should favor not using named result parameters.
+ So, when to use named result parameters depends on the context. In most cases, if
+it’s not clear whether using them makes our code more readable, we shouldn’t use
+named result parameters.
+ Also note that having the result parameters already initialized can be quite handy
+in some contexts, even though they don’t necessarily help readability. The following
+example proposed in Effective Go (https://go.dev/doc/effective_go) is inspired by the
+io.ReadFull function:
+func ReadFull(r io.Reader, buf []byte) (n int, err error) {
+for len(buf) > 0 && err == nil {
+var nr int
+nr, err = r.Read(buf)
+n += nr
+buf = buf[nr:]
+}
+return
+}
+In this example, having named result parameters doesn’t really increase readability.
+However, because both n and err are initialized to their zero value, the implementa-
+tion is shorter. On the other hand, this function can be slightly confusing for readers
+at first sight. Again, it’s a question of finding the right balance.
+ One note regarding naked returns (returns without arguments): they are consid-
+ered acceptable in short functions; otherwise, they can harm readability because the
+reader must remember the outputs throughout the entire function. We should also be
+consistent within the scope of a function, using either only naked returns or only
+returns with arguments.
+ So what are the rules regarding named result parameters? In most cases, using
+named result parameters in the context of an interface definition can increase read-
+ability without leading to any side effects. But there’s no strict rule in the context of a
+method implementation. In some cases, named result parameters can also increase
+readability: for example, if two parameters have the same type. In other cases, they can
+also be used for convenience. Therefore, we should use named result parameters
+sparingly when there’s a clear benefit.

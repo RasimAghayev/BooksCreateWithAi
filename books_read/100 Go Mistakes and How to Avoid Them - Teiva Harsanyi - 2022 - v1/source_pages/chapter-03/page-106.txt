@@ -1,0 +1,42 @@
+86
+CHAPTER 3
+Data types
+Regarding reads, updates, and deletes, Go must calculate the corresponding array
+index. Then Go iterates sequentially over all the keys until it finds the provided one.
+Therefore, the worst-case time complexity for these three operations is O(p), where p
+is the total number of elements in the buckets (one bucket by default, multiple buck-
+ets in case of overflows).
+ Let’s now discuss why initializing a map efficiently is important.
+3.11.2 Initialization
+To understand the problems related to inefficient map initialization, let’s create a
+map[string]int type containing three elements:
+m := map[string]int{
+"1": 1,
+"2": 2,
+"3": 3,
+}
+Internally, this map is backed by an array consisting of a single entry: hence, a single
+bucket. What happens if we add 1 million elements? In this case, a single entry won’t
+be enough because finding a key would mean, in the worst case, going over thousands
+of buckets. This is why a map should be able to grow automatically to cope with the
+number of elements.
+ When a map grows, it doubles its number of buckets. What are the conditions for a
+map to grow?
+The average number of items in the buckets (called the load factor) is greater
+than a constant value. This constant equals 6.5 (but it may change in future ver-
+sions because it’s internal to Go).
+Too many buckets have overflowed (containing more than eight elements).
+When a map grows, all the keys are dispatched again to all the buckets. This is why, in
+the worst-case scenario, inserting a key can be an O(n) operation, with n being the
+total number of elements in the map.
+ We saw that when using slices, if we knew up front the number of elements to be
+added to the slice, we could initialize it with a given size or capacity. This avoids having
+to keep repeating the costly slice growth operation. The idea is similar for maps.
+Indeed, we can use the make built-in function to provide an initial size when creating a
+map. For example, if we want to initialize a map that will contain 1 million elements, it
+can be done this way:
+m := make(map[string]int, 1_000_000)
+With a map, we can give the built-in function make only an initial size and not a capac-
+ity, as with slices: hence, a single argument.
+ By specifying a size, we provide a hint about the number of elements expected to
+go into the map. Internally, the map is created with an appropriate number of buckets

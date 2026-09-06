@@ -1,0 +1,63 @@
+Security
+130
+HSTS example
+1
+package main
+2
+3
+import (
+4
+"flag"
+5
+"fmt"
+6
+"log"
+7
+"net/http"
+8
+)
+9
+10
+var (
+11
+addr = flag.String("http", ":8000", "HTTP listen address")
+12
+)
+13
+14
+func headerWrap(h http.HandlerFunc) http.HandlerFunc {
+15
+return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+16
+w.Header().Add("Strict-Transport-Security", "max-age=31536000; includeSubDo\
+17
+mains")
+18
+h.ServeHTTP(w, r)
+19
+})
+20
+}
+21
+22
+func homeHandler(w http.ResponseWriter, r *http.Request) {
+23
+fmt.Fprint(w, "Hello, world")
+24
+}
+25
+26
+func main() {
+27
+flag.Parse()
+28
+http.HandleFunc("/", headerWrap(homeHandler))
+29
+30
+log.Printf("Running on %s ...", *addr)
+31
+log.Fatal(http.ListenAndServe(*addr, nil))
+32
+}
+If we start the server and then run curl -i localhost:8000 in another terminal, we can see that the
+header is set:

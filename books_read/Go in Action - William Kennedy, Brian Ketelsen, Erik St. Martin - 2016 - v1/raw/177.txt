@@ -1,0 +1,44 @@
+156
+CHAPTER 6
+Concurrency
+Worker: 1 : Completed Task : 7
+Worker: 1 : Started Task : 10
+Worker: 4 : Completed Task : 6
+Worker: 4 : Shutting Down
+Worker: 3 : Completed Task : 9
+Worker: 3 : Shutting Down
+Worker: 2 : Completed Task : 8
+Worker: 2 : Shutting Down
+Worker: 1 : Completed Task : 10
+Worker: 1 : Shutting Down
+Because of the random nature of the program and the Go scheduler, the output for
+this program will be different every time you run it. But the use of all four goroutines
+to process work from the buffered channel won’t change. You can see from the output
+how each goroutine is receiving work distributed from the channel.
+ In the main function on line 31, a buffered channel of type string is created with
+a capacity of 10. On line 34 the WaitGroup is given the count of 4, one for each gorou-
+tine that’s going to be created. Then on lines 35 through 37, four goroutines are cre-
+ated and passed the channel they will be receiving the work on. On lines 40 through
+42, 10 strings are sent into the channel to simulate work for the goroutines. Once the
+last string is sent into the channel, the channel is closed on line 46 and the main func-
+tion waits for all the work to be completed on line 49. 
+ Closing the channel on line 46 is an important piece of code. When a channel is
+closed, goroutines can still perform receives on the channel but can no longer send
+on the channel. Being able to receive on a closed channel is important because it
+allows the channel to be emptied of all its values with future receives, so nothing in
+the channel is ever lost. A receive on a closed and empty channel always returns imme-
+diately and provides the zero value for the type the channel is declared with. If you
+also request the optional flag on the channel receive, you can get information about
+the state of the channel. 
+ Inside the worker function you find an endless for loop on line 58. Within the loop,
+all of the received work is processed. Each goroutine blocks on line 60 waiting to receive
+work from the channel. Once the receive returns, the ok flag is checked to see if the
+channel is both empty and closed. If the value of ok is false, the goroutine terminates,
+which causes the defer statement on line 56 to call Done and report back to main. 
+ If the ok flag is true, then the value received is valid. Lines 71 and 72 simulate
+work being processed. Once the work is done, the goroutine blocks again in the
+receive of the channel on line 60. Once the channel is closed, the receive on the chan-
+nel returns immediately and the goroutine terminates itself. 
+ The examples for the unbuffered and buffered channels provided a good sam-
+pling of the kind of code you can write with channels. In the next chapter we’ll look at
+real-world concurrency patterns that you could use in your own projects. 

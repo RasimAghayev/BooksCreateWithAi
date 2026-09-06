@@ -1,0 +1,32 @@
+Middleware chaining
+The Echo framework provides three mechanisms for inserting middleware into
+your request-processing pipeline. The Echo instance's Use(MiddlewareFunc) helper
+method is the most common way to add normal post-routing middleware. As
+you may recall, for flexibility we showed you how to use the Group(string) Echo
+method to organize routes. The Use(MiddlewareFunc) helper method is also available
+on Group instances so that you can apply middleware functions only to
+particular groupings of routes as well. Use tells the Echo instance, or grouping
+instance, that we wish to insert the middleware specified as a parameter into our
+middleware chain. It should be made clear that the order of your Use calls is very
+important. The order of the middleware insertion stipulates the order in which
+the middleware chain will be performed. For example, you might want two
+middleware, Logger and Recover, wrapping all of your routes. If you perform the
+following operations in order, and there is a panic within your Logger middleware ,
+it will not be recoverable, as Recover is wrapped by Logger, and not vice versa. The
+following example can be found in $GOPATH/src/github.com/PacktPublishing/Echo-
+Essentials/chapter4/cmd/service/main.go:
+e.Use(middleware.Logger())   // logger middleware will “wrap” recovery
+e.Use(middleware.Recover()) // as it is enumerated before in the Use calls
+The Echo instance also provides Pre(MiddlewareFunc) too, which allows insertion of
+middleware functions prior to the routing step. This is for global, non-route-
+specific middleware functions. An example use case for this feature would be to
+manipulate the request prior to routing the request within the framework. As a
+concrete example, you would use this feature to change the URL or target path to
+remove trailing slashes or perform a redirect. Another good example of a reason
+to use Pre-Middleware is for things like recover handling from panics within
+your web application, so that responses do not comprise of stack traces. The Pre
+function works in the same way the Use function does, in that the ordering is
+important to how the middleware is chained. The earlier the Pre call, the earlier
+the middleware starts.
+The third way to insert a middleware chain is by specifying particular
+middleware in order as variadic parameters on the handler routing insertion calls

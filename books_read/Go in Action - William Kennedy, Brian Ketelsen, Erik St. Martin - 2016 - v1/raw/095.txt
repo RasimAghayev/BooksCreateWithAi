@@ -1,0 +1,61 @@
+74
+CHAPTER 4
+Arrays, slices, and maps
+Now let’s use the third index option to perform a slicing operation.
+// Slice the third element and restrict the capacity.
+// Contains a length of 1 element and capacity of 2 elements.
+slice := source[2:3:4]
+After this slicing operation, we have a new slice that references one element from the
+underlying array and has a capacity of two elements. Specifically, the new slice refer-
+ences the Plum element and has capacity up to the Banana element, as shown in fig-
+ure 4.17.
+ We can apply the same formula that we defined before to calculate the new slice’s
+length and capacity.
+For slice[i:j:k]
+or
+[2:3:4]
+Length:
+j - i
+or
+3 - 2 = 1
+Capacity: k - i
+or
+4 - 2 = 2
+Again, the first value represents the starting index position of the element the new slice
+will start with—in this case, 2. The second value represents the starting index position
+(2) plus the number of elements you want to include (1); 2 plus 1 is 3, so the second
+value is 3. For setting capacity, you take the starting index position of 2, plus the num-
+ber of elements you want to include in the capacity (2), and you get the value of 4.
+Listing 4.33
+Performing a three-index slice
+Listing 4.34
+How length and capacity are calculated
+source := []string{"Apple", "Orange", "Plum", "Banana", "Grape"}
+slice := source[2:3:4]
+Apple
+[ 0 ]
+Orange
+[ 1 ]
+Plum
+[ 2 ]
+Banana
+[ 3 ]
+Grape
+[ 4 ]
+[ 0 ]
+[ 1 ]
+[ 2 ]
+addr
+Pointer
+5
+Length
+5
+Capacity
+addr
+Pointer
+1
+Length
+2
+Capacity
+Figure 4.17
+A representation of the new slice after the operation

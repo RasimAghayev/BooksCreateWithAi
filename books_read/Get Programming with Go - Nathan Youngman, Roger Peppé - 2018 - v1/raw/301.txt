@@ -1,0 +1,32 @@
+286
+Conclusion  Where to Go from here
+Lesson 28 mentions type assertions but not type switches.
+Lesson 30 doesn’t mention directional channels.
+It doesn’t explain initialization with init, a special function like main.
+It doesn’t detail every built-in function, such as new for pointers and copy for slices 
+(see golang.org/pkg/builtin/).
+It doesn’t demonstrate writing new packages to organize code or to share with 
+others. 
+Beyond the playground
+If you’re new to computer programming, you may have appreciated the web-based Go 
+Playground, but the playground has some limitations.
+To break free of the Playground constraints and build the next cool thing, you’ll need to 
+install Go on your computer (see golang.org/dl/). Launching the terminal or command 
+prompt is a bit like hopping into a time machine. Learn to navigate your computer and 
+run programs like it’s 1995!
+You’ll also need a text editor. The authors of this book use Sublime Text and Acme, but 
+there are many editors with good support for Go (see golang.org/doc/editors.html). 
+Sooner or later, you’ll want a version control tool like git—which is a time machine, 
+though only for code and other files. 
+And much more
+Go is much more than a programming language. There’s a rich ecosystem of tools and 
+libraries to be discovered.
+Everything you need for automated testing, debugging, benchmarking, and much more 
+is available. The standard library has many more packages to explore, and if you run 
+out, the community of gophers has been busy making a huge assortment of third-party 
+packages for any need (see godoc.org).
+There are many online resources (see golang.org/wiki) to help you continue your jour-
+ney, and dozens of gopher-friendly books, including Go in Practice, Go Web Programming, 
+and Go in Action (see golang.org/wiki/Books).
+There’s always more to learn, so join in the fun! The Go community welcomes you. 
+ 

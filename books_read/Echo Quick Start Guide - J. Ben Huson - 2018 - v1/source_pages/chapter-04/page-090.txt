@@ -1,0 +1,14 @@
+After Basics of Middleware Processing Image:
+As a concrete example of how this helps reduce the amount of code for each
+handler, let's consider the following example of our two handlers so far,
+HealthCheck and Login, as though we want to add a RequestID for tracing purposes.
+The following are the beginning of the two handlers with the generation of a
+RequestID that we will reference in log messages:
+handlers.HealthCheck:
+// HealthCheck - Health Check Handler
+func HealthCheck(c echo.Context) error {
+        requestID := uuid.NewV4()
+        c.Logger().Infof("RequestID: %s", requestID)
+        resp := renderings.HealthCheckResponse{
+                Message: "Everything is good!",
+        }

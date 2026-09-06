@@ -1,0 +1,45 @@
+51
+Collaborating with other Go developers
+In this example, we show the idiomatic way to document a function in Go. The docu-
+mentation for the function immediately precedes the function and is written in com-
+plete sentences. If you want to add a large body of text to document your package,
+include a file called doc.go that declares the same package as your project, and put
+your package introduction as a comment before the package declaration: 
+/*
+Package usb provides types and functions for working with USB
+devices.
+To connect to a USB device start by creating a new USB
+connection with NewConnection
+...
+*/
+package usb
+This package documentation will be shown before any type or function documenta-
+tion is displayed for your package. It also demonstrates using the slash-asterisk type of
+comment. You can read more about creating good documentation for your code by
+searching for golang documentation in Google. 
+3.6
+Collaborating with other Go developers
+Modern developers don’t code in a vacuum, and the Go tooling recognizes and
+embraces this fact. The concept of packages extends beyond your local development
+environment, thanks to the go tool. Let’s look at a few conventions to follow in order
+to be a good citizen in a distributed development environment. 
+3.6.1
+Creating repositories for sharing
+Once you start cranking out awesome Go code, you’re probably going to want to share
+that code with the rest of the Go community. It’s really easy as long as you follow a few
+simple steps. 
+PACKAGE SHOULD LIVE AT THE ROOT OF THE REPOSITORY
+When you’re using go get, you specify the full path to the package that should be
+imported. This means that when you create a repository that you intend to share, the
+package name should be the repository name, and the package’s source should be in
+the root of the repository’s directory structure. 
+ A common mistake that new Go developers make is to create a code or src direc-
+tory in their public repository. Doing so will make the package’s public import longer.
+Instead, just put the package source files at the root of the public repository. 
+PACKAGES CAN BE SMALL
+It’s common in Go to see packages that are relatively small by the standards of other
+programming languages. Don’t be afraid to make a package that has a small API or
+performs only a single task. That’s normal and expected. 
+RUN GO FMT ON THE CODE
+Just like any other open source repository, people will look at your code to gauge the
+quality of it before they try it out. You need to be running go fmt before checking

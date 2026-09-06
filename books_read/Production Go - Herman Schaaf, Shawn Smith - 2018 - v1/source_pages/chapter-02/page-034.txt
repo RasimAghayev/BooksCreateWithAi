@@ -1,0 +1,57 @@
+Basics
+28
+Using maps in Go
+1
+package main
+2
+3
+import "fmt"
+4
+5
+func main() {
+6
+m := make(map[string]string)
+7
+m["en"] = "Hello"
+8
+m["ja"] = "こんにちは"
+9
+// loop over keys and values of map
+10
+for k, v := range m {
+11
+fmt.Printf("%q => %q\n", k, v)
+12
+}
+13
+14
+// nonexistent key returns zero value
+15
+fmt.Printf("zh: %q\n", m["zh"])
+16
+17
+// check for existence with _, ok := m[Key]
+18
+if _, ok := m["ja"]; ok {
+19
+fmt.Printf("key %q exists in map\n", "ja")
+20
+}
+21
+22
+delete(m, "en")
+23
+fmt.Printf("m length: %d\n", len(m))
+24
+fmt.Println(m)
+25
+}
+Running this code, we should get this output:
+"en" => "Hello"
+"ja" => "こんにちは"
+zh: ""
+key "ja" exists in map
+m length: 1
+map[ja:こんにちは]
+The first output is from the loop, then we check a nonexistent key “zh”, then check for the existence
+of “ja”, print the length of the map, then print the map itself.

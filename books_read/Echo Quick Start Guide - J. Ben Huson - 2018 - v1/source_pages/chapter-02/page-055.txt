@@ -1,0 +1,10 @@
+package main
+import (
+"github.com/PacktPublishing/Echo-Essentials/chapter2/handlers"
+"github.com/labstack/echo"
+)
+func main() {
+// create a new echo instance e := echo.New() // Route / to handler function
+e.GET("/health-check", handlers.HealthCheck)<br/> // Authentication routes
+e.POST("/login", handlers.Login) e.POST("/logout", handlers.Logout)<br/> //
+start the server, and log if it fails <br/> e.Logger.Fatal(e.Start(":8080")) }

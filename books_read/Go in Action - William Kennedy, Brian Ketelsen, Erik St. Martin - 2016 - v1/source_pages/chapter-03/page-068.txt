@@ -1,0 +1,37 @@
+47
+Going farther with Go developer tools
+Building a package is a common practice, and the package can also be specified
+directly: 
+go build github.com/goinaction/code/chapter3/wordcount
+You can also specify wildcards in your package specifiers. Three periods in your pack-
+age specifier indicate a pattern matching any string. For example, the following com-
+mand will build every package under the chapter3 directory: 
+go build github.com/goinaction/code/chapter3/...
+Instead of a package specifier, you can also use a path shortcut as an argument to most
+of the Go commands. For example, you could achieve the same effect with these two
+commands: 
+go build wordcount.go
+go build .
+To execute this program, you need to run the wordcount or wordcount.exe program
+that was created after the build. But there’s a different command that can perform
+both operations in a single call: 
+go run wordcount.go
+The go run command both builds and executes the program contained in wordcount
+.go, which saves a lot on typing. 
+ You’ll use the go build and go run commands the most when you’re developing.
+Let’s take a look at a few of the other available commands and see what they can do. 
+3.5
+Going farther with Go developer tools
+You’ve seen how to compile and run your Go programs using the convenient go tool.
+But that handy little developer tool has a lot of other tricks hidden inside. 
+3.5.1
+go vet
+It won’t write code for you, but once you’ve written some code, the vet command will
+check your code for common errors. Let’s look at the types of errors vet can catch: 
+Bad parameters in Printf-style function calls
+Method signature errors for common method definitions
+Bad struct tags
+Unkeyed composite literals
+Let’s look at a mistake many new Go developers make. The fmt.Printf function is a
+great way to produce formatted output, but the function requires you to remember all
+the different format specifiers. The following listing is an example.

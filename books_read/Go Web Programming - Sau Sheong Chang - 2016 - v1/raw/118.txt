@@ -1,0 +1,36 @@
+97
+Templates and template engines
+5.1
+Templates and template engines
+Template engines often combine data with templates to produce the final HTML (see
+figure 5.1). Handlers usually call template engines to combine data with the templates
+and return the resultant HTML to the client.
+Web template engines evolved from server-side includes (SSIs), which eventually
+branched out into web programming languages like PHP, ColdFusion, and JSP. As a
+result, no standards exist for template engines and the features of existing template
+engines vary widely, depending on why they were created. But there are roughly two
+ideal types of template engines, at opposite ends of the spectrum:
+■
+Logic-less template engines —Dynamic data is substituted into the templates at
+specified placeholders. The template engine doesn’t do any logic processing; it
+only does string substitutions. The idea behind having logic-less template
+engines is to have a clean separation between presentation and logic, where the
+processing is done by the handlers only.
+■
+Embedded logic template engines —Programming language code is embedded into
+the template and executed during runtime by the template engine, including
+substitutions. This makes these types of template engines very powerful.
+Because the logic is embedded in the template itself, though, we often get the
+logic distributed between the handlers, making the code harder to maintain.
+Logic-less template engines are usually faster to render because less processing is
+involved. Some template engines claim to be logic-less (such as Mustache), but the
+ideal of substitution-only is impossible to achieve. Mustache claims to be logic-less but
+has tags that behave like conditionals and loops. 
+ Embedded logic template engines that are completely at the other end of the spec-
+trum are indistinguishable from a computer program itself. We can see this with PHP.
+Template engine
+Templates
+Data
+HMTL
+Figure 5.1
+Template engines combine data and templates to produce the final displayed HTML.

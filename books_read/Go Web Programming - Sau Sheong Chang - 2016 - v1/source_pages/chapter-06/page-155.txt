@@ -1,0 +1,46 @@
+134
+CHAPTER 6
+Storing data
+ Next, you’ll create a buffer from the raw data. Doing so will essentially give the raw
+data the Read and Write methods. You create a decoder from the buffer using the
+NewDecoder function. The decoder is then used to decode the raw data into the Post
+struct that you passed in earlier.
+ You define a Post struct called postRead, and then pass a reference to it into the
+load function, along with the name of the binary data file. The load function will load
+the data from the binary file into the struct.
+ When you run the program, a post1 file, which contains the binary data, will be
+created. You can open it and it’ll look like gibberish. The post1 file is also read into
+another Post struct, and you’ll see the struct being printed on the console:
+{1 Hello World! Sau Sheong}
+We’re done with files. For the rest of this chapter, we’ll be discussing data stored in
+specialized server-side programs called database servers.
+6.3
+Go and SQL
+Storing and accessing data in the memory and on the filesystem is useful, but if you
+need robustness and scalability, you’ll need to turn to database servers. Database servers
+are programs that allow other programs to access data through a client-server model.
+The data is normally protected from other means of access, except through the server.
+Typically, a client (either a library or another program) connects to the database
+server to access the data through a Structured Query Language (SQL). Database man-
+agement systems (DBMSs) often include a database server as part of the system.
+ Perhaps the most well-known and popularly used database management system is
+the relational database management system (RDBMS). RDBMSs use relational databases,
+which are databases that are based on the relational model of data. Relational data-
+bases are mostly accessed through relational database servers using SQL.
+ Relational databases and SQL are also the most commonly used means of storing
+data in a scalable and easy-to-use way. I discussed this topic briefly in chapter 2, and I
+promised that we’ll go through it properly in this chapter, so here goes.
+6.3.1
+Setting up the database
+Before you start, you need to set up your database. In chapter 2 you learned how to
+install and set up Postgres, which is the database we’re using for this section. If you
+haven’t done so, now is a great time to do it.
+ Once you’ve created the database, you’ll follow these steps:
+1
+Create the database user.
+2
+Create the database for the user.
+3
+Run the setup script that’ll create the table that you need.
+Let’s start with creating the user. Run this command at the console:
+createuser -P -d gwp

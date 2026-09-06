@@ -1,0 +1,75 @@
+16
+CHAPTER 2
+Go quick-start
+26
+// they process the individual feeds.
+27
+waitGroup.Add(len(feeds))
+28
+29
+// Launch a goroutine for each feed to find the results.
+30
+for _, feed := range feeds {
+31
+// Retrieve a matcher for the search.
+32
+matcher, exists := matchers[feed.Type]
+33
+if !exists {
+34
+matcher = matchers["default"]
+35
+}
+36
+37
+// Launch the goroutine to perform the search.
+38
+go func(matcher Matcher, feed *Feed) {
+39
+Match(matcher, feed, searchTerm, results)
+40
+waitGroup.Done()
+41
+}(matcher, feed)
+42
+}
+43
+44
+// Launch a goroutine to monitor when all the work is done.
+45
+go func() {
+46
+// Wait for everything to be processed.
+47
+waitGroup.Wait()
+48
+49
+// Close the channel to signal to the Display
+50
+// function that we can exit the program.
+51
+close(results)
+52
+}()
+53
+54
+// Start displaying results as they are available and
+55
+// return after the final result is displayed.
+56
+Display(results)
+57 }
+The Run function contains the main control logic for the program. It’s a good repre-
+sentation of how Go programs can be structured to handle the launching and syn-
+chronization of goroutines that run concurrently. Let’s walk through the logic section
+by section, and then explore the other code files that lend their support. 
+ Let’s review how the Run function is declared.
+11 // Run performs the search logic.
+12 func Run(searchTerm string) {
+To declare a function in Go, use the keyword func followed by the function name, any
+parameters, and then any return values. In the case of Run, you have a single parame-
+ter called searchTerm of type string. The term the program will search against is
+passed into the Run function, and if you look at the main function again, you can see
+that exchange.
+Listing 2.13
+search/search.go: lines 11–12

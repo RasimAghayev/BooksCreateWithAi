@@ -1,0 +1,53 @@
+171
+8.2
+#56: Thinking concurrency is always faster
+Benchmark_sequentialMergesort-4
+2278993555 ns/op
+Benchmark_parallelMergesortV1-4
+17525998709 ns/op
+Surprisingly, the parallel version is almost an order of magnitude slower. How can we
+explain this result? How is it possible that a parallel version that distributes a workload
+across four cores is slower than a sequential version running on a single machine?
+Let’s analyze the problem.
+ If we have a slice of, say, 1,024 elements, the parent goroutine will spin up two gor-
+outines, each in charge of handling a half consisting of 512 elements. Each of these
+goroutines will spin up two new goroutines in charge of handling 256 elements, then
+128, and so on, until we spin up a goroutine to compute a single element.
+ If the workload that we want to parallelize is too small, meaning we’re going to
+compute it too fast, the benefit of distributing a job across cores is destroyed: the time
+it takes to create a goroutine and have the scheduler execute it is much too high com-
+pared to directly merging a tiny number of items in the current goroutine. Although
+goroutines are lightweight and faster to start than threads, we can still face cases
+where a workload is too small.
+NOTE
+We will discuss how to recognize when an execution is poorly paral-
+lelized in mistake #98, “Not using Go diagnostics tooling.”
+So what can we conclude from this result? Does it mean the merge sort algorithm can-
+not be parallelized? Wait, not so fast.
+ Let’s try another approach. Because merging a tiny number of elements within a
+new goroutine isn’t efficient, let’s define a threshold. This threshold will represent
+how many elements a half should contain in order to be handled in a parallel manner.
+If the number of elements in the half is fewer than this value, we will handle it sequen-
+tially. Here’s a new version:
+const max = 2048
+func parallelMergesortV2(s []int) {
+if len(s) <= 1 {
+return
+}
+if len(s) <= max {
+sequentialMergesort(s)
+} else {
+middle := len(s) / 2
+var wg sync.WaitGroup
+wg.Add(2)
+go func() {
+defer wg.Done()
+parallelMergesortV2(s[:middle])
+}()
+go func() {
+defer wg.Done()
+Defines the threshold
+Calls our initial 
+sequential version
+If bigger than the threshold, 
+keeps the parallel version

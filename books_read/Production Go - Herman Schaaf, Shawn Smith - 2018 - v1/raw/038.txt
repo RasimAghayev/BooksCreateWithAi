@@ -1,0 +1,40 @@
+Basics
+32
+Range over map
+1
+package main
+2
+3
+import "fmt"
+4
+5
+func main() {
+6
+m := map[int]string{
+7
+1: "一",
+8
+2: "二",
+9
+3: "三",
+10
+}
+11
+for k, v := range m {
+12
+fmt.Printf("%d => %q\n", k, v)
+13
+}
+14
+}
+This will output:
+1 => "一"
+2 => "二"
+3 => "三"
+Functions
+Functions are declared with the func keyword. They can take zero or more arguments, and can return
+multiple results.
+Functions are first-class citizens, and can be stored in variables or used as values to other functions.
+Exported Names
+In a Go package, a name is exported if it starts with an uppercase letter. Take the following code for
+example:

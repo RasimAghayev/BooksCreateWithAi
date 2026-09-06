@@ -1,0 +1,38 @@
+8
+Lesson 1  Get ready, get set, Go
+The func keyword declares a function, in this case a function named main. The body of 
+each function is enclosed in curly braces {}, which is how Go knows where each func-
+tion begins and ends.
+The main identifier is special. When you run a program written in Go, execution begins at 
+the main function in the main package. Without main, the Go compiler will report an error, 
+because it doesn’t know where the program should start.
+To print a line of text, you can use the Println function (ln is an abbreviation for line). 
+Println is prefixed with fmt followed by a dot because it is provided by the fmt package. 
+Every time you use a function from an imported package, the function is prefixed with 
+the package name and a dot. When you read code written in Go, the package each func-
+tion came from is immediately clear.
+Run the program in the Go Playground to see the text Hello, playground. The text 
+enclosed in quotes is echoed to the screen. In English, a missing comma can change the 
+meaning of a sentence. Punctuation is important in programming languages too. Go 
+relies on quotes, parentheses, and braces to understand the code you write.
+   
+Lux
+tax
+Cape
+road
+Money
+chest
+$60
+Delain
+$400
+Quick check 1.3 
+1
+Where does a Go program start?
+2
+What does the fmt package provide?
+QC 1.3 answer 
+1
+A program starts at the main function in the main package.
+2
+The fmt package provides functions for formatted input and output.
+ 

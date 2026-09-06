@@ -1,0 +1,44 @@
+271
+Deploying to Docker
+The SDK will push your code to Google’s servers, compile it, and deploy it. And if
+everything is fine, your application will be live on the internet! Assuming your applica-
+tion is named ws-g-1234 (like mine), your application will be at http://ws-g-
+1234.appspot.com.
+ Let’s test our newly deployed simple web service. Use curl and send a POST request
+to the server to create a record:
+curl -i -X POST -H "Content-Type: application/json"  -d '{"content":"My first 
+post","author":"Sau Sheong"}' http://ws-g-1234.appspot.com/post/
+HTTP/1.1 200 OK
+Content-Type: text/html; charset=utf-8
+Date: Sat, 01 Aug 2015 06:46:59 GMT
+Server: Google Frontend
+Content-Length: 0
+Alternate-Protocol: 80:quic,p=0
+Now, use curl again to get the same record:
+curl -i -X GET http://ws-g-1234.appspot.com/post/1
+HTTP/1.1 200 OK
+Content-Type: application/json
+Date: Sat, 01 Aug 2015 06:44:29 GMT
+Server: Google Frontend
+Content-Length: 69
+Alternate-Protocol: 80:quic,p=0
+{
+    "id": 1,
+    "content": "My first post",
+    "author": "Sau Sheong"
+}
+The GAE is powerful and has a lot of capabilities to help developers create and deploy
+scalable web applications to the internet. But it’s Google’s playground, and if you want
+to play in it, you have to follow its rules.
+10.4
+Deploying to Docker
+The previous section included a brief introduction to Docker and discussed how you
+can dockerize your Go web application and push it out as a Docker container on the
+many Docker hosting services available. This section will focus entirely on deploying a
+simple Go web service to a local Docker host and then to a Docker host on the cloud.
+10.4.1 What is Docker?
+Docker is quite a phenomenon. Since its release as an open source project by PaaS
+company dotCloud in 2013, its adoption by large and small companies has been amaz-
+ing. Technology companies like Google, AWS, and Microsoft have embraced it. AWS
+has the EC2 Container Service, Google provides the Google Container Engine, and
+many other cloud providers like Digital Ocean, Rackspace, and even IBM have thrown

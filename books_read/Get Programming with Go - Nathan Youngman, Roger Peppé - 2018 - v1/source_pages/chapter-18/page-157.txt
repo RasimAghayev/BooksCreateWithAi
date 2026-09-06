@@ -1,0 +1,35 @@
+142
+Lesson 18  A bigger slice
+To demonstrate that dwarfs2 and dwarfs3 refer to a different array than dwarfs1, simply 
+modify an element and print out the three slices.   
+18.4 Three-index slicing
+Go version 1.2 introduced three-index slicing to limit the capacity of the resulting slice. In 
+the next listing, terrestrial has a length and capacity of 4. Appending Ceres causes a new 
+array to be allocated, leaving the planets array unaltered.
+planets := []string{
+    "Mercury", "Venus", "Earth", "Mars",
+    "Jupiter", "Saturn", "Uranus", "Neptune",
+}
+terrestrial := planets[0:4:4]
+worlds := append(terrestrial, "Ceres")
+fmt.Println(planets) 
+If the third index isn’t specified, terrestrial will have a capacity of 8. Appending Ceres 
+doesn’t allocate a new array, but instead overwrites Jupiter:
+terrestrial = planets[0:4]
+worlds = append(terrestrial, "Ceres")
+fmt.Println(planets)
+Listing 18.4 Capacity after slicing: three-index-slicing.go
+Quick check 18.3 If you modify an element of dwarfs3 in listing 18.3, will dwarfs2 or dwarfs1
+change?
+dwarfs3[1] = "Pluto!"
+QC 18.3 answer dwarfs3 and dwarfs2 are changed, but dwarfs1 remains the same because it
+points to a different array.
+Length 4, capacity 4
+Prints [Mercury Venus 
+Earth Mars Jupiter 
+Saturn Uranus Neptune]
+Length 4, capacity 8
+Prints [Mercury Venus 
+Earth Mars Ceres Saturn 
+Uranus Neptune]
+ 

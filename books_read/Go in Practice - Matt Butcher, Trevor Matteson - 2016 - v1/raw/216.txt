@@ -1,0 +1,18 @@
+193
+Summary
+7.3
+Summary
+Serving files and working with forms are common elements in any web application.
+They’re staples of the web, and their use goes back decades. This chapter covered
+methods to use them while taking advantage of Go’s helper functionality and power.
+These include the following:
+Uploading files to users from a Go server in a variety of ways, depending on
+your needs
+Using the Go helper functions for quick and easy access to form submissions
+Working with the underlying parts of the Go form parser and output it provides
+Getting access to the underlying multipart form handling and using it to parse
+and manipulate submissions
+In the next chapter, you’ll learn about working with REST APIs. You’ll learn about
+building them, versioning them, and other characteristics needed to build stable,
+production-ready APIs that your applications can consume and that you can expose to
+others. 

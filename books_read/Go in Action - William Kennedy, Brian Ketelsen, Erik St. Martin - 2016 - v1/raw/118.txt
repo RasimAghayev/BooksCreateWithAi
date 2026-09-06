@@ -1,0 +1,54 @@
+97
+The nature of types
+ 
+620 func Trim(s string, cutset string) string {
+621
+if s == "" || cutset == "" {
+622
+return s
+623
+}
+624
+return TrimFunc(s, makeCutsetFunc(cutset))
+625 }
+In listing 5.23, you see the Trim function, which comes from the strings package in
+the standard library. The Trim function is passed a string value to operate on and a
+string value with characters to find. It then returns a new string value that’s the result
+of the operation. The function operates on copies of the caller’s original string values
+and returns a copy of the new string value. Strings, just like integers, floats, and Bool-
+eans, are primitive data values and should be copied when passed in and out of func-
+tions or methods. 
+ Let’s look at a second example of how the built-in types are treated as having a
+primitive nature.
+38 func isShellSpecialVar(c uint8) bool {
+39
+switch c {
+40
+case '*', '#', '$', '@', '!', '?', '0', '1', '2', '3', '4', '5',
+'6', '7', '8', '9':
+41
+return true
+42
+}
+43
+return false
+44 }
+Listing 5.24 shows the isShellSpecialVar function from the env package. This func-
+tion is passed a value of type uint8 and returns a value of type bool. Note how point-
+ers aren’t being used to share the value for the parameter or return value. The caller
+passes a copy of their uint8 value and receives a value of true or false. 
+5.3.2
+Reference types
+Reference types in Go are the set of slice, map, channel, interface, and function types.
+When you declare a variable from one of these types, the value that’s created is called
+a header value. Technically, a string is also a reference type value. All the different
+header values from the different reference types contain a pointer to an underlying
+data structure. Each reference type also contains a set of unique fields that are used to
+manage the underlying data structure. You never share reference type values because
+the header value is designed to be copied. The header value contains a pointer; there-
+fore, you can pass a copy of any reference type value and share the underlying data
+structure intrinsically. 
+Listing 5.23
+golang.org/src/strings/strings.go: lines 620–625
+Listing 5.24
+golang.org/src/os/env.go: lines 38–44

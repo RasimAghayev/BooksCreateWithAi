@@ -1,0 +1,58 @@
+289
+11.8
+#89: Writing inaccurate benchmarks
+$ go test -bench=. -count=10 | tee stats.txt
+cpu: Intel(R) Core(TM) i5-7360U CPU @ 2.30GHz
+BenchmarkAtomicStoreInt32-4
+234935682
+5.124 ns/op
+BenchmarkAtomicStoreInt32-4
+235307204
+5.112 ns/op
+// ...
+BenchmarkAtomicStoreInt64-4
+235548591
+5.107 ns/op
+BenchmarkAtomicStoreInt64-4
+235210292
+5.090 ns/op
+// ...
+We can then run benchstat on this file:
+$ benchstat stats.txt
+name
+time/op
+AtomicStoreInt32-4
+5.10ns ± 1%
+AtomicStoreInt64-4
+5.10ns ± 1%
+The results are the same: both functions take on average 5.10 nanoseconds to complete.
+We also see the percent variation between the executions of a given benchmark: ± 1%.
+This metric tells us that both benchmarks are stable, giving us more confidence in the
+computed average results. Therefore, instead of concluding that atomic.StoreInt32 is
+faster or slower, we can conclude that its execution time is similar to that of atomic
+.StoreInt64 for the usage we tested (in a specific Go version on a particular machine).
+ In general, we should be cautious about micro-benchmarks. Many factors can sig-
+nificantly impact the results and potentially lead to wrong assumptions. Increasing the
+benchmark time or repeating the benchmark executions and computing stats with
+tools such as benchstat can be an efficient way to limit external factors and get more
+accurate results, leading to better conclusions.
+ Let’s also highlight that we should be careful about using the results of a micro-
+benchmark executed on a given machine if another system ends up running the
+application. The production system may act quite differently from the one on which
+we ran the micro-benchmark. 
+11.8.3 Not being careful about compiler optimizations
+Another common mistake related to writing benchmarks is being fooled by compiler
+optimizations, which can also lead to wrong benchmark assumptions. In this section,
+we look at Go issue 14813 (https://github.com/golang/go/issues/14813, also dis-
+cussed by Go project member Dave Cheney) with a population count function (a
+function that counts the number of bits set to 1):
+const m1 = 0x5555555555555555
+const m2 = 0x3333333333333333
+const m4 = 0x0f0f0f0f0f0f0f0f
+const h01 = 0x0101010101010101
+func popcnt(x uint64) uint64 {
+x -= (x >> 1) & m1
+x = (x & m2) + ((x >> 2) & m2)
+x = (x + (x >> 4)) & m4
+return (x * h01) >> 56
+}

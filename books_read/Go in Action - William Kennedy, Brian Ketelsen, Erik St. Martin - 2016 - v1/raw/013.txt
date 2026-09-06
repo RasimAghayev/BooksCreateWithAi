@@ -1,0 +1,19 @@
+FOREWORD
+xii
+but a tribute to the language they love. They weren’t content with producing a “good”
+book. They wrote and reviewed, rewrote and revised many drafts of each page, exam-
+ple, and chapter until they had a book worthy of the language they hold so dear. 
+ It takes courage to leave a language of comfort and familiarity and try a language
+that is not only new to you but new to the world. This road less traveled is a bumpy
+one, lined with bugs that only early adopters are familiar with. It includes unexpected
+errors, spotty or missing documentation, and a lack of established libraries to use.
+This is the path of a trailblazer, a pioneer. If you are reading this now, you are likely on
+the beginning of this journey.  
+ From the first chapter to the last, this book is crafted to provide you, the reader, a
+concise and comprehensive guide to exploring, learning, and using Go. In all the
+world, you couldn’t hope to have better guides than Bill, Brian, and Erik. I’m excited
+for you to discover all the goodness that is Go and look forward to seeing you online
+and at the Go meetups and conferences. 
+STEVE FRANCIA 
+GOPHER AND CREATOR OF HUGO,
+COBRA, VIPER, AND SPF13-VIM

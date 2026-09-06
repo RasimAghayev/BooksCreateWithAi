@@ -1,0 +1,53 @@
+17
+Search package
+ 
+17 // main is the entry point for the program.
+18 func main() {
+19
+// Perform the search for the specified term.
+20
+search.Run("president")
+21 }
+The first thing that the Run function does is retrieve a list of data feeds. These feeds
+are used to pull content from the internet that is then matched against the specified
+search term.
+13
+// Retrieve the list of feeds to search through.
+14
+feeds, err := RetrieveFeeds()
+15
+if err != nil {
+16
+log.Fatal(err)
+17
+}
+There are a few important concepts here that we need to go through. You can see on
+line 14 that we make a function call to the function RetrieveFeeds. This function
+belongs to the search package and returns two values. The first return value is a slice
+of Feed type values. A slice is a reference type that implements a dynamic array. You use
+slices in Go to work with lists of data. Chapter 4 goes into greater detail about slices. 
+ The second return value is an error. On line 15, the error value is evaluated for
+errors, and if an error did occur, the function Fatal from the log package is called.
+The Fatal function accepts an error value and will log to the terminal window before
+terminating the program. 
+ Though not unique to Go, you can see that our functions can have multiple return
+values. It’s common to declare functions that return a value and an error value just
+like the RetrieveFeeds function. If an error occurs, never trust the other values being
+returned from the function. They should always be ignored, or else you run the risk of
+the code generating more errors or panics.
+ Let’s take a closer look at how the values being returned from the function are
+being assigned to variables.
+13
+// Retrieve the list of feeds to search through.
+14
+feeds, err := RetrieveFeeds()
+Here you see the use of the short variable declaration operator (:=). This operator is
+used to both declare and initialize variables at the same time. The type of each value
+being returned is used by the compiler to determine the type for each variable,
+respectively. The short variable declaration operator is just a shortcut to streamline
+Listing 2.14
+main.go: lines 17–21
+Listing 2.15
+search/search.go: lines 13–17
+Listing 2.16
+search/search.go: lines 13–14

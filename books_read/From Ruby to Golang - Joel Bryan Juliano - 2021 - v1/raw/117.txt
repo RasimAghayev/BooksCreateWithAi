@@ -1,0 +1,18 @@
+Organizing your Functions using Interface
+111
+Questions
+1. What have we learned?
+We can use Interface as a contract for your function return values.
+2. Why is this important?
+It allows us to create a contract for our return values.
+Chapter Questions
+1. What is Go’s interface?
+Go’s interface is a way to specify the behavior of a type in a way that is independent of the
+type’s implementation.
+2. Why is it Go’s interface useful?
+It allows a type to be used in multiple contexts without having to change its implementation.
+3. How do we define an interface in Go?
+We use the keyword “type” followed by the name of the interface and the type’s methods and
+fields.
+4. When not to use an interface in Go?
+When the type’s methods and fields are not independent of the type’s implementation.

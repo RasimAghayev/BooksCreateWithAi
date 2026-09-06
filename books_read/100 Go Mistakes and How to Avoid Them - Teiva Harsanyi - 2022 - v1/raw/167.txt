@@ -1,0 +1,50 @@
+147
+7.2
+#49: Ignoring when to wrap an error
+ Now that we have clarified the main use cases in which to wrap an error, let’s see
+different ways in Go to return an error we receive. We will consider the following
+piece of code and explore different options inside the if err != nil block:
+func Foo() error {
+err := bar()
+if err != nil {
+// ?
+}
+// ...
+}
+The first option is to return this error directly. If we don’t want to mark the error and
+there’s no helpful context we want to add, this approach is fine:
+if err != nil {
+return err
+}
+Figure 7.4 shows that we return the same error returned by bar.
+ Before Go 1.13, to wrap an error, the
+only option without using an external
+library was to create a custom error type:
+type BarError struct {
+Err error
+}
+func (b BarError) Error() string {
+return "bar failed:" + b.Err.Error()
+}
+Then, instead of returning err directly, we wrapped the error into a BarError (see fig-
+ure 7.5):
+if err != nil {
+return BarError{Err: err}
+}
+The benefit of this option is its flexibility. Because BarError is a custom struct, we can
+add any additional context if needed. However, being obliged to create a specific
+error type can quickly become cumbersome if we want to repeat this operation.
+How do we 
+return the error?
+Return error
+Bar error
+Bar error
+Figure 7.4
+We can return the error directly.
+Wrap error
+Bar error
+BarError
+Bar error
+Figure 7.5
+Wrapping the error 
+inside BarError

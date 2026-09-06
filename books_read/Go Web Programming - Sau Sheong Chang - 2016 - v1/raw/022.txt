@@ -1,0 +1,12 @@
+Part 1
+Go and web applications
+Web applications are probably the most widely used type of software appli-
+cation today and if you’re connected to the internet, you would hardly pass a day
+without using one. Even if you’re mostly on a mobile device, you still are using
+web applications. Many mobile applications that look like native applications are
+hybrids that have portions that built on web technologies. 
+ Knowing HTTP is the foundation to learning how to write web applications,
+so these first two chapters will introduce HTTP. I will also explain why using Go
+for writing web applications is a good idea. I will jump straight into showing you
+how to write a simple internet forum using Go and show you a bird’s-eye view of
+writing a web application. 

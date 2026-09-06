@@ -1,0 +1,23 @@
+45
+6 
+LESSON
+REAL NUMBERS
+After reading lesson 6, you’ll be able to
+Use two types of real numbers
+Understand the memory-versus-precision trade-off
+Work around rounding errors in your piggy bank
+Computers store and manipulate real numbers like 3.14159 using the IEEE-754 floating-
+point standard. Floating-point numbers can be very large or incredibly small: think gal-
+axies and atoms. With such versatility, programming languages like JavaScript and Lua 
+get by using floating-point numbers exclusively. Computers also support integers for 
+whole numbers, the subject of the next lesson.
+Consider this Imagine a carnival game with three cups. The nearest cup is worth
+$0.10 to $1.00, the next is worth $1 to $10, and the farthest cup is worth $10 to
+$100. Choose one cup and toss as many as 10 coins. If landing four coins in the middle
+cup is worth $4, how would you win $100?
+To represent many possible real numbers with a fixed amount of space, a floating-point
+number is like choosing 1 of 2,048 cups and placing anywhere from one to several tril-
+lion coins in it. Some bits represent a cup or bucket, and other bits represent the coins
+or offset within that bucket.
+➠
+ 

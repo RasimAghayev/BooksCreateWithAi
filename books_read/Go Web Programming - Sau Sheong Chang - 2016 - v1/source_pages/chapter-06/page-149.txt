@@ -1,0 +1,46 @@
+128
+CHAPTER 6
+Storing data
+post3 := Post{Id: 3, Content: "Hola Mundo!", Author: "Pedro"}
+post4 := Post{Id: 4, Content: "Greetings Earthlings!", Author: "Sau Sheong"}
+store(post1)
+store(post2)
+store(post3)
+store(post4)
+When you execute the program, you’ll see the following:
+&{1 Hello World! Sau Sheong}
+&{2 Bonjour Monde! Pierre}
+&{1 Hello World! Sau Sheong}
+&{4 Greetings Earthlings! Sau Sheong}
+&{3 Hola Mundo! Pedro}
+Note that you’re getting back the same post regardless of whether you access it
+through the author or the post ID.
+ This process seems simple and obvious enough—trivial even. Why would we want
+to even talk about storing data in memory? 
+ Very often in our web applications we start off with using relational databases (as in
+chapter 2) and then as we scale, we realize that we need to cache the data that we
+retrieve from the database in order to improve performance. As you’ll see in the rest
+of this chapter, most of the methods used to persist data involve structs in one way or
+another. Instead of using an external in-memory database like Redis, we have the
+option of refactoring our code and storing the cache data in memory. 
+ I’ll also introduce you to storing data in structs, which is going to be the recurrent
+pattern for data storage for this chapter and much of the book.
+6.2
+File storage
+Storing in memory is fast and immediate because there’s no retrieval from disk. But
+there’s one very important drawback: in-memory data isn’t actually persistent. If you
+never shut down your machine or program, or if it doesn’t matter if the data is lost (as
+in a cache), then that’s probably fine. But you usually want data to be persisted when
+the machine or program is shut down, even if it’s in cache. There are a number of
+ways data can be persisted, but the most common method is to store it to some sort of
+nonvolatile storage such as a hard disk or flash memory. 
+ You have a number of options for storing data to nonvolatile storage. The tech-
+nique we’ll discuss in this section revolves around storing data to the filesystem. Spe-
+cifically we’ll explore two ways of storing data to files in Go. The first is through a
+commonly used text format, CSV (comma-separated values), and the second is specific
+to Go—using the gob package. 
+CSV is a common file format that’s used for transferring data from the user to the
+system. It can be quite useful when you need to ask your users to provide you with a
+large amount of data and it’s not feasible to ask them to enter the data into your
+forms. You can ask your users to use their favorite spreadsheet, enter all their data,
+and then save it as CSV and upload it to your web application. Once you have the file,

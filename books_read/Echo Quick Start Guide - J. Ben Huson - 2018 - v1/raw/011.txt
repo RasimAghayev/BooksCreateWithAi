@@ -1,0 +1,16 @@
+About the reviewers
+Aaron Torres received his master's of science degree in computer science from
+New Mexico Institute of Mining and Technology. He has worked on distributed
+systems in high-performance computing and in large-scale web and
+microservices applications.
+Aaron has published a number of papers and has several patents in the areas of
+storage and I/O. He is passionate about sharing his knowledge and ideas with
+others. He is also a fan of the Go language and open source for backend systems
+and development.
+ 
+Vishal Rana is the creator of the Echo web framework and many other popular
+open source projects. Currently, he is working as a staff engineer for PayPal,
+where he is involved in building distributed and scalable systems to process
+millions of events per day using Go, REST, Java, Docker, microservices,
+Hadoop, Kafka, Spark, Elasticsearch, and other open source technologies.
+ 

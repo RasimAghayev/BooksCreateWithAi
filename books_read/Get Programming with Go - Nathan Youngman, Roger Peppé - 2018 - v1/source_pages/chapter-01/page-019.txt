@@ -1,0 +1,19 @@
+4
+Lesson 1  Get ready, get set, Go
+The community of people who have adopted Go call themselves gophers, in honor of 
+Go’s lighthearted mascot (figure 1.1). Programming is challenging, but with Go and this 
+book, we hope you discover the joy of coding.
+In this lesson, you’ll experiment with a Go program in your web browser.
+Figure 1.1 Go gopher mascot 
+designed by Renée French
+Consider this If you tell a digital assistant, “Call me a cab,” does it dial a taxi com-
+pany? Or does it assume you changed your name to a cab? Natural languages like
+English are full of ambiguity.
+Clarity is paramount in programming languages. If the language’s grammar or syntax
+allows for ambiguity, the computer may not do what you say. That rather defeats the
+point of writing a program.
+Go isn’t a perfect language, but it strives for clarity more so than any other language
+we’ve used. As you go through this lesson, there will be some abbreviations to learn and
+jargon to overcome. Not everything will be clear at first glance, but take the time to
+appreciate how Go works to reduce ambiguity.
+ 

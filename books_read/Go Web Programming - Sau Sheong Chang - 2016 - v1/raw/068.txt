@@ -1,0 +1,22 @@
+47
+Handling requests
+Chapter 2 showed the steps for creating a simple internet forum web application.
+The chapter mapped out the various parts of a Go web application, and you saw the
+big picture of how a Go web application is structured. But there’s little depth in
+each of those parts. In the next few chapters, we’ll delve into the details of each of
+these parts and explore in depth how they can be put together. 
+ In this and the next chapter, we’ll focus on the brains of the web application:
+the handlers that receive and process requests from the client. In this chapter,
+you’ll learn how to create a web server with Go, and then we’ll move on to handling
+requests from the client.
+This chapter covers
+■
+Using the Go net/http library
+■
+Serving out HTTP using the Go net/http 
+library
+■
+Understanding handlers and handler 
+functions
+■
+Working with multiplexers

@@ -1,0 +1,20 @@
+7
+Code and project
+organization
+Organizing a Go codebase in a clean, idiomatic, and maintainable manner isn’t an
+easy task. It requires experience and even mistakes to understand all the best prac-
+tices related to code and project organization. What are the traps to avoid (for
+example, variable shadowing and nested code abuse)? How do we structure pack-
+ages? When and where do we use interfaces or generics, init functions, and utility
+packages? In this chapter, we examine common organizational mistakes.
+2.1
+#1: Unintended variable shadowing
+The scope of a variable refers to the places a variable can be referenced: in other
+words, the part of an application where a name binding is valid. In Go, a variable
+name declared in a block can be redeclared in an inner block. This principle,
+called variable shadowing, is prone to common mistakes.
+This chapter covers
+Organizing our code idiomatically
+Dealing efficiently with abstractions: interfaces and 
+generics
+Best practices regarding how to structure a project

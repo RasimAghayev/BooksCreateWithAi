@@ -1,0 +1,34 @@
+246
+CHAPTER 9
+Leveraging Go concurrency
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <title>Mosaic</title>
+    ...
+  </head>   
+  <body>
+    <div class='container'>
+        <div class="col-md-6">
+          <img src="data:image/jpg;base64,{{ .original }}" width="100%">
+          <div class="lead">Original</div>
+        </div>
+        <div class="col-md-6">
+          <img src="data:image/jpg;base64,{{ .mosaic }}" width="100%">
+          <div class="lead">Mosaic – {{ .duration }} </div>
+        </div>
+        <div class="col-md-12 center">
+          <a class="btn btn-lg btn-info" href="/">Go Back</a>
+        </div>
+    </div>   
+    <br>
+  </body>
+</html>
+Figure 9.5 shows the mosaic that’s created if you build it and then run it with only one
+CPU, assuming your code is in a directory named mosaic:
+GOMAXPROCS=1 ./mosaic
+Listing 9.17
+The results template
+Figure 9.5
+Basic photo mosaic web application

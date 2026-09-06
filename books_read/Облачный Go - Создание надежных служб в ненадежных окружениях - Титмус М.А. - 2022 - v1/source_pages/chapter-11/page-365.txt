@@ -1,0 +1,44 @@
+Трассировка  365
+Чтобы создать консольный экспортер, достаточно вызвать метод stdout.
+NewExporter , который в  OpenTelemetry v0.17.0 находится в  пакете go.open-
+telemetry.io/otel/exporters/stdout .
+Подобно большинству функций создания экспортеров, stdout.NewExporter  – 
+это функция с переменным числом параметров. Она может принимать ноль 
+или более параметров конфигурации. Мы продемонстрируем один из них, 
+управляющий форматированием JSON:
+stdExporter, err := stdout.NewExporter(
+    stdout.WithPrettyPrint(),
+)
+В этом фрагменте использована функция stdout.NewExporter , которая воз-
+вращает экспортер и значение ошибки. Как выглядит результат, вы увидите, 
+когда мы запустим наш пример в разделе «Собираем все вместе: трассиров-
+ка» на стр. 373.
+ Дополнительную информацию о консольном экспортере вы найдете на его странице 
+в документации Open T elemetry (https://oreil.ly/PEfAI).
+ЭКСПОРТЕР ДЛЯ JAEGER  Консольный экспортер удобно использовать для 
+журналирования и отладки, но в OpenTelemetry имеется также ряд других 
+экспортеров, предназначенных для пересылки данных в специализирован-
+ные службы. Одним из таких экспортеров является экспортер для Jaeger.
+Экспортер для Jaeger (как следует из названия) преобразует данные теле-
+метрии для передачи в распределенную систему трассировки Jaeger (https://
+oreil.ly/uMAfg ). Получить экземпляр этого экспортера можно с  по  мощью 
+функции jaeger.NewRawExporter , как показано ниже:
+jaegerEndpoint := "http://localhost:14268/api/traces"
+serviceName := "fibonacci"
+jaegerExporter, err := jaeger.NewRawExporter(
+    jaeger.WithCollectorEndpoint(jaegerEndpoint),
+    jaeger.WithProcess(jaeger.Process{
+        ServiceName: serviceName,
+    }),
+)
+В OpenTelemetry v0.17.0 экспортер для Jaeger находится в пакете go.open-
+telemetry.io/otel/exporter/trace/jaeger .
+Возможно, вы заметили, что функция jaeger.NewRawExporter  во многом по-
+хожа на stdout.NewExporter  в том смысле, что она тоже принимает переменное 
+число параметров и  возвращает export.SpanExporter  (экспортер для Jaeger) 
+и значение ошибки.
+В вызов jaeger.NewRawExporter  можно передать следующие параметры:
+  jaeger.WithCollectorEndpoint , который определяет URL конечной точки 
+HTTP-коллектора целевого процесса Jaeger;
+  jaeger.WithProcess , который позволяет задать информацию об экспор-
+тирующем процессе, в данном случае имя службы.

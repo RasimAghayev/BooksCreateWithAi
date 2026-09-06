@@ -1,0 +1,15 @@
+xx
+about the authors
+MATT BUTCHER is an architect at Deis, where contributing to
+open source projects is his day job. He has written several books
+and dozens of articles. Matt holds a PhD in philosophy and
+teaches in the Computer Science department at Loyola Univer-
+sity Chicago. Matt is passionate about building strong teams and
+developing elegant solutions to complex problems. 
+MATT FARINA is a Principal Engineer in the Advanced Technol-
+ogy Group at Hewlett Packard Enterprise. He is an author,
+speaker, and regular contributor to open source software who
+has been developing software for over a quarter century. He
+likes to solve problems for regular people by creating solutions
+using both the latest technology and the mundane that can be
+easily overlooked.

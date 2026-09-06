@@ -1,0 +1,57 @@
+193
+Unit testing with Go
+important point: although most of the time you focus on writing code that imple-
+ments features and delivery functionality, it’s equally important that the code be test-
+able. This often requires some form of design thinking before writing the program.
+Keep in mind that testing is a critical part of writing software programs. I’ll come back
+to this point later in this chapter.
+ As a reminder, the following listing is the JSON file you parsed in chapter 7.
+{
+  "id" : 1,
+  "content" : "Hello World!",
+  "author" : {
+    "id" : 2,
+    "name" : "Sau Sheong"
+  },
+  "comments" : [
+    { 
+      "id" : 3, 
+      "content" : "Have a great day!", 
+      "author" : "Adam"
+    },
+    {
+      "id" : 4, 
+      "content" : "How are you today?", 
+      "author" : "Betty"
+    }
+  ]
+}
+Now let’s look at the main_test.go file.
+package main              
+import (
+  "testing"
+)
+func TestDecode(t *testing.T) {
+  post, err := decode("post.json")        
+  if err != nil {                      
+    t.Error(err)
+  }
+  if post.Id != 1 {                                    
+    t.Error("Wrong id, was expecting 1 but got", post.Id)
+  }
+  if post.Content != "Hello World!" {                         
+    t.Error("Wrong content, was expecting 'Hello World!' but got", 
+    ➥ post.Content)
+  }
+}
+Listing 8.2
+The post.json file that you parsed
+Listing 8.3
+Test file for main.go
+Tests files are in same 
+package as tested functions
+Calls the function
+that’s tested
+Checks if results are 
+expected; if not, flag 
+error messages.

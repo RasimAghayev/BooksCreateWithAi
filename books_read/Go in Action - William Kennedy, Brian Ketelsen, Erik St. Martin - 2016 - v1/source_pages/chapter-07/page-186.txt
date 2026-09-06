@@ -1,0 +1,67 @@
+165
+Runner
+53
+// We want to receive all interrupt based signals.
+54
+signal.Notify(r.interrupt, os.Interrupt)
+55
+56
+// Run the different tasks on a different goroutine.
+57
+go func() {
+58
+r.complete <- r.run()
+59
+}()
+60
+61
+select {
+62
+// Signaled when processing is done.
+63
+case err := <-r.complete:
+64
+return err
+65
+66
+// Signaled when we run out of time.
+67
+case <-r.timeout:
+68
+return ErrTimeout
+69
+}
+70 }
+The Start method implements the main workflow for the program. In listing 7.12 on
+line 52, Start sets up the ability for the gotInterrupt method to receive interrupt
+events from the operating system. On lines 56 through 59, an anonymous function is
+declared and created as a goroutine. This is the goroutine that executes the set of
+assigned tasks for the program. On line 58, inside this goroutine, the run method is
+called and the returned error interface value is sent on the complete channel. Once
+the error interface value is received, the goroutine returns that value to the caller. 
+ With the goroutine created, Start enters into a select statement that blocks wait-
+ing for one of two events to occur. If an error interface value is received on the
+complete channel, then the goroutine either finished its work within the allotted
+amount of time or an operating system interrupt event was received. Regardless, the
+received error interface value is returned and the method terminates. If a time.Time
+value is received on the timeout channel, then the goroutine didn’t finish its work
+within the allotted amount of time. In this case, the program returns the ErrTimeout
+variable. 
+ Now that you’ve seen the code for the runner package and learned how it works,
+let’s review the test program in the main.go source code file.
+01 // This sample program demonstrates how to use a channel to
+02 // monitor the amount of time the program is running and terminate
+03 // the program if it runs too long.
+03 package main
+04
+05 import (
+06
+"log"
+07
+"time"
+08
+09
+"github.com/goinaction/code/chapter7/patterns/runner"
+10 )
+Listing 7.13
+runner/main/main.go

@@ -1,0 +1,42 @@
+28
+CHAPTER 2
+A solid foundation
+ From there, you’ll move onto servers and practical measures for starting and stop-
+ping them. This may seem fairly straightforward, but addressing certain situations
+early (for example, stopping a server before data has finished being saved) can cut
+down on future problems.
+ The chapter ends with path-matching techniques for servers. URL path matching is
+common for websites and servers providing a Representational State Transfer (REST)
+API. You’ll learn how and when to implement a few of the common methods for path
+matching.
+ By the end of this chapter, you’ll know the best practices for building command-
+line clients and web servers that can serve as a foundation for building robust applica-
+tions in Go.
+2.1
+Working with CLI applications, the Go way
+Whether you’re using a console application (such as the source-control manage-
+ment system Git or an application such as the MySQL database or the Apache web
+server), command-line arguments and flags are part of the application user inter-
+face. The Go standard library has built-in functionality for working with these, but it
+comes with a twist.\
+2.1.1
+Command-line flags
+The argument and flag handling in the Go standard library is based on Plan 9, which
+has a different style from the systems based on GNU/Linux and Berkeley Software Dis-
+tribution (BSD), such as Mac OS X and FreeBSD, that are in wide use today. For exam-
+ple, on Linux and BSD systems, you can use the command ls -la to list all files in a
+directory. The -la part of the command contains two flags, or options. The l flag tells
+ls to use the long form listing, and the a flag causes the list to include hidden files.
+The Go flag system won’t let you combine multiple flags, and instead sees this as one
+flag named la.
+ GNU-style commands (such as Linux’s ls) support long options (for example,
+--color) that require two dashes in order to tell the program that the string color
+isn’t five options, but one.
+ A debate has arisen over whether the Go (or Plan 9) system offers any real advan-
+tages over the style that dominates GNU, Linux, and BSD. Honestly, it boils down to a
+matter of preference. GNU-style double-dashes feel clunky and error-prone to some.
+Windowed applications
+Designed as a systems language, Go doesn’t provide native support for building win-
+dowed applications like the ones you find in Microsoft Windows or Mac OS X. The Go
+community has dabbled in windowed development, but no clear direction has pre-
+sented itself.

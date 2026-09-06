@@ -1,0 +1,64 @@
+250
+CHAPTER 10
+Communication between cloud services
+ 
+package main
+import (
+     "fmt"
+     "os"
+     pb "github.com/Masterminds/go-in-practice/chapter10/hellopb"
+     "golang.org/x/net/context"
+     "google.golang.org/grpc"
+)
+func main() {
+     address := "localhost:55555"
+     conn, err := grpc.Dial(address, grpc.WithInsecure())
+     if err != nil {
+            ...
+     }
+     defer conn.Close()
+     c := pb.NewHelloClient(conn)
+     name := "Inigo Montoya"
+     hr := &pb.HelloRequest{Name: name}
+     r, err := c.Say(context.Background(), hr)
+     if err != nil {
+            ...
+     }
+     fmt.Println(r.Message)
+}
+The context being passed to Say is important. In this case, it’s an empty context that’s
+never canceled and has no values. It’s a simple background process. The context
+package has other contexts, and you can read more about them in the package docu-
+mentation at https://godoc.org/golang.org/x/net/context.
+ One example is using a context with a cancel function. This is useful if the caller
+goes away (for example, the application is closed), and the callee needs to be
+informed of this. The client could create a context like this:
+ctx, cancel := context.WithCancel(context.Background())
+defer cancel()
+Listing 10.13
+Request to a gRPC server with protocol buffers
+Includes the generated code from the protocol 
+buffer for the messages and service
+The gRPC package needed to
+communicate with the server
+Connects to the other service and handles
+any errors. Insecure communications
+shouldn’t be used in production. Be sure
+to set up the connection to be closed.
+Creates a new instance of a hello 
+client, defined in the protocol 
+buffer file from listing 10.11. It 
+communicates over the already 
+created connection.
+Prepares a
+HelloRequest
+message to pass to
+the other service
+Passes a context and request to 
+Say and gets a response and 
+error. Notice the interface to Say 
+is the same as the server from 
+listing 10.12. Handles any errors 
+that may have occurred.
+Prints the response that was
+generated in the other service

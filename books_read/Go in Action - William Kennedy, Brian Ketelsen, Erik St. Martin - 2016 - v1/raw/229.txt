@@ -1,0 +1,57 @@
+208
+CHAPTER 8
+Standard library
+err = &PathError{"write", f.name, e}
+}
+return n, err
+}
+Sure enough, listing 8.44 shows the implementation of the io.Writer interface for
+pointers of type File. Look again at line 24 from listing 8.37.
+22
+// Write the content of the Buffer to the stdout device.
+23
+// Using the io.Writer implementation for os.File.
+24
+b.WriteTo(os.Stdout)
+25 }
+You see that the WriteTo method is able to write the contents of the buffer to stdout
+which results in the string "Hello World!" being displayed on our terminal window.
+The method will use the implementation of the Write method from the File type via
+the interface value. 
+ This example shows the beauty of interfaces and the power they bring to the lan-
+guage. Thanks to the implementation of the interface by both the bytes.Buffer and
+os.File types, we were able to reuse functionality in the standard library and have
+these types work together to implement a solution. Next let’s look at an example that’s
+a bit more practical. 
+8.4.3
+Simple curl
+A command-line tool called curl can be found on both Linux and Mac OS X systems.
+The tool allows you to specify a URL, and it will perform an HTTP request and save the
+content. By using the http, io, and os packages, you can write your own version of
+curl in just a few lines of code. 
+ Let’s take a look at an example that implements a basic version of curl.
+01 // Sample program to show how to write a simple version of curl using
+02 // the io.Reader and io.Writer interface support.
+03 package main
+04
+05 import (
+06
+"io"
+07
+"log"
+08
+"net/http"
+09
+"os"
+10 )
+11
+12 // main is the entry point for the application.
+13 func main() {
+14
+// r here is a response, and r.Body is an io.Reader.
+15
+r, err := http.Get(os.Args[1])
+Listing 8.45
+listing37.go: lines 22–25
+Listing 8.46
+listing46.go

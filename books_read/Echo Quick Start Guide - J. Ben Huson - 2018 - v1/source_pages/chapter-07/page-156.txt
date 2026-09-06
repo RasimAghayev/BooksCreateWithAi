@@ -1,0 +1,20 @@
+func BenchmarkHealthCheck(b *testing.B) {
+e := echo.New() e.Pre(middlewares.RequestIDMiddleware) e.GET("/health-
+check", HealthCheck)
+w := httptest.NewRecorder() r, _ := http.NewRequest("GET", "/health-check",
+nil)
+for i := 0; i < b.N; i++ {
+e.ServeHTTP(w, r) }
+}
+go test -v ./... -bench Benchmark === RUN TestHealthCheck
+--- PASS: TestHealthCheck (0.00s) goos: linux
+goarch: amd64
+pkg: github.com/PacktPublishing/Echo-Essentials/chapter7/handlers
+BenchmarkHealthCheck-8 300000 5095 ns/op
+PASS
+ok github.com/PacktPublishing/Echo-Essentials/chapter7/handlers 1.597s
+As you can see, the time it took to run the HealthCheck handler was 5,095
+nanoseconds, and in the 1.597 second run time we were able to perform 300K
+runs of the HealthCheck handler. With this benchmark in place, you will be able
+to alter your code, and know exactly how your alteration affects the performance
+of your service.

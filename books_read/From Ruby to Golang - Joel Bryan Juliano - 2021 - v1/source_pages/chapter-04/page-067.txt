@@ -1,0 +1,50 @@
+Arrays and Slices
+61
+be independent of the values from the new array. For instance, in the following example, we have
+declared two array variables, namely oldArray and newArray. Then we assigned the contents of
+oldArray to newArray on line 11. As expected we will get the "foo" value as the first index of
+oldArray, as oldArray[0] to newArray[0]. Then we assign the strings "baz" and "bar" to the second
+index of both arrays.
+Fixed Array Value Type
+1
+package main
+2
+3
+import "fmt"
+4
+5
+func main() {
+6
+var oldArray [2]string
+7
+var newArray [2]string
+8
+9
+oldArray[0] = "foo"
+10
+11
+newArray = oldArray
+12
+13
+newArray[1] = "baz"
+14
+oldArray[1] = "bar"
+15
+16
+fmt.Println(oldArray) // [foo bar]
+17
+fmt.Println(newArray) // [foo baz]
+18
+}
+1
+$ go run array.go
+2
+3
+[foo bar]
+4
+[foo baz]
+As you noticed, upon printing the values of both arrays, on line 16 and 17, the values of both
+arrays are independent of each other. We both inserted strings on both arrays and they both have
+independent values. This is the expected behavior of a Fixed Array being a value type, however, this
+can get really expensive on large data sets, and for this scenarios, we would require a flexible type
+of array, the Sliced Array.

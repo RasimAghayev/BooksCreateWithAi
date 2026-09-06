@@ -1,0 +1,53 @@
+29
+2.8
+#8: any says nothing
+cases, any can be considered an overgeneralization; and as mentioned by Rob Pike, it
+doesn’t convey anything (https://www.youtube.com/watch?v=PAAkCSZUG1c&t=7m
+36s). Let’s first remind ourselves of the core concepts, and then we can discuss the
+potential problems.
+ An any type can hold any value type:
+func main() {
+var i any
+i = 42
+i = "foo"
+i = struct {
+s string
+}{
+s: "bar",
+}
+i = f
+_ = i
+}
+func f() {}
+In assigning a value to an any type, we lose all type information, which requires a type
+assertion to get anything useful out of the i variable, as in the previous example. Let’s
+look at another example, where using any isn’t accurate. In the following, we imple-
+ment a Store struct and the skeleton of two methods, Get and Set. We use these
+methods to store the different struct types, Customer and Contract:
+package store
+type Customer struct{
+// Some fields
+}
+type Contract struct{
+// Some fields
+}
+type Store struct{}
+func (s *Store) Get(id string) (any, error) {
+// ...
+}
+func (s *Store) Set(id string, v any) error {
+// ...
+}
+Although there is nothing wrong with Store compilation-wise, we should take a min-
+ute to think about the method signatures. Because we accept and return any argu-
+ments, the methods lack expressiveness. If future developers need to use the Store
+struct, they will probably have to dig into the documentation or read the code to
+An int
+A string
+A struct
+A function
+Assignment to the blank 
+identifier so that the 
+example compiles
+Returns any
+Accepts any

@@ -1,0 +1,47 @@
+163
+Parsing and creating XML with Go
+7.3.2
+Make the action a property of the resource
+If activation is a simple state of the customer account, you can simply make the action
+a property of the resource, and then use the PATCH HTTP method to do a partial
+update to the resource. For example, you can do this:
+PATCH /user/456 HTTP/1.1
+{ "active" : "true" }
+This code will change the active property of the user resource to true.
+7.4
+Parsing and creating XML with Go
+Now that you’re armed with background knowledge of SOAP and RESTful web ser-
+vices, let’s look at how Go can be used to create and consume them. We’ll start with
+XML in this section and move on to JSON in the next.
+XML is a popular markup language (HTML is another example of a markup lan-
+guage) that’s used to represent data in a structured way. It’s probably the most widely
+used format for representing structured data as well as for sending and receiving
+structured data. XML is a formal recommendation from the W3C, and it’s defined by
+W3C’s XML 1.0 specification.
+ Regardless of whether you end up writing or consuming web services, knowing
+how to create and parse XML is a critical part of your arsenal. One frequent use is to
+consume web services from other providers or XML-based feeds like RSS. Even if you’d
+never write an XML web service yourself, learning how to interact with XML using Go
+will be useful to you. For example, you might need to get data from an RSS newsfeed
+and use the data as part of your data source. In this case, you’d have to know how to
+parse XML and extract the information you need from it.
+ Parsing structured data in Go is quite similar, whether it’s XML or JSON or any
+other format. To manipulate XML or JSON, you can use the corresponding XML or
+JSON subpackages of the encoding library. For XML, it’s in the encoding/xml library.
+7.4.1
+Parsing XML
+Let’s start with parsing XML, which is most likely what you’ll start doing first. In Go,
+you parse the XML into structs, which you can subsequently extract the data from.
+This is normally how you parse XML:
+1
+Create structs to contain the XML data.
+2
+Use xml.Unmarshal to unmarshal the XML data into the structs, illustrated in
+figure 7.2.  
+Create structs
+to store XML
+Unmarshal XML
+into structs
+Figure 7.2
+Parse XML with Go by 
+unmarshaling XML into structs

@@ -1,0 +1,49 @@
+146
+CHAPTER 7
+Error management
+7.2
+#49: Ignoring when to wrap an error
+Since Go 1.13, the %w directive allows us to wrap errors conveniently. But some devel-
+opers may be confused about when to wrap an error (or not). So, let’s remind our-
+selves what error wrapping is and then when to use it.
+ Error wrapping is about wrapping or packing an error inside a wrapper container
+that also makes the source error available (see figure 7.1). In general, the two main
+use cases for error wrapping are the following:
+Adding additional context to an error
+Marking an error as a specific error
+Regarding adding context, let’s consider the following example. We receive a request
+from a specific user to access a database resource, but we get a “permission denied”
+error during the query. For debugging purposes, if the error is eventually logged, we
+want to add extra context. In this case, we can wrap the error to indicate who the user
+is and what resource is being accessed, as shown in figure 7.2.
+Now let’s say that instead of adding context, we want to mark the error. For example,
+we want to implement an HTTP handler that checks whether all the errors received
+while calling functions are of a Forbidden type so we can return a 403 status code. In
+that case, we can wrap this error inside Forbidden (see figure 7.3).
+In both cases, the source error remains available. Hence, a caller can also handle an
+error by unwrapping it and checking the source error. Also note that sometimes we
+want to combine both approaches: adding context and marking an error.
+Wrapper
+Wrap error
+Error
+Error
+Figure 7.1
+Wrap the error inside a wrapper.
+When user X tried to
+access resource Y
+Wrap error
+Permission
+denied
+Permission
+denied
+Figure 7.2
+Adding additional context 
+to the “permission denied” error
+Forbidden
+Wrap error
+Permission
+denied
+Permission
+denied
+Figure 7.3
+Marking the error Forbidden

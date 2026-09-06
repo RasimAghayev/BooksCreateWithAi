@@ -1,0 +1,48 @@
+76
+CHAPTER 4
+Processing requests
+don’t need to, because the net/http library includes a rather comprehensive set of
+functions that normally provides us with all we need. Let’s talk about each in turn.
+ The functions in Request that allow us to extract data from the URL and/or the
+body revolve around the Form, PostForm, and MultipartForm fields. The data is in the
+form of key-value pairs (which is what we normally get from a POST request anyway).
+The general algorithm is:
+1
+Call ParseForm or ParseMultipartForm to parse the request.
+2
+Access the Form, PostForm, or MultipartForm field accordingly.
+This listing shows parsing forms. 
+package main
+import (
+    "fmt"
+    "net/http"
+)
+func process(w http.ResponseWriter, r *http.Request) {
+    r.ParseForm()
+    fmt.Fprintln(w, r.Form)
+}
+func main() {
+    server := http.Server{
+        Addr: "127.0.0.1:8080",
+    }
+    http.HandleFunc("/process", process)
+    server.ListenAndServe()
+}
+The focus of the server in listing 4.4 is on these two lines:
+  r.ParseForm()
+  fmt.Fprintln(w, r.Form)
+As mentioned earlier, you need to first parse the request using ParseForm, and then
+access the Form field. 
+ Let’s look at the client that’s going to call this server. You’ll create a simple, mini-
+mal HTML form to send the request to the server. Place the code in a file named cli-
+ent.html.
+<html>
+  <head>    
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>Go Web Programming</title>
+  </head>
+  <body>
+    <form action=http://127.0.0.1:8080/process?hello=world&thread=123
+       ➥ method="post" enctype="application/x-www-form-urlencoded">
+Listing 4.4
+Parsing forms

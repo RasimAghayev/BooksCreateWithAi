@@ -1,0 +1,51 @@
+14
+CHAPTER 1
+Go and web applications
+headers tell the server more about the request and what the client wants, the response
+headers are the means for the server to tell the client more about the response and
+what the server wants (from the client). Some commonly used response headers are
+shown in table 1.3.
+1.7
+URI
+When Tim Berners-Lee introduced the World Wide Web to the world, he also intro-
+duced the idea of a location string representing a resource on the internet. In June
+1994, Berners-Lee published RFC 1630, which defined the URI. In it he described the
+concepts of a string that represents the name of the resource (uniform resource name, or
+URN) and a string that represents the location of the resource (uniform resource locator,
+or URL). The URI is an umbrella term that includes both the URN and the URI, and
+they have similar syntax and format. This book uses only URLs, so for all purposes,
+both the URI and URL can be used interchangeably.
+ This is the general form of a URI: <scheme name> : <hierarchical part> [ ? <query> ]
+[ # <fragment> ]
+ The scheme name is the name of the URI scheme that defines the rest of the URI
+structure. A large number of URI schemes are in use, because URI is a popular way of
+identifying resources. But the one we’ll be using mostly in this book is the HTTP
+scheme. 
+ The hierarchical part contains the identification information and should be hierar-
+chical in structure. If the hierarchical part starts with a double slash (//), then it’ll
+Table 1.3
+Common response headers
+Header field
+Description
+Allow
+Tells the client which request methods are supported by the server.
+Content-Length
+The length of the response body in octets (8-bit bytes).
+Content-Type
+The content type of the response body (when there is a response body).
+Date
+Tells the current time (formatted in GMT).
+Location
+This header is used with redirection, to tell the client where to request the next 
+URL.
+Server
+Domain name of the server that’s returning the response.
+Set-Cookie
+Sets a cookie at the client. Multiple Set-Cookie headers can be added to the 
+same response.
+WWW-Authenticate
+Tells header the client what type of authorization clients should supply in their 
+Authorization request header. The server usually sends this along with a 401 
+Unauthorized status line. This header also provides the challenge information 
+to the authentication schemes that are accepted by the server (for example, the 
+basic and digest access authentication schemes described in RFC 2617). 

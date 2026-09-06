@@ -1,0 +1,32 @@
+225
+Goroutines
+see an example of this later in this chapter. What’s important to note now is that
+although Go can be used to create parallel programs, it was created with concurrency
+in mind and not parallelism. 
+ Go’s support for concurrency is supported by two main constructs—goroutines and
+channels. In the following sections, I’ll describe how goroutines and channels, along
+with some of the standard libraries, allow you to create concurrent programs.
+9.2
+Goroutines
+Goroutines are functions that run independently with other goroutines. This might
+seem similar to threads—and in fact, goroutines are multiplexed on threads—but
+they aren’t threads. A lot more goroutines than threads can be running, because
+goroutines are lightweight. A goroutine starts with a small stack (8 K as of Go 1.4) and
+it can grow (or shrink) as needed. Whenever a goroutine is blocked, it blocks the OS
+thread it’s multiplexed on, but the runtime moves other goroutines on the same
+blocked thread to another unblocked thread.
+9.2.1
+Using goroutines
+Using goroutines is pretty simple. Add the keyword go in front of any function (either
+named or anonymous) and the function becomes a goroutine. Let’s see, in the follow-
+ing listing, how this works in a file named goroutine.go.
+package main
+func printNumbers1() {
+  for i := 0; i < 10; i++ {
+    fmt.Printf("%d ", i)
+  }
+}
+Listing 9.1
+Demonstrating goroutines
+Figure 9.2
+Parallelism—two lines, two checkout counters

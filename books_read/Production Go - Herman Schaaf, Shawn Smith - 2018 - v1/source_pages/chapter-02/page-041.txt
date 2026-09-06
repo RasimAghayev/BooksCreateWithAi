@@ -1,0 +1,58 @@
+Basics
+35
+1
+go func() {
+2
+fmt.Println("hello from a goroutine!")
+3
+}()
+One way to synchronize goroutines is to use sync.WaitGroup¹²:
+Using sync.WaitGroup
+1
+package main
+2
+3
+import (
+4
+"fmt"
+5
+"sync"
+6
+)
+7
+8
+func main() {
+9
+var wg sync.WaitGroup
+10
+wg.Add(3)
+11
+go func() {
+12
+defer wg.Done()
+13
+fmt.Println("goroutine 1")
+14
+}()
+15
+go func() {
+16
+defer wg.Done()
+17
+fmt.Println("goroutine 2")
+18
+}()
+19
+go func() {
+20
+defer wg.Done()
+21
+fmt.Println("goroutine 3")
+22
+}()
+23
+24
+wg.Wait()
+25
+}
+¹²https://golang.org/pkg/sync/#WaitGroup

@@ -1,0 +1,47 @@
+Glossary
+152
+Return
+To come or go back (to a place or person)
+Reusability
+The property or degree of being reusable
+Reusable
+able to be used again; especially after
+salvaging or special treatment or
+processing
+Reuse
+The act of salvaging or in some manner
+restoring a discarded item to yield
+something usable
+Review
+A second or subsequent reading of a text
+or artifact in an attempt to gain new
+insights
+Rewrite
+The act of writing again or anew
+Rewritten
+past participle of rewrite
+Root
+The part of a plant, generally
+underground, that anchors and supports
+the plant body, absorbs and stores water
+and nutrients, and in some plants is able
+to perform vegetative reproduction
+Ruby
+Ruby is an interpreted, high-level,
+general-purpose programming language.
+It was designed and developed in the
+mid-1990s by Yukihiro “Matz”
+Matsumoto in Japan. Ruby is
+dynamically typed and uses garbage
+collection. It supports multiple
+programming paradigms, including
+procedural, object-oriented, and
+functional programming. According to
+the creator, Ruby was influenced by Perl,
+Smalltalk, Eiffel, Ada, Basic, and Lisp.
+Rule
+A regulation, law, guideline
+Run
+To move swiftly. To move forward
+quickly upon two feet by alternately
+making a short jump off either foot

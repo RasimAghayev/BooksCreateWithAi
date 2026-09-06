@@ -1,0 +1,51 @@
+179
+TECHNIQUE 43
+Serving from an alternative location
+enables safe development and testing whereby a slip-up in development or testing
+doesn’t impact production users.
+ When the location of the files is different in each environment, the location needs to
+be passed into the application as configuration. This can happen via a shared configu-
+ration service such as etcd, in configuration files, as arguments passed into the applica-
+tion at startup time, or some other means of passing configuration. The following
+listing provides a basic example of passing a location in as a command-line argument.
+var t *template.Template
+var l = flag.String("location", "http://localhost:8080", "A location.")
+var tpl = `<!DOCTYPE HTML>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>A Demo</title>
+    <link rel="stylesheet" href="{{.Location}}/styles.css">
+  </head>
+  <body>
+    <p>A demo.</p>
+  </body>
+</html>`
+func servePage(res http.ResponseWriter, req *http.Request) {
+     data := struct{ Location *string }{
+          Location: l,
+     }
+     t.Execute(res, data)
+}
+Listing 7.9
+ Passing a URL location to a template
+Application
+Assets
+Application
+Assets
+Application
+Assets
+User’s browser
+Development
+Testing
+Production
+Figure 7.2
+A browser fetches a different application and asset set in each environment.
+Gets the location of the static files
+from the application arguments
+The path to the CSS is
+relative to the location.
+An HTTP handler 
+passing the 
+location into the 
+template

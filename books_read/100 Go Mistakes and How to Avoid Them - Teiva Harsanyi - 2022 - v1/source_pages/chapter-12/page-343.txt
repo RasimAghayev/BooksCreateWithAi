@@ -1,0 +1,53 @@
+323
+12.4
+#94: Not being aware of data alignment
+i
+int64
+b2 byte
+_
+[7]byte
+}
+Every time a Foo struct is created, it requires 24 bytes in memory, but only 10 bytes
+contain data—the remaining 14 bytes are padding. Because a struct is an atomic unit,
+it will never be reorganized, even after a garbage collection (GC); it will always occupy
+24 bytes in memory. Note that the compiler doesn’t rearrange the fields; it only adds
+padding to guarantee data alignment.
+ How can we reduce the amount of memory allocated? The rule of thumb is to
+reorganize a struct so that its fields are sorted by type size in descending order. In our
+case, the int64 type is first, followed by the two byte types:
+type Foo struct {
+i
+int64
+b1 byte
+b2 byte
+}
+Figure 12.24 shows how this new version of Foo is allocated in memory. i is allocated
+first and occupies a complete word. The main difference is that now b1 and b2 can live
+alongside each other in the same word.
+Again, the struct must be a multiple of the word size; but instead of occupying 24 bytes
+in memory, it occupies only 16 bytes. We saved 33% of the memory just by moving i to
+the first position.
+ What would be the concrete impacts if we used the first version of the Foo struct
+(24 bytes) instead of the compacted one? If the Foo structs were retained (for exam-
+ple, an in-memory Foo cache), our application would consume extra memory. But
+even if the Foo structs weren’t retained, there would be other effects. For example, if
+we created Foo variables frequently and they were allocated to the heap (we discuss
+this concept in the next section), the result would be more frequent GCs, impacting
+overall application performance.
+ Speaking of performance, there’s another effect on spatial locality. For example,
+let’s consider the following sum function that takes a slice of Foo structs as an argu-
+ment. This function iterates over the slice and sums all the i fields (int64):
+func sum(foos []Foo) int64 {
+var s int64
+Added by 
+the compiler
+b1
+i
+8 bytes (word)
+b2
+16 bytes
+0x00
+0x08
+Figure 12.24
+The struct now 
+occupies 16 bytes in memory.

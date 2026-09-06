@@ -1,0 +1,49 @@
+65
+TECHNIQUE 11
+Waiting for goroutines
+$ ls -1 exampledata
+example1.txt
+example2.txt
+example3.txt
+You have three text files in your exampledata directory. Using your tool, you can com-
+press them:
+$ go run simple_gz.go exampledata/* 
+$ ls -1 exampledata
+example1.txt
+example1.txt.gz
+example2.txt
+example2.txt.gz
+example3.txt
+example3.txt.gz
+In that example run, you can see that your simple_gz.go program created a Gzipped
+version of each file.
+ Now let’s talk about performance. As written, the preceding program uses only
+one goroutine (and thus uses only one CPU core). It’s unlikely that this program is
+going to make good use of all of the disk I/O bandwidth, too. Although the code runs
+just fine, it’s nowhere near as fast as it could be. And because each file can be com-
+pressed individually, it’s conceptually simple to break out your single thread of execu-
+tion into something parallelized.
+ You can rewrite a program like this to compress each file in its own goroutine.
+Although this would be a suboptimal solution for compressing thousands of files
+(you’d probably overwhelm the I/O capacity of the system), it works well when dealing
+with a few hundred files or less.
+ Now here’s the trick: you want to compress a bunch of files in parallel, but have the
+parent goroutine (main) wait around until all of the workers are done. You can easily
+accomplish this with a wait group. In listing 3.4 you’ll modify the code in such a way
+that you don’t change the compress function at all. This is generally considered better
+design because it doesn’t require your worker function (compress) to use a wait group
+in cases where files need to be compressed serially.
+package main
+import (
+     "compress/gzip"
+     "fmt"
+     "io"
+     "os"
+     "sync"
+)
+func main() {
+     var wg sync.WaitGroup
+Listing 3.4
+Compressing files in parallel with a wait group
+A WaitGroup doesn’t need 
+to be initialized.

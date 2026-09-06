@@ -1,0 +1,44 @@
+157
+Introducing SOAP-based web services
+UDDI (Universal Description, Discovery, and Integration—a directory service), SOAP-
+based services can also be discovered.
+SOAP is known to be cumbersome and unnecessarily complex. The SOAP XML
+messages can grow to be verbose and difficult to troubleshoot, and you may often
+need other tools to manage them. SOAP-based web services also can be heavy to pro-
+cess because of the additional overhead. WSDL, while providing a solid contract
+between the client and server, can become burdensome because every change in the
+web service requires the WSDL and therefore the SOAP clients to be changed. This
+often results in version lock-in as the developers of the web service are wary of making
+even the smallest changes. 
+REST-based web services are a lot more flexible. REST isn’t an architecture in itself
+but a design philosophy. It doesn’t require XML, and very often REST-based web ser-
+vices use simpler data formats like JSON, resulting in speedier web services. REST-
+based web services are often much simpler than SOAP-based ones. 
+ Another difference between the two is that SOAP-based web services are function-
+driven; REST-based web services are data-driven. SOAP-based web services tend to be
+RPC (Remote Procedure Call) styled; REST-based web services, as described earlier,
+focus on resources, and HTTP methods are the verbs working on those resources. 
+ ProgrammableWeb is a popular site that tracks APIs that are available publicly over
+the internet. As of this writing, its database contains 12,987 publicly available APIs, of
+which 2061 (or 16%) are SOAP-based and 6967 (54%) are REST-based.1 Unfortunately,
+enterprises rarely publish the number of internal web services, so that figure is diffi-
+cult to confirm.
+ Many developers and companies end up using both SOAP- and REST-based web ser-
+vices at the same time but for different purposes. In these cases, SOAP is used in internal
+applications for enterprise integration and REST is used for external, third-party devel-
+opers. The advantage of this strategy is that both the strengths of REST (speed and sim-
+plicity) and SOAP (security and robustness) can be used where they’re most effective.
+7.2
+Introducing SOAP-based web services
+SOAP is a protocol for exchanging structured data that’s defined in XML. SOAP was
+originally an acronym for Simple Object Access Protocol, terminology that is a misno-
+mer today, as it’s no longer considered simple and it doesn’t deal with objects either.
+In the latest version, the SOAP 1.2 specification, the protocol officially became simply
+SOAP. SOAP is usable across different networking protocols and is independent of pro-
+gramming models.
+SOAP is highly structured and heavily defined, and the XML used for the transpor-
+tation of the data can be complex. Every operation and input or output of the service
+is clearly defined in the WSDL. The WSDL is the contract between the client and the
+server, defining what the service provides and how it’s provided.
+1 Refer to www.programmableweb.com/category/all/apis?data_format=21176 for SOAP-based APIs and
+www.programmableweb.com/category/all/apis?data_format=21190 for REST-based APIs.

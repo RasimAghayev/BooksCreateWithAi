@@ -1,0 +1,49 @@
+39
+Interfacing with the database
+type Thread struct {
+  Id        int
+  Uuid      string
+  Topic     string
+  UserId    int
+  CreatedAt time.Time
+}
+Notice that the package name is no longer main but data (in bold). When you use
+anything in this package later (functions or structs or anything else), you need to pro-
+vide the package name along with it. If you want to use the Thread struct you must use
+data.Thread instead of just Thread alone. This is the data package you used earlier in
+the chapter. Besides containing the structs and code that interact with the database,
+the package contains other functions that are closely associated.
+ The Thread struct should correspond to the DDL (Data Definition Language, the
+subset of SQL) that’s used to create the relational database table called threads. You
+don’t have these tables yet so let’s create them first. Of course, before you create the
+database tables, you should create the database itself. Let’s create a database called
+chitchat. Execute this command at the console:
+createdb chitchat 
+Once you have the database, you can use setup.sql to create the database tables for
+ChitChat, shown next.  
+create table users (
+  id         serial primary key,
+  uuid       varchar(64) not null unique,
+  name       varchar(255),
+  email      varchar(255) not null unique,
+  password   varchar(255) not null,
+  created_at timestamp not null   
+);
+create table sessions (
+  id         serial primary key,
+  uuid       varchar(64) not null unique,
+  email      varchar(255),
+  user_id    integer references users(id),
+  created_at timestamp not null   
+);
+create table threads (
+  id         serial primary key,
+  uuid       varchar(64) not null unique,
+  topic      text,
+  user_id    integer references users(id),
+  created_at timestamp not null       
+);
+create table posts (
+  id         serial primary key,
+Listing 2.13
+setup.sql used to create database tables in PostgreSQL

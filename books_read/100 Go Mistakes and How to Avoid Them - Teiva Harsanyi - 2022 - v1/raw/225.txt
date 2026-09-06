@@ -1,0 +1,44 @@
+205
+9.6
+#66: Not using nil channels
+some information, we need a channel without data. The idiomatic way to handle it is a
+channel of empty structs: chan struct{}.
+ In Go, an empty struct is a struct without any fields. Regardless of the architecture,
+it occupies zero bytes of storage, as we can verify using unsafe.Sizeof:
+var s struct{}
+fmt.Println(unsafe.Sizeof(s))
+0
+NOTE
+Why not use an empty interface (var i interface{})? Because an
+empty interface isn’t free; it occupies 8 bytes on 32-bit architecture and 16
+bytes on 64-bit architecture.
+An empty struct is a de facto standard to convey an absence of meaning. For example,
+if we need a hash set structure (a collection of unique elements), we should use an
+empty struct as a value: map[K]struct{}.
+ Applied to channels, if we want to create a channel to send notifications without
+data, the appropriate way to do so in Go is a chan struct{}. One of the best-known
+utilizations of a channel of empty structs comes with Go contexts, which we discuss in
+this chapter.
+ A channel can be with or without data. If we want to design an idiomatic API in
+regard to Go standards, let’s remember that a channel without data should be
+expressed with a chan struct{} type. This way, it clarifies for receivers that they
+shouldn’t expect any meaning from a message’s content—only the fact that they have
+received a message. In Go, such channels are called notification channels.
+ The next section discusses how Go behaves with nil channels and its rationale for
+using them. 
+9.6
+#66: Not using nil channels
+A common mistake while working with Go and channels is forgetting that nil channels
+can sometimes be helpful. So what are nil channels, and why should we care about
+them? That is the scope of this section.
+ Let’s start with a goroutine that creates a nil channel and waits to receive a mes-
+sage. What should this code do?
+var ch chan int
+<-ch
+ch is a chan int type. The zero value of a channel being nil, ch is nil. The goroutine
+won’t panic; however, it will block forever.
+ The principle is the same if we send a message to a nil channel. This goroutine
+blocks forever:
+var ch chan int
+ch <- 0
+Nil channel

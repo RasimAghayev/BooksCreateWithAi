@@ -1,0 +1,52 @@
+68
+CHAPTER 3
+Handling requests
+many default cURL implementations don’t yet support HTTP/2 (including the one
+shipped with OS X), so if you need to recompile cURL, link it with nghttp2 and replace
+the previous cURL version with the one you just built.
+ Once you have done that, you can use cURL to check your HTTP/2 web applica-
+tion:
+curl -I --http2 --insecure https://localhost:8080/
+Remember, you need to run it against HTTPS. Because you created your own certifi-
+cate and private key, by default cURL will not proceed as it will try to verify the certifi-
+cate. To force cURL to accept your certificate, you need to set the insecure flag.
+ You should get an output similar to this:
+HTTP/2.0 200
+content-type:text/plain; charset=utf-8
+content-length:12
+date:Mon, 15 Feb 2016 05:33:01 GMT
+We’ve discussed how to handle requests, but we mostly glossed over how to process the
+incoming request and send responses to the client. Handlers and handler functions
+are the key to writing web applications in Go, but processing requests and sending
+responses is the real reason why web applications exist. In the next chapter, we’ll turn
+to the details on requests and responses and you’ll see how to extract information
+from requests and pass on information through responses.
+3.5
+Summary
+■
+Go has full-fledged standard libraries for building web applications, with net/
+http and html/template.
+■
+Although using good web frameworks is often easier and saves time, it is impor-
+tant to learn the basics of web programming before using them.
+■
+Go’s net/http package allows HTTP to be layered on top of SSL to be more
+secured, creating HTTPS.
+■
+Go handlers can be any struct that has a method named ServeHTTP with two
+parameters: an HTTPResponseWriter interface and a pointer to a Request struct.
+■
+Handler functions are functions that behave like handlers. Handler functions
+have the same signature as the ServeHTTP method and are used to process
+requests.
+■
+Handlers and handler functions can be chained to allow modular processing of
+requests through separation of concerns.
+■
+Multiplexers are also handlers. ServeMux is an HTTP request multiplexer. It
+accepts an HTTP request and redirects it to the correct handler according to
+the URL in the request. DefaultServeMux is a publicly available instance of
+ServeMux that is used as the default multiplexer.
+■
+In Go 1.6 and later, net/http supports HTTP/2 by default. Before 1.6, HTTP/2
+support can be added manually by using the http2 package.

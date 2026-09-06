@@ -1,0 +1,33 @@
+External behavior and integration
+testing
+As seen, the creation of unit tests and benchmark tests within Go is very simple
+and intuitive. The built in go test command allows various coverage capabilities.
+A little known capability of the go test tool is the ability to specify which
+packages you wish to generate coverage information about with the -coverpkg
+flag. Armed with this information, we can formulate a go test command that will
+be able to run against the main package in our program but collect coverage
+information about our handlers package:
+go test -coverprofile=cov.txt -coverpkg ./handlers -run TestRunMain ./cmd/service/
+The preceding command is saying run tests against the main package but collect
+the coverage information from handlers that in turn will use the cover tool to
+instrument the handlers code to keep track of coverage numbers in the handlers
+package. If we take this concept to the next logical step, what happens if we
+have one test in cmd/service/main_test.go that merely runs the main entry point of
+our web application? For our thought experiment, here are the contents of
+cmd/service/main_test.go followed by the modifications to
+$GOPATH/src/github.com/PacktPublishing/Echo-Essentials/chapter7/cmd/service/main_test.go:
+package main
+import (
+        "testing"
+)
+func TestRunMain(t *testing.T) {
+        TestRun = true
+        go main()
+        <-StopTestServer
+        TestRun = false
+}
+Next, you will see how we alter main.go to include the TestRun variable and the
+StopTestServer channel which are used to tell main that this is a test version of the
+server, and when to stop processing:
+var (
+        StopTestServer = make(chan bool)

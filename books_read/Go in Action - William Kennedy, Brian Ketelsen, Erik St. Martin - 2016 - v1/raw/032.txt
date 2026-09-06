@@ -1,0 +1,63 @@
+11
+Main package
+rss.go
+-- Matcher for searching rss feeds
+- search
+default.go
+-- Default matcher for searching data
+feed.go
+-- Support for reading the json data file
+match.go
+-- Interface support for using different matchers
+search.go
+-- Main program logic for performing search
+main.go
+-- Programs entry point
+The code is organized into these four folders, which are listed in alphabetical order.
+The data folder contains a JSON document of data feeds the program will retrieve
+and process to match the search term. The matchers folder contains the code for the
+different types of feeds the program supports. Currently the program only supports
+one matcher that processes RSS type feeds. The search folder contains the business
+logic for using the different matchers to search content. Finally we have the parent
+folder, sample, which contains the main.go code file, which is the entry point for the
+program. 
+ Now that you’ve seen where all the code for the program is, you can begin to
+explore and understand how the program works. Let’s start with the entry point for
+the program. 
+2.2
+Main package
+The program’s entry point can be found in the main.go code file. Even though there
+are only 21 lines of code, there are a few things going on that we have to mention.
+01 package main
+02
+03 import (
+04
+"log"
+05
+"os"
+06
+07
+_ "github.com/goinaction/code/chapter2/sample/matchers"
+08
+"github.com/goinaction/code/chapter2/sample/search"
+09 )
+10
+11 // init is called prior to main.
+12 func init() {
+13
+// Change the device for logging to stdout.
+14
+log.SetOutput(os.Stdout)
+15 }
+16
+17 // main is the entry point for the program.
+18 func main() {
+19
+// Perform the search for the specified term.
+20
+search.Run("president")
+21 }
+Every Go program that produces an executable has two distinct features. One of those
+features can be found on line 18. There you can see the function main declared. For
+Listing 2.2
+main.go

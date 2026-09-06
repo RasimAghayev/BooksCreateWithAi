@@ -1,0 +1,51 @@
+107
+Interfaces
+ 
+./listing36.go:32: cannot use u (type user) as type
+notifier in argument to sendNotification:
+user does not implement notifier (notify method has pointer receiver)
+So why do we receive a compiler error when the user type implements the notify
+method on line 21? Let’s take a look at that code again.
+08 // notifier is an interface that defined notification
+09 // type behavior.
+10 type notifier interface {
+11
+notify()
+12 }
+21 func (u *user) notify() {
+22
+fmt.Printf("Sending user email to %s<%s>\n",
+23
+u.name,
+24
+u.email)
+25 }
+Listing 5.40 shows how the interface has been implemented, yet the compiler tells us
+that a value of type user doesn’t implement the interface. If you look closer at the
+compiler message, it actually tells us why.
+(notify method has pointer receiver)
+To understand why values of type user don’t implement the interface when an inter-
+face is implemented with a pointer receiver, you need to understand what method sets
+are. Method sets define the set of methods that are associated with values or pointers
+of a given type. The type of receiver used will determine whether a method is associ-
+ated with a value, pointer, or both. 
+ Let’s start with explaining the rules for method sets as it’s documented by the Go
+specification.
+Values
+Methods Receivers
+-----------------------------------------------
+T
+(t T)
+*T
+(t T) and (t *T)
+Listing 5.42 shows how the specification describes method sets. It says that a value of
+type T only has methods declared that have a value receiver, as part of its method set.
+But pointers of type T have methods declared with both value and pointer receivers, as
+Listing 5.39
+Compiler error storing a value of type user to the interface value
+Listing 5.40
+listing36.go: lines 08–12, 21–25
+Listing 5.41
+Closer look at compiler error
+Listing 5.42
+Method sets as described by the specification

@@ -1,0 +1,105 @@
+281
+Symbols
+- character 272
+?: operator 5
+. character 138
+* character 53, 279
+<- operator 73
+Numerics
+304 Not Modified response
+170
+404 Not Found error 54, 173, 
+176, 202
+409 Conflict message 202
+A
+Abstract Syntax Tree. See AST
+accept property 187
+ACK messages 121
+Action function 36
+actions 148
+AES (Advanced Encryption 
+Standard) 9
+Alert log level 123
+An Error Occurred message
+201
+annotations
+structs 266–267
+tags 267–274
+validating 268
+anonymous goroutine 62
+Ansible ops platform 39
+API version
+in content type 211
+in URL 209
+apt-get package manager 22
+arrow operator 73
+AST (Abstract Syntax Tree)
+275
+asterisk character 53, 279
+asynchronous I/O 21
+autonomous applications 222
+B
+back pressure 120
+bar function 126
+BenchmarkCompiled-
+Templates 139
+benchmarking 136–143
+BenchmarkParallelTemplates
+141
+block directive 159
+bool channel 79
+bots 222
+brew install go command 22
+BSD (Berkeley Software 
+Distribution) 28
+building for cloud 230–232
+bytes.Buffer 142
+C
+C language 17–18
+c.Args() method 36
+Caller function 128
+Callers function 128
+cancel() function 251
+Cascading Style Sheets. 
+See CSS
+CBOR (Concise Binary Object 
+Representation) 242
+CDN (content delivery 
+network) 178
+CGI (Common Gateway 
+Interface) 169
+cgo 231
+channels 9–13, 60, 72–83
+Char property 93
+Check() function 135
+Chef ops platform 39
+CLI applications, working 
+with 28–38
+command-line flags 28–33
+gnuflag 31–32
+go-flags 32–33
+command-line frameworks
+33–38
+commands and 
+subcommands 36
+simple console 
+application 34–36
+cli.go framework 35
+cli.NewApp 35
+cli.NewExitError function 36
+close function 78–79
+cloud computing 217–234
+building for cloud 230–232
+containers and cloud-native 
+applications 220–222
+infrastructure as service 219
+managing services 222–227
+avoiding cloud provider 
+lock-in 222–225
+handling errors 225–227
+overview 17
+performing runtime 
+detection 227–230
+performing runtime 
+monitoring 232–234
+index

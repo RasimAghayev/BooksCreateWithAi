@@ -1,0 +1,9 @@
+Technical requirements
+You will be required to know Go programming language, also basics of web
+application framework. You will also need to install Git, in order use the Git
+repository of this book. And finally, ability to develop with an IDE on the
+command line.
+The code files of this chapter can be found on GitHub:
+https://github.com/PacktPublishing/Echo-Essentials/tree/master/chapter7
+Check out the following video to see the code in action:
+https://goo.gl/PtZgpP

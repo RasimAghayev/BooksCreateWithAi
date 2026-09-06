@@ -1,0 +1,42 @@
+79
+HTML forms and Go
+The PostFormValue method does the same thing, except that it’s for the PostForm
+field instead of the Form field. Let’s make some changes to the code to use the Post-
+FormValue method:
+fmt.Fprintln(w, r.PostFormValue("hello"))
+fmt.Fprintln(w, r.PostForm)
+This time you get this instead:
+sau sheong
+map[hello:[sau sheong] post:[456]]
+As you can see, you get only the form key-value pairs.
+ Both the FormValue and PostFormValue methods call the ParseMultipartForm
+method for you so you don’t need to call it yourself, but there’s a slightly confusing
+gotcha that you should be careful with (at least as of Go 1.4). If you set the client
+form’s enctype to multipart/form-data and try to get the value using either the
+FormValue or the PostFormValue method, you won’t be able to get it even though the
+MultipartForm method has been called! 
+ To help clarify, let’s make changes to the server’s handler function again:
+fmt.Fprintln(w, "(1)", r.FormValue("hello"))
+fmt.Fprintln(w, "(2)", r.PostFormValue("hello"))
+fmt.Fprintln(w, "(3)", r.PostForm)
+fmt.Fprintln(w, "(4)", r.MultipartForm)
+Here’s the result from using our form with enctype set to multipart/form-data:
+(1) world
+(2) 
+(3) map[]
+(4) &{map[hello:[sau sheong] post:[456]] map[]}
+The first line in the results gives you the value for hello that’s found in the URL and
+not the form. The second and third lines tell you why, because if you just take the
+form key-value pairs, you get nothing. That’s because the FormValue and PostForm-
+Value methods correspond to the Form and PostForm fields, and not the Multipart-
+Form field. The last line in the results proves that the ParseMultipartForm method
+was actually called—that’s why if you try to access the MultipartForm field you’ll get
+the data there.
+ We covered quite a bit in these sections, so let’s recap, in table 4.1, how these func-
+tions are different. The table shows the methods that should be called if you’re look-
+ing for values in the corresponding fields. The table also shows where the data comes
+from and what type of data you’ll get. For example, in the first row, if you’re looking
+for data in the Form field, you should be calling the ParseForm method (either
+directly or indirectly). You’ll then get both the URL data and the form data from the
+request and the data will be URL-encoded. Undoubtedly the naming convention
+leaves much to be desired!

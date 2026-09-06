@@ -1,0 +1,80 @@
+50
+CHAPTER 2
+A solid foundation
+ 
+package main
+import (
+     "fmt"
+     "net/http"
+     "strings"
+)
+func main() {
+     http.HandleFunc("/hello", hello)
+     http.HandleFunc("/goodbye/", goodbye)
+     http.HandleFunc("/", homePage)
+     http.ListenAndServe(":8080", nil)
+}
+func hello(res http.ResponseWriter, req *http.Request) {
+     query := req.URL.Query()
+     name := query.Get("name")
+     if name == "" {
+            name = "Inigo Montoya"
+     }
+     fmt.Fprint(res, "Hello, my name is ", name)
+}
+func goodbye(res http.ResponseWriter, req *http.Request) {
+     path := req.URL.Path
+     parts := strings.Split(path, "/")
+     name := parts[2]
+     if name == "" {
+            name = "Inigo Montoya"
+     }
+     fmt.Fprint(res, "Goodbye ", name)
+}
+func homePage(res http.ResponseWriter, req *http.Request) {
+     if req.URL.Path != "/" {
+            http.NotFound(res, req)
+            return
+     }
+     fmt.Fprint(res, "The homepage.")
+}
+NOTE
+Content collected from an end user should be sanitized before using.
+That includes displaying the content back to a user. This functionality is part
+of the templating Go package covered in chapter 5.
+Here you use three handler functions for three paths or path parts B. When a path is
+resolved, it tries to go from the most specific to the least specific. In this case, any path
+that isn’t resolved prior to the / path will resolve to this one.
+ It’s worth noting that paths ending in / can have redirection issues. In this listing,
+a user who visits /goodbye will be automatically redirected to /goodbye/. If you have
+query strings, they may be dropped. For example, /goodbye?foo=bar will redirect to
+/goodbye/.
+Listing 2.16
+Multiple handler functions: multiple_handlers.go
+Registers URL 
+path handlers
+B
+Starts the web server 
+on port 8080
+C
+Handler function
+mapped to
+/hello
+Gets the name from 
+the query string
+D
+Handler 
+function for 
+/goodbye/
+E
+Looks in the 
+path for a name
+F
+Home and not 
+found handler 
+function
+G
+Checks the path 
+to decide if home 
+page or not found
+H

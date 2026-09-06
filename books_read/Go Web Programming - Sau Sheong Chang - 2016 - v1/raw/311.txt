@@ -1,0 +1,161 @@
+INDEX
+290
+postRead struct 134
+posts.csv file 131–132
+PostsByAuthor variable 127
+PostTestSuite 214
+prepared statement 139
+Principle of Least 
+Astonishment 64
+Principle of Least Surprise 64
+print1 function 226, 228–230
+print2 function 230
+printf function 111
+printLetters1 function 226, 229
+printLetters2 function 227–229, 
+231, 234
+printNumbers1 function 226, 
+229
+printNumbers2 function
+227–229, 231, 234
+Privacy Enhanced Email. See 
+PEM
+private key 52–55, 68
+private navigation bar 32
+process function 100
+ProgrammableWeb 157
+psql tool 40
+Public Key Infrastructure. See PKI
+--publish flag 275
+PUT method 10, 161
+Q
+query 15
+Query method 143
+QueryRow method 140–141
+QueryRowx method 149
+Queryx method 149
+question mark character 15
+quote character 165
+R
+r.Form 77
+r.PostForm 77
+race condition 249–250
+RAML (Restful API Modeling 
+Language) 162
+ran docker-machine env 
+wsd 278
+range action 41
+RawQuery field 71
+RDBMS (relational database 
+management system) 134
+RDS (Relational Database 
+Service) 258
+React.js library 174
+Read method 73, 130, 133
+ReadAll method 132
+Reader interface 73
+ReadFile 129
+reading CSV files 130–132
+readPost variable 146, 152
+receive-only channels 233
+red_hello.html file 122
+red, green, and blue. See RGB
+Redirection status code 13
+Referrer header field 12
+Register function 138
+Related method 152
+relational databases 134
+relational mappers 147–152
+Gorm (Go-ORM) 149–152
+Sqlx library 148–149
+relationships, SQL 143–147
+one-to-many 
+relationship 145–147
+setting up databases 143–144
+Remote Procedure Call. See RPC
+request handling 47–68
+net/http library 48–49
+serving Go 50–55
+Go web server 50–51
+through HTTPS 51–55
+using handlers 55–66
+chaining handlers and han-
+dler functions 59–62
+handler functions 57–59
+handling requests 55–56
+other multiplexers 64–66
+ServeMux and 
+DefaultServeMux 63–64
+using HTTP/2 66–68
+request headers 11–12
+request methods 10
+Request struct 20, 55, 68
+request-response 8
+requests
+receiving and processing
+27–32
+access control using 
+cookies 30–32
+creating handler 
+function 28–30
+multiplexer 27–28
+serving static files 28
+request body 73–74
+request header 71–73
+Request struct 70
+Request URL 70–71
+ResponseWriter 82–87
+resize function 241
+resources
+converting actions to 162
+making actions properties 
+of 163
+respawn 262
+responds 8
+response headers 13–14
+response status code 13
+ResponseRecorder struct 202
+ResponseWriter 82–87, 98–99
+REST (Representational State 
+Transfer), web services 
+based on 160–163
+converting actions to 
+resources 162
+making actions properties of 
+resources 163
+Restful API Modeling Lan-
+guage. See RAML
+results template 246
+retrieve function 204–205, 208
+retrievePost function 186
+RGB (red, green, and blue) 240
+--rm flag 275
+route_auth.go file 30
+Row struct 140
+RPC (Remote Procedure 
+Call) 157
+RUN command 275
+-run flag 198
+Run function 203
+S
+SaaS (Software-as-a-Service) 258
+safe request methods 11
+scalable web apps 4–5
+Scan method 140–141
+scheme name 14
+<script> tag 116
+Secure Socket Laye. See SSL
+select statement 237–239, 252
+send-only channels 233
+ServeHTTP method 55, 57, 207
+ServeMux 49, 56–57, 63–65, 68
+Server Error status code 13
+Server response header 14
+Server struct 43, 51, 57, 64, 66
+server_test.go file 191, 210, 213, 
+217
+server-side includes. See SSI
+server.go file 18, 258
+servers
+deploying Go to 257–263
+starting 43

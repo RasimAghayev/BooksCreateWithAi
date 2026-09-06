@@ -1,0 +1,52 @@
+Benchmarks
+103
+A benchmark for the Fibonacci function
+1
+// fibonacci_bench_test.go
+2
+package fibonacci
+3
+4
+import "testing"
+5
+6
+var numbers = []int{
+7
+0, 10, 20, 30,
+8
+}
+9
+10
+func BenchmarkF(b *testing.B) {
+11
+// run F(n) b.N times
+12
+m := len(numbers)
+13
+for n := 0; n < b.N; n++ {
+14
+F(numbers[n%m])
+15
+}
+16
+}
+The BenchmarkF function can be saved in any file ending with _test.go to be included by the testing
+package. The only real surprise in the code is the for loop defined on line 13,
+13
+for n := 0; n < b.N; n++ {
+The benchmark function must run the target code b.N times. During benchmark execution, b.N is
+adjusted until the benchmark function lasts long enough to be timed reliably.
+To run the benchmark, we need to explicitly instruct go test to run benchmarks using the -bench
+flag. Similar to the -run command-line argument, -bench also accepts a regular expression to match
+the benchmark functions we want to run. To run all the benchmark functions, we can simply provide
+-bench=.. go test will first run all the tests (or those matched by -run, if provided), and then run the
+benchmarks. The output for our benchmark above looks is as follows:
+$ go test -bench=.
+goos: linux
+goarch: amd64
+BenchmarkF-4
+1000
+1255534 ns/op
+PASS
+ok
+_/home/productiongo/benchmarks/fibonacci 1.387s
