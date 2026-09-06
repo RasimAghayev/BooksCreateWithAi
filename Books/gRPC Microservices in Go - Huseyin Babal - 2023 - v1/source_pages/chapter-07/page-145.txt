@@ -1,0 +1,54 @@
+128
+CHAPTER 8
+Deployment
+8.1
+Docker
+Docker is a platform that helps you to build and package your application and its
+dependencies, as well as deploy it seamlessly. (See this book to learn more:
+https://www.manning.com/books/docker-in-action-second-edition.) Here, I will skip
+the basics and provide practical information. Building a Docker image for a Go appli-
+cation is easy since we simply add a Go binary executable into the Docker image, and
+it already has all the dependencies we need inside it. This executable will be the con-
+tainer’s entry point, a runnable instance of the Docker image, so that it will launch
+our application whenever you run a container. To better understand this process, let’s
+look at how we can build a Docker image for our microservices.
+8.1.1
+Building images
+Building a Docker image has two steps:
+1
+Prepare a Dockerfile.
+2
+Execute docker build -t <image_name>.
+In the Dockerfile, a line should start with the FROM keyword to state our application’s
+parent image. In Go, there are different dependencies for compile time and runtime.
+For example, we need to be able to run go build to generate a Go binary executable,
+but once we build it, we no longer need the Go distribution in the container runtime.
+We can provide a generated Go executable binary as an entry point to the Docker
+container. Separating compile time and runtime dependencies in Docker images
+is the process of creating multistage builds in Docker (see https://docs.docker
+.com/develop/develop-images/multistage-build/). In the example that follows, a
+Golang Docker image will be the parent image that executes the go build command,
+and we will pass a generated artifact to the next stage, which uses a scratch Docker
+image as the parent. The scratch image is a special one that you cannot pull or run as
+a standalone container but that you can use as a parent and provide an executable as
+an entry point:
+FROM golang:1.18 AS builder 
+WORKDIR /usr/src/app
+COPY . .
+RUN CGO_ENABLED=0 GOOS=linux go build -a -installsuffix cgo -o order 
+➥ ./cmd/main.go 
+FROM scratch
+COPY --from=builder /usr/src/app/order ./order 
+CMD ["./order"] 
+About code examples in this chapter
+In chapter 4, we started coding our services, and the code in this chapter is based on
+what we implemented in chapters 4 and 5. The examples in this chapter are complete,
+and you can build Docker images and deploy any of them to Kubernetes. We will con-
+tinue to extend it to see how CD works.
+Uses the Golang Docker 
+image as parent
+Copies Go source code to the Docker image
+Builds a Go binary executable
+Copies a generated artifact from 
+the first stage to the second one
+Orders a gRPC server as an entry point

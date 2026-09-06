@@ -1,0 +1,60 @@
+22
+CHAPTER 2
+gRPC meets microservices
+that if the saga fails at any specific step, it runs compensation transactions from the bot-
+tom up. For example, if it fails in shipping, it will execute Payment:refund() and
+Order:cancel(), such as a rollback operation for order creation, as seen in figure 2.5.
+We will use the request/response style to complete a saga flow for interservice commu-
+nication. Each service should know the address of all other services to connect. Let’s
+take a closer look at how services find each other in microservice architecture.
+2.4
+Service discovery
+Service discovery is the operation in which service locations are managed and exposed
+outside to let each service find the next one for step execution. There are two types of
+service discovery:
+Client-side service discovery—In this notation, a service discovery tool allows appli-
+cations to report their locations during startup, as shown in figure 2.6. Client
+applications have direct connections to the service registry, and they query the
+location of a specific service by providing some criteria, like the service name,
+or a unique identifier.
+Server-side service discovery—A load balancer integrates with the service registry to
+resolve downstream services. Client applications connect to services via the load
+balancer instead of using the service registry to resolve the exact location, as
+visualized in figure 2.7.
+Apart from those two discovery mechanisms, container orchestration platforms such
+as Kubernetes have built-in service discovery mechanisms that allow you to access any
+service by its name, which we will see in detail in chapter 8. Now that we understand
+service discovery, which enables services to communicate with each other, let’s see
+how gRPC comes into play.
+Payment
+process()
+Shipping
+start()
+Payment
+refund()
+Shipping
+cancel()
+Create
+Order
+Saga
+Success
+Fail
+Fail
+Fail
+Compensation
+actions
+Success
+Order
+create()
+TX
+TX
+TX
+TX
+TX
+Order
+cancel()
+TX
+Figure 2.5
+An orchestrator for an order creation creates an order and payment process, and 
+the Shipping service starts to complete the order flow. It runs a compensation transaction in 
+case of failure, and this is executed from the bottom up.

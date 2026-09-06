@@ -1,0 +1,43 @@
+45
+3.4
+Backward and forward compatibility
+message CreatePaymentRequest {
+    oneof payment_method  {
+        CreditCard credit_card = 1;
+        PromoCode promo_code = 2;
+    }
+}
+After a while, remove the promo_code option from the list, tag the message type as v2,
+and upgrade the server side. If the client uses v1 and sends promo_code in the request,
+the information about promo_code will be lost on the server side since it is an unknown
+field. Removing a field from oneof is a backward-incompatible change, and adding a
+new field to oneof is a forward-incompatible change. If there is an incompatible
+change in your message field, you need to introduce an update to your semantic ver-
+sion (https://semver.org/) so that consumers will know there is a breaking change.
+Consumers will need to check the release notes page of the new release to make the
+necessary changes on the client side and avoid compatibility problems.
+3.4.5
+Moving fields out of or into oneof fields
+This time a regular field is moved into or out of oneof group, which causes a data loss.
+Let’s say that you have the following request to send CreatePaymentRequest:
+message CreatePaymentRequest {
+    oneof payment_method {
+        CreditCard credit_card = 1;
+    }
+    PromoCode promo_code = 2;
+}
+After a while, we decide to move the promo_code field into one of the groups. The mes-
+sage is as follows:
+message CreatePaymentRequest {
+    oneof payment_method {
+        CreditCard credit_card = 1;
+        PromoCode promo_code = 2;
+    }
+}
+If the client used the first message, set credit_card and promo_code fields, and sent
+them to the server with the second version of the message, then either promo_code or
+credit_card will be lost since you cannot send multiple fields for a oneof group.
+ Use cases about compatibility problems can be extended. Still, it is enough to
+understand that we should be cautious while changing fields, especially when reusing
+an already used field number or name. Changes should always be backward and for-
+ward compatible to prevent disruption on both the client and server side.

@@ -1,0 +1,12 @@
+46
+CHAPTER 3
+Getting up and running with gRPC and Golang
+Summary
+The protocol buffer compiler uses a special encoding operation to marshal data
+into a [] byte for excellent performance on the gRPC protocol.
+The protocol buffer compiler helps us generate language-specific source code
+that we can maintain in the same repo or an independent repository.
+GitHub Actions allows us to automate source code generation and tagging by
+using a workflow definition.
+Introducing changes that are always backward and forward compatible is cru-
+cial to prevent service disruption or data loss.

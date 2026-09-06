@@ -1,0 +1,65 @@
+100
+CHAPTER 6
+Resilient communication
+…
+func getTlsCredentials() (credentials.TransportCredentials, error) {
+    serverCert, serverCertErr := tls.LoadX509KeyPair("cert/server.crt", 
+    ➥ "cert/server.key")
+    // handle serverCertErr
+    certPool := x509.NewCertPool() 
+    caCert, caCertErr := ioutil.ReadFile("cert/ca.crt")
+    // handle caCertErr
+    if ok := certPool.AppendCertsFromPEM(caCert); !ok { 
+        return nil, errors.New("failed to append the CA certs")
+    }
+    return credentials.NewTLS(
+        &tls.Config{
+            ClientAuth:   tls.RequireAnyClientCert,
+            Certificates: []tls.Certificate{serverCert}, 
+            ClientCAs:    certPool, 
+        }), nil
+}
+…
+func main() {
+    listener, err := net.Listen("tcp", fmt.Sprintf(":%d", 8080))
+    // handle err
+    tlsCredentials, tlsCredentialsErr := getTlsCredentials()
+    // handle tlsCredentialsErr
+    var opts []grpc.ServerOption
+    opts = append(opts, grpc.Creds(tlsCredentials)) 
+    grpcServer := grpc.NewServer(opts...)
+    …
+}
+In listing 6.8, transport credentials are created from the certificate files, and the newly
+created credentials object is passed to the gRPC server initialization. This also means
+that when a client wants to connect this gRPC server, it must provide a client certifi-
+cate to its gRPC client connections. 
+ Now that the server side has TLS configuration enabled, let’s look at how we can
+configure the client side to let the client and server exchange their certificates and
+then establish secure communication:
+func getTlsCredentials() (credentials.TransportCredentials, error) {
+    clientCert, clientCertErr := tls.LoadX509KeyPair("cert/client.crt", 
+    ➥ "cert/client.key") 
+    // handle clientCertErr
+    certPool := x509.NewCertPool()
+    caCert, caCertErr := ioutil.ReadFile("cert/ca.crt")
+    // handle caCertErr
+Listing 6.8
+gRPC TLS configuration
+Load server certificate
+Certificate
+pool for CA
+check
+Adds
+ca.crt
+to pool
+Client authentication 
+type
+Provides server
+certificate
+Roots the CA for the server 
+to verify client certificates
+Adds TLS configuration 
+to server options
+Loads client certificate
+Certificate pool for CA check

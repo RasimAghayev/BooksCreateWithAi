@@ -1,0 +1,51 @@
+76
+CHAPTER 5
+Interservice communication
+
+PERMISSION_DENIED—If the operation is not allowed for the current caller, the
+server will return this status code. You might be already logged into the system,
+but the resource you are trying to access may need higher permissions.
+
+RESOURCE_EXHAUSTED—This code is used once the caller reaches its limit for
+usage. For example, you may have a quota for a Software as a Service (SaaS)
+product; then, once you reach the limit for the product in that environment,
+the server will return this status code.
+
+INTERNAL—This status code is used for internal server errors.
+(See the gRPC status codes here: http://mng.bz/Aodz.) Now that we understand the
+meanings of gRPC status codes, let’s look at how we can use them in gRPC responses.
+5.3.2
+Returning an error code and message
+Consider the following code from the Payment service to better understand the error
+structure:
+func (a Adapter) Create(ctx context.Context, request 
+➥ *payment.CreatePaymentRequest) (*payment.CreatePaymentResponse, error) {
+    newPayment := domain.NewPayment(request.UserId, request.OrderId,   
+    ➥ request.TotalPrice)
+    result, err := a.api.Charge(newPayment) 
+    // Assume it returns something like => err = errors.New("failed to 
+       ➥ charge customer")
+    if err != nil {
+        return nil, err
+    }
+    return &payment.CreatePaymentResponse{PaymentId: result.ID}, nil
+}
+If you call the Create endpoint of the Payment service with the following command,
+the result will create a clear picture:
+grpcurl -d '{"user_id": 123, "order_id":12, "total_price": 32}' -plaintext 
+➥ localhost:3001 Payment/Create
+ERROR:
+  Code: Unknown
+  Message: failed to charge the customer
+As you can see, the Message field is there, but what about the code field? That is miss-
+ing because we simply returned an error object instead of gRPC status. Let’s refine the
+code a bit so that it also returns code:
+func (a Adapter) Create(ctx context.Context, request 
+➥ *payment.CreatePaymentRequest) (*payment.CreatePaymentResponse, error) {
+    newPayment := domain.NewPayment(request.UserId, request.OrderId, 
+    ➥ request.TotalPrice)
+    result, err := a.api.Charge(newPayment) 
+    // Assume it returns => err = status.Errorf(
+        codes.InvalidArgument,
+Assume this returns an error.
+Assume this returns an error.

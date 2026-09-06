@@ -1,0 +1,46 @@
+142
+CHAPTER 8
+Deployment
+and Let’s Encrypt (https://letsencrypt.org/) are examples of cert-manager integra-
+tions, but we will use a self-signed certificate to explain concepts in the local Kuberne-
+tes cluster. Let’s look at the custom resources cert-manager provides and apply the
+integration to see it in action for the Order service.
+8.3.1
+Installation
+cert-manager contains custom resources for generating and injecting certificates to
+specific workloads. Installation will create custom resources in Kubernetes that we can
+use in our deployment pipeline. There are several options to install cert-manager:
+Helm, Operator, or kubectl apply. Let’s use Helm:
+helm repo add jetstack https://charts.jetstack.io 
+helm repo update 
+helm install \ 
+  cert-manager jetstack/cert-manager \
+  --namespace cert-manager \ 
+  --create-namespace \ 
+  --version v1.10.0 \
+  --set installCRDs=true 
+You can verify and see all the available CRDs installed via cert-manager as follows:
+kubectl get crds
+As a result, you will see six CRDs: CertificateRequests, Certificates, Challenges,
+ClusterIssuers, Issuers, and Orders. We will focus on ClusterIssuers. Let’s create a
+ClusterIssuer to handle the self-signed certification flow, which is very handy for local
+development.
+8.3.2
+ClusterIssuer
+I find this resource name (ClusterIssuer) significant because when you want to use a
+certificate for TLS communication, you must “issue a certificate.” ClusterIssuer does
+that for you cluster-wide. You would use the following resource to create a self-signed
+certificate in a Kubernetes cluster:
+apiVersion: cert-manager.io/v1
+kind: ClusterIssuer
+metadata:
+  name: selfsigned-issuer
+spec:
+  selfSigned: {}
+As always, save this content in cluster-issuer.yaml and use the following to create this
+resource in Kubernetes cluster:
+kubectl apply -f cluster-issuer.yaml
+Repo for cert-manager
+Updates the repository index
+Creates a namespace if it does not exist
+Installs all CRDs

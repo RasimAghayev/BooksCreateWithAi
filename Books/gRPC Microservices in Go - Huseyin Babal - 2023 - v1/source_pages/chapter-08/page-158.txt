@@ -1,0 +1,51 @@
+141
+8.3
+Certificate management
+          - path: /Order 
+            pathType: Prefix
+            backend:
+              service:
+                name: order
+                port:
+                  number: 8080
+  tls:
+    - hosts:
+        - ingress.local  
+The Ingress resource has name and label fields like other Kubernetes resources, and
+most of the configurations are done via the annotation section. This is followed by
+some rule patterns in which the route operation is applied to a specific path (e.g.,
+backend protocol, certificate issuer, and SSL redirect).
+ To deploy the Ingress controller, you can use the helm package manager
+(https://helm.sh/) to deploy the nginx-ingress chart:
+helm repo add ingress-nginx https://kubernetes.github.io/ingress-nginx 
+helm repo  update #B
+helm install nginx-ingress ingress-nginx/ingress-nginx 
+This will simply deploy an nginx instance inside a pod, creating a load balancer. When-
+ever you request this load balancer, it goes through the NGINX pod, which also con-
+tains nginx.conf. NGINX configurations are rerendered whenever there is a change
+for any Ingress resource. 
+ In sum, we deployed a pod that contains the actual workload, in our case, any
+microservice. Then we learned how to manage replicas of that pod and automatically
+handle image updates. We used Service to expose the pod to the public using Service
+with the LoadBalancer, NodePort, and ClusterIP options. Finally, we tried to understand
+the benefits of using the NGINX Ingress controller, which provisions a load balancer
+and then uses Ingress resources to configure routing for public access. Now that we
+understand how the public traffic reaches the pod in the Kubernetes environment,
+let’s look at how TLS certification automation is handled, as we also need it for Ingress
+resources.
+8.3
+Certificate management
+We already addressed how TLS-enabled communication works for gRPC microser-
+vices and followed a step-by-step explanation of TLS certification generation for
+secure gRPC communication. In this section, we will automate this process via cert-
+manager (https://cert-manager.io/docs/), a tool that helps us obtain, renew, then use
+certificates in the Kubernetes environment. cert-manager provides custom CRDs (cus-
+tom resource definitions), which are responsible for certificate-related resources and
+for integrating third parties to obtain certificates. Vault (https://www.vaultproject.io/)
+Context path for the Order gRPC
+Authorized domain for TLS
+Adds the required
+repository for the chart
+Updates the repository index
+Installs resources 
+via the chart

@@ -1,0 +1,21 @@
+103
+Testing microservices
+Microservice architecture encourages you to write minimal services that can be easily
+tested as a unit. For example, while testing the Order service, the only context you
+need to focus on is Order. To test the Order service, you have two high-level alterna-
+tives: manual testing and automated testing.
+ With manual testing, you must run actual and dependent services to test the entire
+flow. This can be a time-consuming operation compared to testing backed by a
+machine. This inefficient testing methodology will also slow down your software deliv-
+ery. However, with automated testing, you can get fast feedback from your implemen-
+tation because you don’t need to wait until you finish and test the entire system.
+ We will look at different testing strategies in this chapter, but first let’s look at
+the relations between them and their possible advantages and disadvantages.
+This chapter covers
+Understanding the motivation behind testing
+Test strategies (e.g., unit testing, integration 
+testing, and end-to-end testing)
+Test containers’ usage in test automation
+Calculating and viewing the test coverage for 
+test suites
+Understanding test pyramids

@@ -1,0 +1,67 @@
+77
+5.3
+Error handling
+        fmt.Sprintf("failed to charge user: %d", request.UserId))
+    if err != nil {
+        return nil, err
+    }
+    return &payment.CreatePaymentResponse{PaymentId: result.ID}, nil
+}
+Once we make another payment Create endpoint call, you will see the following
+response:
+grpcurl -d '{"user_id": 123, "order_id":12, "total_price": 32}' -plaintext 
+➥ localhost:3001 Payment/Create
+ERROR:
+  Code: InvalidArgument
+  Message: failed to charge user: 123
+Error codes help you understand the error category and decide on the next step. Now
+that we know how to return errors with their statuses and codes, let’s try to add more
+details to those errors for a better understanding of the root cause of the problem.
+5.3.3
+Errors with details
+In the previous example, we assumed that the customer’s credit card failed to charge,
+and, in this case, we should propagate this error to the Order service to let it return a
+proper message to the consumer. Since the Order service depends on multiple ser-
+vices, such as the Payment and Shipping services, any error can be caused by several
+reasons: insufficient balance, invalid shipping address, and so on. The gRPC status
+package has another constructor to allow passing more details to the status object.
+The following code is a good example for explaining why the order creation failed:
+func (a Application) PlaceOrder(order domain.Order) (domain.Order, error) {
+    err := a.db.Save(&order)
+    if err != nil {
+        return domain.Order{}, err
+    }
+    paymentErr := a.payment.Charge(&order)
+    if paymentErr != nil {
+        st, _ := status.FromError(paymentErr) 
+        fieldErr := &errdetails.BadRequest_FieldViolation{
+            Field:       "payment",
+            Description: st.Message(),
+        } 
+        badReq := &errdetails.BadRequest{}
+        badReq.FieldViolations = append(badReq.FieldViolations, fieldErr) 
+        orderStatus := status.New(codes.InvalidArgument, "order creation 
+        ➥ failed") 
+        statusWithDetails, _ := orderStatus.WithDetails(badReq) 
+        return domain.Order{}, statusWithDetails.Err()
+    }
+    return order, nil
+}
+Resolves status from 
+a payment error
+Payment
+error as a
+separate
+field
+Initiates
+a bad
+request
+error
+Populates with an
+actual payment detail
+Creates the root status
+Augments 
+the status 
+with a 
+payment 
+error

@@ -1,0 +1,38 @@
+70
+CHAPTER 5
+Interservice communication
+Now that we understand how the Order service evolves with the payment module, let’s
+zoom into the payment port and adapter and review step-by-step explanations on how
+to implement a payment strategy for the Order service.
+5.2.3
+Implementing the payment port
+The payment port allows the Order service to call the Payment service
+(http://mng.bz/V1xP). To define a basic contract in a payment port, you can simply
+go to the Order service project we implemented in chapter 4 and create a payment
+port file: mkdir -p internal/ports && touch internal/ports/payment.go.
+ The payment port has only one functionality: charge. Simply pass the actual order
+object, and it charges the customer based on order details:
+package ports
+import "github.com/huseyinbabal/microservices/order/internal/application/
+➥ core/domain"
+type PaymentPort interface {
+    Charge(*domain.Order) error
+}
+Now that we have PaymentPort, let’s see what the payment adapter looks like.
+Driver side
+Driven side
+Ports
+Ports
+Adapter
+Adapter
+Payment
+MySQL
+gRPC
+Infrastructure
+Application
+Uses
+Order
+Implements
+Figure 5.5
+Port and adapter 
+for a payment stub

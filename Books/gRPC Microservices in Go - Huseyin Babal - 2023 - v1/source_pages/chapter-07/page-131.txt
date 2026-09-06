@@ -1,0 +1,71 @@
+114
+CHAPTER 7
+Testing microservices
+This will create a MySQL container, verify it is up and running, then get the available
+endpoint URL and pass it to the test suite context:
+func (o *OrderDatabaseTestSuite) SetupSuite() { 
+    ctx := context.Background()
+    port := "3306/tcp"
+    dbURL := func(port nat.Port) string {
+        return fmt.Sprintf("root:s3cr3t@tcp(localhost:%s)/
+        ➥ orders?charset=utf8mb4&parseTime=True&loc=Local", 
+        ➥ port.Port()) 
+    }
+    req := testcontainers.ContainerRequest{
+        Image:        "docker.io/mysql:8.0.30",
+        ExposedPorts: []string{port},
+        Env: map[string]string{
+            "MYSQL_ROOT_PASSWORD": "s3cr3t",
+            "MYSQL_DATABASE":      "orders",
+        },
+        WaitingFor: wait.ForSQL(nat.Port(port), "mysql", 
+        ➥ dbURL).Timeout(time.Second * 30),
+    }
+    mysqlContainer, err := testcontainers.GenericContainer(ctx, 
+    ➥ testcontainers.GenericContainerRequest{
+        ContainerRequest: req,
+        Started:          true,
+    })
+    if err != nil {
+        log.Fatal("Failed to start Mysql.", err)
+    }
+    endpoint, _ := mysqlContainer.Endpoint(ctx, "")
+    o.DataSourceUrl = 
+    ➥ fmt.Sprintf("root:s3cr3t@tcp(%s)/
+    ➥ orders?charset=utf8mb4&parseTime=True&loc=Local", endpoint) 
+}
+A security note here: we have used a root user in our tests, but it is good practice to
+use a nonroot user for accessing databases. Let’s implement a test for verifying DB
+adapter save functionality and see if MySQL is correctly initialized, then assert there is
+no error in the test after saving. These tests contain a receiver with the type OrderData-
+baseTestSuite so that we have direct access to asserting functions. Now we can append
+db.Save() testing to the db_integrateion_test.go file:
+func (o *OrderDatabaseTestSuite) Test_Should_Save_Order() {
+    adapter, err := NewAdapter(o.DataSourceUrl)
+    o.Nil(err) 
+    saveErr := adapter.Save(&domain.Order{}) 
+    o.Nil(saveErr)
+}
+According to this test, there shouldn’t be an error after order information is saved to
+the database. Let’s add one more test for the db.Get() function verification; then we
+will see how to execute all tests in one suite. Create a sample order and save it to the
+Suite setup with 
+receiver function
+Used for
+a health
+check
+ in the
+WaitFor
+field
+Verifies DB with the 
+SELECT 1 query
+Sets
+DataSourceUrl
+to be used on
+each test
+Assertions are available 
+through receiver o.
+Saves
+a new
+order
+Asserts there is no error after saving

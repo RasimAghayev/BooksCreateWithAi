@@ -1,0 +1,100 @@
+INDEX
+181
+server
+load balancing on side of 66
+upgrading client but not server 44
+upgrading, but not client 43–44
+service discovery 22
+service performance monitoring 160–161
+Service resource, Kubernetes 137–139
+Service types 137
+Service YAML definition 137
+service-level agreement (SLA) 155
+service-level indicator (SLI) 155
+service-level objective (SLO) 155–157
+service-to-service communication 66–68
+Service, LoadBalancer Type 137
+<ServiceName>Client function 37
+Service–pod relationship 147
+SetupSuite section 120
+Shipping operation 18
+Shipping service 39–40, 42
+Shipping stub 24
+SLA (service-level agreement) 155
+SLI (service-level indicator) 155
+SLO (service-level objective) 155–157
+software development kits (SDKs) 79
+source code generation automation 40–42
+spec section 136
+stack, running tests against 120–123
+status codes, in error handling 75–76
+stubs
+client and server 4
+generating 36–38
+Payment and Shipping 24
+payment, client configuration for 72–73
+-subj parameter 97
+SUT (system under test) 105
+svc.cluster.local suffix 162
+T
+TearDownSuite 120, 122
+test suite preparation 112–113
+Testcontainers 113–115
+testing microservices 103–126
+end-to-end tests 115–123
+database layer 117–118
+Docker Compose service definitions 116–117
+folder structure for 117
+Order service layer 119–120
+Payment service layer 118–119
+running tests against stack 120–123
+specifications 116
+integration tests 112–115
+test suite preparation 112–113
+working with Testcontainers 113–115
+test coverage 123–124
+coverage information 123–124
+testing in CI pipeline 124
+testing pyramid 104–105
+unit tests 105–112
+automatic mock generation 111–112
+implementing mock 108–111
+system under test 105
+test workflow 106–107
+working with mocks 107–108
+testing pyramid 104–105
+TestSetupSuite function 113
+TestSetupTest method 112
+TestTearDownSuite method 112
+timeout pattern 82–85
+TLS (Transport Layer Security) 4
+gRPC credentials 99–101
+handshake 95–96
+to keyword 33
+traces, in observability 154–155
+two-phase commit (2PC) 18
+U
+UAT (user acceptance testing) 11
+Unavailable response code 86–87
+unit tests 105–112
+automatic mock generation 111–112
+implementing mock 108–111
+system under test 105
+test workflow 106–107
+working with mocks 107–108
+upgrading
+client, but not server 44
+server, but not client 43–44
+V
+VCS (Version Control System) 11
+W
+wires, connecting in interservice 
+communication 27–28
+WithBackoff configuration 87
+WithCodes configuration 87
+WithMax configuration 87
+WithStreamingInterceptor interceptor usage 87
+WithUnaryInterceptor interceptor usage 87
+worker nodes 130
+X
+X-axis scaling 16

@@ -1,0 +1,54 @@
+169
+9.3
+Observability in Kubernetes
+func init() { 
+    log.SetFormatter(serviceLogger{ 
+        formatter: log.JSONFormatter{FieldMap: log.FieldMap{ 
+            "msg": "message",
+        }},
+    })
+    log.SetOutput(os.Stdout) 
+    log.SetLevel(log.InfoLevel) 
+}
+Log formatters can be added to the cmd/main.go file, and once you add the init()
+function it, the log formatter will be initialized when the application starts. Then, you
+can use logrus in any location, and it will use that formatter globally in your project:
+log.WithContext(ctx).Info("Creating order...")
+If you make a gRPC call to CreateOrder, logrus will use the context to populate its con-
+tent, which you can see in trace and span information:
+{"Context":{"TraceID":"4a55375c835c1e0f78d5a0001b6f5f5d","SpanID":"1ab65b1c
+➥ 982ee940","TraceFlags":"01","TraceState":"","Remote":false},"level":"in
+➥ fo","message":"Creatingorder...","span_id":"1ab65b1c982ee940","time":"2
+➥ 022-12-04T06:37:25Z","trace_id":"4a55375c835c1e0f78d5a0001b6f5f5d"}
+TraceID and SpanID fields can be used in the logging backend to filter and show the
+logs related to a specific operation. However, how can we get the TraceID to complete
+a filter operation? In gRPC, we use context to propagate tracing information between
+services, which can be injected into the response context so that we can use it.
+ As you can see in the example, the logs are in JSON format, and you may think this
+is hard to read in the standard output. However, this usage is very useful for logging
+backends because they can easily map JSON fields into search fields, which you can
+use while searching. If you use plain text logs, you need to develop a proper parser to
+help the logging agent or backend convert log messages into a more readable data
+structure. Now that we also understand how to inject tracing information into applica-
+tion logs, let’s look at how we can collect logs from those applications.
+9.3.8
+Logs collection
+You can get Kubernetes pod logs in the terminal with the following command:
+kubectl logs -f order-74b6b997c-4rwb5
+kubectl is not magic here, as whatever you write in the logs in standard output is
+stored in a log file in the file system. These log files have a naming convention, such as
+<pod>_<namespace>_<container>-<unique_identifier>.log, and are located in /var/log/
+containers in Kubernetes nodes. The post is that collecting logs is not that difficult; a
+simple agent could stream those files and process them. A typical log collection setup
+needs one log collection agent per Kubernetes node to reach the log files under
+/var/log/containers.
+Executes the function on the file load
+Sets 
+serviceLogger 
+as the log 
+formatter
+Renames the 
+log fields
+Logs are printed in 
+standard output.
+Sets the log level

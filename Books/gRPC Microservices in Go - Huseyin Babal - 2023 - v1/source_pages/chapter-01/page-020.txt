@@ -1,0 +1,19 @@
+3
+Introduction to Go
+ gRPC microservices
+Good architecture design and proper technology selection help ensure a high-
+quality product by eliminating repetitive work and providing the best tool kit for
+software development and maintenance. While microservice architecture can be
+implemented in any language, Go is particularly suited for building high-
+performance cloud-native distributed applications such as microservices in
+Kubernetes on a large scale. Microservices with gRPC communication have already
+enabled many companies to implement their products with small services based on
+their business capabilities and have let those services communicate smoothly with
+each other and the public. With the help of Go, the distribution of those services
+becomes easier due to its fast compilation, ability to generate executable binaries,
+This chapter covers
+Introducing Go gRPC microservices
+Comparing gRPC with REST
+Understanding when to use gRPC 
+Applying gRPC microservices to production-grade 
+use cases

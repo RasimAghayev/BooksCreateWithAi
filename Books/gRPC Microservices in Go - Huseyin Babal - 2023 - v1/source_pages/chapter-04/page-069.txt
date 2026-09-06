@@ -1,0 +1,58 @@
+52
+CHAPTER 4
+Microservice project setup
+Domain objects in Go are primarily specified by structs that contain field type, field
+name, and serialization config via tags (https://pkg.go.dev/encoding/json#Marshal).
+For example, to specify a CustomerID field with an int64 type of order and specify a
+field name as customer_id after JSON serialization (e.g., to save it in MongoDB), you
+can use the following code:
+CustomerID int64       `json:"customer_id"`
+order.go contains the following content:
+package domain
+import (
+    "time"
+)
+type OrderItem struct {
+    ProductCode string  `json:"product_code"` 
+    UnitPrice   float32 `json:"unit_price"` 
+    Quantity    int32   `json:"quantity"` 
+}
+type Order struct {
+    ID         int64       `json:"id"` 
+    CustomerID int64       `json:"customer_id"` 
+    Status     string      `json:"status"` 
+    OrderItems []OrderItem `json:"order_items"` 
+    CreatedAt  int64       `json:"created_at"` 
+}
+func NewOrder(customerId int64, orderItems []OrderItem) Order { 
+    return Order{
+        CreatedAt:  time.Now().Unix(),
+        Status:     "Pending",
+        CustomerID: customerId,
+        OrderItems: orderItems,
+    }
+}
+In this example, we simply implemented the Order data structure with an OrderItem
+relation and introduced a method called NewOrder to create an order. There is another
+package under the application, api, which contains another Go file to control the
+state of a specific order. During application initialization, we expect to see a depen-
+dency injection mechanism to inject a DB adapter (concrete implementation for a
+specific DB technology) into the application so that the API can store the state of a
+particular order in the database without needing to know the adaptor’s internals. This
+is why the application depends on the interface ports.DBPort instead of the DB
+adapter’s concrete implementation. The API interface uses this port to access the real
+DB adapter to save order information in the database with the PlaceOrder method:
+touch internal/application/api/api.go
+Unique code of the product
+Price of a single product
+Count of the product
+Unique identifier of the order
+Owner of the order
+Status of
+the order
+List of items purchased in an order
+Order creation time
+Function 
+to create 
+default 
+order

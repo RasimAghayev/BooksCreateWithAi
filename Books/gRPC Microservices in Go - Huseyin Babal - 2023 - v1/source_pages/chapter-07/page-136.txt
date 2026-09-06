@@ -1,0 +1,58 @@
+119
+7.4
+End-to-end tests
+FROM golang:1.18 AS builder 
+WORKDIR /usr/src/app 
+COPY . . 
+RUN CGO_ENABLED=0 GOOS=linux go build -a -installsuffix cgo -o payment 
+➥ ./cmd/main.go 
+FROM scratch
+COPY --from=builder /usr/src/app/payment ./payment 
+CMD ["./payment"] 
+We also need some configurations in the environment variables: application port,
+database URL, and so forth. You can append the following service definition for the
+Payment service to the docker-compose.yml file as follows:
+version: "3.9"
+services:
+  mysql:
+  ...
+  payment:
+    depends_on: 
+      mysql:
+        condition: service_healthy
+    build: ../../payment/ 
+    environment: 
+      APPLICATION_PORT: 8081
+      ENV: "development"
+      DATA_SOURCE_URL: "root:s3cr3t@tcp(mysql:3306)/
+      ➥ payments?charset=utf8mb4&parseTime=True&loc=Local"
+We can now continue with the Order service.
+7.4.6
+The Order service layer
+The Order service definition is almost the same as the Payment service, except it has
+an additional configuration in the environment: a port exposed for our test suite to
+access. The only difference between the payment and order Dockerfile is the binary
+executable name:
+FROM golang:1.18 AS builder
+WORKDIR /usr/src/app
+COPY . .
+RUN CGO_ENABLED=0 GOOS=linux go build -a -installsuffix cgo -o order 
+➥ ./cmd/main.go
+FROM scratch
+COPY --from=builder /usr/src/app/order ./order
+CMD ["./order"]
+From the order folder, add this content to the Dockerfile. The service definition of
+the Order service is as follows:
+The builder name is alias.
+Changes the working directory
+Copies the source code of the payment
+Builds the binary executable
+Copies the binary from 
+the builder stage
+The payment executable is an entry point.
+Depends on running 
+the mysql service
+Dockerfile location 
+for the payment
+Required 
+configurations

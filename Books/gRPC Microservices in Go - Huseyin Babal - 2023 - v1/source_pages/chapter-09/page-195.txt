@@ -1,0 +1,100 @@
+INDEX
+178
+interservice communication 31–46, 65–80
+backward and forward compatibility 43–45
+adding new fields 43
+adding/removing oneof fields 44–45
+moving fields out of or into oneof fields 45
+upgrading client but not server 44
+upgrading server but not client 43–44
+depending on module and implementing ports 
+and adapters 68–75
+client configuration for payment stub 72–73
+implementing payment adapter 71–72
+implementing payment port 70
+payment adapter overview 69–70
+payment port overview 69
+using payment adapter in gRPC 73–75
+error handling 75–80
+errors with details 77–78
+handling errors on client side 78–79
+returning error code and message 76–77
+running Payment service 80
+status codes 75–76
+generating stubs 36–38
+gRPC service-to-service communication 66–68
+maintaining .proto files 38–42
+automation for source code generation
+40–42
+proto project structure 38–40
+protocol buffers 32–36
+defining message type 32–33
+protocol buffer encoding 33–36
+using gRPC for 23–28
+connecting wires 27–28
+generating Go source code 25–27
+working with protocol buffers 24–25
+IP:port pair 138
+Issuers CRD 142
+J
+Jaeger All in One 161–162
+Jaeger installation 162–163
+jaeger namespace 162
+jaeger pod 165
+Jaeger SPM (service performance monitoring) 
+component 167
+jaeger-prometheus Prometheus service name 162
+K
+Kibana as logging dashboard 172–174
+kubectl apply command 136
+kubectl command-line tool 132
+Kubernetes
+deployment 130–141
+architecture 130–132
+eagle view of microservices deployment
+133–134
+NGINX Ingress controller 140–141
+overview 135–137
+pod 134
+resources 132–133
+Service resource 137–139
+observability in 161–174
+application logging 168–169
+Elasticsearch as logging backend 170–172
+Jaeger All in One 161–162
+Jaeger installation 162–163
+Kibana as logging dashboard 172–174
+logs collection 169–170
+OpenTelemetry Collector 162
+OpenTelemetry interceptor for Order 
+service 163–165
+Prometheus 162
+understanding metrics of Order service
+165–167
+L
+labels section 136
+latest tag 39
+load balancing
+client-side 67–68
+server-side 66
+LoadBalancer Service type 137–140, 144
+.local domain name 143
+logging
+application 168–169
+Elasticsearch as backend for 170–172
+in observability 157–158
+Kibana as dashboard for 172–174
+log collections 169–170
+M
+math class 106
+message fields 43
+metrics
+and OpenTelemetry 159–160
+in observability 155–157
+of Order service, understanding 165–167
+microservice architecture 17–22
+choreography-based saga 19–21
+handling data consistency 18
+orchestration-based saga 21–22
+production-grade use cases 9–10
+saga pattern 18–19

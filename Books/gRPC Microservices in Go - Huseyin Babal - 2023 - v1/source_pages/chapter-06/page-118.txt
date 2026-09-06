@@ -1,0 +1,58 @@
+101
+Summary
+    if ok := certPool.AppendCertsFromPEM(caCert); !ok { 
+        return nil, errors.New("failed to append CA cert.")
+    }
+    return credentials.NewTLS(&tls.Config{
+        ServerName:   "*.microservices.dev", 
+        Certificates: []tls.Certificate{clientCert},
+        RootCAs:      certPool, 
+    }), nil
+}
+…
+func main() {
+    tlsCredentials, tlsCredentialsErr := getTlsCredentials()
+    // handle tlsCredentialsErr
+    var opts []grpc.DialOption
+    opts = append(opts, grpc.WithTransportCredentials(tlsCredentials)) 
+    conn, err := grpc.Dial("localhost:8080", opts...)
+    // handle err
+}
+…
+This implementation is useful for local development, but in a production environment,
+it is best practice to delegate certificate management to a third party, which we will see
+in detail in chapter 8 when we deploy microservices to a Kubernetes environment.
+Summary
+In a typical microservices architecture, it is normal for one service to depend on
+one or more other services. If one of the dependent services is down, it will
+affect the availability of the entire microservice application. We use resiliency
+patterns such as retry, timeout, and circuit breaker to prevent these situations.
+Once the dependent service is down, we can use the retry strategy on the con-
+sumer side to make gRPC communication eventually succeed.
+Retry logic can be triggered for certain status codes, such as Unavailable or
+ResourceExhausted, instead of blindly retrying on each failure. For example, it is
+not wise to retry a request if you received a validation exception because it
+shows that you sent an invalid payload; you should fix it to make it succeed.
+Using retry logic blocks the actual gRPC call since you have to wait for depen-
+dent service. It is hard to detect recovery time for a dependent service, which
+can create long wait times for retries. To prevent this situation, we use context
+timeout and deadline to put a time limit on blocking the actual execution.
+In the retry mechanism, you can redo an operation for specific time intervals,
+but this can also put an extra load on the dependent service since it has to retry
+all the time, even if the dependent service is not ready. To solve this problem,
+we use a circuit breaker to open a circuit once we reach the failure limit, retry
+the request after some time, and finally close the circuit once the dependent
+service is back online.
+Adds the CA to 
+the certificate 
+pool
+Server name used 
+during certificate 
+generation
+Provides
+the client
+certificate
+Roots the CA for the client to 
+verify the server certificate
+Adds TLS configuration
+to gRPC dial options

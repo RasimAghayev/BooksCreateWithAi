@@ -1,0 +1,104 @@
+INDEX
+180
+OrderClient interface 37
+OrderDatabaseTestSuite type 113–114
+OrderId struct 55
+OrderItem model 54
+Orders CRD 142
+orders database 118
+ORM (Object Relational Mapping) library 54
+otelgrpc package 164
+outputs section 171
+P
+payment adapter
+implementing 71–72
+overview 69–70
+using in gRPC 73–75
+Payment Create operation 166
+Payment operation 18
+payment port
+implementing 70
+overview 69
+Payment service 39–40, 42
+calls 108
+end-to-end tests 118–119
+running 80
+payment stub, client configuration for 72–73
+payment_created event 20
+payment_failed event 20
+payment-related calls 108
+payment.Charge() call 110
+payments database 118
+PENDING state 20, 74
+performance benefits of gRPC microservices 4
+PlaceOrder 52–53, 59, 74, 78, 107–109, 154, 161
+-plaintext parameter 63
+pods, Kubernetes 134
+ports
+implementing 53–54
+in hexagonal architecture 48
+payment
+implementing 70
+overview 69
+ports.DBPort interface 52
+PR (pull request) 124
+production-grade use cases 8–13
+CI/CD pipeline 11
+container runtime 10–11
+microservices 9–10
+monitoring and observability 11–12
+public access 12–13
+project folders 50–51
+project structure, proto 38–40
+Prometheus 162
+promo_code option 45
+-proto file 144
+.proto files, maintaining 38–42
+automation for source code generation 40–42
+proto project structure 38
+protocol buffer compiler 25
+installation 36
+using 36–38
+protocol buffers 32–36
+defining message type 32–33
+encoding 33–36
+in interservice communication 24–25
+public access 12–13
+R
+replicas definition 136
+replyTo channel 21
+replyToChannel parameter 20
+reserved keyword 33
+resilient communication 81–102
+error handling 92–95
+gRPC error model 93
+gRPC error response 93–95
+resiliency patterns 82–92
+circuit breaker pattern 87–92
+retry pattern 85–87
+timeout pattern 82–85
+securing gRPC communication 95–101
+certificate generation 97–98
+gRPC TLS credentials 99–101
+TLS handshake 95–96
+ResourceExhausted response code 86–87
+REST (Representational State Transfer) 6–7
+retry pattern 85–87
+RollingUpdate deployment 145–146
+round-robin algorithm 67
+route operation 141
+RPC (Remote Procedure Call) 6–7
+Run method 62
+running application 61–63
+S
+saga pattern
+choreography-based saga 19–21
+orchestration-based saga 21–22
+overview 18–19
+Save method 54, 56–57
+scale cube 16–17
+X-axis scaling 16
+Y-axis scaling 17
+Z-axis scaling 17
+scaling monolithic applications 16
+SDKs (software development kits) 79

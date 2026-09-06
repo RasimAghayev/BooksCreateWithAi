@@ -1,0 +1,77 @@
+35
+3.1
+Protocol buffers
+ Now that we understand how protocol buffer encoding works for a simple object
+with a field number less than or equal to 15 and for data values greater than 127 bytes,
+let’s see how to encode an object with a value greater than 127. Let’s say that the
+CreatePaymentRequest message has only one field, user_id, with type int, and field
+number 2. We compiled this message and used it in our production code:
+// order.proto
+message CreatePaymentRequest {
+    int64 user_id = 2;
+}
+// main.go
+request := CreatePaymentRequest {
+    UserId: 21567
+}
+// send a request via gRPC
+The Protobuf compiler will marshal the request object into a []byte, and the metadata
+section will be encoded, just like the previous example and as visualized in figure 3.2.
+The data section will be handled this way:
+1
+Convert the decimal value 21567 to a binary value: 101010000111111.
+2
+Split the binary value into seven-bit blocks: 0000001-0101000-0111111.
+3
+The seven-bit block is for data, and the last bit will be used to store MSB. 
+4
+Reverse the order of data parts (https://betterexplained.com/articles/
+understanding-big-and-little-endian-byte-order/), which will result in 0111111-
+0101000-0000001.
+5
+Since there are three data parts here, the first will have the MSB as 1, the sec-
+ond as 1, and the 3rd as 0 since no more bytes come after that.
+Data part 1
+Data part 2
+Data part 3
+MSB
+MSB
+MSB
+The MSB is 1, 
+since there are
+more bytes.
+The MSB is 1, 
+since there are
+more bytes.
+The MSB is 0 
+since there are 
+no more bytes.
+101010000111111
+Split
+0000001 - 0101000 - 0111111
+1
+1
+1
+1
+1
+1
+1
+1
+1
+1
+1
+0
+0
+0
+0
+0
+0
+0
+0
+0
+0
+0
+0
+0
+Figure 3.2
+Protocol buffer encoding for the integer field values larger than 127

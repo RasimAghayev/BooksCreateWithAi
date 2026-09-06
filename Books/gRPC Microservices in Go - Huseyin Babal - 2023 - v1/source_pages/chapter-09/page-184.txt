@@ -1,0 +1,20 @@
+167
+9.3
+Observability in Kubernetes
+of information, such as the performance of the query. You can check traces, spans, and
+related metrics, as well as the performance summary of gRPC microservices using the
+Jaeger service performance monitoring (SPM) component (figure 9.13).
+JAEGER SPM
+In SPM, you can see the performance monitoring metrics for each service after click-
+ing the Monitor menu in Jaeger UI. To understand the basic performance analysis of
+the Order service, select Order in the dropdown menu to see a performance sum-
+mary that contains p95 latency, request rate, error rate, and so on (figure 9.14).
+In figure 9.14, the p95 latency of the Order service is 46.79 ms, meaning 95% of the
+latencies are 46.79 ms or less. You can also see the frequency of the requests: 6 per sec-
+ond. As a reminder, these performance metrics are aggregated from Prometheus.
+Now that we have checked traces and metrics, let’s look at how we can handle logs in
+Kubernetes.
+Figure 9.13
+DB-related span details
+Figure 9.14
+Jaeger SPM

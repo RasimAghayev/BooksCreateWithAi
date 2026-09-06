@@ -1,0 +1,48 @@
+118
+CHAPTER 7
+Testing microservices
+returns true, this service will be marked as ready. You can append the following YAML
+definition to the docker-compose.yml file:
+version: "3.9"
+services:
+  mysql: 
+    image: "mysql:8.0.30"
+    environment:
+      MYSQL_ROOT_PASSWORD: "s3cr3t"
+    volumes:
+      - "./init.sql:/docker-entrypoint-initdb.d/init.sql" 
+    healthcheck:
+      test: ["CMD", "mysqladmin" ,"ping", "-h", "localhost", "-uroot", "-
+      ➥ ps3cr3t"]
+      interval: 5s
+      timeout: 5s
+      retries: 20
+You can create an init.sql file and append the following SQL script to prepare our
+databases when the MySQL container starts:
+CREATE DATABASE IF NOT EXISTS payments;
+CREATE DATABASE IF NOT EXISTS orders;
+The following command will provision a MySQL container with the payments and
+orders database:
+cd resources && docker-compose up
+This command will provision a database container, and before accepting a new con-
+nection, it will create two databases and the test section will start to work. Now that we
+know how to create the database container, let’s look at the Payment service to inte-
+grate it with a database that is already up and running with a stack.
+7.4.5
+The Payment service layer
+The Payment service depends on the database layer because it stores payment infor-
+mation for specific orders. To run the Payment service, we will need a Docker image
+built during the test container startup process, but we don’t have a Dockerfile yet. In a
+Dockerfile, we express which parent Docker image will be used, and, in our case, we
+have two parent images: one for compilation and one for runtime. This type of build
+is called a multistage build, which we will cover in detail in chapter 8. For now, it is
+enough to know we use a Golang base image to build the payment project and a
+scratch image and payment executable to run the application.
+ You can navigate the payment folder and create a Dockerfile with the following
+content:
+ 
+ 
+Service name as a key
+The SQL file 
+contains DB 
+creations.

@@ -1,0 +1,77 @@
+34
+CHAPTER 3
+Getting up and running with gRPC and Golang
+// main.go
+request := CreateOrderRequest{
+    UserId: 65
+}
+// send a request via gRPC
+The request object is marshalled by the protocol buffer (http://mng.bz/D49n) into
+[]byte to be able to be sent over gRPC. Marshalling results in some bytes containing
+encoding information of the metadata and the data itself (see figure 3.1):
+1
+The metadata section is expressed with 1 byte and has the first three bits for
+denoting the wire type: 000, which is type 0 (Varint) since our data type is int.
+(You can see the whole list here: http://mng.bz/QPV6.)
+2
+The first bit of the data section is called the most significant bit (MSB), and its
+value is 0 when there is no additional byte. Its value becomes 1 if more bytes
+come to encode the remaining data. 
+3
+The remaining bits of the metadata section contain the field value.
+4
+The data section contains the MSB (i.e., a continuation bit) to state whether
+there are more bytes. 
+5
+The remaining seven bits are used for the data itself. 
+A field’s value can be anything based on your needs, and thus cannot affect perfor-
+mance. However, we can affect performance by following some rules for field num-
+bers. For example, you can use numbers less than or equal to 15 for field numbers
+since that is the maximum number a metadata block can store. More metadata blocks
+are needed to express a specified field number. In the same way, if you want to store a
+data value greater than 127 (the maximum capacity of a data block), you need more
+bytes to fit that value in those data blocks. 
+65 can fit in 1 byte
+Metadata
+Field number for Num field
+0 means Varint, which
+refers to int.
+The value of Userld field
+in binary format
+Data
+Bytes
+Binary
+8
+0
+0
+0
+0
+1
+1
+1
+1
+0
+0
+0
+0
+0
+0
+0
+0
+0
+Metadata
+Field number
+Type
+MSB
+0
+0
+0
+0
+0
+0
+0
+1
+Figure 3.1
+Protocol buffer 
+encoding contains data and 
+metadata sections.

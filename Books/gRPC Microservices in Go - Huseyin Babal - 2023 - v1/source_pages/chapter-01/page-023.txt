@@ -1,0 +1,45 @@
+6
+CHAPTER 1
+Introduction to Go gRPC microservices
+example, we may want to retry a user delete operation in case of a network failure on
+response. If the operation returns the same result even if you call it more than once,
+we say this operation is idempotent. 
+ If an operation is not a good fit for an idempotency use case, you must provide
+proper validation errors in a response message that helps you know when to stop the
+retry operation. Once you guarantee this idempotency or proper validation, it is just a
+definition of the retry policy on the gRPC side. Fault tolerance also focuses on topics
+such as rate limiting, circuit breakers, and fault injection, which we will see in greater
+detail in chapter 6.
+1.1.4
+Security
+In most systems, you may need a security layer to protect your product against unveri-
+fied sources. gRPC encourages HTTP/2 over SSL/TLS to authenticate and encrypt
+data exchanged between the client and server. More specifically, you can easily set that
+authentication system up using SSL/TLS, ALTS (Application Layer Transport Secu-
+rity), or a token-based authentication system, which we will cover in more detail in
+chapter 6. 
+1.1.5
+Streaming
+Sometimes you may need to divide response data into several chunks in a paginated
+way that reduces bandwidth and returns them to the user quickly. Moreover, if users
+are only interested in specific pages, it is not meaningful to return all the data simulta-
+neously. In gRPC, in addition to pagination, you can also stream this data to the con-
+sumer instead of forcing the user to do pagination to get the data iteratively.
+Streaming doesn’t necessarily have to be on the server side; it can also be on the client
+side or both sides simultaneously, called bidirectional streaming. In a typical streaming
+use case, you open the connection once, and the data is streamed through this
+opened connection. You will see different kinds of streaming use cases in this book,
+particularly in chapter 5, when we implement a complete application. 
+1.2
+REST vs. RPC
+REST (Representational State Transfer) is a widely adopted protocol for microser-
+vices. Still, you may start to think about using gRPC if you have strict requirements
+such as low latency, multilanguage system support, and so forth. REST is based on
+HTTP 1.0 protocol that lets you exchange messages in a JSON or XML format
+between the client and server. On the other hand, gRPC is based on RPC (Remote
+Procedure Call) architecture that uses protocol buffers’ binary format to exchange
+data over HTTP 2.0 protocol. This does not mean that REST is not compatible with
+HTTP 2.0; you can set up your REST services based on that protocol with a custom
+implementation so that it is a built-in feature in gRPC.
+ 
+ 

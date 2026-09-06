@@ -1,0 +1,63 @@
+148
+CHAPTER 8
+Deployment
+8.4.4
+Final thoughts on deployment
+To better understand deployments, we used a traditional approach to deploy a work-
+load to the Kubernetes environment by kubectl. However, multiple options exist to
+automate this process within the GitOps context. ArgoCD (https://argo-cd.readthedocs
+.io/en/stable/) and FluxCD (https://fluxcd.io/) are famous examples of GitOps nota-
+tion; you can connect them to the repository, and whenever you push a change to this
+repository, they handle deployments for you.
+Deployment 1
+(app = order)
+Deployment 2
+(app = order)
+Deployment 2 is created with v2 Image
+Pod
+Pod
+Deployment 1
+(app = order)
+Current production
+Service
+selector
+(app = order)
+Service
+selector
+(app = order)
+Service
+selector
+(app = order)
+Service
+selector
+(app = order)
+Service
+selector
+(app = order)
+Pod
+Pod
+Deployment 1
+(app = order)
+Deployment 2 with v2 is fully available
+Pod
+Pod
+Pod
+Deployment 1
+(app = order)
+Deployment 2
+(app = order)
+Deployment 1 is scaled to 1
+Pod
+Pod
+Pod
+Deployment 1
+(app = order)
+Deployment 2
+(app = order)
+Deployment 2 is scaled to 2
+Pod
+Pod
+Pod
+Pod
+Figure 8.11
+Canary deployment

@@ -1,0 +1,24 @@
+64
+CHAPTER 4
+Microservice project setup
+{
+  "orderId": "1"
+}
+This is a simple response, but we will see advanced scenarios and proper exception-
+handling mechanisms in upcoming chapters.
+Summary
+Hexagonal architecture helps you isolate layers in your microservice to imple-
+ment testable and clean applications.
+Ports are used for defining contracts between layers, while adapters are con-
+crete implementations that can be plugged into ports to make the core applica-
+tion available to the end user.
+Implementing the application core first and then continuing with the outer lay-
+ers is helpful. 
+GORM is an ORM library for Go with good abstraction for database-related
+operations.
+Twelve-factor applications have good use cases for microservices in that applica-
+tion configurations can be passed through environment variables and that you
+can configure them based on the environment.
+Combining layers in hexagonal architecture is done with dependency injection.
+ grpcurl provides a cURL-like behavior to handle order data by calling gRPC
+endpoints.

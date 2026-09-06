@@ -1,0 +1,18 @@
+31
+Getting up and running
+ with gRPC and Golang
+The communication between two services is just like two people talking: people use
+a telephone to connect, and gRPC does the same thing for interservice communi-
+cation. In the same way that people use language to understand each other, two ser-
+vices use protocol buffers to exchange messages. It is crucial to select the proper
+communication style to create an effective relationship. Now that we understand
+that vital communication strategy, let’s see how protocol buffers and gRPC are used
+together in microservice communication.
+This chapter covers
+Working with protocol buffers
+Generating stubs from .proto files
+Adding a stub generation process into the CI/CD 
+pipeline using Github Actions 
+Maintaining .proto files in a separate repository
+Maintaining backward and forward compatibility 
+for protocol buffers

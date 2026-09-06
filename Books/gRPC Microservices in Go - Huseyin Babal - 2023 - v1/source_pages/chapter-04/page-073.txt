@@ -1,0 +1,47 @@
+56
+CHAPTER 4
+Microservice project setup
+    gorm.Model
+    ProductCode string
+    UnitPrice   float32
+    Quantity    int32
+    OrderID     uint 
+}
+Having struct definitions is not enough to persist data into the database. We need to
+add gorm.DB as a dependency to our adapter:
+type Adapter struct {
+    db *gorm.DB
+}
+Let’s assume we are implementing a DB adapter. To create the adapter, you need to
+pass a gorm.DB reference to it. Now that we understand how to add a DB reference,
+let’s see how adapter functions use this DB reference to manage the state of order
+models.
+ The data source URL is a common parameter used to create a reference for data-
+base connections. We can create a connection to a provided data source URL by using
+a DB driver, which, in our case, is a MySQL driver, aliased by gorm/mysql. Error han-
+dling is also important here so that we understand whether the connection is success-
+ful and so that we can decide whether we should continue the initialization of the
+application. The following function is a good candidate for opening a connection to
+the database:
+func NewAdapter(dataSourceUrl string) (*Adapter, error) {
+    db, openErr := gorm.Open(mysql.Open(dataSourceUrl), &gorm.Config{})
+    if openErr != nil {
+        return nil, fmt.Errorf("db connection error: %v", openErr)
+    }
+    err := db.AutoMigrate(&Order{}, OrderItem{}) 
+    if err != nil {
+        return nil, fmt.Errorf("db migration error: %v", err)
+    }
+    return &Adapter{db: db}, nil
+}
+The NewAdapter function creates an Adapter instance that we can use internally. It is
+important to understand how the Adapter instance is delegated to functions via receiver
+functions. For example, to get Order information, we can query the database using the
+Adapter instance and return it after converting it to a domain model the application
+can understand. Using the same notation, we can accept the Order domain model as a
+parameter, transform it to a DB entity, and save the order information in the database.
+You can see the Get and Save methods in the following two code snippets:
+ 
+Back reference to Order model
+Be sure the tables are 
+created correctly.

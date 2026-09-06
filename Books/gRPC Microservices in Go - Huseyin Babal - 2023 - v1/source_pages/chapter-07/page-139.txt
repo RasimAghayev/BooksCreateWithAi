@@ -1,0 +1,27 @@
+122
+CHAPTER 7
+Testing microservices
+After success or failure, we need to shut the application stack down so as not to con-
+sume extra resources. We can do that in the TearDownSuite phase by using the Docker
+Compose reference and invoking the following shutdown operation:
+func (c *CreateOrderTestSuite) TearDownSuite() {
+    execError := c.compose.
+        WithCommand([]string{"down"}).
+        Invoke() 
+    err := execError.Error
+    if err != nil {
+        log.Fatalf("Could not shutdown compose stack: %v", err)
+    }
+}
+As a final step, we can add a runner section to run the entire test:
+func TestCreateOrderTestSuite(t *testing.T) {
+    suite.Run(t, new(CreateOrderTestSuite))
+}
+Our end-to-end test is almost ready; we just need to add the Order service client as a
+dependency to the e2e project via the following command:
+go get github.com/huseyinbabal/microservices-proto/golang/order
+Now you can use NewOrderClient and other order-related resources for your test. After
+all, you should have a folder structure, as shown in figure 7.7.
+Equals Docker Compose down
+Figure 7.7
+End-to-end module structure

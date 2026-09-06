@@ -1,0 +1,41 @@
+123
+7.5
+Test coverage
+You can now navigate to the e2e folder and execute the following test command to see
+how it works:
+go test -run "^TestCreateOrderTestSuite$"
+Notice we provide a regex to test the run command and start executing from
+TestCreateOrderTestSuite, the test suite runner.
+ To wrap up the end-to-end test, we simply run our application stack and run our
+tests against it, thanks to Testcontainers providing a good abstraction for Docker Com-
+pose that lets us run our stack via service definitions. This kind of test may take longer
+because it provisions a real system to verify features. Now that we have seen all the
+major test strategies for microservice architecture, let’s look at how we can measure
+the coverage of our tests for the entire application.
+7.5
+Test coverage
+The test coverage operation’s primary motivation is to understand the missing test
+cases for production code. Code coverage is a strategy to detect how much of the
+application’s entire codebase is covered by tests. Golang has very good built-in fea-
+tures for testing, and coverage can be automatically handled during test execution
+with the -cover parameter:
+go test -cover ./…
+Once you execute this command, you can see the coverage information for each pack-
+age among test execution status:
+ok      
+➥ github.com/huseyinbabal/microservices/order/internal/application/core/a
+➥ pi       0.274s  coverage: 93.3% of statements
+At the end of the line, you can see the coverage information of that package, which
+mostly describes your confidence level in the codebase (more coverage means you
+know your codebase better), and you can refactor your codebase with fewer problems.
+It is simple to see the coverage information for your tests, but let’s look at how we can
+see the distribution of this coverage under a package.
+7.5.1
+Coverage information
+With the -cover parameter, you can see the percentage of each package in the output.
+Completing the following steps shows a detailed report to drill down files, functions,
+and so on:
+1
+Redirect the coverage output to a file.
+2
+Use a built-in coverage tool to convert it to an HTML file.

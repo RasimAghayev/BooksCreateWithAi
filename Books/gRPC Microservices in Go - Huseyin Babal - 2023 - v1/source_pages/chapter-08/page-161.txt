@@ -1,0 +1,44 @@
+144
+CHAPTER 8
+Deployment
+8.3.4
+Certificates on the client side
+minikube has an available command, minikube tunnel, that creates a proxy through
+127.0.0.1 so that whenever you request 127.0.0.1, that request will be proxied to the
+Ingress controller inside minikube. Let’s create a tunnel:
+minikube tunnel
+Open your browser and request https://ingress.local to see if you will get a certificate
+issued. You can simply click the padlock/info icon in the browser next to the insecure
+message and download the certificate. If you double-click on that certificate, it will
+prompt you to install the certificate into your key chain. Refer to http://mng.bz/zXZg
+for detailed steps on how to collect the certificate from the browser. 
+ You should see a secure connection after installing the certificate. We are request-
+ing a browser, but this is not a gRPC communication. To make a gRPC call, we can still
+use grpcurl and provide the .proto files to understand what kind of methods are avail-
+able to grpcurl for the requested service:
+grpcurl -import-path /path/to/order -proto order.proto ingress.local:443 
+➥ Order.Create
+In previous chapters, we handled those .proto files; locate them on your computer and
+pass the folder’s full path to the grpcurl command with the parameter -import-path and
+-proto file. Now grpcurl knows the methods to construct correct request metadata for
+the gRPC call. Notice that we don’t need .proto files for the programmatic approach.
+For example, if you want to call the Order service via a Go client, adding .proto files as
+a dependency and using client functions to call specific services is enough.
+ We started with creating a pod and exposing it to the public via the Service
+resource. Using the LoadBalancer Service type seemed straightforward, but it may not
+be efficient for microservices because we end up with lots of load balancers, which is
+not cost-effective. Then we used the Ingress controller to handle routing with Ingress
+resources, and the controller became our single-entry point as a load balancer. Finally,
+we managed our certificates with a cert-manager, as gRPC only works with HTTPS
+over HTTP/2. Now that we understand how to complete a simple deployment into a
+Kubernetes cluster, let’s look at advanced deployment strategies we can use in micro-
+services deployments.
+8.4
+Deployment strategies
+Deploying to Kubernetes is not a one-time operation; it is an operation that is inte-
+grated into a CD pipeline that updates the container image artifact once we want to
+make changes in the actual workload. This is mostly done by updating the image ver-
+sion, but it can also be done by updating the environment variables of pod containers
+or by changing replicas of a deployment. You will hear about RollingUpdate, Blue-
+Green, or Canary deployment while searching the internals of Kubernetes deployment.
+Let’s look at each of these deployment strategies with real-life examples.

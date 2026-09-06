@@ -1,0 +1,45 @@
+96
+CHAPTER 6
+Resilient communication
+3
+The Order service verifies that certificate.
+4
+The Order service sends data to the Payment service in an encrypted communi-
+cation channel.
+As you can see, only the server provides its certificate to let the client verify it. How-
+ever, there is another version of this handshake in which the client shows its certificate
+and the server verifies it. This type of handshake is called mTLS (mutual TLS), which
+contains server verification. Figure 6.7 illustrates these steps :
+1
+The Order service connects to the Payment service.
+2
+The Payment service shows its certificate to the Order service.
+3
+The Order service verifies that certificate.
+4
+The Order service shows its certificate to the Payment service.
+5
+The Payment service verifies that certificate and allows the Order service to
+send requests.
+6
+The Order service sends data to the Payment service in an encrypted communi-
+cation channel.
+With mTLS, you simply secure the connection between the Order service and the Pay-
+ment service in both directions. Whenever there is a connection to those services, the
+identity will be extracted, and both sides will know the owner of a specific call. This
+approach is beneficial for organizations that use a zero-trust approach for their net-
+work security. Next, let’s prepare a certificate for the Go microservices example.
+Order
+service
+Payment
+service
+Figure 6.6
+The Order-Payment 
+communication TLS handshake
+Order
+service
+Payment
+service
+Figure 6.7
+Order-Payment 
+service mTLS communication

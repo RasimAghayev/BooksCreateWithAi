@@ -1,0 +1,44 @@
+7
+1.3
+When to use gRPC
+ Since gRPC has built-in HTTP 2.0 support, you can also use unary and bidirec-
+tional streaming between clients and servers, resulting in high-speed communication.
+With REST services’ default settings, multiple client–server communications can
+introduce a delay in overall system performance.
+ There are also cases in which REST is more beneficial than gRPC. For example,
+the REST protocol is supported in all kinds of browsers. Since gRPC support is mini-
+mal, you may need to use a proxy layer, such as gRPC Web (https://github.com/
+grpc/grpc-web), to easily communicate with the gRPC server.
+ gRPC has lots of advantages, such as being able to define messages to easily
+exchange data between services. Regarding readability, JSON and XML usage in
+REST has advantages, such as changing the request freely if there is no explicit busi-
+ness validation for the changed fields. In contrast, you need to follow some rules in
+gRPC to make a change. We will explain this in detail in chapter 5.
+ gRPC has a built-in client and server stub generation mechanism for which you
+need to use a framework in REST such as Swagger Codegen to generate client-side
+models. This becomes critical, especially once you have multiple services and main-
+tain multiple SDKs for customers simultaneously. Now that we understand the differ-
+ences between REST and gRPC, let’s look at when it makes sense to use gRPC.
+1.3
+When to use gRPC
+If you have strict requirements for browser support, then you need to think of using
+REST, because you will end up setting up another layer for conversion between
+HTTP/2 and HTTP/1. However, you can still use gRPC for interservice communica-
+tion and attach a gRPC load balancer (http://mng.bz/BmZ8) to that service pool to
+expose API to the public for REST compatibility, which we will see in detail in chapter
+9. Other alternatives include Twirp (https://github.com/twitchtv/twirp), an RPC
+framework built on Protobuf. Twirp lets you enable the REST layer for gRPC services
+in a way that allows you to access your endpoints, as in the following example, which
+sends a POST request with a JSON payload:
+curl -X "POST" \
+      - H "Content-Type: application/json" \
+      -d '{"name": "dev-cluster"}' \
+      ➥ http://localhost:8080/twirp/github.com/huseyinbabal/microservices-
+      ➥ proto/cluster/Create
+Polyglot development environments are ideal for gRPC integrations since using the
+Python client within the Checkout service to access the Payment service, which is writ-
+ten using Java, is very easy with client stub generation. You can apply the same strategy
+to your SDK generations for public consumers. Also, whenever you change your ser-
+vice definitions, the test fails on the client side, which is a suitable verification mecha-
+nism for your microservices. 
+ 

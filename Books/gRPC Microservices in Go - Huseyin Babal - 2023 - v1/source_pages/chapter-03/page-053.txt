@@ -1,0 +1,47 @@
+36
+CHAPTER 3
+Getting up and running with gRPC and Golang
+These examples can be expanded, but they are enough to better understand how pro-
+tocol buffer encoding contributes to gRPC’s performance for exchanging messages. In
+other words, instead of exchanging messages as they are, which will result in larger data
+size, they are converted into a binary format with proper encoding to reduce data size.
+3.2
+Generating stubs
+gRPC Stub is a module that acts as an interface for the gRPC client. You can do several
+things using those stubs, such as connect and exchange data via streaming or non-
+streaming notation. The protocol buffer compiler generates the source code for a
+specified language, and that source code contains all the stubs. You can import gener-
+ated source code into both the client and server sides to implement the business logic
+by following the contracts defined in the interfaces.
+3.2.1
+Protocol buffer compiler installation
+To generate source code from .proto files, first install protoc, the protocol buffer com-
+piler (https://grpc.io/docs/protoc-installation/). Then install two more modules to
+help protoc generate source code specific to the Go language:
+go install google.golang.org/protobuf/cmd/protoc-gen-go@latest
+go install google.golang.org/grpc/cmd/protoc-gen-go-grpc@latest
+3.2.2
+Using the protocol buffer compiler
+Let’s say you are about to implement a client-server application in which the client
+sends a create order request, and the server handles it. To do this, you can use the fol-
+lowing .proto file to generate stubs using protoc:
+syntax = “proto3”;
+option go_package=" GitHub/huseyinbabal/microservices/order";
+message CreateOrderRequest {
+    int64 user_id = 1;
+    repeated Item items = 2;
+    float total_price = 3;
+}
+message Item {
+    string name = 1;
+}
+message CreateOrderResponse {
+    int order_id = 1;
+}
+service Order {
+    rpc Create(CreateOrderRequest) 
+    returns (CreateOrderResponse){}
+}
+Package 
+name for the 
+generated file

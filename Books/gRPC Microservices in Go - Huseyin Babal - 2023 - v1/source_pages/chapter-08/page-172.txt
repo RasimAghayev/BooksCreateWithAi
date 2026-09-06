@@ -1,0 +1,57 @@
+155
+9.1
+Observability
+As shown in figure 9.1, the name of the journey is PlaceOrder, and once it is initialized,
+a trace ID is automatically generated. Then it spans to multiple parts such as saving in
+the database and then calling the Payment service via the payment client. The pay-
+ment client call process also creates another span while it is in the Payment service to
+make a query in a logging backend using a trace ID and sorting it by date in ascending
+order to see what happened to the request. We can see gRPC-related metadata in
+spans under a specific trace (figure 9.2).
+ Figure 9.2 is for a sever span that contains information about a single operation: the
+entry point of payment.Create. Keys are already implemented within the specific instru-
+mentation library contracted by the OpenTelemetry project. (You can see all instru-
+mentation libraries here https://opentelemetry.io/docs/instrumentation/.) rpc
+.service and rpc.method refer to the gRPC
+service name and gRPC method name under
+that service, respectively. span.kind is used
+for pointing out if instrumentation is done
+on either the client or server side. Finally,
+rpc.system shows what sort of RPC is used in
+service communication, in this case gRPC.
+Now that we understand how trace and span
+work together, let’s look at what metrics we
+can have in a microservices environment.
+9.1.2
+Metrics
+Metrics contain numerical values to help us define a service’s behavior over time. Pro-
+metheus has metrics that are defined by name, value, label, and timestamp. Using
+these fields, we can see metrics over time. We can also group them using their labels.
+Of course, we can apply other aggregation techniques (https://prometheus.io/docs/
+prometheus/latest/querying/functions/) using metric fields, SLA, SLO, and SLI, and
+obtain information about the system. For more in-depth information, see Google’s
+Site Reliability Engineering book (https://sre.google/sre-book/table-of-contents/).
+SLA
+An SLA (service-level agreement) is an agreement between customers and service pro-
+viders and contains measurable metrics such as latency, throughput, and uptime. It is
+not easy to measure and report SLAs, so a stable observability system is important.
+SLI
+An SLI (service-level indicator) is a specific metric that helps showcase service quality
+to customers by referencing request latency, error rate, and throughput for example.
+The statement “The throughput of our service is 1000/ms” indicates that this service
+can handle 1,000 operations per millisecond.
+SLO
+A SLO (service-level objective) is the goal for a product team to satisfy SLA. Especially
+in SaaS projects, you can see the SLA in terms and conditions pages. A typical example
+rpc.service
+rpc.method
+span.kind
+rpc.system
+grpc
+server
+Create
+Payment
+Span value
+Span key
+Figure 9.2
+Span tags

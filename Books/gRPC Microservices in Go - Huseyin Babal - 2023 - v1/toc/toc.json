@@ -1,0 +1,83 @@
+{
+  "book": "gRPC Microservices in Go",
+  "page_offset": 17,
+  "chapters": [
+    {
+      "chapter": 0,
+      "title": "Preface / Acknowledgments / About",
+      "book_pages": "9-19",
+      "start_pdf_page": 9,
+      "end_pdf_page": 19
+    },
+    {
+      "chapter": 1,
+      "title": "Introduction to Go gRPC microservices",
+      "book_pages": "3-12",
+      "start_pdf_page": 20,
+      "end_pdf_page": 29
+    },
+    {
+      "chapter": 2,
+      "title": "gRPC meets microservices",
+      "book_pages": "14-27",
+      "start_pdf_page": 31,
+      "end_pdf_page": 44
+    },
+    {
+      "chapter": 3,
+      "title": "Getting up and running with gRPC and Golang",
+      "book_pages": "31-46",
+      "start_pdf_page": 48,
+      "end_pdf_page": 63
+    },
+    {
+      "chapter": 4,
+      "title": "Microservice project setup",
+      "book_pages": "47-62",
+      "start_pdf_page": 67,
+      "end_pdf_page": 82
+    },
+    {
+      "chapter": 5,
+      "title": "Interservice communication",
+      "book_pages": "65-78",
+      "start_pdf_page": 83,
+      "end_pdf_page": 96
+    },
+    {
+      "chapter": 6,
+      "title": "Resilient communication",
+      "book_pages": "81-98",
+      "start_pdf_page": 105,
+      "end_pdf_page": 122
+    },
+    {
+      "chapter": 7,
+      "title": "Testing microservices",
+      "book_pages": "103-124",
+      "start_pdf_page": 129,
+      "end_pdf_page": 150
+    },
+    {
+      "chapter": 8,
+      "title": "Deployment",
+      "book_pages": "127-148",
+      "start_pdf_page": 155,
+      "end_pdf_page": 176
+    },
+    {
+      "chapter": 9,
+      "title": "Observability",
+      "book_pages": "153-174",
+      "start_pdf_page": 180,
+      "end_pdf_page": 195
+    },
+    {
+      "chapter": 10,
+      "title": "Index",
+      "book_pages": "175-179",
+      "start_pdf_page": 196,
+      "end_pdf_page": 200
+    }
+  ]
+}

@@ -1,0 +1,19 @@
+127
+Deployment
+Microservices architecture is built on top of a distributed system in which you can
+see many services, standalone CronJobs, third-party dependencies, and so on. Since
+there are many challenges in such an environment, it is important to build cloud-
+native applications. Container technologies like Docker help generate cloud-native
+artifacts from those application source codes. In the same way, Kubernetes, an
+open source container orchestration platform, helps deploy artifacts in an environ-
+ment in which most of the cloud components, such as a load balancer, disk, and
+networking, are abstracted. In this chapter, we will learn how to build artifacts
+within the CI (continuous integration) pipeline and deploy gRPC microservices to
+Kubernetes in the CD (continuous deployment) pipeline.
+This chapter covers
+Building Docker images for gRPC services
+Understanding the components of Kubernetes
+Maintaining certificates in Kubernetes to enable 
+TLS communication between the end user and 
+the services
+The motivation behind deployment strategies

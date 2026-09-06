@@ -1,0 +1,47 @@
+27
+2.5
+Using gRPC for interservice communication
+and it can return a single message that reports all the payment creation operation
+responses with their statuses:
+service Payment {
+    Create(stream CreatePaymentRequest) 
+    returns (CreatePaymentResponse){}
+}
+Streaming on both the client and server sides is called bidirectional streaming. It allows
+the client to send requests to the server continuously, and the server can return a
+result as a stream of objects. Since that operation is handled asynchronously, it is bet-
+ter to provide a unique identifier to mark which operation failed:
+service Payment {
+    Create(stream CreatePaymentRequest) 
+    returns (stream CreatePaymentResponse){}
+}
+Don’t worry; we will examine this concept in detail in chapter 5.
+2.5.3
+Connecting wires 
+Client–server communication means service-to-service communication in a microser-
+vices environment. A service is a typical consumer that uses the client stub of another
+service. In our case, if you want to connect the Order service to the Payment service,
+complete the following steps:
+1
+Import the Payment service client stub into the Order service as a dependency.
+2
+Create a connection by dialing the Payment service from the Order service.
+Let’s assume we already know the address of the Payment service since we use
+service discovery.
+3
+Create a Payment client using the connection object we created in step 3.
+4
+Call the Create method on the PaymentService client.
+var opts []grpc.DialOption
+conn, err := grpc.Dial(*serverAddr, opts...)
+if err != nil {
+  // handle connection error
+}
+defer conn.Close()
+payment := pb.NewPaymentClient(conn)
+result, err := payment.Create(ctx, &CreatePaymentRequest{})
+if err != nil {
+    // handle Payment create error
+}
+Listing 2.2
+Payment stub usage on client side

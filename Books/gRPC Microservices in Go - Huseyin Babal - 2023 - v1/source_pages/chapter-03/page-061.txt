@@ -1,0 +1,45 @@
+44
+CHAPTER 3
+Getting up and running with gRPC and Golang
+Now let’s add a vat field to CreatePaymentRequest and update the server-side
+implementation:
+message CreatePaymentRequest {
+    float64 price = 1;
+    float64 vat = 2;
+}
+ func (p *Payment) Create(ctx, req *pb.CreatePaymentRequest) 
+ ➥ (*pb.CreatePaymentResponse, error) {
+    return &CreatePaymentResponse{
+        TotalPrice: req.Vat + req.Price
+    }, nil
+}
+Old clients will continue to send requests without the vat field, which will cause an
+inconsistency in the TotalPrice field. We can update the server-side implementation
+to use a default VAT if there is no vat in the request payload:
+Func (p *Payment) Create(ctx, req *pb.CreatePaymentRequest) 
+(*pb.CreatePaymentResponse, error) {
+    vat := VAT
+    if req.Vat > 0 {
+        vat = req.Vat
+    }
+    return &CreatePaymentResponse{
+        TotalPrice: vat + req.Price
+    }, nil
+}
+3.4.3
+Upgrading the client but not the server
+If we upgrade the client but not the server, the client message type is upgraded to v2:
+message CreatePaymentRequest {
+    float64 price = 1;
+    float64 vat = 2;
+}
+The server still uses the old message type, which does not expect a vat field, and a
+default value, VAT, for calculation. However, since the client sends this in the request,
+the server side will use the default value VAT and ignore the vat value within the
+request payload, but at least it will not throw an error.
+3.4.4
+Adding/removing oneof fields
+Let’s say you have multiple fields in a message that require one or the other but not
+both. For example, CreatePaymentRequest has both credit_card and promo_code fields,
+but you can send only one at a time. The oneof feature is used for enforcing this
+behavior instead of trying to put extra logic in actual implementation:

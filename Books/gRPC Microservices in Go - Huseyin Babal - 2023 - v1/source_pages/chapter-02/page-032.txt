@@ -1,0 +1,44 @@
+15
+2.1
+Monolithic architecture
+decomposed into services based on their business capabilities. This decomposition
+enables the deployment of each service independently, which we will see in detail in
+chapter 8. Interservice communication stability is imperative to providing data consis-
+tency among services. This chapter will show how important gRPC is for interservice
+communication.
+2.1
+Monolithic architecture
+In monolithic architecture, the different components of a monolithic application are
+combined into a single-tiered and unified software application that can contain a user
+interface, a server, and database modules that are all managed in one place. Mono-
+lithic architecture is especially helpful when developing the initial version of a prod-
+uct, as it helps you get familiar with business domains without having to tackle
+nonfunctional challenges. However, it is suggested that you assess your product peri-
+odically to understand whether it is the right time to move to microservice architec-
+ture. Now that we know what monolithic architecture looks like, let’s look at its pros
+and cons.
+2.1.1
+Development
+All modern IDEs are designed to support monolithic applications. For example, you can
+open a multimodule Maven project in IntelliJ IDEA (https://www.jetbrains.com/idea/)
+or create a modular Go project with GoLand (https://www.jetbrains.com/go/) that you
+can easily open and navigate within the codebase.
+ However, problems can arise as your codebase grows. For example, suppose you
+have many modules within a monolithic application, and you try to open them simul-
+taneously. In that case, it is possible to overload the IDE, which negatively affects pro-
+ductivity; it also may not be necessary to open them all if you don’t need some of them. 
+ Additionally, if you do not have proper isolation for your test cases, you may run all
+the tests any time you make a small change in your codebase. The bigger the code-
+base, the longer the compile and testing time. 
+2.1.2
+Deployment
+Deploying a monolithic application means copying a standalone package or folder
+hierarchy to the server or a container runtime. However, monoliths may be an obstacle
+to frequent deployments in continuous deployment because they are hard to deploy
+and test in a reasonable time interval. You need to deploy the entire application, even
+if you introduce just a small change to a specific component. For example, say that we
+introduced a small change in the newsletter component responsible for serving the
+newsletter, and we want to test and deploy it to production. We would need to run all
+the tests, even though we haven’t changed anything in other components, such as pay-
+ment, order, and so on. In the same way, we need to build the system to generate one
+artifact, even though the changes are only in the newsletter component.

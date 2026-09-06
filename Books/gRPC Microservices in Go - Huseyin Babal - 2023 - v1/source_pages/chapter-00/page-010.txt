@@ -1,0 +1,9 @@
+PREFACE
+ix
+applications and microservices. Throughout the book, we’ll use an e-commerce appli-
+cation, deployed on Kubernetes, as an example to guide you on your own journey into
+gRPC and microservices. We’ll also cover advanced topics such as error handling, test-
+ing, and security, which are vital for building product-grade applications.
+ I wrote this book to make it easier for developers like me to get started with gRPC,
+and I hope you’ll find it a valuable resource. Thank you for choosing gRPC Microser-
+vices in Go.

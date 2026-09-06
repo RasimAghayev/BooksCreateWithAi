@@ -1,0 +1,59 @@
+133
+8.2
+Kubernetes
+You can define how much memory or CPU reservation you need for your appli-
+cation.
+You can specify what the behavior should do when the application crashes.
+Let’s look at real-life microservices examples by diving deep into widely used Kuberne-
+tes resources we can use during application deployment.
+8.2.3
+ Eagle view of microservices deployment
+Assume that we already have a Docker image for each microservice that we can run as
+a container by providing the minimum required configurations. If we use only Docker
+in our machine, we would run that service as follows:
+docker run -d \ 
+    -e APPLICATION_PORT=8080 \ 
+    -e PAYMENT_SERVICE_URL=payment:8081 \ 
+huseyinbabal/order:1.0.0 
+In Kubernetes, instead of directly running a containerized application, we deploy a
+pod that encapsulates the container runtime. This might seem like an unnecessary
+encapsulation, but maybe you already know Kubernetes used the Docker engine as
+the default container runtime for a while, then removed it with the release of Kuber-
+netes 1.24. If Kubernetes had a direct dependency on the Docker engine, it would be
+hard to migrate our Kubernetes workload if we wanted to upgrade to Kubernetes 1.24
+from earlier releases. However, as you can see in figure 8.3, there are pods for the
+actual application workloads Kubernetes handles. 
+Runs the application in the background
+The Order service runs on 8080.
+Payment service endpoint
+Docker Hub image name
+This is provisioned by the
+NGINX Ingress controller.
+Notice that the gRPC call is routed 
+to this if we call order create.
+Contains container and required
+configuration for the application
+Load
+balancer
+Ingress
+controller
+Ingress
+(/order)
+Ingress
+(/payment)
+Pod
+(order
+application
+container)
+Service
+(Payment
+service)
+Service
+(Order
+service)
+Pod
+(payment
+application
+container)
+Figure 8.3
+High-level overview of Order and Payment service deployments

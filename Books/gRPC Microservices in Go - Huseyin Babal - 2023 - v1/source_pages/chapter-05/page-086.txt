@@ -1,0 +1,44 @@
+69
+5.2
+Depending on a module and implementing ports and adapters
+The primary motivation for creating a payment client is fulfilling the Order service’s
+goal: charge customers when they try to place an order. Now that we have seen a quick
+summary of how the Order service will use a payment client, let’s look at the imple-
+mentation details of integrating the Payment service into the Order service.
+5.2.1
+Payment port
+As discussed in chapter 4, a port is an interface that contains contracts about a busi-
+ness model in hexagonal architecture. When we say “port,” we mean the contract of a
+payment operation or a Go interface that contains payment-related function signa-
+tures, not the concrete implementation of a specific payment strategy. The main
+expectation from the payment port is adding the capability of inserting a payment
+step within the Order creation flow. This way, the Order service will never depend on
+a concrete implementation but on an interface. Because the Order service uses this
+payment port, this is located on the driven side of hexagonal architecture, as shown in
+figure 5.4. 
+5.2.2
+Payment adapter
+There can be multiple implementations of payment ports, called adapters. If your
+adapter implementation is suitable for a payment port contract and contains identical
+function signatures with the port interface, you can easily plug that adapter into the
+payment port. This is done by dependency injection: you have the actual implementa-
+tion of the payment port, and you simply initialize and add it to the Order domain
+model during application initialization to call it during the payment step.
+ We should have a payment port and adapter in the Order service to interact with
+the Payment service, as shown in figure 5.5. If we clearly state those components in the
+hexagon, the picture and design of the Order service based on those components are
+more visible.
+Order
+service
+Payment
+service
+Pending
+Order
+database
+Order
+database
+Success
+User
+Figure 5.4
+Place order flow and 
+Payment service interaction

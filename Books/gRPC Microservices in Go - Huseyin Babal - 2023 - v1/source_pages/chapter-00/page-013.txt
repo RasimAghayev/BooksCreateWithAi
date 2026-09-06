@@ -1,0 +1,23 @@
+xii
+about this book
+gRPC Microservices in Go was written for anyone who wants to apply production-grade
+practices from gRPC, Go, and/or Kubernetes to microservice applications that run in
+a live environment. It starts with microservices theory and cloud-native application
+development, then dives into the technical development of microservices in Kuberne-
+tes using Go and gRPC. 
+Who should read this book
+This book will help developers design and implement their microservices projects
+using Go and gRPC in the Kubernetes environment. There are some examples of
+Kubernetes deployment and gRPC usage online, but this book provides a step-by-step
+explanation of a gRPC microservice life cycle, from beginning to production. For this
+reason, this book will be a good reference for architects, chief technology officers, and
+engineering managers in applying microservice principles to development life cycles.
+How this book is organized: A road map
+This book has three sections that cover nine chapters.
+ Part 1 contains theoretical information about microservices and gRPC:
+■
+Chapter 1 briefly introduces gRPC microservices and provides an overview of
+the book.
+■
+Chapter 2 discusses microservices, including their communication patterns,
+and explains how to use gRPC during development.

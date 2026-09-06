@@ -1,0 +1,44 @@
+12
+CHAPTER 1
+Introduction to Go gRPC microservices
+Observable systems are achieved mainly through metrics, logs, and tracing. Tracing
+context is critical to see any specific request’s life cycle, which we will see in chapter 9
+in detail. Let’s say that a consumer uses an SDK to access an API via the API gateway. It
+propagates requests to four to five downstream services to handle all the operations
+and then returns to the customer. Having a successful response does not mean every-
+thing is good; it is not good if there is a latency within this life cycle. After latency
+detection, request flows can be analyzed by grouping by trace IDs that contain helpful
+information. Trace IDs in the requests and response headers can be injected quickly
+with a simple middleware that we will see in detail in chapter 9.
+ Monitoring is a crucial part of microservice architecture, because once you decom-
+pose a monolithic application into a microservice architecture, you must introduce a
+solution for better visibility. Service-level metrics, overall latency, and service-to-service
+call hierarchy are some solutions you may want to see in the monitoring dashboard. In
+addition to system-level metrics, the logs of the services are also necessary since they
+allow you to track application-level anomalies such as increasing error rates. 
+ Dashboards, panels, and graphs for your system provide a good start for better
+observability. Still, we should focus on introducing new metrics and creating specific
+alarms based on these tools to notify you when you are away from your dashboards. As
+an example, Prometheus (https://prometheus.io), an open source event monitoring
+and alerting tool, can be used to collect system and application metrics, and there can
+be new alert configurations based on those metrics, such as “notify once the memory
+usage percentage > 80 for a specific service.” Logs are also good sources of insight
+because you can calculate error rates in real time. You can even create alert configura-
+tions based on log patterns within modern log management tools such as Elastic Stack
+(Elasticsearch, Logstash, and other Elastic integration products).
+ A good monitoring setup can provide insights into both service-to-service commu-
+nication and service-to-third-party integrations. For example, it will be possible to
+detect performance problems between a service and a database or a service to a third-
+party API that is out of the organization’s control. 
+1.4.5
+Public access
+Public access is important for your product and for your business’s reputation. For
+example, if a user can send unlimited requests to your product, this is a sign of bad
+architecture design for public access because products without a throttling system can
+cause resource exhaustion on the server side, negatively affecting performance.
+ API gateways are widely used to prevent these kinds of scenarios by following cer-
+tain principles, such as quickly setting up a proper authentication/authorization sys-
+tem, introducing rate limiting to restrict users’ request capacity, and so forth. If you
+already use Kubernetes, you can handle this with built-in features such as adding
+authorization and rate-limiting configuration to NGINX controllers; otherwise, you
+have other options, such as using API gateway products.

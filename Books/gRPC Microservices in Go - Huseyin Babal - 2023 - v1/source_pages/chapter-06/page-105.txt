@@ -1,0 +1,35 @@
+88
+CHAPTER 6
+Resilient communication
+After this point, any request to the dependent service will immediately fail due to the
+open circuit. Of course, this is not a permanent situation; it will be reset after a certain
+time based on your configuration, and if there is no failure in new requests, the circuit
+will be closed again. Once the reset timeout is triggered, the state will go into a half-open
+state, and become closed if there is no other failure. If it continues to get failures, it will
+go back into an open state (figure 6.3).
+Now that we understand what the circuit breaker pattern, let’s look at a Go example to
+understand production use cases.
+ Circuit breaker implementations allow your business logic to know the result of
+your execution and decide the next step in the circuit breaker state machine. You can
+define several circuit breakers with different configurations and apply them to differ-
+ent parts of your application. In this book, we use a Go circuit breaker. (You can see the
+source code here: https://github.com/sony/gobreaker.) Before diving deep into the
+implementation, let’s explore the relevant terms in a circuit breaker implementation:
+ 
+Closed
+Half
+open
+Open
+Is failure
+rate above
+threshold?
+Is failure
+rate below
+threshold?
+No
+Yes
+No
+After wait duration
+Yes
+Figure 6.3
+State change diagram of a circuit breaker pattern

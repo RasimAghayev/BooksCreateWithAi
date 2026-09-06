@@ -1,0 +1,52 @@
+168
+CHAPTER 9
+Observability
+9.3.7
+Application logging
+Application logs are important to reference when we have a problem in the live envi-
+ronment because they contain messages from the application that can help us under-
+stand what happened. Analyzing logs may become more challenging in a distributed
+system like gRPC microservices because we need to see the logs in a meaningful order.
+In a logging backend system, you can see logs from different services and from differ-
+ent systems. If we want to filter for only the logs in an operation, we need a filter field
+that belongs to that operation. I have seen this with different names, such as “correla-
+tion ID” and “distributed trace ID,” which refer to the tracing ID we saw in Open-
+Telemetry. Let’s look at how to inject this trace ID into our application logs to filter
+logs by trace IDs.
+ Plenty of logging libraries exist in the Go ecosystem, but we will use logrus
+(https://github.com/sirupsen/logrus) in our examples. Here’s a simple example:
+log.WithFields(log.Fields{
+    "id": “12212”
+  }).Info("Order is updated")
+After using this code, a message with metadata and key-value pairs is provided in stan-
+dard output. In this example, order ID metadata is inside a log message, so if you ship
+this message to the logging backend, you can filter logs using that metadata. 
+ Let’s go back to distributed systems. To inject trace and span IDs into every log we
+printed using the logrus library, we can configure it to use a log formatter:
+…
+type serviceLogger struct {
+    formatter log.JSONFormatter 
+}
+func (l serviceLogger) Format(entry *log.Entry) ([]byte, error) {
+    span := trace.SpanFromContext(entry.Context) 
+    entry.Data["trace_id"] = span.SpanContext().TraceID().String()
+    entry.Data["span_id"] = span.SpanContext().SpanID().String()
+    //Below injection is Just to understand what Context has
+    entry.Data["Context"] = span.SpanContext()
+    return l.formatter.Format(entry)  
+}
+…
+This is just a definition of a log formatter, and when you look at the logic in the Format
+function, you can see it loads span data from context and configures the existing log
+entry to inject tracing data. How is this log formatter used? There are multiple
+answers to this question: you can pass this formatter to other packages to use it, or
+maybe put formatter initialization in the init() function to configure log formatting
+once the main.go is loaded:
+ 
+Logs will be printed 
+in JSON format.
+Gets the 
+span from 
+the context
+Injects the trace and span 
+into the current log message

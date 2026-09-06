@@ -1,0 +1,48 @@
+117
+7.4
+End-to-end tests
+CLI understand the YAML file’s data structure. The services section defines service
+dependencies, requirements, and corresponding properties, as follows:
+
+build—This field states the path of the Dockerfile to use during the stack build.
+
+environment—With this field, we can define our environment variables, such as
+application port. This field accepts a list with key-value pairs.
+
+depends_on—Sometimes, you may need a prerequisite service for your service.
+To accomplish that, you can use the depends_on field. A service that has
+depends_on will not be built until the services defined under this field are ready.
+
+ports—This field contains a port list for a specific service to be accessed from
+outside.
+
+healthcheck—By default, a service is marked ready once the container is started
+in a stack. However, the application inside this service may not accept the con-
+nection. For this reason, you may need to define a health check condition using
+this field.
+
+volumes—This field mounts a local resource to the container so that your local
+resource will be available inside the container. We will use this to mount an SQL
+file to the mysql container so that it will process it at startup.
+We will use these fields in this book, but if you are interested in other fields, you can
+refer to https://docs.docker.com/compose/. Now that we have insight into Docker
+Compose service fields, let’s look at how to structure our end-to-end test.
+7.4.3
+End-to-end test folder structure
+To add a separate module to run our end-to-end tests, go to the root folder of our
+project and create a folder with the name e2e. You can navigate to that folder and ini-
+tialize a module via the following command:
+go mod init github.com/huseyinbabal/microservices/e2e
+Do not forget to replace the username and repository in the go.mod file based on
+your needs. To store our docker-compose.yml and DB migration files, create a
+resources folder under the e2e folder. Once you add the docker-compose.yml file to
+the resources folder, we can proceed with the initial service definitions that contain
+the database layer. Notice that we just created a separate module dedicated to end-to-
+end tests that contains a Docker Compose file to define the required service layers for
+our tests. Let’s start with the database layer used by our microservices.
+7.4.4
+Database layer
+In this layer, we provide a Docker image, mysql:8.0.30, and a password for the root
+user. We also have an SQL file mounted to this service. As a health check mechanism,
+we simply ping the MySQL server, which will be retried 20 times maximum, with a
+5-second difference on each retry. If the command result provided in the test field

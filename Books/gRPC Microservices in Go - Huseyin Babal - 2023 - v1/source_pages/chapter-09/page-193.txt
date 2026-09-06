@@ -1,0 +1,107 @@
+INDEX
+176
+CI/CD pipeline
+production-grade use cases 11
+testing in 124
+circuit breaker pattern 87–92
+client
+certificates on side of 144
+configuration for payment stub 72–73
+handling errors on side of 78–79
+load balancing on side of 67–68
+upgrading client but not server 44
+upgrading server but not client 43–44
+client-side load balancing 66
+CLIs (command-line interfaces) 48
+cluster level logging 158
+ClusterIP type 137
+ClusterIssuer 142–143
+ClusterIssuers CRD 142
+code generation 5
+command channel notation 21
+command-line interfaces (CLIs) 48
+connecting wires, in interservice 
+communication 27–28
+container runtime 10–11
+context function 84
+context.Background() parent context 84
+continuous deployment (CD) pipeline 127
+control plane 130
+-cover parameter 111, 123
+coverage, test 123–124
+coverage information 123–124
+testing in CI pipeline 124
+coverage.out report 124
+-coverprofile param 111
+CRDs (custom resource definitions) 141–142
+Create endpoint 59–60, 74, 76–78, 120
+Create function 24
+Create method 37, 60, 68, 72
+CreateOrder request 63
+CreateOrderRequest message 32–33
+CreatePaymentRequest message 24, 35
+CreatePaymentResponse message 24
+ctx parameter 28
+custom resource definitions (CRDs) 141–142
+D
+-d parameter 63
+data consistency, handling in microservice 
+architecture 18
+database layer, end-to-end tests 117–118
+db call 108
+db.Get() function verification 114
+db.Save() testing 114
+dependency injection 61–63
+deployment 127–149
+certificate management 141–144
+certificate usage in Ingress 143
+certificates on client side 144
+ClusterIssuer 142–143
+installation 142
+Docker 128–130
+Kubernetes 130–141
+architecture 130–132
+deployment 135–137
+eagle view of microservices deployment
+133–134
+NGINX Ingress controller 140–141
+pod 134
+resources 132–133
+Service resource 137–139
+of monolithic applications 15–16
+strategies for 144–149
+blue-green deployment 146–147
+canary deployment 147
+final thoughts on deployment 148–149
+RollingUpdate 145–146
+Docker 128–130
+Docker Compose service definitions 116–117
+docker login command 130
+docker-compose up operation 121
+driven actor 48
+driver actor 48
+E
+Elasticsearch, as logging backend 170–172
+ELK stack (Elasticsearch-Logstash-Kibana) 158
+encoding, protocol buffer 33–36
+end-to-end tests 115–123
+database layer 117–118
+Docker Compose service definitions 116–117
+folder structure for 117
+Order service layer 119–120
+Payment service layer 118–119
+running tests against stack 120–123
+specifications 116
+enums 24
+error handling
+and resilient communication 92–95
+gRPC error model 93
+gRPC error response 93–95
+in interservice communication 75–80
+errors with details 77–78
+handling errors on client side 78–79
+returning error code and message 76–77
+running Payment service 80
+status codes 75–76
+error message, gPRC 75
+ErrorDetails section 93

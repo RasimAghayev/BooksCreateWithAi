@@ -1,0 +1,25 @@
+129
+8.1
+Docker
+Now you can create a Dockerfile under the Order service in the microservices project
+(order/Dockerfile) and add this content. We will soon use this to prepare our Docker
+image. Notice that you can create one more Dockerfile for the Payment service. Just
+replace the order with a payment, then put that in the payment/Dockerfile file (fig-
+ure 8.1).
+Since we have a Dockerfile for each service, we are ready to build Docker images as
+follows:
+docker build -t order.
+If you execute this command while you are in the order folder, the current folder will
+be in Docker context (since that is the location of the Dockerfile) and a local Docker
+image will be built for you, but it should be published to a remote registry, a storage
+system in which you can store your Docker images so that Kubernetes can pull them.
+The most popular Docker registries for production environments follow but in this
+chapter, we will not use registries; we will copy the Docker images to Kubernetes clus-
+ter nodes to have faster development feedback:
+https://hub.docker.com/
+https://quay.io/
+https://cloud.google.com/container-registry
+https://aws.amazon.com/ecr/
+Figure 8.1
+Dockerfile 
+in each service folder

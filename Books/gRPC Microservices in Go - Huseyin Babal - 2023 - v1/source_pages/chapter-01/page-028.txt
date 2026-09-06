@@ -1,0 +1,45 @@
+11
+1.4
+Production-grade use cases
+ Each service can have different behavior, such as resource requests, scale factors,
+language runtime, and so on. Again, they are just configurations within Kubernetes
+deployments that can be appropriately configured for each service. For example, say
+the Product service needs more capacity or scaling factors than other services since
+most customers search and view products during the day. You don’t need to simultane-
+ously scale all the services in Kubernetes like you do in a monolithic application. This
+can be handled by adding scaling factors and resource capacity to specific services.
+ The main output for each service will be a cloud-native application, which means
+you can deploy this service to any other container runtime, such as AWS Fargate, AWS
+ECS, even Docker for local development, and so on, with a little modification. 
+1.4.3
+CI/CD pipeline
+There are lots of operations that are candidates for automation within the microser-
+vices environment. Service artifact building, gRPC stub generation for specific lan-
+guages, testing, code quality check, and deployment of services are some well-known
+examples. The more automation you have for this distributed system, the less stress
+you have during the development life cycle. 
+ You can easily use gRPC tools to generate stubs on your local environment, but
+wouldn’t it be better to generate them whenever some changes are pushed to the
+remote repository? You can also generate artifacts to deploy them to an experimental
+or stable environment after merging them into the main branch. Modern version con-
+trol system (VCS) providers such as GitHub, GitLab, and Bitbucket already have that
+kind of integration, so there is not much custom implementation needed for this level
+of automation.
+ A green check after a CI/CD job execution does not mean everything is fine; there
+should be a way to check that the correct mechanism was used. Good coverage of unit tests;
+proper integration tests to check third-party integrations such as MySQL, Kubernetes, or
+AWS; contract testing for service-to-service communication; static code analysis; and
+vulnerability checks are a good start to having a reliable codebase in the main branch.
+ After a successful and reliable codebase, artifacts can be generated and tagged to
+be deployed to the user acceptance testing (UAT) environment and then the produc-
+tion environment for end users. Some best practices for deployment methodologies
+include a rolling upgrade, canary deployment, and blue-green deployment. The main
+goal with deployment is to ship the artifact, a Docker image in our case, to the Kuber-
+netes environment and be prepared to roll back when needed. The decision to roll
+back the operation is not easy. Still, if you have a proper monitoring system, you can
+track error rates and user feedback to decide when to roll back or introduce a hotfix
+to the current version. 
+1.4.4
+Monitoring and observability
+Monitoring is a mechanism that allows teams to watch and understand the state of their
+systems, and observability is a mechanism that enables teams to debug their systems.

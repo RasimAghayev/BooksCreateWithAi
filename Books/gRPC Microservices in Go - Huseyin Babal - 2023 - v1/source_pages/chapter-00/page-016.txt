@@ -1,0 +1,7 @@
+xv
+about the author
+HÜSEYIN BABAL has been a software developer since 2007. Since 2016, he has built
+cloud-native applications with Kubernetes in major cloud providers. He has also
+worked with enterprise companies to help them with their DevOps and microservice
+transition projects. You can find him giving presentations at global conferences or
+doing live coding sessions on his Twitch channel. 

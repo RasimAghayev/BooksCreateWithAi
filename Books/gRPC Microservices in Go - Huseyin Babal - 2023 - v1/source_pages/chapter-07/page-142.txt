@@ -1,0 +1,51 @@
+125
+Summary
+Summary
+Testing is important to save time and money, and to maintain code quality,
+which results in almost bug-free applications in production.
+Unit testing is not designed for verifying the functions in a file; it is mostly help-
+ful when you want to test scenarios in a file. A function can have one or more
+scenarios based on the conditional statements inside it. A SUT gives the exact
+place in the code base you are running your test against.
+We can use integration tests to test two modules to verify they are well inte-
+grated. The most popular example is testing a data layer with a real database.
+Test containers are beneficial here.
+Suites work well for defining requirements before tests and destroying required
+components after tests. Setup and TearDown are very powerful in integration tests
+because we create the DB adaptor before the test and destroy it once we finish.
+End-to-end tests can contain all the available services in your environment
+because you test a flow from beginning to end.
+These can be handled
+by GitHub Actions.
+Create
+PRs
+Test
+with coverage
+Static
+code analysis
+Vulnerability
+analysis
+PR Check failed
+cannot be merged
+PR check
+mergable
+Yes
+Build
+Docker
+images
+Fix the problem to be able to 
+merge into the main branch.
+The most common artifact 
+used for deployment. Artifact
+versions can be inherited from
+a Git tag.
+All
+success?
+No
+Merge
+into
+main?
+Yes
+No
+Figure 7.8
+PR flow with checks and artifact generation

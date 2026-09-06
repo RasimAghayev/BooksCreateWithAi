@@ -1,0 +1,52 @@
+74
+CHAPTER 5
+Interservice communication
+type Adapter struct {
+    api  ports.APIPort 
+    port int
+    order.UnimplementedOrderServer
+}
+func NewAdapter(api ports.APIPort, port int) *Adapter {
+    return &Adapter{api: api, port: port}
+}
+When you check the APIPort interface, you see it contains the payment adapter we
+implemented in this chapter. In the current implementation of order creation, the
+Create endpoint calls the PlaceOrder method of the APIPort:
+func (a Adapter) Create(ctx context.Context, request 
+➥ *order.CreateOrderRequest) (*order.CreateOrderResponse, error) {
+    var orderItems []domain.OrderItem
+    for _, orderItem := range request.OrderItems {
+        orderItems = append(orderItems, domain.OrderItem{
+            ProductCode: orderItem.ProductCode,
+            UnitPrice:   orderItem.UnitPrice,
+            Quantity:    orderItem.Quantity,
+        })
+    }
+    newOrder := domain.NewOrder(request.UserId, orderItems)
+    result, err := a.api.PlaceOrder(newOrder) 
+    if err != nil {
+        return nil, err
+    }
+    return &order.CreateOrderResponse{OrderId: result.ID}, nil
+} 
+Once you go to the PlaceOrder method in internal/application/core/api/api.go, it
+saves order requests into the database with the PENDING state:
+func (a Application) PlaceOrder(order domain.Order) (domain.Order, error) {
+    err := a.db.Save(&order)
+    if err != nil {
+        return domain.Order{}, err
+    }
+    return order, nil
+}
+Now we add another step: calling the Payment service to charge the customer for that
+specific order:
+func (a Application) PlaceOrder(order domain.Order) (domain.Order, error) {
+    err := a.db.Save(&order)
+    if err != nil {
+        return domain.Order{}, err
+    }
+    paymentErr := a.payment.Charge(&order) 
+This contains the payment adapter.
+The API knows how to 
+use a payment adapter.
+Charges for the current order

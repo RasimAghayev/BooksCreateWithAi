@@ -1,0 +1,53 @@
+37
+3.2
+Generating stubs
+protoc mainly accepts the following parameters to generate language-specific source
+code:
+-I—To specify the import path where imported packages in .proto files are
+searched
+
+--go_ou—To specify where to put generated Go code for messages
+
+--go_opt—To configure options for Go source code generation, such as
+paths=source_relative, to keep the same folder structure after source code
+generation
+
+--go-grpc_out—To define the destination folder of gRPC-specific Go source
+code, such as calling a service function 
+
+--go-grpc_opt—To configure options for gRPC-related operations, such as
+paths=source_relative, to have the same folder structure after source code
+generation
+Let’s say that the .proto file is proto/order.proto. In this case, the commands that fol-
+low will generate two files, order.pb.go, for message-related operations, and order_
+grpc.pb.go, which contains gRPC-related functionalities. 
+protoc -I ./proto \ 
+   --go_out ./golang \
+   --go_opt paths=source_relative \ 
+   --go-grpc_out ./golang \ 
+   --go-grpc_opt paths=source_relative \ 
+   ./proto/order.proto 
+When you open the generated order_grpc.pb.go file, you see a function,
+NewOrderClient(…), that returns an interface, OrderClient. There is a convention for
+functions like New<ServiceName>Client and <ServiceName>Client for the interface when
+<ServiceName> is the name of the service specified in the .proto file, which is Order. You
+can use the generated source code if the files are in your main project. Typical usage
+involves creating OrderClient and calling the Create method:
+// Inside another module in the same project
+import "GitHub/huseyinbabal/microservices/order"
+…
+client := order.NewOrderClient(...)
+client.Create(ctx, &CreateOrderRequest{
+    UserId: 123
+})
+Listing 3.1
+Generation Go source code
+Imported packages will be searched in this location.
+Location of generated source code for messages
+Output files are placed in the same 
+relative directory as the input file.
+Location of generated source 
+code for service functions
+Output files are placed in the same 
+relative directory as the input file.
+Location of the input file

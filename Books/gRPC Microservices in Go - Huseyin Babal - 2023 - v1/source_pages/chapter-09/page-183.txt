@@ -1,0 +1,26 @@
+166
+CHAPTER 9
+Observability
+those traces and metrics to collector endpoints in the Jaeger ecosystem. We already
+checked a very basic example in the previous section, and now we will review a specific
+trace to understand what is going on in it. From the Jaeger UI (figure 9.10), we will
+see the details in figure 9.11 after clicking the first trace.
+In figure 9.11, it took 4.2 ms to finish the create order flow. The Payment Create opera-
+tion in the Payment service took 3.36 ms, which contains a DB-related operation that
+took 2.88 ms. Hopefully, since we are using GORM in our project and the Open-
+Telemetry registry already has GORM instrumentation, we can collect metrics from
+DB-related operations. We can also see more details by clicking any of those spans. For
+example, payment/PaymentCreate has the information shown in figure 9.12.
+As you can see, there is plenty of metadata in span details, and rpc.service was
+defined in our tracing provider, as well as the ID and environment. (You can see the
+description of the fields in figure 9.12 here: http://mng.bz/9DY0.) span.kind was also
+defined, which shows us this is a server-related metric. Let’s look at another example.
+ In a DB operation, you can see database, statement, and so on. These metrics are help-
+ful to spot the root cause of a problem, as the provided SQL statement can provide a lot
+1
+2
+3
+Figure 9.11
+Span details of the create order flow
+Figure 9.12
+Span details

@@ -1,0 +1,23 @@
+174
+CHAPTER 9
+Observability
+Since TraceID and SpanID are already injected into application logs, we can see them in
+the Kibana dashboard. To see all the logs under a specific TraceID, you can do a search
+(figure 9.18).
+You can see that the entire flow belongs to a specific TraceID (figure 9.19).
+Summary
+Observability is key to successful, stress-free, and more visible microservices.
+The main components for observability are traces, metrics, and logs, and cor-
+relating them is important, as it allows you to detect why an application is slow,
+what the metrics are, and what the related logs are at the time a metrics anom-
+aly is detected.
+Traces are important for understanding request flows in a microservices envi-
+ronment, especially if they have related metrics instrumented by OpenTeleme-
+try SDKs.
+A cluster-level logging architecture with Fluent Bit as a collector, Elasticsearch
+as a logging backend, and Kibana as data visualization increases microservices’
+observability. This setup provides flexibility for searching structured log data.
+Figure 9.18
+Filter by TraceID
+Figure 9.19
+Results grouped by TraceID

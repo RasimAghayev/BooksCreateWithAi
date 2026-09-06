@@ -1,0 +1,81 @@
+90
+CHAPTER 6
+Resilient communication
+    cb = gobreaker.NewCircuitBreaker(gobreaker.Settings{
+        Name:        "demo", 
+        MaxRequests: 3, 
+        Timeout:     4, 
+        ReadyToTrip: func(counts gobreaker.Counts) bool { 
+            failureRatio := float64(counts.TotalFailures) /      
+            ➥ float64(counts.Requests)
+            return failureRatio >= 0.6
+        },
+        OnStateChange: func(name string, from gobreaker.State, to 
+        ➥ gobreaker.State) { 
+            log.Printf("Circuit Breaker: %s, changed from %v, to %v", name, 
+            ➥ from, to)
+        },
+    })
+    cbRes, cbErr := cb.Execute(func() (interface{}, error) { 
+        res, isErr := isError()
+        if isErr {
+            return nil, errors.New("error")
+        }
+        return res, nil
+    })
+    if cbErr != nil { 
+        log.Fatalf("Circuit breaker error %v", cbErr)
+    } else {
+        log.Printf("Circuit breaker result %v", cbRes)
+    }
+}
+func isError() (int, bool) { 
+    min := 10
+    max := 30
+    result := rand.Intn(max-min) + min
+    return result, result != 20
+}
+We wrapped a simple function with circuit breaker logic. Let’s apply this logic to a
+client-server example in which the client tries to create an order periodically, and an
+exception for some requests is thrown due to an outage in the Order service. For this
+kind of error case, applying the circuit breaker pattern to client-server interaction is
+beneficial instead of blindly sending requests.
+…
+    orderClient := order.NewOrderServiceClient(conn)
+    for { 
+        log.Println("Creating order...")
+        orderResponse, errCreate := cb.Execute(func() (interface{}, error) {
+            return orderClient.Create(context.Background(), 
+            ➥ &order.CreateOrderRequest{
+                UserId:    23,
+                ProductId: 1234,
+Listing 6.5
+Client-side circuit breaker
+Unique
+name for
+the circuit
+breaker
+Allowed number of requests for a half-open circuit
+Timeout for
+an open to
+half-open
+transition
+Decides on 
+if the circuit 
+will be open
+Executed on each 
+state change
+Wrapped function 
+to apply a circuit 
+breaker
+Returns an error once 
+the circuit is open
+Random number between 
+10–30 with error logic
+Periodic call to simulate 
+end-user requests
+Begins
+wrapping the
+Order service
+call with the
+circuit breaker

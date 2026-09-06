@@ -1,0 +1,41 @@
+104
+CHAPTER 7
+Testing microservices
+7.1
+Testing pyramid
+The testing pyramid organizes software tests into three categories based on their con-
+text and provides insight into the percentage of tests for each category:
+Unit tests—Type of software test in which specific units of software are tested
+Integration tests—Type of software test in which the integration of multiple mod-
+ules is tested
+End-to-end tests—Type of software test in which the entire behavior of the appli-
+cation is tested
+The unit test category is at the bottom of the pyramid, the integration test is in the
+middle, and the end-to-end test is at the top (figure 7.1).
+As you can see, in a typical application, the percentage of unit tests is greater than that
+for integration tests, which is greater than the percentage for end-to-end tests. There
+are possible reasons/outputs for that percentage; let’s analyze them individually.
+ Unit tests are designed to test one component at a time, with maximum isolation.
+While testing a component (SUT), you should mock the other dependencies. Isola-
+tion levels get lower once you move up on the pyramid because you start to involve
+more components in the test suite that might break the isolation. 
+ In a unit test, you probably have a test runner, enough to test the core features and
+mock the dependencies. Once you move to the integration test, you need third-party
+tools to maintain dependencies, such as having test containers for a DB connection.
+About code examples in this chapter
+In chapter 4, we started coding our services, and in this chapter, we depend on what
+we implemented in chapter 4 and chapter 5 and continue to extend the code. Even though
+you will see step-by-step explanations of different testing strategies, you can always check
+the completed version here: https://github.com/huseyinbabal/microservices.
+Expensive
+More integration
+Slower
+Cheap
+More isolation
+Faster
+End-to-end
+tests
+Integration tests
+Unit tests
+Figure 7.1
+Testing pyramid

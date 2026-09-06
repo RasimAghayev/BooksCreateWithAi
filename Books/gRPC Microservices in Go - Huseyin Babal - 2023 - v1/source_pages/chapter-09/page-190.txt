@@ -1,0 +1,17 @@
+173
+9.3
+Observability in Kubernetes
+As shown in figure 9.16, I selected only the container name and message fields. All the
+available fields are processed and shipped to Elasticsearch by Fluent Bit, which means
+you can modify the syntax in the Fluent Bit configuration based on your needs. If you
+click any logs there, you can see more details, as shown in figure 9.17.
+The fields we
+want to see
+in columns
+All the other 
+available fields 
+in the logs
+Figure 9.16
+Kibana logs dashboard
+Figure 9.17
+Logs details that contain TraceID and SpanID

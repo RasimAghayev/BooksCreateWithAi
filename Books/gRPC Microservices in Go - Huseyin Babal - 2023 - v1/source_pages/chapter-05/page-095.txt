@@ -1,0 +1,56 @@
+78
+CHAPTER 5
+Interservice communication
+Here, we reuse the error from the Payment service and return the new error from the
+Order service. If you make another call to create an endpoint from the Payment ser-
+vice, you will get following:
+grpcurl -d '{"user_id": 123, "order_items":[{"product_code":"sku1", 
+➥ "unit_price": 0.12, "quantity":1}]}' -plaintext localhost:3000 
+➥ Order/Create
+ERROR:
+  Code: InvalidArgument
+  Message: order creation failed
+  Details:
+  1)    
+{"@type":"type.googleapis.com/google.rpc.BadRequest","fieldViolations":
+     ➥ [{"field":"payment","description":"failed to charge. invalid billing 
+     ➥ address "}]} 
+As you can see, the error structure iteratively stays refactored so that those messages
+can be propagated to the user. Now that we know how to return more detailed status
+objects from a gRPC endpoint, let’s look at how we can handle those messages on the
+client side.
+5.3.4
+Handling errors on the client side
+In our examples, the Order service is a Payment service client because it charges users
+for specific orders. If a problem occurs during a charge operation, the Payment ser-
+vice returns an error, and the Order Service should understand what happened to the
+operation. In a typical status response, there can be an error and a message to explain
+what happened. To handle this status on the client side, the gRPC status package pro-
+vides a function to resolve the status from the error. The PlaceOrder endpoint of the
+Order service would get an error from the Payment service Create endpoint. In this
+case, we can resolve the status object from the error object. Since any gRPC service
+may call multiple services to aggregate data, it is also valuable to group errors to
+understand the source of the error in the response:
+func (a Application) PlaceOrder(order domain.Order) (domain.Order, error) {
+    err := a.db.Save(&order)
+    if err != nil {
+        return domain.Order{}, err
+    }
+    paymentErr := a.payment.Charge(&order)
+    if paymentErr != nil {
+        st, _ := status.FromError(paymentErr) 
+        fieldErr := &errdetails.BadRequest_FieldViolation{
+            Field:       "payment",
+            Description: st.Message(),
+        }
+        badReq := &errdetails.BadRequest{}
+        badReq.FieldViolations = append(badReq.FieldViolations, fieldErr)
+        orderStatus := status.New(codes.InvalidArgument, "order creation 
+        ➥ failed") 
+Status object from 
+a payment error
+Payment
+error
+section
+Root
+error

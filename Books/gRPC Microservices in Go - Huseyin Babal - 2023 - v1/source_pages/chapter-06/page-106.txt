@@ -1,0 +1,48 @@
+89
+6.1
+Resiliency patterns
+
+MaxRequests limits the number of requests allowed to pass through a half-open
+circuit. The difference between an open and half-open circuit is that a half-
+open one allows certain requests to pass through the circuit based on your con-
+figuration, whereas you can’t pass through an open request. 
+
+Interval mainly defines when the count is cleared while the state is closed. For
+some use cases, you may not want to clear the interval, even if it has been a long
+time since you last saw a failure. However, this interval is cleared for most use
+cases to allow users to make failures within a reasonable time interval. 
+
+Timeout decides when to change a circuit breaker state from an open to a half-
+open state. The advantage of this change is that in an open state, the requests
+will fail fast, whereas in a half-open state, the circuit breaker allows passing
+through a half-open circuit by limiting the number of requests.
+
+ReadyToTrip checks the state of the failure threshold after the last failure and
+decides on whether to open the circuit completely.
+
+OnStateChange is mainly used for tracking state changes while handling business
+models within a function wrapper.
+With this very basic explanation of the configurations of a circuit breaker out of the
+way, let’s design client-server communication using a circuit breaker pattern with the
+following characteristics:
+The maximum allowed failure (failed_request_count / total_request_count)
+ratio is 0.6.
+The MaxRequests allowed during the half-open state is 3.
+The timeout value needed for state transition from open to half-open is 4 seconds.
+Print a log statement whenever the state changes.
+To implement these requirements, we can simply initialize *gobreaker.CircuitBreaker
+with configurations and wrap a random function to simulate circuit breaker behavior.
+This random function generates a random number between 10 and 30, and if the gen-
+erated number is 25, it also returns an error. This error increases the failure count in
+the circuit breaker, which causes the state to change from closed to open.
+package main
+import (
+    "errors"
+    "github.com/sony/gobreaker"
+    "log"
+    "math/rand"
+)
+var cb *gobreaker.CircuitBreaker
+func main() {
+Listing 6.4
+Circuit breaker for simple function

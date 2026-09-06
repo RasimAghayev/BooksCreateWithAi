@@ -1,0 +1,66 @@
+157
+9.1
+Observability
+ Think about the response latency numbers in
+figure 9.4.
+ The first thing we can do is sort all the num-
+bers in descending order, which results in the
+numbers shown in figure 9.5.
+ To find 80th percentile response latency, see the index at 80% from the right to left
+direction, which in this case is 11 ms.
+9.1.3
+Logs
+Applications produce events, and it is important to be aware of them to take action in
+case of an error or any kind of warning message. In this section, we will check the log-
+ging architecture first, then set up a logging system to ship gRPC microservices logs to
+the logging backend.
+ In monolithic applications, saving produced logs in a file to read later is not diffi-
+cult. In microservices, you can still save logs in files, but combining different log files is
+challenging. Saving logs locally is not the only option; we can also ship them to a cen-
+tral location. In a Kubernetes environment, we have two types of logging architecture:
+Node-level logging
+Cluster-level logging
+Let’s look at both.
+NODE-LEVEL LOGGING
+In node-level logging architecture, applications generate events, which are logged to a
+file or standard output using some logging library in the application. If the application
+keeps logging events, that file can grow dramatically, which will make it hard to find cer-
+tain logs. To avoid this situation, we can use log rotation: once a log file reaches a specific
+size, it can be rotated to a file with a name that contains time metadata for that rotation.
+Once you rotate logs, they are saved in separate files, but we still need to ship them to
+a central location or find a way to analyze them in multiple files (figure 9.6).
+Order service pod
+Order service container
+Container output logs are written to file
+Log rotation
+Node
+Log4
+Log3
+Log1
+Log2
+Figure 9.6
+Node-level logging architecture
+10
+22
+2
+3
+9
+1
+87
+11
+7
+4
+Figure 9.4
+Response latencies
+87
+22
+11
+10
+9
+7
+4
+3
+2
+1
+Figure 9.5
+Order response latencies

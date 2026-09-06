@@ -1,0 +1,45 @@
+43
+3.4
+Backward and forward compatibility
+3.4
+Backward and forward compatibility
+The software development process is not a one-time operation; it constantly evolves.
+This evolution always introduces changes to the system. If those changes do not affect
+existing users, it is called backward compatible change, which provides a graceful
+upgrade mechanism for your end users’ integrations to your product. If a system is
+not backward compatible, it automatically forces users to upgrade their client library,
+which may not always be possible.
+ Forward compatibility involves processing input for the system with the latest version.
+A typical example is a web browser that can handle a newer version of HTML and simply
+ignore the part it cannot understand. Since writing software that is both backward and
+forward compatible is important, especially for client-facing APIs, let’s examine some
+use cases you can use to validate whether the change is backward or forward compatible.
+3.4.1
+Adding new fields
+As mentioned, gRPC lets us exchange messages between services, and those services
+should be carefully maintained, especially while changing something in message
+fields. Most of the time, you can add new fields to messages freely, but it is important
+to validate in advance if the new field you add is already reserved by field number or
+field name.
+3.4.2
+Upgrading the server but not the client
+Let’s say that CreatePaymentRequest has only the price field, and it returns CreatePayment-
+Response with total_price, which contains the final price, the sum of price, and VAT. In
+this scenario, the message is upgraded to v2 on the server side but is still v1 on the client
+side. The client side can live with v1, but the server side should change its implemen-
+tation to support old client message types:
+message CreatePaymentRequest {
+    float64 price = 1;
+}
+message CreatePaymentResponse {
+    float64 total_price = 1;
+}
+service Payment {
+    rpc Create(CreatePaymentRequest) returns (CreatePaymentResponse){}
+}
+func (p *Payment) Create(ctx, req *pb.CreatePaymentRequest) 
+➥ (*pb.CreatePaymentResponse, error) {
+    return &CreatePaymentResponse{
+        TotalPrice: VAT + req.Price
+    }, nil
+}

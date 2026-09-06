@@ -1,0 +1,19 @@
+65
+Interservice
+ communication
+In the previous chapter, we implemented a gRPC service for the Order service. In
+this chapter, we will implement a gRPC client for that service to show how underly-
+ing communication works in microservice architecture. You can see the high-level
+picture of interservice communication in figure 5.1.
+ In previous chapters, we saw how to generate Go source codes from proto files; now,
+we will learn how to use repositories that contain gRPC stubs as Go module
+dependencies on the client side. gRPC also provides flexible configurations for client
+connections to make interservice communication more reliable. These configurations
+This chapter covers
+Understanding the internals of gRPC client-server 
+connection strategies
+How to depend on a client module to access a 
+specific service
+Tips and tricks for client configuration of a 
+particular service
+Handling errors

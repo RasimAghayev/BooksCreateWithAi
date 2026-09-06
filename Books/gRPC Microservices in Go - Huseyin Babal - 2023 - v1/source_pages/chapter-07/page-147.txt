@@ -1,0 +1,44 @@
+130
+CHAPTER 8
+Deployment
+You can also install the on-premises version of Docker registries in your network for
+better performance during pull and push operations. If you are using Docker Hub as
+your Docker image registry, you can use the following command to push your images
+after you tag them:
+docker tag order huseyinbabal/order:1.0.0
+docker push huseyinbabal/order:1.0.0
+Now that we understand how to build Docker images for our Go microservices let’s
+get familiar with our deployment environment, Kubernetes. Docker registry providers
+require a valid authentication token you can get via a docker login command. Of
+course, in the Kubernetes environment, we can provide a pull secret since running
+the Docker command while deploying microservices is not feasible. 
+8.2
+Kubernetes
+Kubernetes (i.e., k8s) is an open source container orchestration platform that helps
+manage containerized workloads or services. Kubernetes has a good abstraction layer,
+a virtualized logical operating environment that utilizes physical hardware infrastruc-
+ture components such as disks, networks, and machines. For example, once Kuberne-
+tes is deployed on a set of machines, an internal service discovery mechanism is
+provided so that you don’t have to worry about IP addresses in a networking context.
+Microservices can interact with their service names. 
+ Now that we understand what a Kubernetes cluster is, let’s look at its core compo-
+nents. Since Kubernetes is a popular open source platform, you can see it in almost all
+cloud providers; you can go to their consoles and spin it up with one click. In the same
+way, you can include Kubernetes cluster installation in your infrastructure as a code
+pipeline to provision clusters with Terraform or other cloud provider–specific SDKs
+such as eksctl (http://mng.bz/Gye8). In the cloud environment, you can use AKS,
+Azure-managed Kubernetes; EKS, AWS-managed Kubernetes; or GKE, Google Cloud–
+managed Kubernetes. If your services are on bare metal servers, Kubespray is also an
+option (https://github.com/kubernetes-sigs/kubespray).
+8.2.1
+Kubernetes architecture
+A Kubernetes cluster is a distributed system made from a machine set that contains
+primarily containerized workloads. Those nodes are divided into control plane nodes
+and worker nodes. The control plane is the brain of the Kubernetes cluster, and it has
+mission-critical components to manage resources in the Kubernetes environment.
+Those resources are specific to Kubernetes, but they manage a containerized applica-
+tion under the hood. Worker nodes contain system components like kubelet and work-
+loads like pods, the minimum deployable unit in Kubernetes (see figure 8.2).
+ 
+ 
+ 

@@ -1,0 +1,68 @@
+79
+5.3
+Error handling
+        statusWithDetails, _ := orderStatus.WithDetails(badReq) 
+        return domain.Order{}, statusWithDetails.Err()
+    }
+    return order, nil
+}
+This example assumes the Payment service returns a simple status object with code
+and a message, but if it returns the message with details, we may need to extract those
+field violations separately. In that case, we can use the built-in status.Convert()
+instead of status.FromError():
+func (a Application) PlaceOrder(order domain.Order) (domain.Order, error) {
+    err := a.db.Save(&order)
+    if err != nil {
+        return domain.Order{}, err
+    }
+    paymentErr := a.payment.Charge(&order)
+    if paymentErr != nil {
+        st := status.Convert(paymentErr) 
+        var allErrors []string
+        for _, detail := range st.Details() {
+            switch t := detail.(type) {
+            case *errdetails.BadRequest: 
+                for _, violation := range t.GetFieldViolations() {
+                    allErrors = append(allErrors, violation.Description)
+                }
+            }
+        }
+        fieldErr := &errdetails.BadRequest_FieldViolation{
+            Field:       "payment",
+            Description: strings.Join(allErrors, "\n"),
+        } 
+        badReq := &errdetails.BadRequest{}
+        badReq.FieldViolations = append(badReq.FieldViolations, fieldErr)
+        orderStatus := status.New(codes.InvalidArgument, "order creation 
+        ➥ failed")
+        statusWithDetails, _ := orderStatus.WithDetails(badReq) 
+        return domain.Order{}, statusWithDetails.Err()
+    }
+    return order, nil
+}
+During interservice communication, we may not need to convert statuses frequently,
+but when it comes to software development kits (SDKs), such as a client implementa-
+tion, your entire application may need to handle those error messages, as shown, to
+understand what happened in the system and provide a meaningful message to the
+end user. We’ve completed all the Payment and Order service steps; now let’s see how
+to run them.
+Populates 
+with a 
+payment 
+error
+Converts a complex 
+error to a status
+Slices for
+whole errors
+Used for a Bad 
+Request case
+Payment
+errors as
+fields
+A root error
+on the Order
+service
+Expands 
+the root 
+error with 
+details

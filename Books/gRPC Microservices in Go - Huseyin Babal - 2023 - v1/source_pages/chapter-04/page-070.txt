@@ -1,0 +1,52 @@
+53
+4.2
+Order service implementation
+The content of api.go is as follows:
+package api
+import (
+    "github.com/huseyinbabal/microservices/order/internal/application/core/
+     ➥ domain"
+    "github.com/huseyinbabal/microservices/order/internal/ports" 
+)
+type Application struct {
+    db ports.DBPort 
+}
+func NewApplication(db ports.DBPort) *Application {
+    return &Application{
+        db: db, 
+    }
+}
+func (a Application) PlaceOrder(order domain.Order) (domain.Order, error) {
+    err := a.db.Save(&order) 
+    if err != nil {
+        return domain.Order{}, err
+    }
+    return order, nil
+}
+The Application struct has a dependency in the DB layer, and you can see the NewAp-
+plication method that helps create an instance of the Application. Once you create
+an instance of the Application, you will see that each instance has a PlaceOrder
+method that uses DB dependency to save the order in the database. The original pack-
+ages are used in the import statements, but you can use your package URL instead of
+github.com/huseyinbabal/microservices/order…. Now that we understand how the
+application core is structured, let’s look at how to implement ports so that they can be
+used in the application and the adapters.
+4.2.4
+Implementing ports
+Ports are just interfaces that contain general methods in each hexagonal layer. For
+example, we implemented the PlaceOrder method in the previous section, and if you
+look at it carefully, you can see that it implements the PlaceOrder method of the
+APIPort interface. The PlaceOrder method simply accepts and saves a domain object in
+the database. With this information, we can assume that whenever we want to create
+an application, we need to pass the DB adapter to it. The application saves an order in
+the database using the reference db via the receiver function. 
+ Let’s start implementing the API port with touch internal/ports/api.go, which
+contains an interface with just one method, PlaceOrder, as follows:
+ 
+Package for the order
+domain object
+Ports for the DB adapter
+The API depends on DBPort.
+DBPort is passed during 
+the app’s initialization.
+Order is saved through the DB port.

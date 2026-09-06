@@ -1,0 +1,44 @@
+54
+CHAPTER 4
+Microservice project setup
+package ports
+import 
+"github.com/huseyinbabal/microservices/order/internal/application/core/d
+omain"
+type APIPort interface {
+    PlaceOrder(order domain.Order) (domain.Order, error)
+}
+While APIPort is used for core application functionalities, DBPort helps the application
+fulfill its functionalities. Let’s create a DB port using the touch internal/ports/db.go
+file. DBPort is a very simple interface that contains the Get and Save methods, and, of
+course, it depends on the application domain model, which is Order:
+package ports
+import "github.com/huseyinbabal/microservices/order/internal/application/
+➥ core/domain"
+type DBPort interface {
+    Get(id string) (domain.Order, error) 
+    Save(*domain.Order) error 
+}
+The application depends on DBPort via the interface, but we need to pass a concrete
+implementation during initialization, so let’s look at what concrete implementations
+of ports look like.
+4.2.5
+Implementing adapters
+We must implement Save and Get methods to allow the application to save Order in the
+database. The ORM (Object Relational Mapping) library would be suitable for database-
+related operations in an effort to eliminate extra effort while constructing SQL queries.
+GORM is a very popular ORM library in the Go world, and we will use it for our project.
+Let’s get GORM and MySQL driver dependency with the following command after you
+go to the root directory of order project:
+go get -u gorm.io/gorm
+go get -u gorm.io/driver/mysql
+Now we are ready to create our DB file and add dependencies to your go.mod file. As
+you can see, GORM has an abstraction over DB drivers that you can easily use: touch
+internal/adapters/db/db.go. This file contains a struct for database models and
+related functions to manage their state. For the Order service, we have two simple
+models, Order and OrderItem, in which the Order model has a one-to-many relation-
+ship with OrderItem, as you can see in figure 4.3.
+ One of the best things about an ORM library is the ability to define these relation-
+ships with simple conventions, such as referencing a field in one model and applying
+Gets Order by its unique ID
+Saves the Order domain into the database

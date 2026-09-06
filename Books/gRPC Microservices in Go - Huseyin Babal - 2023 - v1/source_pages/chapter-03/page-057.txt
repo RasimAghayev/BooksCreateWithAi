@@ -1,0 +1,40 @@
+40
+CHAPTER 3
+Getting up and running with gRPC and Golang
+This is just a brief introduction to module versioning. We will revisit this topic in chap-
+ter 5 in detail.
+ Manually handling these generations and tagging processes can be a bit painful as
+the service count increases. Next, let’s look at how we can automate this process using
+GitHub Actions as an example of CI/CD.
+3.3.2
+Automation for source code generation
+GitHub Actions is a CI/CD platform that allows you to automate a building, testing,
+and deployment pipeline. All the pipeline steps can be defined in the workflow file
+that GitHub can detect under your repository’s .github/workflows folder. You don’t
+need to be an expert on GitHub Actions to fully understand the examples, but, since
+we are using GitHub Actions examples to explain CI/CD parts of this book, you may
+want to look at the very short GitHub Actions Quickstart tutorial on Github:
+https://docs.github.com/en/actions/quickstart. 
+As you can see in figure 3.3, Go source codes for Payment, Order, and Shipping services
+are generated using GitHub Actions whenever the user sends a change to the repository
+Generated Go source codes can
+be added as dependencies.
+repo: microservices
+repo: microservices-public-java-sdk
+repo: microservices-proto
+Order service
+Payment service
+Shipping service
+Github actions
+.proto files
+Payment
+Text
+Generated Go and other language
+source codes can be added
+as dependencies.
+Order
+Shipping
+Workflow
+triggered
+Figure 3.3
+Automatic source code generation flow

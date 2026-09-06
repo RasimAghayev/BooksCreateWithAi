@@ -1,0 +1,42 @@
+154
+CHAPTER 9
+Observability
+9.1
+Observability
+Microservice architecture is a distributed system in which services communicate to
+maintain data consistency. Let’s say that PlaceOrder visits three services to create an
+order, charge a customer’s credit card, and ship it to the customer. An error can occur
+in any of those services while handling a PlaceOrder operation, and this is where the
+challenge begins. Observability helps us track a problem’s root cause by analyzing
+traces, metrics, and logs. This chapter will show how observability can be perfectly
+handled in a microservices system that uses gRPC for communication. In this context,
+observability can answer the following questions:
+Why did the product service crash yesterday?
+Why is performance degraded in the middle of the day each Thursday?
+What is the performance of the Payment service like right now?
+To answer these questions, we need a proper observability system that shows traces, met-
+rics, and logs in the correct format so that we can analyze them and take action. We will
+use different technologies such as Jaeger (https://www.jaegertracing.io/), OpenTelem-
+etry (https://opentelemetry.io/), and Prometheus (https://prometheus.io/), but first
+let’s look at what traces, metrics, and logs are in a microservices environment.
+9.1.1
+Traces
+A trace, a collection of operations to handle a unique transaction, refers to the journey of a
+request across services in a distributed system. It encodes the metadata of a specific
+request to propagate it until it reaches its final service. A trace can contain one or
+more spans that map to a single operation (see figure 9.1).
+About code examples in this chapter
+In chapter 4, we started coding our services; in this chapter, we depend on what we
+implemented from chapters 4 through 8. The examples in this chapter are complete,
+and you can run the entire application by checking the README file in the repository.
+We will continue to extend the application to see how observability works.
+PlaceOrder
+OrderService:saveToDB()
+paymentClient:Create()
+paymentService:charge()
+Span 3
+Span 2
+Span 1
+Trace
+Figure 9.1
+Journey of a request

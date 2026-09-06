@@ -1,0 +1,19 @@
+153
+Observability
+Due to the nature of microservice architecture, you may end up with many services
+to meet product needs. Having good visibility of this system becomes important for
+being proactive about spotting problems and taking quick action to fix them. Ser-
+vices talk to other services, databases, queues, and third-party services, which pro-
+duces insights about internal operations. In this chapter, we learn how to collect
+those insights and generate meaningful reports to understand situations in a cloud-
+native microservices environment.
+This chapter covers
+Understanding observability concepts, such as 
+traces, metrics, and logs
+Adding OpenTelemetry instrumentation libraries 
+to ship metrics to a metrics collector
+Setting up a performance monitoring dashboard 
+for microservices using Jaeger and Prometheus
+Installing an observability stack that includes 
+Jaeger, Prometheus, Fluent Bit, Elasticsearch, 
+and Kibana

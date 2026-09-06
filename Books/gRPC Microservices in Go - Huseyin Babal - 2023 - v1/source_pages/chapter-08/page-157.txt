@@ -1,0 +1,49 @@
+140
+CHAPTER 8
+Deployment
+8.2.7
+NGINX Ingress controller
+The NGINX Ingress controller helps you create one load balancer per Ingress con-
+troller and has a dedicated resource Ingress that helps traffic routing between the end
+user and a pod. If you create three Services with LoadBalancer type for three microser-
+vices, the controller will create three load balancers, one each. If you deploy the con-
+troller and create an Ingress resource for traffic routing, you will have just one load
+balancer instead of three. That one load balancer will be responsible for handling all
+the traffic between the end user and the pod. 
+NGINX Ingress plays a key role in routing the traffic from the load balancer to actual
+pods. The logic behind this is very simple: whenever you create an Ingress resource,
+the Ingress controller detects this change and refreshes the nginx.conf file with new
+paths inside the controller. Let’s look at the Ingress resource for the Order service:
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  annotations:
+    kubernetes.io/ingress.class: nginx
+    nginx.ingress.kubernetes.io/backend-protocol: GRPC 
+    nginx.ingress.kubernetes.io/ssl-redirect: "true" 
+    cert-manager.io/cluster-issuer: selfsigned-issuer 
+  name: order
+spec:
+  rules:
+    - http:
+        paths:
+K8s Worker Node
+Pod
+app: payment
+Ingress
+/payments
+Pod
+app: order
+Ingress
+/orders
+Ingress
+controller
+creates
+Figure 8.8
+NGINX Ingress controller
+States the gRPC backend
+gRPC, by
+default
+works on
+HTTPS.
+Certificate automation

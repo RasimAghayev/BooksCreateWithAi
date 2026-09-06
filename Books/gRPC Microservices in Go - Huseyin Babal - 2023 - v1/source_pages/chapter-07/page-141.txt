@@ -1,0 +1,41 @@
+124
+CHAPTER 7
+Testing microservices
+You can use the following command to redirect detailed coverage information to a
+file:
+go test -coverprofile=coverage.out
+This will save coverage information into the coverage.out file, and then we are ready
+to pass this file to the following command to generate an HTML report.
+go tool cover -html=coverage.out
+coverage.out is provided via the -html option, which should generate an HTML
+report. In a modern automated environment, we are not interested in coverage
+reports in HTML format, but the coverage.out file can be passed to modern tools in
+our CI pipeline to maintain code quality for our repository. Now let’s look at a brief
+introduction for using tests and coverages in a CI flow in our environment.
+7.5.2
+Testing in a CI pipeline
+Continuous integration (CI) is a special automation that aims to integrate code
+changes. Those code changes can trigger testing and artifact generation, such as a
+Docker image or JAR file, to verify changes or build an artifact after changes are
+already approved. As a more concrete example, if you create a pull request (PR) in
+GitHub, CI can trigger a set of actions to calculate coverage and do some static code
+analysis to verify the code changes for maintaining quality. Once you merge this PR
+into the main branch, the CI can trigger a Docker image build operation with a spe-
+cial tag to use in application deployment. You can also configure rules, such as if the
+coverage is dropped under a certain threshold, the the PR check should fail. This will
+force the maintainer to revisit changes and add more tests to increase coverage. The
+more coverage you have, the more confidence you have during any change in the
+codebase. Figure 7.8 shows an overview of PR flow.
+ CI is powerful in maintaining code quality and reducing distraction while develop-
+ing software. You can focus more on business logic development while CI handles
+checks and artifact generation for you.
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 

@@ -1,0 +1,49 @@
+115
+7.4
+End-to-end tests
+database, then get it to verify if the returned order contains the same customerID we
+provided the initial order:
+func (o *OrderDatabaseTestSuite) Test_Should_Get_Order() {
+    adapter, _ := NewAdapter(o.DataSourceUrl)
+    order := domain.NewOrder(2, []domain.OrderItem{ 
+        {
+            ProductCode: "CAM",
+            Quantity:    5,
+            UnitPrice:   1.32,
+        },
+    })
+    adapter.Save(&order)
+    ord, _ := adapter.Get(order.ID)
+    o.Equal(int64(2), ord.CustomerID) 
+}
+Now that we have added all the tests, let’s add another function responsible for run-
+ning them, suite.Run(..), with the argument OrderDatabaseTestSuite, which causes all
+the tests that contain a receiver with this type to run. We can append the following
+function to our test file as a final step:
+func TestOrderDatabaseTestSuite(t *testing.T) {
+    suite.Run(t, new(OrderDatabaseTestSuite)) 
+}
+Now you can navigate to internal/adapters/db and execute the following to run all
+the tests inside the suite:
+go test ./…
+This execution will spin up a test container for MySQL, and the tests will run against
+that database. This verifies that the DB adapter works well with a real MySQL data-
+base. We call it an integration test because we verify that the two modules work
+together. What if we want to test all the components together? Let’s look at how we
+can verify our application works well with all its dependencies.
+7.4
+End-to-end tests
+We addressed testing one component with unit tests and integration tests to check
+consistency between two components, but to say our product is working, we need
+more than that. Here, we will do an end-to-end test by running the stack that contains
+the minimum set of required services and verifying a certain flow against this stack. To
+accomplish this goal, we will run MySQL database, Payment service, and Order service
+and use the testing techniques we used for previous sections with an order client to
+test a create order flow. We will create an order and get order details to assert each
+response field in that suite. Let’s look at high-level information about that setup and
+dive deep into each section.
+Example order
+Retrieves the order by its ID
+Equal is accessible via the receiver.
+Runs all tests with the 
+OrderDatabaseTestSuite receiver

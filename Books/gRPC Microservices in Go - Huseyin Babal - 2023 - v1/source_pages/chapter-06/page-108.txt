@@ -1,0 +1,65 @@
+91
+6.1
+Resiliency patterns
+                Price:     3.2,
+            })
+        })
+        if errCreate != nil { 
+            log.Printf("Failed to create order. Err: %v", errCreate)
+        } else { 
+            log.Printf("Order %d is created successfully.", 
+orderResponse.(*order.CreateOrderResponse).OrderId)
+        }
+        time.Sleep(1 * time.Second) 
+    } 
+…
+Suppose you have multiple places like this where you call a dependent service from a con-
+sumer service. Would you apply a circuit breaker pattern to all calls by wrapping them?
+Or would you want some central place to manage the circuit breaker pattern? Let’s look
+at how we can control circuit breaker logic in one place using gRPC interceptors.
+ Remember, we already used UnaryClientInterceptor while handling a retry
+operation for client-server communication. Now we will implement an interceptor
+that allows us to pass circuit breaker logic as a parameter to ensure we return
+UnaryClientInterceptor.
+package middleware
+import (
+    "context"
+    "github.com/sony/gobreaker"
+    "google.golang.org/grpc"
+)
+func CircuitBreakerClientInterceptor(cb *gobreaker.CircuitBreaker) 
+➥ grpc.UnaryClientInterceptor { 
+    return func(
+    ctx context.Context, 
+    method string, 
+    req, reply interface{}, 
+    cc *grpc.ClientConn, 
+    invoker grpc.UnaryInvoker, 
+    opts ...grpc.CallOption
+    ) error {
+        _, cbErr := cb.Execute(func() (interface{}, error) { 
+            err := invoker(ctx, method, req, reply, cc, opts...) 
+            if err != nil {
+                return nil, err
+            }
+            return nil, nil
+        })
+Listing 6.6
+Circuit breaker interceptor
+Error when state changes
+If the
+circuit is
+closed, it
+returns
+data.
+Waits for one second 
+to not heat the CPU
+Finishes wrapping
+A function with a 
+UnaryClientInterceptor type
+Circuit
+breaker
+wrapper
+The gRPC call is
+resumed within a circuit
+breaker wrapper.

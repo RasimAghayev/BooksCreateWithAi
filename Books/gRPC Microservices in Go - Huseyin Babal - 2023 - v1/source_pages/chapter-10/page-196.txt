@@ -1,0 +1,107 @@
+INDEX
+179
+microservice project setup 47–64
+hexagonal architecture 47–49
+Order service implementation 49–64
+calling gRPC endpoint 63–64
+dependency injection and running 
+application 61–63
+implementing adapters 54–57
+implementing application core 51–53
+implementing gRPC adapter 57–61
+implementing ports 53–54
+initializing Go project 51
+project folders 50–51
+minikube tunnel command 143–144
+mocks
+automatic generation of 111–112
+implementing 108–111
+working with 107–108
+modules, depending on 68–75
+client configuration for payment stub 72–73
+implementing payment adapter 71–72
+implementing payment port 70
+payment adapter overview 69–70
+payment port overview 69
+using payment adapter in gRPC 73–75
+monitoring 11–12
+monolithic architecture 15–16
+deployment 15–16
+development 15
+scaling 16
+mTLS (mutual TLS) 96
+multistage builds 118, 128
+N
+New<Service_Name>Client naming 
+convention 28
+New<ServiceName>Client function 37
+NewAdapter function 56
+NewApplication method 53
+NewOrder method 52
+NewOrderClient(…) function 37
+NGINX Ingress controller 140–141
+nginx instance 134, 141
+nginx-ingress chart 141
+nginx.conf. NGINX configurations 141
+node-level logging 157–158
+NodePort option 141
+NodePort service type 137–139
+numbers, average value of 156
+O
+observability 153–174
+in Kubernetes 161–174
+application logging 168–169
+Elasticsearch as logging backend 170–172
+Jaeger All in One 161–162
+Jaeger installation 162–163
+Kibana as logging dashboard 172–174
+logs collection 169–170
+OpenTelemetry Collector 162
+OpenTelemetry interceptor for Order 
+service 163–165
+Prometheus 162
+understanding metrics of Order service
+165–167
+logs 157–158
+metrics 155–157
+OpenTelemetry 158–161
+instrumentation 159
+instrumentation locations 159
+metric backend 159–160
+service performance monitoring 160–161
+production-grade use cases 11–12
+traces 154–155
+OK status 75
+oneof fields
+adding/removing 44–45
+moving fields out of or into 45
+OpenTelemetry 158–161
+instrumentation 159
+instrumentation locations 159
+metric backend 159–160
+service performance monitoring 160–161
+OpenTelemetry Collector 162
+OpenTelemetry interceptor for Order 
+service 163–165
+orchestration-based saga 21–22
+Order data 19, 52
+Order event 21
+Order model 54–56, 60, 69
+order operation 84
+Order service 39–40, 42
+end-to-end tests 119–120
+implementation 49–64
+calling gRPC endpoint 63–64
+dependency injection and running 
+application 61–63
+implementing adapters 54–57
+implementing application core 51–53
+implementing gRPC adapter 57–61
+implementing ports 53–54
+initializing Go project 51
+project folders 50–51
+OpenTelemetry interceptor for 163–165
+understanding metrics of 165–167
+order_created event 20
+order-service, deployment 135
+Order:create() method 18
