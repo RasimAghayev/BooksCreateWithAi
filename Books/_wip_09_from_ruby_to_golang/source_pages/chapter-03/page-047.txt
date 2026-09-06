@@ -1,0 +1,65 @@
+Hash and Maps
+41
+1
+basket = { fruits: ["apple", "grapes"],
+2
+veggies: ["kale", "cabbage"] }
+3
+4
+basket.delete(:veggies)
+and to avoid deleting the original hash, you can do,
+1
+basket = { fruits: ["apple", "grapes"],
+2
+veggies: ["kale", "cabbage"] }
+3
+4
+newbasket = basket.dup.tap { |produce| produce.delete(:veggies) }
+In Go, you simply use the delete command.
+1
+variable := map[keyType]valueType{
+2
+keyName: Value,
+3
+}
+4
+5
+delete(variable, "keyName")
+and going back to our example, you can delete a specific value from a map via delete,
+1
+package main
+2
+3
+import (
+4
+"fmt"
+5
+)
+6
+7
+type produce struct {
+8
+flavour string
+9
+kind
+string
+10
+}
+11
+12
+func main() {
+13
+var basket map[string]produce
+14
+15
+basket = make(map[string]produce)
+16
+17
+basket["apple"] = produce{
+18
+flavour: `It's a little sour and bitter, but mostly
+19
+sweet, not at all salty, very juicy in general.`,
+20
+kind:
+"fruit",

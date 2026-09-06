@@ -1,0 +1,40 @@
+Glossary
+132
+Git
+is a distributed version-control system
+for tracking changes in source code
+during software development. It is
+designed for coordinating work among
+programmers, but it can be used to track
+changes in any set of files. Its goals
+include speed, data integrity, and support
+for distributed, non-linear workflows.
+Go (programming language)
+Go, also known as Golang, is a statically
+typed, compiled programming language
+designed at Google by Robert Griesemer,
+Rob Pike, and Ken Thompson. Go is
+syntactically similar to C, but with
+memory safety, garbage collection,
+structural typing, and CSP-style
+concurrency.
+Golang
+the Shortened Name for “Go
+Programming Language”
+Group
+A number of things or persons being in
+some relation to one another
+Handled
+simple past tense and past participle of
+handle
+Hard
+Having a severe property; presenting
+difficulty. Resistant to pressure
+Hash
+Food, especially meat and potatoes,
+chopped and mixed together. corn-beef
+hash
+Header
+layout
+Helper
+One who helps; an aide

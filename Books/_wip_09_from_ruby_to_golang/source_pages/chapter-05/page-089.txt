@@ -1,0 +1,70 @@
+Package Management
+83
+greeter.go
+1
+package main
+2
+3
+import (
+4
+"time"
+5
+6
+"github.com/foo/greeter"
+7
+weather "github.com/bar/climate"
+8
+)
+9
+10
+func main() {
+11
+greeter.SayHello("John")
+// Hello John!
+12
+13
+weather.SayWeather(time.Now())
+14
+// It will be sunny today. Overall it's
+15
+// a good weather!
+16
+}
+Noticed that we imported time and greeter and use its name as-is to access the package’s functions
+in our main function. We also imported climate and assign a name weather. In Ruby, this works
+like a module that contains methods that you can include in your class. Below is the following Ruby
+example that we will rewrite in Go using package and import.
+Module and Include
+1
+module Coffee
+2
+def types
+3
+%w[
+4
+espresso
+5
+cappuccino
+6
+macchiato
+7
+]
+8
+end
+9
+end
+10
+11
+class Drink
+12
+include Coffee
+13
+14
+def menu
+15
+puts types
+16
+end
+17
+end
+18

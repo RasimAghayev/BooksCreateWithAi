@@ -1,0 +1,62 @@
+{
+  "book": "From Ruby to Golang: A Ruby Programmer's Guide to Learning Go",
+  "page_offset": 7,
+  "chapters": [
+    {
+      "chapter": 1,
+      "title": "Introduction and communication (variables)",
+      "book_pages": "1-2",
+      "start_pdf_page": 7,
+      "end_pdf_page": 9
+    },
+    {
+      "chapter": 2,
+      "title": "Setter/Getters, Attribute Accessors and Structs",
+      "book_pages": "3-28",
+      "start_pdf_page": 10,
+      "end_pdf_page": 34
+    },
+    {
+      "chapter": 3,
+      "title": "Hash and Maps, Variadic Functions",
+      "book_pages": "29-54",
+      "start_pdf_page": 35,
+      "end_pdf_page": 60
+    },
+    {
+      "chapter": 4,
+      "title": "Arrays and Slices, Navigating your Arrays",
+      "book_pages": "55-81",
+      "start_pdf_page": 61,
+      "end_pdf_page": 87
+    },
+    {
+      "chapter": 5,
+      "title": "Package Management (Go Modules, dep)",
+      "book_pages": "82-92",
+      "start_pdf_page": 88,
+      "end_pdf_page": 98
+    },
+    {
+      "chapter": 6,
+      "title": "Collection Functions (Enumerable in Go)",
+      "book_pages": "93-100",
+      "start_pdf_page": 99,
+      "end_pdf_page": 107
+    },
+    {
+      "chapter": 7,
+      "title": "Organizing your Functions using Interface",
+      "book_pages": "101-111",
+      "start_pdf_page": 108,
+      "end_pdf_page": 117
+    },
+    {
+      "chapter": 8,
+      "title": "Glossary (Ruby-Go terminology)",
+      "book_pages": "112-158",
+      "start_pdf_page": 118,
+      "end_pdf_page": 165
+    }
+  ]
+}

@@ -1,0 +1,22 @@
+Collection Functions in Go
+100
+I’m sure there are many things we can learn from Ruby enumerable, not only this can potentially
+be applied to Golang but to any programming language that does not have the built-in enumerable
+methods. If you want to use a community supported collection method, check out Go By Example’s
+collection-functions¹⁷
+Questions
+1. What have we learned?
+We learn to emulate Ruby’s drop_while method which drops elements from the array until
+the passed block returns true.
+2. Why is it useful?
+It can be used to remove elements from the array until a certain condition is met.
+Chapter Questions
+1. What is an enumerable?
+An enumerable is a collection of items that can be iterated over.
+2. What is an enumerable method in Ruby?
+An enumerable method is a method that returns an enumerator.
+3. Why is enumerable methods in Ruby useful?
+Enumerable methods are useful because they allow you to iterate over a collection.
+4. What is a predicate method in Ruby?
+A predicate method is a method that returns a boolean value.
+¹⁷https://gobyexample.com/collection-functions

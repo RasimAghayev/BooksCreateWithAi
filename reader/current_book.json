@@ -1,7 +1,6 @@
 {
-  "book_id": null,
-  "title": null,
-  "status": "none",
-  "started_at": null,
-  "note": "Effective Go RU (effective_go_ru_2009_v1) 2026-09-06 tarixində tamamlandı. Növbəti kitab Books/ qovluğundan götürüləcək."
+  "book_id": "from_ruby_to_golang_2021_v1",
+  "title": "From Ruby to Golang",
+  "status": "reading",
+  "started_at": "2026-09-06"
 }

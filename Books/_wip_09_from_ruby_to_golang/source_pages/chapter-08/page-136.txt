@@ -1,0 +1,49 @@
+Glossary
+130
+Fixed (mathematics)
+Fixed point, a point that is mapped to
+itself by the function
+Fixed
+simple past tense and past participle of
+fix
+Flexible
+Capable of being flexed or bent without
+breaking; able to be turned or twisted
+without breaking
+Float
+Of an object or substance, to be
+supported by a liquid of greater density
+than the object so as that part of the
+object or substance remains above the
+surface
+Focus
+A point at which reflected or refracted
+rays of light converge
+Folder
+An organizer that papers are kept in,
+usually with an index tab, to be stored as
+a single unit in a filing cabinet
+Foobar
+The terms foobar (), or foo and others are
+used as metasyntactic variables and
+placeholder names in computer
+programming or computer-related
+documentation. They have been used to
+name entities such as variables,
+functions, and commands whose exact
+identity is unimportant and serve only to
+demonstrate a concept.
+Foo
+A metasyntactic variable used to stand
+for some unspecified entity, typically the
+first in a series before bar
+For loop
+In computer science, a for-loop (or
+simply for loop) is a control flow
+statement for specifying iteration, which
+allows code to be executed repeatedly.
+Form
+is the shape, visual appearance, or
+configuration of an object. In a wider
+sense, the form is the way something is
+or happens.

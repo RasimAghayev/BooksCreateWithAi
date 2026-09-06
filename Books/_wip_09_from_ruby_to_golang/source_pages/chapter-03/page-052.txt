@@ -1,0 +1,31 @@
+Hash and Maps
+46
+Questions
+1. What have we learned?
+We can read a non-present key from a map, and it will return a zero value.
+2. Why this is useful?
+This is useful when we want to read a non-present key from a map, and we don’t want to
+type check the key.
+3. What is a zero values?
+A zero value is a default value corresponding to each type.
+4. What is the zero values of booleans?
+false
+5. What is the zero values of integers?
+0
+6. What is the zero values of floats?
+0.0
+7. What is the zero values of strings?
+""
+8. What corresponds a zero value of nil in Go?
+Functions, interfaces, slices, pointer, channel, and map.
+9. How do you read a non-present key from a map with ‘int’ type?
+You can read a non-present key from a map with an int type, which will return the zero
+value (and the literal 0 value for int).
+10. What other ways that you can safely read a non-present key from a map in Go?
+You can use the reflect.ValueOf function to convert the map to a reflect.Value and then
+use the reflect.Value.Elem function to read the value.
+Variadic Functions
+Ruby has a way to capture arguments and convert to hash using double-splat³ operator. In the
+following example, we have a method add_item that accepts a string and a double-splat, that appends
+a hash into the basket instance variable.
+³https://ruby-doc.org/core-2.3.0/doc/syntax/calling_methods_rdoc.html#label-Hash+to+Keyword+Arguments+Conversion

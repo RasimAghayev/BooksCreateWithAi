@@ -1,0 +1,50 @@
+Setter/Getters, Attribute Accessors and Structs
+10
+Go Public Struct
+1
+package main
+2
+3
+import "fmt"
+4
+5
+type Dog struct {
+6
+Breed string
+7
+}
+8
+9
+func main() {
+10
+kind := Dog{
+11
+Breed: "Rottweiler",
+12
+}
+13
+14
+fmt.Println(kind.Breed)
+15
+}
+1
+$ go run dog.go
+2
+3
+Rottweiler
+In most cases, the equivalent functionality of an instance variables in Go would be using struct.
+And you can extend struct by attaching it to a function, forming methods to a struct that you can
+perform mutations of existing values.
+Questions
+1. What have we learned?
+Structs are a way to group data together, and you can also make it publicly available for
+other packages.
+2. Why is it useful?
+Sharing packages in Go is useful because it allows you to reuse code in different projects.
+3. How do you make your Golang struct publicly available?
+You can make your struct publicly available by capitalizing the struct type alias name.
+4. What other Golang functionality that you can made public?
+You can also make your functions and variables publicly available by capitalizing their
+names.
+5. How do you mutate an existing struct values?
+By attaching a struct to a function, you can perform mutations of existing values.

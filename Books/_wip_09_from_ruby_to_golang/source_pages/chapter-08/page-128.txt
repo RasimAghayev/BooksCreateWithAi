@@ -1,0 +1,51 @@
+Glossary
+122
+Custom
+Frequent repetition of the same behavior;
+way of behavior common to many;
+ordinary manner; habitual practice;
+method of doing, living or behaving
+Cut
+To incise, to cut into the surface of
+something. To perform an incision on,
+for example with a knife. To divide with
+a knife, scissors, or another sharp
+instrument
+Cycle
+An interval of space or time in which one
+set of events or phenomena is completed
+Database (generic)
+organized information in a regular
+structure, usually but not necessarily in a
+machine-readable format accessible by a
+computer
+Database
+A database is an organized collection of
+data, generally stored and accessed
+electronically from a computer system.
+Where databases are more complex they
+are often developed using formal design
+and modeling techniques.
+Data
+Plural of datum. Data is a set of values of
+subjects with respect to qualitative or
+quantitative variables.
+Datum
+(plural: data) A measurement of
+something on a scale understood by both
+the recorder (a person or device) and the
+reader (another person or device). The
+scale is arbitrarily defined, such as from
+1 to 10 by ones, 1 to 100 by 0.1, or simply
+true or false, on or off, yes, no, or maybe,
+etc.
+Declaration
+A written or oral indication of a fact,
+opinion, or belief
+Declaratively
+In a declarative way
+Decouple
+to unlink; to take apart
+Decoupling
+Decoupling usually refers to the ending,
+removal or reverse of coupling.

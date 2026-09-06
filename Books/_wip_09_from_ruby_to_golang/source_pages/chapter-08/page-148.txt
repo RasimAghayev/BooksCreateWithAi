@@ -1,0 +1,50 @@
+Glossary
+142
+Management
+Management (or managing) is the
+administration of an organization,
+whether it is a business, a not-for-profit
+organization, or government body.
+Management includes the activities of
+setting the strategy of an organization
+and coordinating the efforts of its
+employees (or of volunteers) to
+accomplish its objectives through the
+application of available resources, such
+as financial, natural, technological, and
+human resources. The term
+“management” may also refer to those
+people who manage an organization.
+Manager
+A person whose job is to manage
+something, such as a business, a
+restaurant, or a sports team
+Manage
+To direct or be in charge of
+Manual
+A handbook
+Map[String]String
+a Declared map With Type and Value
+Both Assigned as String
+Map (generic)
+A map is a symbolic depiction
+emphasizing relationships between
+elements of some space, such as objects,
+regions, or themes.
+Map
+A visual representation of an area,
+whether real or imaginary
+Marked
+Having a visible or identifying mark
+Matching
+present participle of match
+Maximize
+to make as large as possible
+Maximum
+The highest limit
+Max
+maximum function
+Mechanics
+The branch of physics that deals with the
+action of forces on material objects with
+mass

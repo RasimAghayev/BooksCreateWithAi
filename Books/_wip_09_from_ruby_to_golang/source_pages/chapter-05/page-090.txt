@@ -1,0 +1,58 @@
+Package Management
+84
+19
+drink = Drink.new
+20
+21
+drink.menu
+To rewrite this example in Go, we will create the package named coffee and put it in
+$GOHOME/src/local/coffee.go, this will be the module block in our Ruby example.
+1
+package coffee
+2
+3
+func Types() []string {
+4
+types := []string{"espresso", "cappuccino", "macchiato"}
+5
+6
+return types
+7
+}
+Noticed that the name of the function Types is capitalized, that’s because Go will make any
+capitalized functions, structs and variables public. Next, we can use import to include the coffee
+package in our program and access the functions inside the coffee package. This will be the
+classblock in our Ruby example.
+Importing Packages in Go
+1
+package main
+2
+3
+import (
+4
+"fmt"
+5
+6
+"local/coffee"
+7
+)
+8
+9
+func main() {
+10
+menu()
+11
+}
+12
+13
+func menu() {
+14
+for _, val := range coffee.Types() {
+15
+fmt.Println(val)
+16
+}
+17
+}
+In summary, the equivalent of Ruby’s module and include in Go would be using Go’s built-in
+package and put it in GOPATH and use import to load it. Now that we know how to declare package

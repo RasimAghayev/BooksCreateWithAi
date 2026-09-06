@@ -1,0 +1,45 @@
+Organizing your Functions using
+Interface
+If you need to organize and scope your functions into specific implementations, provides a better
+structure for your programs, and a cleaner way to manage your components, then use interface.
+Interfaces provide a way to organize multiple implementations and behaviors into common APIs.
+One of the advantages of using interface is that it can enforce cleaner component management,
+allowing multiple implementations and behaviors to managed easily. In other words, treat interface
+as your API contracts in between your implementations.
+There are no direct analogs of interface in Ruby, but there are several Ruby implementations that
+the concept of interface has been used. One of those implementations is organizing your Ruby
+methods using modules. In the following example, we are going to organize our class methods into
+manageable modules. We have a module called Basket which contains our methods for adding and
+removing items in the items accessor.
+1
+require 'set' # We can collect unique unordered values
+2
+3
+module Basket
+4
+attr_accessor :items
+5
+6
+def setup_basket
+7
+@items = Set.new
+8
+end
+9
+10
+def add_item(item)
+11
+@items << item
+12
+end
+13
+14
+def remove_item(item)
+15
+@items.delete(item)
+16
+end
+17
+end
+Then we are going to create a class that subclass to String, and includes our Basket module which
+includes the functionality that we defined for adding and removing items.

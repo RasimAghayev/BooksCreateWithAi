@@ -1,0 +1,68 @@
+Organizing your Functions using Interface
+110
+25
+}
+26
+27
+func (i Item) Kind() string {
+28
+kind := map[string]string{
+29
+"Apple": "Fruit",
+30
+"Kale":
+"Veggies",
+31
+}
+32
+33
+return fmt.Sprintf("Item %s is a %s\n", i.Name,
+34
+kind[i.Name])
+35
+}
+36
+37
+func main() {
+38
+var basket []Produce
+39
+40
+apple := Item{Name: "Apple"}
+41
+kale
+:= Item{Name: "Kale"}
+42
+43
+basket = append(basket, apple)
+44
+basket = append(basket, kale)
+45
+46
+for _, v := range basket {
+47
+fmt.Println(v.Flavour())
+48
+fmt.Println(v.Kind())
+49
+}
+50
+}
+1
+$ go run produce.go
+2
+3
+Item Apple flavour is: It's a little sour and bitter,
+4
+mostly sweet, not salty, juicy in general
+5
+6
+Item Apple is a Fruit
+7
+8
+Item Kale flavour is: It boasts deep, earthy flavors that
+9
+can range from rich, herbaceous and slightly bitter
+10
+11
+Item Kale is a Veggies

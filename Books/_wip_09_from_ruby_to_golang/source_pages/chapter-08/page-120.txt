@@ -1,0 +1,45 @@
+Glossary
+114
+Allocation
+The process or procedure for allocating
+things, especially money or other
+resources
+All
+Every individual or anything of the
+given class, with no exceptions (the noun
+or noun phrase denoting the class must
+be plural or uncountable)
+Alternative
+Relating to a choice between two or
+more possibilities
+Analog
+variable physical quantity that can be
+measured (such as the shadow of a
+sundial)
+Anonymous
+Lacking a name; not named, for example
+an animal not assigned to any species
+Any
+To even the slightest extent, at all
+Append
+To hang or attach to, as by a string, so
+that the thing is suspended. In general, to
+append is to join or add on to the end of
+something. In computer programming,
+append is the name of a procedure for
+concatenating (linked) lists or arrays in
+some high-level programming languages.
+Application programming interface (API)
+An application programming interface
+(API) is an interface or communication
+protocol between a client and a server
+intended to simplify the building of
+client-side software. It has been
+described as a “contract” between the
+client and the server, such that if the
+client makes a request in a specific
+format, it will always get a response in a
+specific format or initiate a defined
+action.
+Applications
+plural of application

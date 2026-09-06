@@ -1,0 +1,36 @@
+Hash and Maps
+35
+Map by Assignment
+1
+variable := map[keyType]valueType{
+2
+keyName: Value,
+3
+}
+4
+5
+println(variable[keyName]) // Value
+Assignment on an Empty Map
+We can also create the variable, assign it into an empty map, then use it later like a declared map,
+for example.
+Map by Assignment on an Empty map
+1
+variable := map[keyType]valueType{}
+2
+variable[keyName] = Value
+3
+4
+println(variable[keyName]) // Value
+Questions
+1. What have we learned?
+We learned that we can create a map on the go by assigning a key/value or an empty map.
+2. What is maps by assignment?
+Maps can be both initialised and created on the go through assignment.
+3. What is map by key-value assignment?
+Creates a map and assigned a value to a key in one expression.
+4. What is map by empty map?
+Creates the variable, assign it into an empty map, then use it later like a declared map.
+Using Struct in Maps
+Maps using struct is a useful way to contain your map information into data structures. We have
+discussed ways to create your maps declaratively or via assignment. In the following example, we
+will discuss how to create a map using a struct.

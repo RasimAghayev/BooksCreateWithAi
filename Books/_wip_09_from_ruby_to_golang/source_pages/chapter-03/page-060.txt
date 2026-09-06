@@ -1,0 +1,21 @@
+Hash and Maps
+54
+Chapter Questions
+1. How do you create a function with a parameters and return values in Go?
+func add(a, b int) int
+2. How do you create a function with parameters as variadic type in Go?
+func add(a, b, …int) int
+3. How do you declare a map in Go?
+var m map[string]int
+4. How do you initialize a map in Go via make?
+m := make(map[string]int)
+5. How do you initialize and assign a contents of a map in Go?
+m := map[string]int{“one”: 1, “two”: 2}
+6. Why do you use a map variable in Go?
+To store a key-value pair.
+7. Why do you use a variadic variables in Go?
+To pass a variable number of arguments to a function.
+8. Why do you use an empty interface{} in Go?
+To pass a value of any type to a function.
+9. How do you get the value of a map key?
+m[“key”]

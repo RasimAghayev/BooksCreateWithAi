@@ -1,0 +1,66 @@
+Collection Functions in Go
+94
+1
+var basket = make([]bool, len(fruits))
+2
+3
+for i := 0; i < len(fruits); i++ {
+4
+basket[i] = len(fruits[i]) > length
+5
+}
+Next, is check if all item in the array returns true, otherwise break if false.
+1
+var cond bool
+2
+3
+for v := range basket {
+4
+if cond = basket[v] == true; cond == false {
+5
+break
+6
+}
+7
+}
+8
+9
+return cond
+And here’s my implementation of all? in an example. We created a is_lengthy(int, []string)
+that accepts the expected length and the array of strings.
+1
+package main
+2
+3
+import "fmt"
+4
+5
+func is_lengthy(length int, fruits []string) bool {
+6
+var all = make([]bool,len(fruits))
+7
+var cond bool
+8
+9
+for i := 0; i < len(fruits); i++ {
+10
+all[i] = len(fruits[i]) > length
+11
+}
+12
+13
+for v := range all {
+14
+if cond = all[v] == true; cond == false {
+15
+break
+16
+}
+17
+}
+18
+19
+fmt.Println(cond)
+20
+21
+return cond

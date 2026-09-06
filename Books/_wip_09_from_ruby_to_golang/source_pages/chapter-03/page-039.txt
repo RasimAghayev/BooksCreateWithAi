@@ -1,0 +1,44 @@
+Hash and Maps
+33
+1
+$ go run map_init_by_literal_type_assignment.go
+2
+3
+Model 3
+If you would like to assign a value later, you can set an empty map value{} to the variable.
+Maps by Declaration and Initialization on an Empty Map
+1
+variable := map[keyType]valueType{}
+2
+variable[keyName] = Value
+3
+4
+println(variable[keyName]) // Value
+And here’s the same example as above, using empty map for later declaration.
+1
+package main
+2
+3
+import (
+4
+"fmt"
+5
+)
+6
+7
+func main() {
+8
+car := map[string]string{}
+9
+10
+car["Tesla"] = "Model 3"
+11
+12
+fmt.Println(car["Tesla"])
+13
+}
+1
+$ go run map_init_by_literal_type_assignment_2.go
+2
+3
+Model 3
