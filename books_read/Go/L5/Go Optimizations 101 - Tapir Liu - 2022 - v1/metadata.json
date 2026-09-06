@@ -1,0 +1,136 @@
+{
+  "📘 title_original": "Go Optimizations 101",
+  "🔤 filename_safe": "Go Optimizations 101 - Tapir Liu - 2022 - v1",
+  "📚 book": {
+    "📖 title": "Go Optimizations 101",
+    "🧑‍💻 author": "Tapir Liu",
+    "📅 year": 2022,
+    "📖 version": 1,
+    "📄 pages": 161,
+    "🔢 isbn": "",
+    "🏢 publisher": "go101.org (self-published)",
+    "📚 series": "Go 101 series"
+  },
+  "🎯 classification": {
+    "💻 primary_language": "Go",
+    "🎯 level": 5,
+    "📛 level_name": "Expert",
+    "🌟 level_icon": "🧠",
+    "🌐 domains": [
+      "Performance Optimization",
+      "Compilers",
+      "Memory Management",
+      "Backend Development"
+    ]
+  },
+  "🛠️ technologies": [
+    "Go",
+    "escape analysis",
+    "GC",
+    "benchmark",
+    "pprof",
+    "sync.Pool",
+    "strings.Builder",
+    "BCE"
+  ],
+  "🏷️ tags": [
+    "#go",
+    "#golang",
+    "#performance",
+    "#optimization",
+    "#memory",
+    "#escape_analysis",
+    "#gc",
+    "#compiler",
+    "#benchmark",
+    "#hotpath"
+  ],
+  "page_offset": 0,
+  "📑 chapters": [
+    {
+      "chapter": 0,
+      "title": "Acknowledgments / About",
+      "pages": "6-8",
+      "pdf_pages": "6-8"
+    },
+    {
+      "chapter": 2,
+      "title": "Value Parts and Value Sizes",
+      "pages": "9-21",
+      "pdf_pages": "9-21"
+    },
+    {
+      "chapter": 3,
+      "title": "Memory Allocations",
+      "pages": "22-32",
+      "pdf_pages": "22-32"
+    },
+    {
+      "chapter": 4,
+      "title": "Stack and Escape Analysis",
+      "pages": "33-55",
+      "pdf_pages": "33-55"
+    },
+    {
+      "chapter": 5,
+      "title": "Garbage Collection",
+      "pages": "56-67",
+      "pdf_pages": "56-67"
+    },
+    {
+      "chapter": 6,
+      "title": "Pointers",
+      "pages": "68-73",
+      "pdf_pages": "68-73"
+    },
+    {
+      "chapter": 7,
+      "title": "Structs",
+      "pages": "74-75",
+      "pdf_pages": "74-75"
+    },
+    {
+      "chapter": 8,
+      "title": "Arrays and Slices",
+      "pages": "76-89",
+      "pdf_pages": "76-89"
+    },
+    {
+      "chapter": 9,
+      "title": "String and Byte Slices",
+      "pages": "90-105",
+      "pdf_pages": "90-105"
+    },
+    {
+      "chapter": 10,
+      "title": "BCE (Bound Check Elimination)",
+      "pages": "106-117",
+      "pdf_pages": "106-117"
+    },
+    {
+      "chapter": 11,
+      "title": "Maps",
+      "pages": "118-124",
+      "pdf_pages": "118-124"
+    },
+    {
+      "chapter": 12,
+      "title": "Channels",
+      "pages": "125-129",
+      "pdf_pages": "125-129"
+    },
+    {
+      "chapter": 13,
+      "title": "Functions",
+      "pages": "130-149",
+      "pdf_pages": "130-149"
+    },
+    {
+      "chapter": 14,
+      "title": "Interfaces",
+      "pages": "150-161",
+      "pdf_pages": "150-161"
+    }
+  ],
+  "📦 workspace": "books_read/Go/L5/Go Optimizations 101 - Tapir Liu - 2022 - v1"
+}

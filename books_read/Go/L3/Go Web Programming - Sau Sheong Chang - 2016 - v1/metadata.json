@@ -1,0 +1,120 @@
+{
+  "📘 title_original": "Go Web Programming",
+  "🔤 filename_safe": "Go Web Programming - Sau Sheong Chang - 2016 - v1",
+  "📚 book": {
+    "📖 title": "Go Web Programming",
+    "🧑‍💻 author": "Sau Sheong Chang",
+    "📅 year": 2016,
+    "📖 version": 1,
+    "📄 pages": 314,
+    "🔢 isbn": "9781617292569",
+    "🏢 publisher": "Manning Publications Co.",
+    "📚 series": null
+  },
+  "🎯 classification": {
+    "💻 primary_language": "Go",
+    "🎯 level": 3,
+    "📛 level_name": "Intermediate",
+    "🌟 level_icon": "🎯",
+    "🌐 domains": [
+      "Web Development",
+      "Backend Development",
+      "DevOps"
+    ]
+  },
+  "🛠️ technologies": [
+    "Go",
+    "net/http",
+    "html/template",
+    "PostgreSQL",
+    "JSON",
+    "XML",
+    "SOAP",
+    "REST",
+    "Heroku",
+    "Docker",
+    "Google App Engine",
+    "HTTP/2",
+    "Goroutines",
+    "Channels"
+  ],
+  "🏷️ tags": [
+    "#go",
+    "#golang",
+    "#web",
+    "#webdev",
+    "#backend",
+    "#rest",
+    "#http",
+    "#templates",
+    "#postgresql",
+    "#docker",
+    "#heroku",
+    "#deployment",
+    "#testing"
+  ],
+  "📑 chapters": [
+    {
+      "chapter": 1,
+      "title": "Go and web applications",
+      "pages": "3-21",
+      "pdf_pages": "24-42"
+    },
+    {
+      "chapter": 2,
+      "title": "Go ChitChat",
+      "pages": "22-44",
+      "pdf_pages": "43-65"
+    },
+    {
+      "chapter": 3,
+      "title": "Handling requests",
+      "pages": "47-68",
+      "pdf_pages": "68-89"
+    },
+    {
+      "chapter": 4,
+      "title": "Processing requests",
+      "pages": "69-95",
+      "pdf_pages": "90-116"
+    },
+    {
+      "chapter": 5,
+      "title": "Displaying content",
+      "pages": "96-124",
+      "pdf_pages": "117-145"
+    },
+    {
+      "chapter": 6,
+      "title": "Storing data",
+      "pages": "125-152",
+      "pdf_pages": "146-173"
+    },
+    {
+      "chapter": 7,
+      "title": "Go web services",
+      "pages": "155-189",
+      "pdf_pages": "175-210"
+    },
+    {
+      "chapter": 8,
+      "title": "Testing your application",
+      "pages": "190-221",
+      "pdf_pages": "211-242"
+    },
+    {
+      "chapter": 9,
+      "title": "Leveraging Go concurrency",
+      "pages": "223-254",
+      "pdf_pages": "244-276"
+    },
+    {
+      "chapter": 10,
+      "title": "Deploying Go",
+      "pages": "256-280",
+      "pdf_pages": "277-301"
+    }
+  ],
+  "page_offset": 21,
+  "📦 workspace": "books_read/Go/L3/Go Web Programming - Sau Sheong Chang - 2016 - v1"
+}

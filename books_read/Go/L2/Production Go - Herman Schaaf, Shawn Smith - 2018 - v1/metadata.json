@@ -1,0 +1,145 @@
+{
+  "📘 title_original": "Production Go",
+  "🔤 filename_safe": "Production Go - Herman Schaaf, Shawn Smith - 2018 - v1",
+  "📚 book": {
+    "📖 title": "Production Go",
+    "🧑‍💻 author": "Herman Schaaf, Shawn Smith",
+    "📅 year": 2018,
+    "📖 version": 1,
+    "📄 pages": 147,
+    "🔢 isbn": null,
+    "🏢 publisher": "Leanpub",
+    "📚 series": null
+  },
+  "🎯 classification": {
+    "💻 primary_language": "Go",
+    "🎯 level": 2,
+    "📛 level_name": "Elementary",
+    "🌟 level_icon": "🌱",
+    "🌐 domains": [
+      "Backend Development",
+      "Web Development",
+      "DevOps",
+      "Software Engineering Practices"
+    ]
+  },
+  "🛠️ technologies": [
+    "Go",
+    "net/http",
+    "gorilla/mux",
+    "Prometheus",
+    "Travis CI",
+    "Drone",
+    "go vet",
+    "golint",
+    "goimports",
+    "Race Detector",
+    "Go Guru",
+    "godoc",
+    "HSTS",
+    "CSP",
+    "CSRF"
+  ],
+  "🏷️ tags": [
+    "#go",
+    "#golang",
+    "#production",
+    "#best_practices",
+    "#testing",
+    "#benchmarking",
+    "#concurrency",
+    "#security",
+    "#ci",
+    "#deployment",
+    "#monitoring",
+    "#style_guide"
+  ],
+  "📑 chapters": [
+    {
+      "chapter": 1,
+      "title": "Introduction",
+      "pages": "i-ii",
+      "pdf_pages": "6-7"
+    },
+    {
+      "chapter": 2,
+      "title": "Getting Started (Installing Go, Editors, Linters)",
+      "pages": "1-6",
+      "pdf_pages": "7-12"
+    },
+    {
+      "chapter": 3,
+      "title": "Basics",
+      "pages": "7-51",
+      "pdf_pages": "13-57"
+    },
+    {
+      "chapter": 4,
+      "title": "Style and Error Handling",
+      "pages": "46-51",
+      "pdf_pages": "52-57"
+    },
+    {
+      "chapter": 5,
+      "title": "Strings",
+      "pages": "52-62",
+      "pdf_pages": "58-68"
+    },
+    {
+      "chapter": 6,
+      "title": "Supporting Unicode",
+      "pages": "62-67",
+      "pdf_pages": "68-73"
+    },
+    {
+      "chapter": 7,
+      "title": "Concurrency",
+      "pages": "68-81",
+      "pdf_pages": "74-87"
+    },
+    {
+      "chapter": 8,
+      "title": "Testing",
+      "pages": "82-100",
+      "pdf_pages": "88-106"
+    },
+    {
+      "chapter": 9,
+      "title": "Benchmarks",
+      "pages": "101-112",
+      "pdf_pages": "107-118"
+    },
+    {
+      "chapter": 10,
+      "title": "Tooling",
+      "pages": "113-127",
+      "pdf_pages": "119-133"
+    },
+    {
+      "chapter": 11,
+      "title": "Security",
+      "pages": "128-131",
+      "pdf_pages": "134-137"
+    },
+    {
+      "chapter": 12,
+      "title": "Continuous Integration",
+      "pages": "132-134",
+      "pdf_pages": "138-140"
+    },
+    {
+      "chapter": 13,
+      "title": "Deployment",
+      "pages": "135-136",
+      "pdf_pages": "141-142"
+    },
+    {
+      "chapter": 14,
+      "title": "Monitoring / Optimization / Gotchas / Further Reading",
+      "pages": "136-139",
+      "pdf_pages": "142-145"
+    }
+  ],
+  "page_offset": 6,
+  "📦 workspace": "books_read/Go/L2/Production Go - Herman Schaaf, Shawn Smith - 2018 - v1"
+}

@@ -1,0 +1,103 @@
+{
+  "📘 title_original": "Go in Action",
+  "🔤 filename_safe": "Go in Action - William Kennedy, Brian Ketelsen, Erik St. Martin - 2016 - v1",
+  "📚 book": {
+    "📖 title": "Go in Action",
+    "🧑‍💻 author": "William Kennedy with Brian Ketelsen and Erik St. Martin",
+    "📅 year": 2016,
+    "📖 version": 1,
+    "📄 pages": 266,
+    "🔢 isbn": "9781617291784",
+    "🏢 publisher": "Manning Publications Co.",
+    "📚 series": "In Action"
+  },
+  "🎯 classification": {
+    "💻 primary_language": "Go",
+    "🎯 level": 3,
+    "📛 level_name": "Intermediate",
+    "🌟 level_icon": "🎯",
+    "🌐 domains": [
+      "Backend Development",
+      "Software Architecture",
+      "Programming Fundamentals"
+    ]
+  },
+  "🛠️ technologies": [
+    "Go",
+    "JSON",
+    "XML",
+    "RSS",
+    "Goroutines",
+    "Channels",
+    "go tool"
+  ],
+  "🏷️ tags": [
+    "#go",
+    "#golang",
+    "#concurrency",
+    "#channels",
+    "#goroutines",
+    "#testing",
+    "#benchmarking",
+    "#standard_library",
+    "#backend"
+  ],
+  "📑 chapters": [
+    {
+      "chapter": 1,
+      "title": "Introducing Go",
+      "pages": "1-8",
+      "pdf_pages": "23-30"
+    },
+    {
+      "chapter": 2,
+      "title": "Go quick-start",
+      "pages": "9-38",
+      "pdf_pages": "30-59"
+    },
+    {
+      "chapter": 3,
+      "title": "Packaging and tooling",
+      "pages": "39-56",
+      "pdf_pages": "60-77"
+    },
+    {
+      "chapter": 4,
+      "title": "Arrays, slices, and maps",
+      "pages": "57-87",
+      "pdf_pages": "78-108"
+    },
+    {
+      "chapter": 5,
+      "title": "Go's type system",
+      "pages": "88-127",
+      "pdf_pages": "109-148"
+    },
+    {
+      "chapter": 6,
+      "title": "Concurrency",
+      "pages": "128-157",
+      "pdf_pages": "149-178"
+    },
+    {
+      "chapter": 7,
+      "title": "Concurrency patterns",
+      "pages": "158-183",
+      "pdf_pages": "179-204"
+    },
+    {
+      "chapter": 8,
+      "title": "Standard library",
+      "pages": "184-210",
+      "pdf_pages": "205-231"
+    },
+    {
+      "chapter": 9,
+      "title": "Testing and benchmarking",
+      "pages": "211-236",
+      "pdf_pages": "232-257"
+    }
+  ],
+  "page_offset": 21,
+  "📦 workspace": "books_read/Go/L3/Go in Action - William Kennedy, Brian Ketelsen, Erik St. Martin - 2016 - v1"
+}

@@ -1,0 +1,134 @@
+{
+  "📘 title_original": "Облачный Go / Создание надежных служб в ненадежных окружениях",
+  "🔤 filename_safe": "Облачный Go - Создание надежных служб в ненадежных окружениях - Титмус М.А. - 2022 - v1",
+  "📚 book": {
+    "📖 title": "Облачный Go / Создание надежных служб в ненадежных окружениях",
+    "🧑‍💻 author": "Мэтью А. Титмус",
+    "📅 year": 2022,
+    "📖 version": 1,
+    "📄 pages": 419,
+    "🔢 isbn": "978-5-97060-965-1",
+    "🏢 publisher": "ДМК Пресс",
+    "📚 series": null
+  },
+  "🎯 classification": {
+    "💻 primary_language": "Go",
+    "🎯 level": 4,
+    "📛 level_name": "Advanced",
+    "🌟 level_icon": "🎯",
+    "🌐 domains": [
+      "Cloud Native",
+      "Backend Development",
+      "Microservices",
+      "Distributed Systems",
+      "DevOps",
+      "Software Architecture"
+    ]
+  },
+  "🛠️ technologies": [
+    "Go",
+    "Docker",
+    "Kubernetes",
+    "gRPC",
+    "PostgreSQL",
+    "OpenTelemetry",
+    "Prometheus",
+    "Jaeger",
+    "Cobra",
+    "Viper",
+    "Zap",
+    "net/http",
+    "context"
+  ],
+  "🏷️ tags": [
+    "#go",
+    "#cloud_native",
+    "#microservices",
+    "#distributed_systems",
+    "#docker",
+    "#kubernetes",
+    "#grpc",
+    "#postgresql",
+    "#observability",
+    "#opentelemetry",
+    "#reliability",
+    "#resilience",
+    "#backend"
+  ],
+  "📑 chapters": [
+    {
+      "chapter": 0,
+      "title": "Предисловие",
+      "pages": "20-23",
+      "pdf_pages": "20-23"
+    },
+    {
+      "chapter": 1,
+      "title": "Что такое «облачное» приложение?",
+      "pages": "25-35",
+      "pdf_pages": "25-35"
+    },
+    {
+      "chapter": 2,
+      "title": "Почему Go правит облачным миром",
+      "pages": "36-46",
+      "pdf_pages": "36-46"
+    },
+    {
+      "chapter": 3,
+      "title": "Основы языка Go",
+      "pages": "48-87",
+      "pdf_pages": "48-87"
+    },
+    {
+      "chapter": 4,
+      "title": "Шаблоны программирования облачных приложений",
+      "pages": "88-124",
+      "pdf_pages": "88-124"
+    },
+    {
+      "chapter": 5,
+      "title": "Конструирование облачной службы",
+      "pages": "125-180",
+      "pdf_pages": "125-180"
+    },
+    {
+      "chapter": 6,
+      "title": "Все дело в надежности",
+      "pages": "183-205",
+      "pdf_pages": "183-205"
+    },
+    {
+      "chapter": 7,
+      "title": "Масштабируемость",
+      "pages": "206-225",
+      "pdf_pages": "206-225"
+    },
+    {
+      "chapter": 8,
+      "title": "Слабая связанность",
+      "pages": "234-277",
+      "pdf_pages": "234-277"
+    },
+    {
+      "chapter": 9,
+      "title": "Устойчивость",
+      "pages": "279-314",
+      "pdf_pages": "279-314"
+    },
+    {
+      "chapter": 10,
+      "title": "Управляемость",
+      "pages": "315-353",
+      "pdf_pages": "315-353"
+    },
+    {
+      "chapter": 11,
+      "title": "Наблюдаемость",
+      "pages": "354-409",
+      "pdf_pages": "354-409"
+    }
+  ],
+  "page_offset": 0,
+  "📦 workspace": "books_read/Go/L4/Облачный Go - Создание надежных служб в ненадежных окружениях - Титмус М.А. - 2022 - v1"
+}
