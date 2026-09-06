@@ -1,0 +1,48 @@
+}
+sink = x
+sink = nil
+}
+Surely, if we know some values will be allocated on heap, then we can just let those values reference
+the values expected to escape.
+4.8.2
+Use explicit value copies to help compilers detect some values don’t
+escape
+Let’s revisit the example used previously (with a small modification, b is initialized as true now):
+package main
+func main() {
+var (
+a = 1
+// moved to heap: a
+b = true // moved to heap: b
+c = make(chan struct{})
+)
+go func() {
+if b {
+a++
+}
+close(c)
+}()
+<-c
+b = !b
+println(a, b) // 2 false
+}
+In this example, variables a and b both escape. If we modify the example by making copies of a
+and b (in two different ways) like the following, then both a and b will not escape.
+package main
+func main() {
+var (
+a = 1
+// doesn't escape
+b = true // doesn't escape
+c = make(chan int)
+)
+b1 := b
+go func(a int) {
+if b1 {
+a++
+c <- a
+}
+}(a)
+a = <-c
+b = !b
+45

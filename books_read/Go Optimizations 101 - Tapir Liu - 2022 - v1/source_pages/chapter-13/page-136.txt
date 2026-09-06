@@ -1,0 +1,46 @@
+return c*c + d*d
+}
+Build it with double -m options:
+$ go build -gcflags="-m -m" inline2.go
+...
+./inline2.go:8:6: cannot inline foo: function too complex: cost 96 exceeds budget 80
+...
+./inline2.go:16:6: can inline foo2 with cost 76 as: ...
+From the outputs, we could learn that although the compiler thinks the foo function is not inline-
+able, but it thinks its manual-flattened version (the foo2 function) is inline-able, because the inline
+cost of the foo2 function calculated by the compiler is 76, which doesn’t exceed the inline threshold
+(80). Yes, manual-inlining is often less costly than compiler auto-inlining. And, in practice, manual
+inlined code is indeed often comparatively more performant (see below for an example).
+Another example:
+// sum.go
+package inline
+func sum1(s []int) int { // line 4
+var r = 0
+for i := 0; i < len(s); i++ {
+r += s[i]
+}
+return r
+}
+func sum2(s []int) (r int) { // line 12
+for i := 0; i < len(s); i++ {
+r += s[i]
+}
+return r
+}
+func sum3(s []int) (r int) { // line 19
+for i := 0; i < len(s); i++ {
+r += s[i]
+}
+return
+}
+The compiler (v1.19) thinks the inline costs of the sumN functions are different, which could be
+verified from the following outputs:
+$ go build -gcflags="-m -m" sum.go
+# command-line-arguments
+./sum.go:4:6: can inline sum1 with cost 25 as: ...
+./sum.go:12:6: can inline sum2 with cost 20 as: ...
+./sum.go:19:6: can inline sum3 with cost 19 as: ...
+...
+The calculated inline costs of the three functions are 25, 20 and 19, respectively. From the above
+example, we could get:
+135

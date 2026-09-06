@@ -1,0 +1,40 @@
+match. For example, the following Grow_Oneline_Named function is much slower than the above
+Grow_Oneline function.
+func Grow_Oneline_Named(x []T, c int) []T {
+type S []T
+return append(x, make(S, c - len(x))...)[:len(x)]
+}
+This flaw will be fixed in Go toolchain v1.20.
+8.6
+Try to grow a slice in one step
+As mentioned above, how slices grow in append calls is implementation specific, which means the
+result capacity of a slice growth is unspecified by Go specification.
+If we could predict the max length of a slice at coding time, we should allocate the slice with the
+max length as its capacity, to avoid some possible future allocations caused by more slice growths.
+If a slice is short-lived, then we could allocate it with an estimated large enough capacity. There
+might be some memory wasted temporarily, but the element memory will be released soon. Even
+if the estimated capacity is proved to be not large enough, there might still be several allocations
+saved.
+8.7
+Clone slices
+Since Go toolchain version 1.15, the most efficient way to clone a slice is the make+copy way:
+sCloned = make([]T, len(s))
+copy(sCloned, s)
+For many cases, the make+copy way is a little faster than the following append way, because as
+mentioned above, an append call might allocate and zero some extra elements.
+sCloned = append([]T(nil), s...)
+For example, in the following code, 8191 extra elements are allocated and zeroed.
+x := make([]byte, 1<<15+1)
+y := append([]byte(nil), x...)
+println(cap(y) - len(x)) // 8191
+8.8
+Merge two slices
+There is not a universally perfect way to merge two slices into a new slice with the current official
+standard Go compiler (up to Go v1.19).
+If the element orders of the merged slice are important, we could use the following two ways to
+merge the slice x and y (assume the length of y is not zero).
+// The make+copy way
+merged = make([]T, len(x) + len(y))
+copy(merged, x)
+copy(merged[len(x):], y...)
+82

@@ -1,0 +1,43 @@
+The output indicates that the a new GC cycle (triggered by the manual runtime.GC call) makes
+the memory block carrying the slice elements collected, otherwise the fanalizers of these elements
+will not get executed.
+Let’s turn on the log.Println(*p) line and run the program again, then it will merely print 999,
+which indicates the memory block carrying the slice elements is still not collected when the manual
+GC cycle ends. Yes, the fact that the last element in the slice will still be used prevents the whole
+memory block from being collected.
+We may copy the long-lived tiny value part (so that it will be carried on a small memory block) to
+let the old larger memory block collected. For example, we may replace the following line in the
+above program (with the log.Println(*p) line turned on):
+var p = &a[999]
+with
+var v = a[999] // make a copy
+var p = &v
+, then the manual GC will make the memory block carrying the slice elements collected.
+The return results of some functions in the standard strings (or bytes) packages are substrings
+(or subslices) of some arguments passed to these functions. Such functions include Fields, Split
+and Trim functions. Similarly, we should duplicate such a result substring (or subslice) if it is long
+lived but its length is small, and the corresponding argument is short lived but has a large length;
+otherwise, the memory block carrying the underlying bytes of (the result and the argument) will not
+get collected in time.
+5.6
+Try to generate less short-lived memory blocks to lower au-
+tomatic GC frequency
+In practice, most garbage comes from short-lived temporary value parts. Such short-lived value
+parts are often allocated in the following scenarios:
+• string concatenations. Many concatenated result strings are passed as arguments of some
+function calls, then they will be discarded immediately. For some cases, to produce the final
+argument strings, many intermediate temporary strings are created.
+• conversions between string and byte slice. The conversion results will be used then discarded
+soon. For safety, such a conversion needs to duplicate the underlying bytes. A memory block
+allocation is often needed for the duplication.
+• box non-interface values into interfaces. The interfaces will be used then discarded soon.
+Most value boxing operations need one allocation.
+There are also some other scenarios in which short-lived value parts will be generated.
+In programming, we should try to generate less short-lived value parts to lower automatic GC
+frequency.
+5.7
+Use new heap memory percentage strategy to control auto-
+matic GC frequency
+The value parts which contain pointers and are known clearly alive by Go runtime are called
+(scannable) root value parts (call roots below). Roots mainly come from the value parts allocated
+59

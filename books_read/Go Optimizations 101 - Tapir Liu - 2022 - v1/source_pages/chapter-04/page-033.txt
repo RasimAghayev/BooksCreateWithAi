@@ -1,0 +1,22 @@
+func releaseNPC(npc *NPC) {
+npcPool.Lock()
+defer npcPool.Unlock()
+*npc = NPC{} // zero the released NPC
+npcPool.PushBack(npc)
+}
+By using the pool (also called free list), allocations of NPC values will be reduced much, which is
+very helpful to keep a smooth FPS (frames per second) in game playing.
+If the cache pool is used in only one goroutine, then concurrency synchronizations are not necessary
+in the implementation.
+We could also set a max size for the pool to avoid the pool occupies too much memory.
+The standard sync package provides a Pool type to provide similar functionalities but with several
+design differences:
+• a free object in the a sync.Pool will be automatically garbage collected if it is found to be
+unused in two successive garbage collection cycles. This means the max size of a sync.Pool
+is dynamic and depends on the demand at run time.
+• the types and sizes of the objects in a sync.Pool could be different. But the best practice is
+to make sure the objects put in the same sync.Pool are of the some type and have the same
+size.
+Personally, I find the design of sync.Pool seldom satisfies the needs in practice. So I often use
+custom value cache pool implementations in my Go projects.
+32

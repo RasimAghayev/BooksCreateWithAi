@@ -1,0 +1,48 @@
+<-ch2
+}
+}
+}
+The benchmark results:
+Benchmark_Select_OneCase-4
+58.90 ns/op
+Benchmark_Select_TwoCases-4
+115.3 ns/op
+So we should try to limit the number of case branches within a select code block.
+The official standard Go compiler treats a select code block with only one case branch (and
+without default branch) as a simple general channel operation.
+For some cases, we could merge multiple channels as one, to avoid the performance loss on execut-
+ing multi-case select code blocks. We could use an interface type or a struct type as the channel
+element type to achieve this goal. If the channel element type is interface, then we can use a type
+switch to distinguish message kinds. If the channel element type is struct, then we can check which
+field is set to distinguish message kinds. The following benchmark code shows the performance
+differences between these ways.
+package channels
+import "testing"
+var vx int
+var vy string
+func Benchmark_TwoChannels(b *testing.B) {
+var x = make(chan int)
+var y = make(chan string)
+go func() { for {x <- 1} }()
+go func() { for {y <- "hello"} }()
+b.ResetTimer()
+for i := 0; i < b.N; i++ {
+select {
+case vx = <-x:
+case vy = <-y:
+}
+}
+}
+func Benchmark_OneChannel_Interface(b *testing.B) {
+var x = make(chan interface{})
+go func() { for {x <- 1} }()
+go func() { for {x <- "hello"} }()
+b.ResetTimer()
+for i := 0; i < b.N; i++ {
+select {
+case v := <-x:
+switch v := v.(type) {
+case int: vx = v
+case string: vy = v
+}
+127

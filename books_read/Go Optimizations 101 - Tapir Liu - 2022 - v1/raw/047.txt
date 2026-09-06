@@ -1,0 +1,45 @@
+println(a, b) // 2 false
+}
+For this specified example, whether or not variables a and b escape has a very small effect on overall
+program performance. But the tip introduced here might be helpful elsewhere.
+4.8.3
+Memory size thresholds used by the compiler to make allocation place-
+ment decisions
+To avoid crashes caused by goroutine stacks exceed the maximum stack size, even though the
+compiler makes sure that a value part is used by only one goroutine, it will still let the value part
+allocated on heap if the size of the value part is larger than a threshold. There are several such
+thresholds used by the official standard Go compiler (v1.19):
+• in a conversion between string and byte slice, it the result string or byte slice contains no
+more than 32 bytes, then its indirect part (its underlying bytes) will be allocated on stack,
+otherwise, on heap. However, the threshold of converting a constant string (to byte slice) is
+relaxed to 64K (64 * 1024) bytes.
+• if the size of a type T is larger than 64K (64 * 1024) bytes, then T values allocated by new(T)
+and &T{} will be allocated on heap.
+• if the size of the backing array [N]T of the result of the make([]T, N) call is larger than
+64K (64 * 1024) bytes, then the backing array will be allocated on heap. Here, N is a constant
+so that the compile could make decisions at compile time. If it is not a constant and larger
+than zero, then the backing array will be always allocated on heap.
+• in a variable declaration, if the size of the direct part of the variable is larger than 10M (10 *
+1024 * 1024) bytes, then the direct part will be allocated on heap.
+The following are some examples to show the effects of these thresholds.
+Example 1:
+package main
+import "testing"
+const t = "1234567890ABCDEF" // len(t) == 16
+const S = t + t + t + t + t
+// len(S) == 80
+var bs33 = make([]byte, 33)
+func f(w []byte) func() {
+return func() {
+_ = string(w) // string(w) does not escape
+}
+}
+func g(v string) func() {
+return func() {
+_ = []byte(v) // ([]byte)(v) does not escape
+}
+}
+func h() {
+_ = []byte(S) // ([]byte)(S) does not escape
+}
+46

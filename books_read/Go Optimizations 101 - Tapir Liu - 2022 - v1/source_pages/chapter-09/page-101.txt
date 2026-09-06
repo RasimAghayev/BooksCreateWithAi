@@ -1,0 +1,42 @@
+Way 1 (the one-line way):
+var newByteSlice = append([]byte(str), bs...)
+Way 2 (the verbose way):
+var newByteSlice = make([]byte, len(str) + len(bs))
+copy(newByteSlice, str)
+copy(newByteSlice[len(str):], bs)
+Generlaly, if the length of the string is much larger than the byte slice, then the verbose way is more
+performant. On the contrary, if the length of the byte slice is much larger than the string, then the
+one-line way is more performant.
+Sadly, currently (Go toolchain v1.19), there is not an extreme performant way to do the merge.
+• In the one-line way, the conversion []byte(str) will duplicate the underlying of the string,
+which is unnecessarily.
+• In the verbose way, the elements within newByteSlice[len(str):] will be unnecessarily
+zeroed in the make call.
+9.4
+The strings.Compare function is not very performant now
+Currently (Go v1.19), the implementation of the strings.Compare function is deliberately imple-
+mented with a not extreme high performant. In other words, it is not recommended to be used in
+practice now. Instead, it is recommended by Go core developers to use comparison operators to
+compare strings. In my honest opinion, it is an infeasible idea for all scenarios. After all, the two
+ways both have their respective best use scenarios.
+The following code shows the current implementation of the strings.Compare function. The
+implementation is inefficient for the cases that the two argument strings have the same length and
+share a not-short common prefix. For such cases, two raw comparisons are performed.
+package strings
+func Compare(a, b string) int {
+if a == b {
+return 0
+}
+if a < b {
+return -1
+}
+return +1
+}
+As a contrast, the implementation of the bytes.Compare function is highly optimized by calling
+an internal function bytealg.Compare.
+package bytes
+func Compare(a, b []byte) int {
+return bytealg.Compare(a, b)
+}
+Hope future Go versions could optimize this function.
+100

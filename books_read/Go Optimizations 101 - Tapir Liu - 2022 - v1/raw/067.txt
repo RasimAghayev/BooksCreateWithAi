@@ -1,0 +1,45 @@
+for i := 0; ; i++ {
+n := 6 + rand.Intn(6)
+for j := range x {
+x[j] = make([]*int, 1<<n)
+for k := range x[j] {
+x[j][k] = new(int)
+}
+}
+time.Sleep(time.Second / 1000)
+}
+}
+func main() {
+const ballastSize = 150 << 20 // 150 MiB
+ballast := make([]byte, ballastSize)
+garbageProducer()
+runtime.KeepAlive(&ballast)
+}
+This program uses a 150MiB memory ballast, so that the non-garbage heap size (live heap) of the
+program keeps at about 150-160MiB. Consequently, the target heap size of the program keeps at
+a bit over 300MiB (assume the GOGC value is 100). This makes GC cycle intervals become larger
+and much less staggering.
+Run it to verify the effect:
+$ GODEBUG=gctrace=1 go run gcballast.go
+...
+gc 1 @0.005s 0%: ..., 150->150->150 MB, 4 MB goal, ...
+gc 2 @0.333s 5%: ..., 255->261->171 MB, 300 MB goal, ...
+gc 3 @0.989s 2%: ..., 293->296->161 MB, 344 MB goal, ...
+gc 4 @1.554s 1%: ..., 276->276->152 MB, 324 MB goal, ...
+gc 5 @2.065s 1%: ..., 260->261->159 MB, 305 MB goal, ...
+gc 6 @2.595s 1%: ..., 271->271->152 MB, 318 MB goal, ...
+gc 7 @3.082s 1%: ..., 259->267->173 MB, 305 MB goal, ...
+gc 8 @3.708s 1%: ..., 295->296->155 MB, 347 MB goal, ...
+gc 9 @4.214s 1%: ..., 265->266->153 MB, 311 MB goal, ...
+gc 10 @4.731s 1%: ..., 262->262->156 MB, 307 MB goal, ...
+...
+Note: the elements of the local slice is never used, so the allocated memory block for the elements
+is only allocated virtually, not physically (at least on Linux). This means the elements of the slice
+don’t consume physical memory, which is an advantage over using root memory blocks as memory
+ballasts.
+5.10
+Use Go toolchain 1.19 introduced memory limit strategy
+to avoid frequent GC cycles
+Go official standard compiler 1.19 introduced a new scheduling strategy: the memory limit strat-
+egy.. The strategy may be configured either via the GOMEMLIMIT environment variable or through
+66

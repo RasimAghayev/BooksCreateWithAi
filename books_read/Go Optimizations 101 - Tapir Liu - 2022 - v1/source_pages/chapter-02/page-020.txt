@@ -1,0 +1,46 @@
+//===================
+func buildSlice() []Element {
+var s = make([]Element, 1000)
+for i := 0; i < len(s); i++ {
+s[i] = Element{0: int64(i)}
+}
+return s
+}
+var r [128]int64
+func Benchmark_PlainForLoop(b *testing.B) {
+var s = buildSlice()
+b.ResetTimer()
+for i := 0; i < b.N; i++ {
+r[i&127] = Sum_PlainForLoop(s)
+}
+}
+func Benchmark_OneIterationVar(b *testing.B) {
+var s = buildSlice()
+b.ResetTimer()
+for i := 0; i < b.N; i++ {
+r[i&127] = Sum_OneIterationVar(s)
+}
+}
+func Benchmark_UseSecondIterationVar(b *testing.B) {
+var s = buildSlice()
+b.ResetTimer()
+for i := 0; i < b.N; i++ {
+r[i&127] = Sum_UseSecondIterationVar(s)
+}
+}
+The benchmark results:
+Benchmark_PlainForLoop-4
+911.8 ns/op
+Benchmark_OneIterationVar-4
+929.3 ns/op
+Benchmark_UseSecondIterationVar-4
+3753 ns/op
+From the results, we could learn that the performance of function Sum_UseSecondIterationVar
+is much lower than the Sum_PlainForLoop and Sum_OneIterationVar functions. The reason is
+every element is copied to the iteration variable v in the function Sum_UseSecondIterationVar,
+and the copy cost is not small (the type Element is not a small-size type). The other two functions
+avoid the copies.
+Example 3:
+package copycost
+import "testing"
+19

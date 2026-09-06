@@ -1,0 +1,44 @@
+The byte elements of the result string of using strings.Builder will be always allocated on heap.
+On the other hand, by using the + operator, the byte elements of the result string will be allocated
+on stack if the length of the result string is small (not larger than 32) and the result string doesn’t
+escape to heap.
+The strings.Builder way calls the make function to allocate enough bytes for concatenations
+and the make call zeros those bytes, which is unnecessarily.
+For the above two reasons, in theory, the + operator way should be always more performant
+than the strings.Builder way. However, for a runtime implementation imperfection (in Go
+1.15/1.16/1.17), sometimes the + operator way might be a little slower than the strings.Builder
+way. This imperfection has been fixed since Go 1.18.
+Let’s compare the efficiencies of the two ways.
+package bytes
+import "testing"
+import "strings"
+const M, N, K = 12, 16, 32
+var s1 = strings.Repeat("a", M)
+var s2 = strings.Repeat("a", N)
+var s3 = strings.Repeat("a", K)
+var r1, r2 string
+func init() {
+println("======", M, N, K)
+}
+//go:noinline
+func Concat_WithPlus(a, b, c string) string {
+return a + b + c
+}
+//go:noinline
+func Concat_WithBuilder(ss ...string) string {
+var b strings.Builder
+var n = 0
+for _, s := range ss {
+n += len(s)
+}
+b.Grow(n)
+for _, s := range ss {
+b.WriteString(s)
+}
+return b.String()
+}
+func Benchmark_Concat_WithPlus(b *testing.B) {
+for i := 0; i < b.N; i++ {
+r1 = Concat_WithPlus(s1, s2, s3)
+r2 = Concat_WithPlus(s3, s3, s3)
+97

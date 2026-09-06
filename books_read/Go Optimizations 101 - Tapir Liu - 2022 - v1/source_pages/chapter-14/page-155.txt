@@ -1,0 +1,57 @@
+Benchmark_Box_Lookup-4
+1.137 ns/op
+0 B/op
+0 allocs/op
+Benchmark_Unbox_Normal-4
+0.7535 ns/op
+0 B/op
+0 allocs/op
+Benchmark_Unbox_Lookup-4
+0.7510 ns/op
+0 B/op
+0 allocs/op
+(Please note that, the results show the Box_Normal function makes zero allocations, which is not
+true. The value is about 0.99, which is truncated to zero. The reason is boxing values within [0,
+255] doesn’t allocate, which will be mentioned below.)
+The same optimization is also applied for boxing constant values:
+package interfaces
+import "testing"
+var r interface{}
+const N int64 = 12345
+func Benchmark_BoxInt64(b *testing.B) {
+for i := 0; i < b.N; i++ { r = N }
+}
+const F float64 = 1.2345
+func Benchmark_BoxFloat64(b *testing.B) {
+for i := 0; i < b.N; i++ { r = F }
+}
+const S = "Go"
+func Benchmark_BoxConstString(b *testing.B) {
+for i := 0; i < b.N; i++ { r = S }
+}
+The benchmark results:
+Benchmark_BoxInt64-4
+1.136 ns/op
+0 B/op
+0 allocs/op
+Benchmark_BoxFloat64-4
+1.196 ns/op
+0 B/op
+0 allocs/op
+Benchmark_BoxConstString-4
+1.211 ns/op
+0 B/op
+0 allocs/op
+In fact, the official standard Go compiler also makes similar optimizations for boxing the following
+values:
+• non-constant small integer values (in range [0, 255]) of any integer types (expect for 8-bit
+ones, which have been covered in the first optimization mentioned above).
+• non-constant zero values of floating-point/string/slice types.
+Box non-constant small integer values:
+package interfaces
+import "testing"
+var r interface{}
+func Benchmark_BoxSmallInt16(b *testing.B) {
+for i := 0; i < b.N; i++ { r = int16(i&255) }
+}
+154

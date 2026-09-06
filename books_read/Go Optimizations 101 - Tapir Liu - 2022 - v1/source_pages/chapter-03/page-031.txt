@@ -1,0 +1,57 @@
+for i := range books {
+books[i] = new(Book)
+}
+return books
+}
+func Benchmark_CreateBooksOnOneLargeBlock(b *testing.B) {
+for i := 0; i < b.N; i++ {
+_ = CreateBooksOnOneLargeBlock(N)
+}
+}
+func Benchmark_CreateBooksOnManySmallBlocks(b *testing.B) {
+for i := 0; i < b.N; i++ {
+_ = CreateBooksOnManySmallBlocks(N)
+}
+}
+Run the benchmarks, we get:
+Benchmark_CreateOnOneLargeBlock-4
+4372 ns/op
+4992 B/op
+2 allocs/op
+Benchmark_CreateOnManySmallBlocks-4
+18017 ns/op
+5696 B/op
+101 allocs/op
+From the results, we could get that allocating many small value parts on one large memory block
+1. spends much less CPU time.
+2. consumes a bit less memory.
+The first conclusion is easy to understand. Two allocation operations spend much less time than
+101 allocation operations.
+The second conclusion has actually already been explained before. As aforementioned, when the
+size of a small value (part) doesn’t exactly match any memory block classes supported by the official
+standard Go runtime, then a bit larger memory block than needed will be allocated for the small
+value (part) if the small value (part) is created individually. The size of the Book type is 40 bytes
+(on 64-bit architectures), whereas the size of the smallest memory block size class larger than 40 is
+48. So allocating a Book value individually will waste 8 bytes.
+In fact, the second conclusion is only right under certain conditions. Specifically, the conclusion
+is not right when the value N is in the range from 820 to 852. In particular, when N == 820, the
+benchmark results show allocating many small value parts on one large memory block consumes
+3.5% more memory.
+Benchmark_CreateOnOneLargeBlock-4
+30491 ns/op
+47744 B/op
+2 allocs/op
+Benchmark_CreateOnManySmallBlocks-4
+145204 ns/op
+46144 B/op
+821 allocs/op
+Why does the CreateBooksOnOneLargeBlock function consume more memory when N == 820?
+Because it needs to allocate a memory block with the minimum size as 32800 (820 * 40), which
+is larger than the largest small memory block class 32768. So the memory block needs 5 memory
+pages, which total size is 40960 (8192 * 5). In other words, 8160 (40960 - 32800) bytes are wasted.
+Despite it sometimes wastes more memory, generally speaking, allocating many small value parts
+on one large memory block is comparatively better than allocating each of them on a separated
+memory block. This is especially true when the life times of the small value parts are almost the
+same, in which case allocating many small value parts on one large memory block could often
+effectively avoid memory fragmentation.
+30

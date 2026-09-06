@@ -1,0 +1,63 @@
+}
+var s = "Go"
+func Benchmark_BoxString(b *testing.B) {
+for i := 0; i < b.N; i++ { r = s }
+}
+var x = []int{1, 2, 3}
+func Benchmark_BoxSlice(b *testing.B) {
+for i := 0; i < b.N; i++ { r = x }
+}
+var a = [100]int{}
+func Benchmark_BoxArray(b *testing.B) {
+for i := 0; i < b.N; i++ { r = a }
+}
+The benchmark results:
+Benchmark_BoxInt16-4
+18.44 ns/op
+2 B/op
+1 allocs/op
+Benchmark_BoxInt32-4
+43.53 ns/op
+4 B/op
+1 allocs/op
+Benchmark_BoxInt64-4
+55.92 ns/op
+8 B/op
+1 allocs/op
+Benchmark_BoxFloat64-4
+62.63 ns/op
+8 B/op
+1 allocs/op
+Benchmark_BoxString-4
+104.1 ns/op
+16 B/op
+1 allocs/op
+Benchmark_BoxSlice-4
+114.6 ns/op
+24 B/op
+1 allocs/op
+Benchmark_BoxArray-4
+591.9 ns/op
+896 B/op
+1 allocs/op
+From the above benchmark results, we could get that each value boxing operation generally needs
+one allocation, and the size of the allocated memory block is the same as the size of the boxed value.
+The official standard Go compiler makes some optimizations so that the general rule mentioned
+above is not always obeyed. One optimization made by the official standard Go compiler is that no
+allocations are made when boxing zero-size values, boolean values and 8-bit integer values.
+package interfaces
+import "testing"
+var r interface{}
+var v0 struct{}
+func Benchmark_BoxZeroSize1(b *testing.B) {
+for i := 0; i < b.N; i++ { r = v0 }
+}
+var a0 [0]int64
+func Benchmark_BoxZeroSize2(b *testing.B) {
+for i := 0; i < b.N; i++ { r = a0 }
+}
+var b bool
+func Benchmark_BoxBool(b *testing.B) {
+for i := 0; i < b.N; i++ { r = b }
+}
+151

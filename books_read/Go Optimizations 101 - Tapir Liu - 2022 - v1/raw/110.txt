@@ -1,0 +1,42 @@
+func main() {}
+Run it, we will get the following output:
+$ go run -gcflags="-d=ssa/check_bce" example2b.go
+./example2b.go:7:8: Found IsSliceInBounds
+./example2b.go:14:8: Found IsSliceInBounds
+We may give the compiler some hints by turning on the comment lines to remove these bound
+checks.
+10.3
+Example 3
+We should try to evaluate the element indexing or subslice operation with the largest index as earlier
+as possible to reduce the number of bound checks.
+In the following example, if the expression s[3] is evaluated without panicking, then the bound
+checks for s[0], s[1] and s[2] could be eliminated.
+// example3.go
+package main
+func f3a(s []int32) int32 {
+return s[0] | // Found IsInBounds (line 5)
+s[1] | // Found IsInBounds
+s[2] | // Found IsInBounds
+s[3]
+// Found IsInBounds
+}
+func f3b(s []int32) int32 {
+return s[3] | // Found IsInBounds (line 12)
+s[0] |
+s[1] |
+s[2]
+}
+func main() {
+}
+Run it, we get:
+./example3.go:5:10: Found IsInBounds
+./example3.go:6:4: Found IsInBounds
+./example3.go:7:4: Found IsInBounds
+./example3.go:8:4: Found IsInBounds
+./example3.go:12:10: Found IsInBounds
+From the output, we could learn that there are 4 bound checks in the f3a function, but only one in
+the f3b function.
+10.4
+Example 4
+Since Go toolchain v1.19, the bould check in the f5a function is successfully removed,
+109

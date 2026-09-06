@@ -1,0 +1,33 @@
+Chapter 9
+String and Byte Slices
+9.1
+Conversions between strings and byte slices
+Strings could be viewed as element-immutable byte slices. With the guarantee that the content (the
+bytes stored in) of a string will never be modified, any function can safely use the content of the
+string without worrying about the content of the string being modified elsewhere.
+To make the guarantee (the bytes stored in a string will never be modified), when converting a string
+to byte slice, the string and the result byte slice should not share byte elements. This means that
+the string content (the bytes) will be duplicated and stored into the result byte slice (one memory
+allocation is needed). Similarly, for the same reason, when converting a byte slice to string, the
+byte slice content (the byte elements of the the slice) will be duplicated and stored into the result
+string too (one memory allocation is needed).
+In fact, under some situations, the duplications are not necessary. The current standard Go compiler
+makes several special optimizations to avoid duplications for some simple cases. Such optimiza-
+tions will be listed below.
+9.1.1
+A string-to-byte-slice conversion following the range keyword doesn’t
+allocate
+If we use the official standard Go compiler to build the following code, the performance difference
+between the function f and the function g is neglectable. The reason is the []byte(s) conversion
+used in the function f doesn’t make allocations.
+func f(s string) {
+for i, b := range []byte(s) {
+// do something with i and b
+_, _ = i, b
+}
+}
+func g(s string) {
+for i := 0; i < len(s); i++ {
+b := s[i]
+// do something with i and b
+90

@@ -1,0 +1,104 @@
+{
+  "book": "Go Optimizations 101",
+  "page_offset": 0,
+  "chapters": [
+    {
+      "chapter": 0,
+      "title": "Acknowledgments / About",
+      "book_pages": "6-8",
+      "start_pdf_page": 6,
+      "end_pdf_page": 8
+    },
+    {
+      "chapter": 2,
+      "title": "Value Parts and Value Sizes",
+      "book_pages": "9-21",
+      "start_pdf_page": 9,
+      "end_pdf_page": 21
+    },
+    {
+      "chapter": 3,
+      "title": "Memory Allocations",
+      "book_pages": "22-32",
+      "start_pdf_page": 22,
+      "end_pdf_page": 32
+    },
+    {
+      "chapter": 4,
+      "title": "Stack and Escape Analysis",
+      "book_pages": "33-55",
+      "start_pdf_page": 33,
+      "end_pdf_page": 55
+    },
+    {
+      "chapter": 5,
+      "title": "Garbage Collection",
+      "book_pages": "56-67",
+      "start_pdf_page": 56,
+      "end_pdf_page": 67
+    },
+    {
+      "chapter": 6,
+      "title": "Pointers",
+      "book_pages": "68-73",
+      "start_pdf_page": 68,
+      "end_pdf_page": 73
+    },
+    {
+      "chapter": 7,
+      "title": "Structs",
+      "book_pages": "74-75",
+      "start_pdf_page": 74,
+      "end_pdf_page": 75
+    },
+    {
+      "chapter": 8,
+      "title": "Arrays and Slices",
+      "book_pages": "76-89",
+      "start_pdf_page": 76,
+      "end_pdf_page": 89
+    },
+    {
+      "chapter": 9,
+      "title": "String and Byte Slices",
+      "book_pages": "90-105",
+      "start_pdf_page": 90,
+      "end_pdf_page": 105
+    },
+    {
+      "chapter": 10,
+      "title": "BCE (Bound Check Elimination)",
+      "book_pages": "106-117",
+      "start_pdf_page": 106,
+      "end_pdf_page": 117
+    },
+    {
+      "chapter": 11,
+      "title": "Maps",
+      "book_pages": "118-124",
+      "start_pdf_page": 118,
+      "end_pdf_page": 124
+    },
+    {
+      "chapter": 12,
+      "title": "Channels",
+      "book_pages": "125-129",
+      "start_pdf_page": 125,
+      "end_pdf_page": 129
+    },
+    {
+      "chapter": 13,
+      "title": "Functions",
+      "book_pages": "130-149",
+      "start_pdf_page": 130,
+      "end_pdf_page": 149
+    },
+    {
+      "chapter": 14,
+      "title": "Interfaces",
+      "book_pages": "150-161",
+      "start_pdf_page": 150,
+      "end_pdf_page": 161
+    }
+  ]
+}

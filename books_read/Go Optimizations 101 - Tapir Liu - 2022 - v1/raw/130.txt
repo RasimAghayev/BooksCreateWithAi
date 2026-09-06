@@ -1,0 +1,16 @@
+for i := 0; i < b.N; i++ {
+select {
+case c <- struct{}{}:
+default:
+}
+}
+}
+The benchmark results:
+Benchmark_TryReceive-4
+5.646 ns/op
+Benchmark_TrySend-4
+5.293 ns/op
+From the above results and the results shown in the first section of the current chapter, we could
+get that a try-send or try-receive code block is much less CPU consuming than a normal channel
+receive or send channel operation.
+129

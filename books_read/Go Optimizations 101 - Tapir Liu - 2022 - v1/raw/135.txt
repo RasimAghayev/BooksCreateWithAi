@@ -1,0 +1,44 @@
+13.1.3
+The go:noinline comment directive
+Sometimes, we might want calls to a function to never get inlined, for study and testing purposes,
+or to make a caller function of the function inline-able (see below for an example), etc. Besides the
+several ways introduced above, we could also use the go:noinline comment directive to achieve
+this goal. For example, the compiler will not inline the call to the add function in the following
+code, even if the add function is very simple.
+package main
+//go:noinline
+func add(x, y int) int {
+return x + y
+}
+func main() {
+println(add(1, 2))
+}
+However, please note that this is not a formal way to avoid inlining. It is mainly intended to be used
+in standard package and Go toolchain developments. But personally, I think this directive will be
+supported in a long term.
+13.1.4
+Write code in the ways which are less inline costly
+Generally, we should try to make more functions inline-able, to get better program execution per-
+formances.
+Besides the rules introduce above, we should know that different code implementation ways might
+have different inline costs, even if the code differences are subtle. We could make use of this fact
+to try different implementation ways to find out which way has the lowest inline cost.
+Let’s use the first example shown above again.
+// inline2.go
+package inline
+func bar(a, b int) int {
+return a*a - b*b + 2 * (a - b)
+}
+func foo(x, y int) int { // line 8
+var a = bar(x, y)
+var b = bar(y, x)
+var c = bar(a, b)
+var d = bar(b, a)
+return c*c + d*d
+}
+func foo2(x, y int) int { // line 16
+var a = x*y - y*y + 2 * (x - y)
+var b = y*y - x*x + 2 * (y - x)
+var c = a*a - b*b + 2 * (a - b)
+var d = b*b - a*a + 2 * (b - a)
+134

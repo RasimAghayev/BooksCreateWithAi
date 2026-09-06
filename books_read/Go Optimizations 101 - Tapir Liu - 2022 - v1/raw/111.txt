@@ -1,0 +1,46 @@
+func f5a(isa []int, isb []int) {
+if len(isa) > 0xFFF {
+for _, n := range isb {
+_ = isa[n & 0xFFF]
+}
+}
+}
+However, before Go toolchain v1.19, the check is not removed. The compiler (v1.18-) needs a hint
+to be removed, as shown in the f5b function:
+func f5b(isa []int, isb []int) {
+if len(isa) > 0xFFF {
+// A successful hint (for v1.18- compilers)
+isa = isa[:0xFFF+1]
+for _, n := range isb {
+_ = isa[n & 0xFFF] // BCEed!
+}
+}
+}
+func f5c(isa []int, isb []int) {
+if len(isa) > 0xFFF {
+// A not-workable hint (for v1.18- compilers)
+_ = isa[:0xFFF+1]
+for _, n := range isb {
+_ = isa[n & 0xFFF] // Found IsInBounds
+}
+}
+}
+func f5d(isa []int, isb []int) {
+if len(isa) > 0xFFF {
+// A not-workable hint (for v1.18- compilers)
+_ = isa[0xFFF]
+for _, n := range isb {
+_ = isa[n & 0xFFF] // Found IsInBounds
+}
+}
+}
+The next section shows more cases which need compiler hints to avoid some unnecessary bound
+checks.
+10.5
+Sometimes, the compiler needs some hints to remove some
+bound checks
+The official standard Go compiler is still not smart enough to remove all unnecessary bound checks.
+Sometimes, the compiler needs to be given some hints to remove some bound checks.
+In the following example, by adding one hint line in the function f4b, all bound checks in the loop
+are eliminated.
+110

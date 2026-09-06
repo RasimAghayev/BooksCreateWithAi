@@ -1,0 +1,43 @@
+4.8.7
+More tricks to allocate arbitrary-size values on stack
+There are more corner cases in which values with arbitrary sizes will be allocated on stack. Simi-
+larly, future Go toolchain versions might (or might not) change the implementation details so that
+the allocation behaviors for these cases might change later.
+All of the following [N]byte values are allocated on stack.
+const N = 1024 * 1024 * 100
+func boxLargeSizeValue() {
+type _ int // avoid being inlined
+var x interface{} = [N]byte{} // 1
+println(x != nil)
+}
+func largeSizeParameter(x [N]byte) { // 2
+type _ int // avoid being inlined
+}
+func largeSizeElement() {
+type _ int // avoid being inlined
+var m map[int][N]byte
+m[0] = [N]byte{} // 3
+}
+However, as what has been mentioned in the chapter before the last, to avoid large value copy costs,
+generally, we should not
+• boxing large-size values into interfaces.
+• use large-size types as function parameter types.
+• use large-size types are map key and element types.
+That is why the three cases shown in the above code snippet are corner cases. Generally, we should
+not write such code in practice.
+4.9
+Grow stack in less times
+A stack growth includes two steps. The first step is to find a larger continuous memory segment as
+the new stack zone. The second step is to copy the used part on the old stack to the new one and
+adjust some pointer values if necessary. Comparatively, the second step is more costly than the first
+one.
+Sometimes, during the execution of a goroutine, its stack will grow to a large size eventually, in
+several times. If we could confidently predict that this will happen and know the peek stack size,
+then we could use the trick shown in the following code to initialize the stack size to the peek size,
+so that multiple stack growths will be avoided during the execution of the goroutine (if ).
+The trick is shown in the following example.
+// init-stack-size.go
+package main
+import "fmt"
+import "time"
+53

@@ -1,0 +1,48 @@
+}
+The benchmark results:
+Benchmark_CopyArray_9_elements-4
+3974 ns/op
+Benchmark_CopyArray_10_elements-4
+8896 ns/op
+Benchmark_CopyStruct_9_fields-4
+2970 ns/op
+Benchmark_CopyStruct_10_fields-4
+8471 ns/op
+This results indicate copying arrays with less than 10 elements and structs with less than 10 fields
+might be specially optimized.
+The official standard Go compiler might use different criteria for other scenarios to determine what
+are small struct and array types. For example, in the following benchmark code, the Add4 func-
+tion consumes much less CPU resources than the Add5 function (the official standard Go compiler
+v1.19).
+package copycost
+import "testing"
+type T4 struct{a, b, c, d float32}
+type T5 struct{a, b, c, d, e float32}
+var t4 T4
+var t5 T5
+//go:noinline
+func Add4(x, y T4) (z T4) {
+z.a = x.a + y.a
+z.b = x.b + y.b
+z.c = x.c + y.c
+z.d = x.d + y.d
+return
+}
+//go:noinline
+func Add5(x, y T5) (z T5) {
+z.a = x.a + y.a
+z.b = x.b + y.b
+z.c = x.c + y.c
+z.d = x.d + y.d
+z.e = x.e + y.e
+return
+}
+func Benchmark_Add4(b *testing.B) {
+for i := 0; i < b.N; i++ {
+var x, y T4
+t4 = Add4(x, y)
+}
+}
+func Benchmark_Add5(b *testing.B) {
+for i := 0; i < b.N; i++ {
+15

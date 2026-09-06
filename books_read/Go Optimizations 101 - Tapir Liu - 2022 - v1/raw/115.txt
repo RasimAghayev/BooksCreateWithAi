@@ -1,0 +1,49 @@
+s2 := s[i:]
+_ = s2[3] // Found IsInBounds
+_ = s2[2]
+_ = s2[1]
+_ = s2[0]
+}
+}
+func f8z(s []byte) {
+for i := 0; len(s) >= 4; i += 4 {
+_ = s[3]
+_ = s[2]
+_ = s[1]
+_ = s[0]
+s = s[4:]
+}
+}
+In fact, benchmark results also show the following f8y3 function is as performant as the f8z func-
+tion and the performance of the f8y2 function is on par with the f8y function. So it is encouraged
+to use three-index subslice forms for such situations in practice.
+func f8y2(s []byte) {
+for i := 0; i < len(s) - 3; i += 4 {
+s2 := s[i:i+4] // Found IsInBounds
+_ = s2[3]
+_ = s2[2]
+_ = s2[1]
+_ = s2[0]
+}
+}
+func f8y3(s []byte) {
+for i := 0; i < len(s) - 3; i += 4 {
+s2 := s[i:i+4:i+4] // Found IsInBounds
+_ = s2[3]
+_ = s2[2]
+_ = s2[1]
+_ = s2[0]
+}
+}
+In the following example, there are no bound checks in the f9b function, but there is one in the f9a
+function.
+func f9a(n int) []int {
+buf := make([]int, n+1)
+k := 0
+for i := 0; i <= n; i++ {
+buf[i] = k // Found IsInBounds
+k++
+}
+return buf
+}
+114

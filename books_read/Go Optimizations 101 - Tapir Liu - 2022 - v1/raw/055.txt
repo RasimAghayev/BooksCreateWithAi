@@ -1,0 +1,46 @@
+func demo(n int) byte {
+var a [8192]byte
+var b byte
+if n--; n > 0 {
+b = demo(n)
+}
+return a[n] + b
+}
+func foo(c chan time.Duration) {
+start := time.Now()
+demo(8192)
+c <- time.Since(start)
+}
+func bar(c chan time.Duration) {
+start := time.Now()
+// Use a dummy anonymous function to enlarge stack.
+func(x *interface{}) {
+type _ int // avoid being inlined
+if x != nil {
+*x = [1024 * 1024 * 64]byte{}
+}
+}(nil)
+demo(8192)
+c <- time.Since(start)
+}
+func main() {
+var c = make(chan time.Duration, 1)
+go foo(c)
+fmt.Println("foo:", <-c)
+go bar(c)
+fmt.Println("bar:", <-c)
+}
+Run it:
+$ go run init-stack-size.go
+foo: 42.051369ms
+bar: 4.740523ms
+From the outputs, we could get that the efficiency of the bar goroutine is higher than the foo
+goroutine. The reason is simple, only one stack growth happens in the lifetime of the bar goroutine,
+whereas more than 10 stack growths happen in the lifetime of the foo goroutine.
+The official standard Go compiler decides to let a [1024 * 1024 * 64]byte value allocated on
+the stack of the bar goroutine (in fact, this will not happen) and calculate the frame size of the
+dummy anonymous function as 67108888 bytes (larger than 64 MiB), so the invocation of the
+anonymous function makes the stack of the bar goroutine grow to the peak size (128 MiB) before
+calling the demo function. Assuming no garbage collections happen during the lifetime of the
+goroutine, the stack doesn’t need to grow any more.
+54

@@ -1,0 +1,46 @@
+func comptr65535() byte {
+// &[65535]byte{} does not escape
+a := &[N-1]byte{}
+for i := range a { a[i] = n }
+return a[n]
+}
+func main() {
+stat := func( f func() byte ) int {
+allocs := testing.AllocsPerRun(1, func() {
+f()
+})
+return int(allocs)
+}
+println(stat(new65537))
+// 1 (heap allocation)
+println(stat(new65535))
+// 0 (heap allocations)
+println(stat(comptr65537)) // 1 (heap allocation)
+println(stat(comptr65535)) // 0 (heap allocations)
+}
+From the outputs of example 2, we could affirm that the T value created in new(T) and &T{} will
+be always allocated on heap if the size of type T is larger than 64K (65536) bytes.
+(Please note that, we deliberately ignore the case of size 65536. Before Go toolchain 1.17, T values
+will be allocated on heap if the size of T is 65536. Go toolchain v1.17 changed this.)
+Example 3:
+package main
+import "testing"
+const N = 64 * 1024 // 65536
+var n = 1
+func makeSlice65537() bool {
+// make([]bool, N + 1) escapes to heap
+s := make([]bool, N+1)
+for i := range s { s[i] = n>0 }
+return s[len(s)-1]
+}
+func makeSlice65535() bool {
+// make([]bool, N - 1) does not escape
+s := make([]bool, N-1)
+for i := range s { s[i] = n>0 }
+return s[len(s)-1]
+}
+func makeSliceVarSize() bool {
+// make([]bool, n) escapes to heap
+s := make([]bool, n)
+for i := range s { s[i] = n>0 }
+48

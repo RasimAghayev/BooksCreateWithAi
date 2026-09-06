@@ -1,0 +1,51 @@
+func MergeWithOneLoop(data ...[]int) []int {
+var r []int
+for _, s := range data {
+r = append(r, s...)
+}
+return r
+}
+func MergeWithTwoLoops(data ...[]int) []int {
+n := 0
+for _, s := range data {
+n += len(s)
+}
+r := make([]int, 0, n)
+for _, s := range data {
+r = append(r, s...)
+}
+return r
+}
+func Benchmark_MergeWithOneLoop(b *testing.B) {
+data := getData()
+b.ResetTimer()
+for i := 0; i < b.N; i++ {
+_ = MergeWithOneLoop(data...)
+}
+}
+func Benchmark_MergeWithTwoLoops(b *testing.B) {
+data := getData()
+b.ResetTimer()
+for i := 0; i < b.N; i++ {
+_ = MergeWithTwoLoops(data...)
+}
+}
+The benchmark results:
+Benchmark_MergeWithOneLoop-4
+636.6 ns/op
+352 B/op
+4 allocs/op
+Benchmark_MergeWithTwoLoops-4
+268.4 ns/op
+144 B/op
+1 allocs/op
+The benchmark results show that allocations affect code execution performance much.
+Let’s print some logs to see when each of the 4 allocations happens in a MergeWithOneLoop func-
+tion call.
+package main
+import "fmt"
+func getData() [][]int {
+return [][]int{
+{1, 2},
+{9, 10, 11},
+26

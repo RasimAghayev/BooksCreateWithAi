@@ -1,0 +1,42 @@
+gc 1 @0.266s 0%: ..., 150 MB goal, ..., 150 MB globals, ...
+gc 2 @0.885s 0%: ..., 154 MB goal, ..., 150 MB globals, ...
+gc 3 @1.616s 0%: ..., 168 MB goal, ..., 150 MB globals, ...
+gc 4 @2.327s 0%: ..., 165 MB goal, ..., 150 MB globals, ...
+gc 5 @3.011s 0%: ..., 168 MB goal, ..., 150 MB globals, ...
+gc 6 @3.493s 0%: ..., 155 MB goal, ..., 150 MB globals, ...
+gc 7 @4.208s 0%: ..., 167 MB goal, ..., 150 MB globals, ...
+gc 8 @4.897s 0%: ..., 162 MB goal, ..., 150 MB globals, ...
+gc 9 @5.618s 0%: ..., 165 MB goal, ..., 150 MB globals, ...
+gc 10 @6.338s 0%: ..., 169 MB goal, ..., 150 MB globals, ...
+...
+The same, the outputs show that GC cycle intervals become larger and much less staggering (with
+Go toolchain version 1.18+).
+The examples in the current section show that root memory blocks objectively act as memory bal-
+lasts.
+The next section will introduce a memory ballast trick which works with Go toolchain version 1.18-.
+5.9
+Use memory ballasts to avoid frequent GC cycles
+The article Go memory ballast introduces a trick to control GC cycles in a much less staggering
+pace. The trick is like:
+import "runtime"
+func main() {
+// ballastSize is value much larger than the
+// maximum possible live heap size of the program.
+ballast := make([]byte, ballastSize)
+programRun()
+runtime.KeepAlive(&ballast)
+}
+The trick allocate a slice with a big element sum size. The size contributes to non-garbage heap
+size.
+Let’s modify the gctrace example shown above as:
+// gcballast.go
+package main
+import (
+"math/rand"
+"runtime"
+"time"
+)
+var x [512][]*int
+func garbageProducer() {
+rand.Seed(time.Now().UnixNano())
+65

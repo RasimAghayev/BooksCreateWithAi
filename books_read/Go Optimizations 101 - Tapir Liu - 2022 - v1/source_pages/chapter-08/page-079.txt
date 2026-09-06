@@ -1,0 +1,47 @@
+============= N = 32
+Benchmark_Copy-4
+4.580 ns/op
+Benchmark_Copy2-4
+1.403 ns/op
+============= N = 64
+Benchmark_Copy-4
+5.187 ns/op
+Benchmark_Copy2-4
+2.000 ns/op
+On my machine (Linux/amd64 Intel(R) Core(TM) i5-4210U CPU @ 1.70GHz), The copy2 way is
+less performant only if the sizes of the slice backing array are in the range [250, 2250] or larger than
+1MB. However, some people reported that the copy2 way is always less performant for larger-size
+arrays. So if we want to use the copy2 way to copy slices for performance reason, try to use it for
+slices which sum element sizes are not larger than 64.
+8.3
+The make and append builtin function implementations
+Go is not C, so generally, the slice elements allocated by a make call will be all zeroed in the make
+call.
+Since Go toolchain v1.15, the official standard Go compiler makes a special optimization: in the
+following alike code, the elements within y[:m], where m is the return result of the copy call, will
+not be zeros in the make call, for they will be overwritten by the subsequent copy call.
+y = make([]T, n)
+copy(y, x) // assume the return value is m
+The optimization is often used to clone slices:
+y = make([]T, len(x))
+copy(y, x)
+Up to now (Go toolchain v1.19), the optimization has not be implemented perfectly yet. In the
+following code, the elements within s[len(x):] will still get zeroed in the make call, which is
+actually unnecessarily.
+s = make([]T, len(x) + len(y))
+copy(s, x)
+copy(s[len(x):], y)
+Another imperfection of this optimization is that several requirements must be satisified to make it
+work:
+• the cloned slice must present as a pure or qualified identifier.
+• the make call must only take two arguments.
+• the copy call must not present as an expression in another statement.
+In other words, the optimization only works for the first case in the following code:
+var s = make{[]T, 10000)
+// case 1:
+y = make([]T, len(s)) // works
+copy(y, s)
+// case 2:
+y = make([]T, len(s)) // not work
+_ = copy(y, s)
+78

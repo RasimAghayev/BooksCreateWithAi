@@ -1,0 +1,52 @@
+package main
+import "runtime"
+//go:noinline
+func f(i int) byte {
+var a [1<<13]byte // allocated on stack and make stack grow
+return a[i]
+}
+func main(){
+var x int
+println(&x)
+// <address 1>
+f(1)
+// (make stack grow)
+println(&x)
+// <address 2>
+runtime.GC() // (make stack shrink)
+println(&x)
+// <address 3>
+runtime.GC() // (make stack shrink)
+println(&x)
+// <address 4>
+runtime.GC() // (stack does not shrink)
+println(&x)
+// <address 4>
+}
+Note that each of the first two manual runtime.GC calls causes a stack shrinkage, but the last one
+doesn’t.
+Let’s make an analysis on how the stack of the main goroutine grows and shrinks during the execu-
+tion of the program.
+1. At the starting, the initial stack size is 2KiB.
+2. The frame size of the f function is 8216 bytes. Before entering the f function call, the stack
+grows to 16KiB, which is the smallest 2n which is larger than the demand (10KiB or so).
+3. After the f function call fully exits, the stack will not shrink immediately, until a garbage
+collection cycle happens.
+4. The first runtime.GC call shrinks the stack to 8KiB.
+5. The second runtime.GC call shrinks the stack to 4KiB.
+6. The third runtime.GC call doesn’t shrink the stack, though 2KiB is sufficient now. The
+reason is the current official standard runtime implementation doesn’t shrink a stack to a size
+which is less than 4 times of the demand.
+The reason why the array a is allocated on stack will be explained in the a later section in this
+chapter.
+Though it happens rarely in practice, we should try to avoid making stack grow and shrink fre-
+quently. That is, for some rare cases, allocating some value parts on stack might be not a good
+idea.
+There is a global limit of stack size each goroutine may reach. If a goroutine exceeds the limit while
+growing its stack, the whole program crashes. As of Go toolchain v1.19, the default maximum stack
+size is 1 GB (not GiB) on 64-bit systems, and 250 MB (not MiB) on 32-bit systems. Please note
+that, the actual max stack size allowed by the current stack grow implementation is about the half
+of the max stack size setting (512 MiB on 64-bit systems and 128 MiB on 32-bit systems).
+The following is an example program which will crash for stack exceeds limit.
+package main
+38

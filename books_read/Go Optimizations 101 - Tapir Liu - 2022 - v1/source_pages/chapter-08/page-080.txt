@@ -1,0 +1,47 @@
+// case 3:
+y = make([]T, len(s)) // not work
+f(copy(y, s))
+// case 4:
+y = make([]T, len(s), len(s)) // not work
+copy(y, s)
+// case 5:
+var a = [1][]T{s}
+y = make([]T, len(a[0])) // not work
+copy(y, a[0])
+// case 6:
+type SS struct {x []T}
+var ss = SS{x: s}
+y = make([]T, len(ss.x)) // not work
+copy(y, ss.x)
+The capacity of the result of a make call is exactly the argument passed to the make call. For
+example, cap(make([]T, n) == n and cap(make([]T, n, m) == m. This means there might
+be some bytes are wasted in the memory block hosting the elements of the result.
+If an append call needs to allocate, then the capacity of the result slice of the append call is unspec-
+ified. The capacity is often larger than length of the result slice. Assume the result of the append
+call is assigned to a slice s, then the elements within s[:len(s):cap(s)] will get zeroed in the
+append call. The other elements will be overwritten by the elements of the argument slices. For
+example, in the following code, the elements within s[len(x)+len(y):] will get reset in the
+append call.
+s = append(x, y...)
+If the append call in the new = append(old, values...) statement allocates, then the capacity
+of the result slice new is determined by the following shown algorithm (assume elementSize is
+not zero) in Go 1.17:
+var newcap int
+var required = old.len + values.len
+if required > old.cap * 2 {
+newcap = required
+} else {
+if old.cap < 1024 {
+newcap = old.cap * 2
+} else {
+newcap = old.cap
+for 0 < newcap && newcap < required {
+newcap += newcap / 4
+}
+// Avoid overflowing.
+if newcap <= 0 {
+newcap = required
+}
+}
+}
+79

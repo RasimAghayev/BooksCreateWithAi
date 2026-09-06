@@ -1,0 +1,45 @@
+the value t, which is referenced by the argument x passed to the f function call, could be safely
+allocated on stack.
+package main
+//go:noinline
+func f(x *int) *int {
+var n = *x + 1 // moved to heap: n
+return &n
+}
+func main() {
+var t = 1 // does not escape
+var p = f(&t)
+println(*p) // 2
+println(&t) // 0xc000034758
+println(p)
+// 0xc0000140c0
+}
+4.7
+Function inline might affect escape analysis results
+If a function call is inlined in its caller function, then the result variables of the inlined call become
+into local variables of the caller function, which will ease escape analysis much. After the inlining,
+compiler might let some value parts which originally escape to heap be allocated on stack instead.
+Still use the example in the last section as an example, but remove the //go:noinline line to
+make the function f inline-able, then the value *p will be allocated on stack.
+package main
+func f(x *int) *int { // x does not escape
+var n = *x + 1 // moved to heap: n
+return &n
+}
+func main() {
+var t = 1
+var p = f(&t)
+println(*p) // 2
+println(&t) // 0xc000034760
+println(p)
+// 0xc000034768
+}
+The printed two addresses show the distance between the value t and *p is the size of the value
+size of *p, which indicates the two values are both allocated on stack. Please note that the message
+"moved to heap: n" is still there, but it is for the f function calls which are not inlined (no such
+calls in this tiny program).
+The following is the rewritten code (by the compiler) after inlining:
+package main
+func main() {
+var t = 1
+42

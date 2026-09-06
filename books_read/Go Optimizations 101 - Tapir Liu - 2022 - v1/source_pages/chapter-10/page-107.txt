@@ -1,0 +1,31 @@
+Chapter 10
+BCE (Bound Check Eliminate)
+Go is a memory safe language. In array/slice/string element indexing and subslice operations, Go
+runtime will check whether or not the involved indexes are out of range. If an index is out of
+range, a panic will be produced to prevent the invalid index from doing harm. This is called bounds
+checking.
+Bounds checks make our code run safely, on the other hand, they also make our code run a little
+slower. This is a trade-off a safe language must made.
+Since Go toolchain v1.7, the standard Go compiler has started to support BCE (bounds check elim-
+ination). BCE can avoid some unnecessary bounds checks, so that the standard Go compiler could
+generate more efficient programs.
+The following will list some examples to show in which cases BCE works and in which cases BCE
+doesn’t work.
+We could use the -d=ssa/check_bce compiler option to show which code lines need bound
+checks.
+10.1
+Example 1
+A simple example:
+// example1.go
+package main
+func f1a(s []struct{}, index int) {
+_ = s[index] // line 5: Found IsInBounds
+_ = s[index]
+_ = s[index:]
+_ = s[:index+1]
+}
+func f1b(s []byte, index int) {
+s[index-1] = 'a' // line 12: Found IsInBounds
+_ = s[:index]
+}
+106

@@ -1,0 +1,45 @@
+8.10
+Insert a slice into another one
+In theory, between the following two implementations of inserting one slice into another one, the
+Insert2 implementation is always more performant than the Insert1 implementation, because
+the Insert2 implementation makes use of the make+copy optimization mentioned above, so that
+the elements within s2[:k] is not zeroed within the make call.
+However, for a runtime implementation imperfection (in Go 1.15/1.16/1.17), if the length of the
+result slice is not larger than 32768, then the Insert2 implementation might be actually slower.
+This imperfection has been fixed since Go 1.18.
+func Insert1(s []byte, k int, vs []byte) []byte {
+s2 := make([]byte, len(s) + len(vs))
+copy(s2, s[:k])
+copy(s2[k:], vs)
+copy(s2[k+len(vs):], s[k:])
+return s2
+}
+func Insert2(s []byte, k int, vs []byte) []byte {
+a := s[:k]
+s2 := make([]byte, len(s) + len(vs))
+copy(s2, a)
+copy(s2[len(a):], vs)
+copy(s2[len(a)+len(vs):], s[k:])
+return s2
+}
+The one-line trick to insert a slice, append(x1[:k:k], append(vs, x1[k:]...)...), is often
+very inefficient. It copies the elements within x1[k:] twice and often needs two allocations. This
+trick might be optimized specially later but has not yet.
+If the free capacity of the base slice is large enough to hold all the inserted elements, and it is allowed
+to let the result slice and the base slice share elements, then the following way is the most efficient,
+for this way doesn’t allocate.
+s = s[:len(s)+len(vs)]
+copy(s[i+len(vs):], s[i:])
+copy(s[i:], vs)
+If the insertion operations are performed frequently, please consider using insertion-friendly data
+structure (such as linked list) instead.
+8.11
+Don’t use the second iteration variable in a for-range
+loop if high performance is demanded
+In the value parts and value sizes article, we have learned that we should avoid
+• ranging over an array with two iteration variables if the size of the array is large, because the
+array is copied. (Note, if only one iteration variable is used, then the copy will not be made.)
+• ranging over a slice or array with two iteration variables if the element size is large, because
+each element will be copied to the second iteration variable once in the iteration process.
+We could get an intuitive understanding from the following equivalence relation:
+85

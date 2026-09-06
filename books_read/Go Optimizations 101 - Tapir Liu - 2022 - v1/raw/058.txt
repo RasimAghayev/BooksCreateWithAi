@@ -1,0 +1,43 @@
+The second strategy is an auxiliary strategy. This article will not talk more about it. With the
+other two strategies in play, the more frequently memory blocks are allocated on heap, the more
+frequently GC cycles start.
+Please note that, the current GC pacer design is not promised to be perfect for every use cases. It
+will be improved constantly in future official standard Go compiler/runtime versions.
+5.2
+Automatic GC might affect Go program execution perfor-
+mance
+GC cycles will consume some CPU resources, so they might affect Go program execution perfor-
+mance to some extend, depending on how program code is written. Generally, if the code of a
+program is not written very badly, we don’t need to worry about the performance impact caused
+by GC, for GC cycles only consume a small fragment of the CPU resources consumed by the main
+program logic. Comparing to the conveniences brought by automatic GC, the small performance
+loss is not a big deal.
+However, if some code of a program is written in a bad way which makes GC cycles busy (run fre-
+quently and scan a large quantity of pointers), then GC might affect program execution performance
+seriously.
+5.3
+How to reduce GC pressure?
+No matter how the GC pacer is (and will be) designed, the basic principles to reduce GC pressure
+include:
+• allocate less short-lived memory blocks on heap (garbage production speed control).
+• create less pointers (scan work load control).
+When a local value part is allocated on heap, an implicit pointer is created on stack to reference
+the local value part allocated on heap so that the value part is traceable (from stacks). This means
+reducing heap allocations is helpful to reduce pointers.
+Heap memory allocations and pointer creations are inevitable in programming. If we need, just do
+it. We don’t need to deliberately avoid using pointers with a lot of efforts.
+In fact, pointers could be often used to reduce copy costs. So whether or not some pointers should
+be used depends on specific situations. We should only avoid using pointers in the situations where
+their drawbacks are obvious.
+We should try to avoid unnecessary memory allocations, especially unnecessary heap memory al-
+locations. However, admittedly, for many reasons, such as language safety and API design re-
+strictions, unnecessary memory allocations are hard to be avoided totally. Go is not C, we should
+acknowledge and accept the fact. After all, Go provides much more conveniences than C.
+Previous chapters have introduced some tips to avoid allocations. The coming chapters will intro-
+duce more.
+5.4
+Memory fragments
+With memory blocks being allocated and collected from time to time, memory will become frag-
+mented. The current official standard Go runtime implementation manages memory in an effective
+way (based on tcmalloc), so generally memory fragmenting is not a problem in Go programming.
+57

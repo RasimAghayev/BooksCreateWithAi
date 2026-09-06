@@ -1,0 +1,45 @@
+return s[len(s)-1]
+}
+func main() {
+stat := func( f func() bool) int {
+allocs := testing.AllocsPerRun(1, func() {
+f()
+})
+return int(allocs)
+}
+println(stat(makeSlice65537))
+// 1 (heap allocation)
+println(stat(makeSlice65535))
+// 0 (heap allocations)
+println(stat(makeSliceVarSize)) // 1 (heap allocation)
+}
+From the outputs of example 3, we could affirm that:
+• if N is a constant and the size of the backing array [N]T of the result of the make([]T, N)
+call is larger than 64K (64 * 1024) bytes, then the backing array will be allocated on heap.
+• if n is not a constant and n is larger than zero, then the backing array will be always allocated
+on heap, for compilers couldn’t determine the backing array size of the result slice at compile
+time.
+(Again, please also note that, if the constant N equals to 65536, the elements of make([]T, N) will
+be allocated on heap before Go toolchain v1.17, but will be allocated on stack since Go toolchain
+v1.17.)
+Example 4:
+package main
+import "testing"
+const N = 10 * 1024 * 1024 // 10M
+var n = N - 1
+func declare10M() byte {
+var a [N]byte
+for i := range a { a[i] = byte(i)}
+return a[n]
+}
+func declare10Mplus1() byte {
+var a [N+1]byte // moved to heap: a
+for i := range a { a[i] = byte(i)}
+return a[n]
+}
+func redeclare10M() byte {
+a := [N]byte{}
+for i := range a { a[i] = byte(i)}
+return a[n]
+}
+49

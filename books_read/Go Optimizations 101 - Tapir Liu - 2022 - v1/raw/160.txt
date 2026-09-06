@@ -1,0 +1,47 @@
+//go:noinline
+func (a Add) Do_NotInlined(x, y float64) float64 {
+return x+y
+}
+var x1, y1, r1 float64
+var add Add
+func Benchmark_Add_Inline(b *testing.B) {
+for i := 0; i < b.N; i++ {
+r1 = add.Do(x1, y1)
+}
+}
+var x2, y2, r2 float64
+var add_NotInlined Add
+func Benchmark_Add_NotInlined(b *testing.B) {
+for i := 0; i < b.N; i++ {
+r2 = add.Do_NotInlined(x2, y2)
+}
+}
+var x3, y3, r3 float64
+var add_Interface BinaryOp = Add{}
+func Benchmark_Add_Interface(b *testing.B) {
+for i := 0; i < b.N; i++ {
+r3 = add_Interface.Do(x3, y3)
+}
+}
+The benchmark results:
+Benchmark_Add_Inline-4
+0.6254 ns/op
+Benchmark_Add_NotInlined-4
+2.340 ns/op
+Benchmark_Add_Interface-4
+4.935 ns/op
+From the benchmark results, we could get the cost of virtual table looking-up is about 2.5ns, and
+(for this specified case) the performance loss caused by not inlined is about 1.7 ns. The losses are
+small for most cases, but might be non-ignorable if the code runs frequently on the hot execution
+paths.
+This has been mentioned in the stacks and escape analysis chapter.
+However, no need to be too resistant to interface methods. For most cases, a clean design is more im-
+portant than a bit better performance. And the official standard Go compiler is able to de-virtualize
+some interface method calls at compile time.
+14.4
+Avoid using interface parameters and results in small
+functions which are called frequently
+Because most value boxing operations need memory allocations, we should try to avoid declaring
+small functions (including methods) with interface parameters and results if the functions are called
+massively and frequently in code execution.
+159

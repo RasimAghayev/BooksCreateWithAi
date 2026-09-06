@@ -1,0 +1,49 @@
+3.9
+Use value cache pool to avoid some allocations
+Sometimes, we need to frequently allocate and discard values of a specified type from time to time.
+It is a good idea to reuse allocated values to avoid a large quantity of allocations.
+For example, there are many non-player characters (NPC) in RTS games. A large quantity of NPCs
+will be spawned and destroyed from time to time in a game session. The related code is like
+type NPC struct {
+name
+[64]byte
+nameLen
+uint16
+blood
+uint16
+properties uint32
+x, y
+float64
+}
+func SpawnNPC(name string, x, y float64) *NPC {
+var npc = newNPC()
+npc.nameLen = uint16(copy(npc.name[:], name))
+npc.x = x
+npc.y = y
+return npc
+}
+func newNPC() *NPC {
+return &NPC{}
+}
+func releaseNPC(npc *NPC) {
+}
+As Go supports automatic GC, the releaseNPC function may do nothing. However, such imple-
+mentation will lead to a large quantity of allocations in game playing and cause large pressure for
+garbage collection, so that it is hard to guarantee a good game FPS (frames per second).
+We could instead use a cache pool to reduce allocations, like the code shown below.
+import "container/list"
+var npcPool = struct {
+sync.Mutex
+*list.List
+}{
+List: list.New(),
+}
+func newNPC() *NPC {
+npcPool.Lock()
+defer npcPool.Unlock()
+if npcPool.Len() == 0 {
+return &NPC{}
+}
+return npcPool.Remove(npcPool.Front()).(*NPC)
+}
+31

@@ -1,0 +1,34 @@
+Chapter 2
+Value Parts and Value Sizes
+2.1
+Values and value parts
+In Go, a value of some kinds of types always contains only one part (in memory), whereas a value
+of other kinds of types might contain more than one part. If a value contains more than one part,
+then one of the parts is called the direct part and the others are called indirect parts. The direct part
+references the indirect parts.
+If a value always contains only one part, then the part may be also called as the direct part of the
+value, and we say the value has no indirect parts.
+In the official standard Go compiler implementation, each value of the following kinds of types
+always contains only one part:
+• boolean types
+• numeric types (int8, uint8, int16, uint16, int32, uint32, int64, uint64, int, uint, uintptr, float32,
+float64, complex64, complex128)
+• pointer types
+• unsafe pointer types
+• struct types
+• array types
+And a value of the following kinds of types always may contain one or more indirect parts:
+• slice types
+• map types
+• channel types
+• function types
+• interface types
+• string types
+When assigning/copying a value, only the direct part of the value is copied. After copying, the
+direct parts of the destination and source values both are referencing the indirect parts of the source
+value (if the indirect parts exist).
+At run time, each value part is carried on one memory block (memory blocks will be explained in a
+following chapter). So, if a value contains two parts, the value is very possibly distributed on two
+memory blocks.
+(Note: The terminology value part was invented by the Go 101 series books. It is not widely
+9

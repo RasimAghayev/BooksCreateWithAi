@@ -1,0 +1,21 @@
+}
+var sink interface{}
+//go:noinline
+func escape(x interface{}) {
+sink = x
+sink = nil
+}
+func main() {
+var a = f(100)
+println(a)
+}
+By making use of the trick introduced in the stack and escape analysis article, we could rewrite the
+function f as the following shows, to prevent the argument x from escaping to heap.
+func f(x int) string {
+if x >= 0 && x < 10 {
+return "0123456789"[x:x+1]
+}
+x2 := x // x2 escapes to heap
+return g(&x2)
+}
+149

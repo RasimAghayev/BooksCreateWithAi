@@ -1,0 +1,47 @@
+func main() {
+stat := func( f func() ) int {
+allocs := testing.AllocsPerRun(1, f)
+return int(allocs)
+}
+println(stat(f(bs33)))
+// 1 (heap allocation)
+println(stat(f(bs33[:32]))) // 0 (heap allocations)
+println(stat(g(S[:33])))
+// 1 (heap allocation)
+println(stat(g(S[:32])))
+// 0 (heap allocations)
+println(stat(h))
+// 0 (heap allocations)
+}
+Please note: the "XXX does not escape" analysis message means the compiler knows that XXX
+is used only by one goroutine, but if the corresponding threshold is surpassed, then XXX will be
+allocated on heap (special thanks to Keith Randall for the explanations).
+From the outputs of example 1, we could affirm the byte elements of the result strings or byte slices
+of conversions between string and byte slice will be always allocated on heap if the length of the
+result is larger than 32.
+Note, however, the threshold of converting a constant string is relaxed to 64K bytes, which is why
+these are no escapes happening in the h function.
+Example 2:
+package main
+import "testing"
+const N = 64 * 1024 // 65536
+var n byte = 123
+func new65537() byte {
+// new([65537]byte) escapes to heap
+var a = new([N+1]byte)
+for i := range a { a[i] = n }
+return a[n]
+}
+func new65535() byte {
+// new([65535]byte) does not escape
+var a = new([N-1]byte)
+for i := range a { a[i] = n }
+return a[n]
+}
+func comptr65537() byte {
+// &[65537]byte{} escapes to heap
+a := &[N+1]byte{}
+for i := range a { a[i] = n }
+return a[n]
+}
+47

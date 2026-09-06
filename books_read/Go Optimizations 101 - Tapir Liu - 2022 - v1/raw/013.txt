@@ -1,0 +1,51 @@
+architectures.
+type
+alignment guarantee
+bool, uint8, int8
+1
+uint16, int16
+2
+uint32, int32
+4
+float32, complex64
+4
+arrays
+depend on element types
+structs
+depend on field types
+other types
+size of a native word
+The Go specification says:
+For a variable x of a struct type: unsafe.Alignof(x) is the largest of all the values
+unsafe.Alignof(x.f) for each field f of x, but at least 1.
+For a variable x of an array type: unsafe.Alignof(x) is the same as the alignment
+of a variable of the array’s element type.
+The official standard Go compiler ensures that the size of a type is a multiple of the alignment
+guarantee of the type.
+2.5
+Struct padding
+To satisfy type alignment guarantee rules mentioned previously, Go compilers may pad some bytes
+after certain fields of struct values. The padded bytes are counted for struct sizes. So the size of a
+struct type may be not a simple sum of the sizes of all its fields.
+For example, the size of the struct type shown in the following code is 24 on 64-bit architectures.
+type T1 struct {
+a int8
+// 7 bytes are padded here
+b int64
+c int16
+// 6 bytes are padded here.
+}
+The reason why its size is 24:
+• The alignment guarantee of the struct type is the same as its largest alignment guarantee of
+its filed types. Here is the alignment guarantee (8, a native word) of type int64. This means
+the distance between the address of the field b and a of a value of the struct type is a multiple
+of 8. Clever compilers should choose the minimum possible value: 8. To get the desired
+alignment, 7 bytes are padded after the field a.
+• The size of the struct type must be a multiple of the alignment guarantee of the struct type. So
+considering the existence of the field c, the minimum possible size is 24 (8x3), which should
+be used by clever compilers. To get the desired size, 6 bytes are padded after the field c.
+Field orders matter in struct type size calculations. If we change the orders of field b and c of the
+above struct type, then the size of the struct will become to 16.
+type T2 struct {
+a int8
+12

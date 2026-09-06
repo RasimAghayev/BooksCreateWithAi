@@ -1,0 +1,44 @@
+call, to avoid growing the map in multiple steps later.
+11.7
+Use index tables instead of maps which key types have only
+a small set of possible values
+Some programmers like to use a map with bool key to reduce verbose if-else code block uses.
+For example, the following code
+// Within a function ...
+var condition bool
+condition = evaluateCondition()
+...
+if condition {
+counter++
+} else {
+counter--
+}
+...
+if condition {
+f()
+} else {
+g()
+}
+...
+could be replaced with
+// Package-level maps.
+var boolToInt = map[bool]int{true: 1, false: 0}
+var boolToFunc = map[bool]func(){true: f, false: g}
+// Within a function ...
+var condition bool
+condition = evaluateCondition()
+...
+counter += boolToInt[condition]
+...
+boolToFunc[condition]()
+...
+If there are many such identical if-else blocks used in code, using maps with bool keys will
+reduce many boilerplates and make code look much cleaner. For most use cases, this is generally
+good. However, as of Go toolchain v1.19, the map way is not very efficient from the code execution
+performance view. The following benchmarks show the performance differences.
+package maps
+import "testing"
+//go:noiline
+func f() {}
+//go:noiline
+122

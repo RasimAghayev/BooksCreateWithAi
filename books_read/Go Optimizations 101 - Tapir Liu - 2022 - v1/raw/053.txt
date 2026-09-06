@@ -1,0 +1,43 @@
+var p = &a
+return s[n] + p[n]
+}
+func main() {
+stat := func( f func() byte ) int {
+allocs := testing.AllocsPerRun(1, func() {
+f()
+})
+return int(allocs)
+}
+println(stat(f)) // 0
+}
+As of Go toolchain v1.19, this tip still works.
+4.8.6
+Allocate the backing array of a slice with an arbitrary length on stack
+It looks the escape analysis module in the current stanard Go compiler implementation (v1.19)
+misses the case of using composite literals to create slices. When using the composite literal way
+to create a slice, the elements of the slice will be always allocated on stack (if the compiler makes
+sure that the elements of the slice will be used by only one goroutine), regardless of the length of
+the slice and the size of the elements. For example, the following example program will allocate
+the 500M elements of a byte slice on stack.
+package main
+import "testing"
+const N = 500 * 1024 * 1024 // 500M
+var v byte = 123
+func createSlice() byte {
+// []byte{...} does not escape
+var s = []byte{N: 0}
+for i := range s { s[i] = v }
+return s[v]
+}
+func main() {
+stat := func( f func() byte ) int {
+allocs := testing.AllocsPerRun(1, func() {
+f()
+})
+return int(allocs)
+}
+println(stat(createSlice)) // 0 (heap allocations)
+}
+Future Go toolchain versions might change the implementation so that this tip might not work later.
+But up to now (v1.19), this tip still works.
+52

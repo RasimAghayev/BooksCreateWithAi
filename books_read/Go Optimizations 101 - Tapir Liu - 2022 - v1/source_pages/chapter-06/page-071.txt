@@ -1,0 +1,52 @@
+for i := range t.a {
+t.a[i] = i
+}
+}
+//go:noinline
+func f1(t *T) {
+_ = *t.a
+for i := range t.a {
+t.a[i] = i
+}
+}
+To move the nil array pointer checks out of the loop, we should copy the t.a field to a local variable,
+then adopt the trick introduced above:
+//go:noinline
+func f3(t *T) {
+a := t.a
+_ = *a
+for i := range a {
+a[i] = i
+}
+}
+Or simply derive a slice from the array pointer field:
+//go:noinline
+func f4(t *T) {
+a := t.a[:]
+for i := range a {
+a[i] = i
+}
+}
+The benchmark results:
+Benchmark_f0-4
+622.9 ns/op
+Benchmark_f1-4
+637.4 ns/op
+Benchmark_f2-4
+511.3 ns/op
+Benchmark_f3-4
+390.1 ns/op
+Benchmark_f4-4
+387.6 ns/op
+The results verify our previous conclusions.
+Note, the f2 function mentioned in the benchmark results is declared as
+//go:noinline
+func f2(t *T) {
+a := t.a
+for i := range a {
+a[i] = i
+}
+}
+The f2 implementation is not fast as the f3 and f4 implementations, but it is faster than the f0 and
+f1 implementations. However, that is another story.
+70

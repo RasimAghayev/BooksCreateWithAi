@@ -1,10 +1,7 @@
 {
-  "book_id": "go-in-action-2e-meap-v03",
-  "title": "Go in Action, Second Edition",
-  "author": "Andrew Walker & William Kennedy",
-  "started_at": "2026-09-06",
-  "completed_at": "2026-09-06",
-  "status": "completed",
-  "workspace": "books_read/Go_in_Action_Andrew_Walker_2022_v1",
-  "telegram_upload": "pending"
+  "book_id": null,
+  "title": null,
+  "status": "none",
+  "started_at": null,
+  "note": "Go Optimizations 101 (go_optimizations_101_2022_v1) 2026-09-06 tarixində tamamlandı. books.json bərpa edildi (12 completed kitab). Növbəti kitab Books/ qovluğundan götürüləcək."
 }

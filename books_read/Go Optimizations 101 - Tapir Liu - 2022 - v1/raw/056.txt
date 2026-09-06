@@ -1,0 +1,5 @@
+At the beginning of the goroutine lifetime, the size of the used part of the stack is still small, so the
+stack copy cost is small. Along with the used part becomes larger and larger, a stack growth will
+copy more and more memory. So the sum of the stack copy costs in the foo goroutine is much
+larger than the one single stack copy cost in the bar goroutine.
+55

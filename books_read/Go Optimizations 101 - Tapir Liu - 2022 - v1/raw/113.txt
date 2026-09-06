@@ -1,0 +1,45 @@
+return len(x)
+}
+func NumSameBytes_2(x, y T) int {
+if len(x) > len(y) {
+x, y = y, x
+}
+// a successful hint
+if len(x) > len(y) {
+panic("unreachable")
+}
+for i := 0; i < len(x); i++ {
+if x[i] != y[i] { // BCEed!
+return i
+}
+}
+return len(x)
+}
+The above hint works for T is either a string type or a slice type. But each of the following two hints
+only works for one case (as of Go toolchain v1.19).
+func NumSameBytes_3(x, y T) int {
+if len(x) > len(y) {
+x, y = y, x
+}
+y = y[:len(x)] // a hint, only works if T is slice
+for i := 0; i < len(x); i++ {
+if x[i] != y[i] {
+return i
+}
+}
+return len(x)
+}
+func NumSameBytes_4(x, y T) int {
+if len(x) > len(y) {
+x, y = y, x
+}
+_ = y[:len(x)] // a hint, only works if T is string
+for i := 0; i < len(x); i++ {
+if x[i] != y[i] {
+return i
+}
+}
+return len(x)
+}
+Please note that, the future versions of the standard official Go compiler will become smarter so
+112

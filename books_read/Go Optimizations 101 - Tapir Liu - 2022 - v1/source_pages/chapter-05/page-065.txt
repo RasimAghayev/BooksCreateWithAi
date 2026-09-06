@@ -1,0 +1,46 @@
+gc 1 @0.015s ..., 4 MB goal, 256 MB stacks, ...
+gc 2 @1.597s ..., 263 MB goal, 256 MB stacks, ...
+gc 3 @2.772s ..., 258 MB goal, 256 MB stacks, ...
+gc 4 @3.945s ..., 258 MB goal, 256 MB stacks, ...
+gc 5 @5.239s ..., 288 MB goal, 256 MB stacks, ...
+gc 6 @6.122s ..., 264 MB goal, 256 MB stacks, ...
+gc 7 @7.384s ..., 279 MB goal, 256 MB stacks, ...
+gc 8 @8.796s ..., 288 MB goal, 256 MB stacks, ...
+gc 9 @10.102s ..., 291 MB goal, 256 MB stacks, ...
+gc 10 @10.951s ..., 262 MB goal, 256 MB stacks, ...
+...
+The following program uses a huge-size package-level variable which contains a pointer, so that
+the root memory block total size of the program is also huge.
+// bigglobals.go
+package main
+import (
+"math/rand"
+"time"
+)
+var x [512][]*int
+func garbageProducer() {
+rand.Seed(time.Now().UnixNano())
+for i := 0; ; i++ {
+n := 6 + rand.Intn(6)
+for j := range x {
+x[j] = make([]*int, 1<<n)
+for k := range x[j] {
+x[j][k] = new(int)
+}
+}
+time.Sleep(time.Second / 1000)
+}
+}
+var bigGlobal struct {
+p *int
+_ [150 << 20]byte
+}
+func main() {
+garbageProducer()
+// never exit
+println(bigGlobal.p) // unreachable
+}
+Run it, get the following outputs:
+$ GODEBUG=gctrace=1 go run bigglobals.go
+...
+64

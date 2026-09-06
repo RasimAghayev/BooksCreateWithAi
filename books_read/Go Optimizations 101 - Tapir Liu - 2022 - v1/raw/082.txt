@@ -1,0 +1,43 @@
+8.4
+Try to clip the first argument of an append call if we know
+the call will allocate
+If an append call allocates and there are no more elements to be appended to the result slice, then
+it is best to clip the first argument of the append call, to try to save some memory (and consume
+less CPU resources).
+An example:
+package main
+func main() {
+x := make([]byte, 100, 500)
+y := make([]byte, 500)
+a := append(x, y...)
+b := append(x[:len(x):len(x)], y...)
+println(cap(a)) // 1024
+println(cap(b)) // 640
+}
+The outputs shown as comments are for Go 1.17. For Go 1.18, instead, the above program prints:
+896
+640
+Surely, if we confidently know that the free capacity of the first argument slice of an append call
+is enough to hold all appended elements, then we should not clip the first argument.
+8.5
+Grow slices (enlarge slice capacities)
+There are two ways to grow the capacity of a slice x to c if the backing array of the slice is needed
+to be re-allocated in the growth.
+// way 1
+func Grow_MakeCopy(x []T, c int) []T {
+r := make([]T, c)
+copy(r, x)
+return r[:len(x)]
+}
+// way 2
+func Grow_Oneline(x []T, c int) []T {
+return append(x, make([]T, c - len(x))...)[:len(x)]
+}
+Both of the two ways are specially optimized by the official standard Go compiler. As mentioned
+above, the make call in way 1 doesn’t reset elements within r[:len(x)]. In way 2, the make call
+doesn’t make allocations at all.
+In theory, with the two optimizations, the two ways have comparable performance. But benchmark
+results often show way 1 is a little more performant.
+Please note, up to now (verison 1.19), in the current official standard Go compiler implementation,
+the optimization for way 2 doesn’t work if the two argument slice types of the make call don’t
+81

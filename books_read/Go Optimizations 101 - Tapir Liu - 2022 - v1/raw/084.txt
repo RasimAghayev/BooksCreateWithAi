@@ -1,0 +1,45 @@
+// The append way
+merged = append(x[:len(x):len(x)], y...)
+The append way is clean but it is often a little slower, because the append function often allocates
+and zeroes some extra elements. But if the length of y is much larger than the length of x, then the
+append way is probably faster, because the elements within merged[len(x):] are (unnecessarily)
+zeroed in the make+copy way (then overridden by the elements of y). So, which way is more
+performant depends on specific situations.
+If the element orders of the merged slice are not important and the append way is chosen, then try
+to pass the shorter slice as the first argument, so that some memory might be saved. An example to
+show the fact:
+package main
+func main() {
+x := make([]int, 98)
+y := make([]int, 666)
+a := append(x, y...)
+b := append(y, x...)
+println(cap(a)) // 768
+println(cap(b)) // 1360
+}
+The outputs shown as comments are for Go 1.17. For Go 1.18, instead, the above program prints:
+768
+1024
+If the free element slots in slice x are enough to hold all elements of slice y and it is allowed to let
+the result slice and x share elements, then append(x, y...) is the most performant way, for it
+doesn’t allocate.
+8.9
+Merge more than two slices (into a new slice)
+Up to now, there is not an extreme performant way to merge 2+ slices into a new slice. The reason
+is there will be always some elements (unnecessarily) get zeroed in the make call.
+If the element orders of the merged slice are important, we could use the following implementations
+to do the merging. Their performances are almost the same.
+func MergeN_MakeCopy(ss ...[]byte) []byte {
+var n = 0
+for _, s := range ss {
+n += len(s)
+}
+i, r := 0, make([]byte, n)
+for _, s := range ss {
+copy(r[i:], s)
+i += len(s)
+}
+return r
+}
+func MergeN_MakeAppend(ss ...[]byte) []byte {
+83

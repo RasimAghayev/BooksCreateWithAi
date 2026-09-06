@@ -1,0 +1,42 @@
+// 1 byte is padded here
+c int16
+// 4 bytes are padded here.
+b int64
+}
+We can use the unsafe.Sizeof function to get value/type sizes. For example:
+package main
+import "unsafe"
+type T1 struct {
+a int8
+b int64
+c int16
+}
+type T2 struct {
+a int8
+c int16
+b int64
+}
+func main(){
+// The printed values are got on
+// 64-bit architectures.
+println(unsafe.Sizeof(T1{})) // 24
+println(unsafe.Sizeof(T2{})) // 16
+}
+We can view the padding bytes as a form of memory wasting, a trade-off result between program
+performance, code readability and memory saving.
+In practice, generally, we should make related fields adjacent to get good readability, and only order
+fields in the most memory saving way when it really needs.
+2.6
+Value copy costs and small-size types/values
+The cost of copying a value is approximately proportional to the size of the value. In reality, CPU
+caches, CPU instructions and compiler optimizations might also affect value copy costs.
+Value copying operations often happen in value assignments. More value copying operations will
+be listed in the next section.
+To achieve high code execution performance, if it is possible, we should try to avoid
+• copying a large quantity of large-size values in a loop.
+• copying very-large-size arrays and structs.
+Some types in Go belong to small-size types. Copying their values is specially optimized by the
+official standard Go compiler so that the copy cost is always small.
+But what are small-size types? There is not a formal definition. In fact, the definition depends
+on specific CPU architectures and compiler implementations. In the official standard Go compiler
+13

@@ -1,0 +1,44 @@
+The benchmark result:
+Benchmark_ConvertToArray_Named-4
+472.2 ns/op
+Benchmark_ConvertToArray_Unnamed-4
+332.9 ns/op
+From the results, we could find that the function with a named result performs slower. It looks this
+is a problem related to code inlining. If the two type _ int lines are enabled (to prevent the calls
+to the two functions from being inlined), then there is no performance difference between the two
+functions. The future compiler versions might remove the performance difference when the two
+functions are both inline-able.
+The following two CopyToArray implementations shows the opposite result. the one with anony-
+mous results is slower than the one with named results, whether or not the two functions are inlined.
+package functions
+import "testing"
+const N = 1<<12
+var buf = make([]byte, N)
+var r [128][N]byte
+func Benchmark_CopyToArray_Named(b *testing.B) {
+for i := 0; i < b.N; i++ {
+r[i&127] = CopyToArray_Named(buf)
+}
+}
+func Benchmark_CopyToArray_Unnamed(b *testing.B) {
+for i := 0; i < b.N; i++ {
+r[i&127] = CopyToArray_Unnamed(buf)
+}
+}
+func CopyToArray_Named(b []byte) (ret [N]byte) {
+// type _ int
+copy(ret[:], b)
+return
+}
+func CopyToArray_Unnamed(b []byte) [N]byte {
+// type _ int
+var ret [N]byte
+copy(ret[:], b)
+return ret
+}
+The benchmark results:
+Benchmark_CopyToArray_Named-4
+408.3 ns/op
+Benchmark_CopyToArray_Unnamed-4
+547.5 ns/op
+144

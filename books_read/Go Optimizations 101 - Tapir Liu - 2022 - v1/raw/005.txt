@@ -1,0 +1,28 @@
+13.1.1 Which functions are inline-able? . . . . . . . . . . . . . . . . . . . . . . 131
+13.1.2 A call to a function value is not inline-able if the value is hard to be deter-
+mined at compile time . . . . . . . . . . . . . . . . . . . . . . . . . . . 133
+13.1.3 The go:noinline comment directive . . . . . . . . . . . . . . . . . . . 134
+13.1.4 Write code in the ways which are less inline costly . . . . . . . . . . . . . 134
+13.1.5 Make hot paths inline-able . . . . . . . . . . . . . . . . . . . . . . . . . 138
+13.1.6 Manual inlining is often more performance than auto-inlining . . . . . . . 139
+13.1.7 Inlining might do negative impact on performance . . . . . . . . . . . . . 140
+13.2 Pointer parameters/results vs. non-pointer parameters/results . . . . . . . . . . . . 141
+13.3 Named results vs. anonymous results . . . . . . . . . . . . . . . . . . . . . . . . 143
+13.4 Try to store intermediate calculation results in local variables
+. . . . . . . . . . . 145
+13.5 Avoid deferred calls in loops . . . . . . . . . . . . . . . . . . . . . . . . . . . . 145
+13.6 Avoid using deferred calls if extreme high performance is demanded . . . . . . . . 147
+13.7 The arguments of a function call will be always evaluated when the call is invoked
+147
+13.8 Try to make less values escape to heap in the hot paths . . . . . . . . . . . . . . . 148
+14 Interfaces
+150
+14.1 Box values into and unbox values from interfaces
+. . . . . . . . . . . . . . . . . 150
+14.2 Try to void memory allocations by assigning interface to interface . . . . . . . . . 157
+14.3 Calling interface methods needs a little extra cost
+. . . . . . . . . . . . . . . . . 158
+14.4 Avoid using interface parameters and results in small functions which are called
+frequently
+. . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 159
+4

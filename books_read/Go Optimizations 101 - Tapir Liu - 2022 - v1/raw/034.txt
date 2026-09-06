@@ -1,0 +1,32 @@
+Chapter 4
+Stack and Escape Analysis
+4.1
+Goroutine stacks
+In the last chapter, it is mentioned that some memory blocks will be allocated on stack(s), one of
+the two kinds of memory zones.
+When a new goroutine is created, Go runtime will create a stack memory zone for the goroutine. The
+current official standard Go runtime uses contiguous stacks (instead of segmented stacks), which
+means the stack memory zone is a single continuous memory segment.
+Allocating memory blocks on stack is generally much faster than on heap, which will be explained
+in the following sections. Memory blocks allocated on stack don’t need to be garbage collected,
+which is another big advantage over memory blocks allocated on heap. Thirdly, memory blocks
+allocated on stack are also often more CPU cache friendly than the ones allocated on heap.
+So, generally speaking, if it is possible, the official standard Go compiler will let Go runtime try to
+allocate memory blocks on stack.
+4.2
+Escape analysis
+Not all value parts are capable of being allocated on stack. One principle condition to allocate a
+value part on stack is the value part will be only used in one goroutine (the current one) during its
+life time. Generally, if the compiler detects a value part is used by more than one goroutine or it is
+unable to make sure whether or not the value part is used by only one goroutine, then it will let the
+value part allocated on heap. We also say the value part escapes (to heap).
+The job of determining which value parts could be allocated on stack is handled by the escape
+analysis module of a Go compiler. However, situations are often complicated in practice so that it
+is almost impossible for the escape analysis module to find out all such value parts at compile time.
+And a more powerful escape analysis implementation will increase compilation time much. So, at
+run time, some value parts will be allocated on heap even if they could be safely allocated on stack.
+Please note that a value part could be allocated on stack doesn’t mean the value part will be allocated
+on stack for sure at run time. If the size of the value part is too large, then the compiler will still
+let the value part allocated on heap anyway. The size thresholds used in the official standard Go
+compiler will be introduced in later sections of this chapter.
+33

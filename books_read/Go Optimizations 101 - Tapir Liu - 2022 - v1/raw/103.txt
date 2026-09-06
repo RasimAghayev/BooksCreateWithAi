@@ -1,0 +1,43 @@
+In the following example, the function f is more efficient than the function g. The reason is the
+former makes one allocation, whereas the latter makes two.
+func f(a, b, c string) {
+abc := a + b + c
+ab := abc[:len(abc)-len(c)]
+...
+}
+func g(a, b, c string) {
+ab := a + b
+abc := ab + c
+...
+}
+In the following code, using array values as the map keys is more performant than using strings as
+the map keys, because the former way doesn’t allocate in building entry keys.
+package bytes
+import "testing"
+var ma = make(map[[2]string]struct{})
+var ms = make(map[string]struct{})
+var keyparts = []string {
+"docs", "aaa",
+"pictures", "bbb",
+"downloads", "ccc",
+}
+func fa(a, b string) {
+ma[[2]string{a, b}] = struct{}{}
+}
+func fs(a, b string) {
+ms[a + "/" + b] = struct{}{}
+}
+func Benchmark_array_key(b1 *testing.B) {
+for i := 0; i < b1.N; i++ {
+for i := 0; i < len(keyparts); i+= 2 {
+fa(keyparts[i], keyparts[i+1])
+}
+for key := range ma {delete(ma, key)}
+}
+}
+func Benchmark_string_key(b1 *testing.B) {
+for i := 0; i < b1.N; i++ {
+for i := 0; i < len(keyparts); i+= 2 {
+fs(keyparts[i], keyparts[i+1])
+}
+102

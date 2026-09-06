@@ -1,0 +1,45 @@
+var n = 0
+for _, s := range ss {
+n += len(s)
+}
+r := make([]byte, 0, n)
+for _, s := range ss {
+r = append(r, s...)
+}
+return r
+}
+If the element orders of the merged slice are not important, we could use the following way instead.
+This implementation tries to make use of the make+copy optimization to zero less elements in the
+make call.
+func MergeN_Orderless(ss ...[]byte) []byte {
+if len(ss) == 0 {
+return []byte{}
+}
+var k, max = 0, len(ss[0])
+var n = max
+for i := 1; i < len(ss); i++ {
+li := len(ss[i])
+n += li
+if li > max {
+k = i
+max = li
+}
+}
+if k > 0 {
+ss2 := make([][]byte, len(ss))
+copy(ss2, ss)
+ss2[k], ss2[0] = ss2[0], ss2[k]
+ss = ss2
+}
+var s = ss[0]
+var r = make([]byte, n)
+copy(r, s)
+r = r[:max]
+for _, s := range ss[1:] {
+r =append(r, s...)
+}
+return r
+}
+Although the MergeN_Orderless implementation is more performant (often only a bit), it is quite
+verbose and not graceful. So please only adopt it if a high performance is desired strongly.
+84

@@ -1,0 +1,44 @@
+for i := 0; i < len(bss); i++ {
+r = append(r, bss[i]...)
+}
+return r
+}
+If the inline cost of the function wrapping the code path part doesn’t exceed the inline threshold,
+then we should use the above introduced avoid-being-inlined ways to prevent the function from
+being inline-able. Otherwise, the rewritten concat function is still not inline-able, for the wrapped
+part be automatically flattened into the rewritten function. That is why the go:noinline comment
+directive is put before the rewritten concatSlow function.
+Please note that, currently (Go toolchain v1.19), the inline cost of a function call is 59. That means
+a function is not inline-able if it contains 2+ calls which are not inlined.
+And please note that, since Go toolchain v1.18, if we replace the two plain for loops within the
+original concat function with two for-range loops, then the original function will become inline-
+able already. Here, for demo purpose, we use two plain for loops.
+13.1.6
+Manual inlining is often more performance than auto-inlining
+An example:
+package functions
+import "testing"
+const N = 100
+// This function is inline-able.
+func Slice2Array(b []byte) [N]byte {
+return *(*[N]byte)(b)
+}
+//====================
+var buf = make([]byte, 8192)
+var r [128][N]byte
+func Benchmark_ManualInline(b *testing.B) {
+for i := 0; i < b.N; i++ {
+r[i&127] = *(*[N]byte)(buf)
+}
+}
+func Benchmark_AutoInline(b *testing.B) {
+for i := 0; i < b.N; i++ {
+r[i&127] = Slice2Array(buf) // inlined
+}
+}
+The benchmark results:
+Benchmark_ManualInline-4
+5.134 ns/op
+Benchmark_AutoInline-4
+11.49 ns/op
+139

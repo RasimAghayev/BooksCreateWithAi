@@ -1,0 +1,9 @@
+data[k] = v // Found IsInBounds
+k++
+}
+}
+return data[:k] // Found IsSliceInBounds
+}
+The future versions of the standard official Go compiler will become smarter so that the above
+unnecessary bound checks will be eliminated later.
+117

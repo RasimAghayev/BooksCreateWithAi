@@ -1,0 +1,145 @@
+4.6.3
+A reflect.ValueOf function call makes the values referenced by its ar-
+gument escape to heap . . . . . . . . . . . . . . . . . . . . . . . . . . .
+41
+4.6.4
+The values referenced by function return results will escape . . . . . . . .
+41
+4.7
+Function inline might affect escape analysis results . . . . . . . . . . . . . . . . .
+42
+4.7.1
+Function inlining is not always helpful for escape analysis . . . . . . . . .
+43
+4.8
+Control memory block allocation places . . . . . . . . . . . . . . . . . . . . . .
+43
+4.8.1
+Ensure a value is allocated on heap . . . . . . . . . . . . . . . . . . . . .
+44
+4.8.2
+Use explicit value copies to help compilers detect some values don’t escape
+45
+4.8.3
+Memory size thresholds used by the compiler to make allocation placement
+decisions . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
+46
+4.8.4
+Use smaller thresholds . . . . . . . . . . . . . . . . . . . . . . . . . . .
+50
+4.8.5
+Allocate the backing array of a slice on stack even if its size is larger than
+or equal to 64K (but not larger than 10M)
+. . . . . . . . . . . . . . . . .
+51
+4.8.6
+Allocate the backing array of a slice with an arbitrary length on stack
+. . .
+52
+4.8.7
+More tricks to allocate arbitrary-size values on stack . . . . . . . . . . . .
+53
+4.9
+Grow stack in less times . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
+53
+5
+Garbage Collection
+56
+5.1
+GC pacer . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
+56
+5.2
+Automatic GC might affect Go program execution performance . . . . . . . . . .
+57
+5.3
+How to reduce GC pressure? . . . . . . . . . . . . . . . . . . . . . . . . . . . .
+57
+5.4
+Memory fragments . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
+57
+5.5
+Memory wasting caused by sharing memory blocks
+. . . . . . . . . . . . . . . .
+58
+5.6
+Try to generate less short-lived memory blocks to lower automatic GC frequency .
+59
+5.7
+Use new heap memory percentage strategy to control automatic GC frequency . . .
+59
+5.8
+Since Go toolchain 1.18, the larger GC roots, the larger GC cycle intervals . . . . .
+62
+5.9
+Use memory ballasts to avoid frequent GC cycles
+. . . . . . . . . . . . . . . . .
+65
+5.10 Use Go toolchain 1.19 introduced memory limit strategy to avoid frequent GC cycles 66
+6
+Pointers
+68
+6.1
+Avoid unnecessary nil array pointer checks in a loop . . . . . . . . . . . . . . . .
+68
+6.1.1
+The case in which an array pointer is a struct field . . . . . . . . . . . . .
+69
+6.2
+Avoid unnecessary pointer dereferences in a loop
+. . . . . . . . . . . . . . . . .
+71
+7
+Structs
+74
+7.1
+Avoid accessing fields of a struct in a loop though pointers to the struct
+. . . . . .
+74
+7.2
+Small-size structs are optimized specially
+. . . . . . . . . . . . . . . . . . . . .
+75
+7.3
+Make struct size smaller by adjusting field orders
+. . . . . . . . . . . . . . . . .
+75
+8
+Arrays and Slices
+76
+8.1
+Avoid using literals of large-size array types as comparison operands
+. . . . . . .
+76
+8.2
+Using slice-to-array-pointer conversions introduced in Go 1.17 to copy slices . . .
+77
+8.3
+The make and append builtin function implementations . . . . . . . . . . . . . .
+78
+8.4
+Try to clip the first argument of an append call if we know the call will allocate . .
+81
+8.5
+Grow slices (enlarge slice capacities) . . . . . . . . . . . . . . . . . . . . . . . .
+81
+8.6
+Try to grow a slice in one step . . . . . . . . . . . . . . . . . . . . . . . . . . .
+82
+8.7
+Clone slices
+. . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
+82
+8.8
+Merge two slices . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
+82
+8.9
+Merge more than two slices (into a new slice)
+. . . . . . . . . . . . . . . . . . .
+83
+8.10 Insert a slice into another one . . . . . . . . . . . . . . . . . . . . . . . . . . . .
+85
+8.11 Don’t use the second iteration variable in a for-range loop if high performance
+is demanded
+. . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
+85
+2

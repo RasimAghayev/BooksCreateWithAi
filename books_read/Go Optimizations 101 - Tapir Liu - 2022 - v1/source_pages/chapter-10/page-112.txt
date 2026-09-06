@@ -1,0 +1,47 @@
+func f4a(is []int, bs []byte) {
+if len(is) >= 256 {
+for _, n := range bs {
+_ = is[n] // Found IsInBounds
+}
+}
+}
+func f4b(is []int, bs []byte) {
+if len(is) >= 256 {
+is = is[:256] // a successful hint
+for _, n := range bs {
+_ = is[n] // BCEed!
+}
+}
+}
+func f4c(is []int, bs []byte) {
+if len(is) >= 256 {
+_ = is[:256] // a non-workable hint
+for _, n := range bs {
+_ = is[n] // Found IsInBounds
+}
+}
+}
+func f4d(is []int, bs []byte) {
+if len(is) >= 256 {
+_ = is[255] // a non-workable hint
+for _, n := range bs {
+_ = is[n] // Found IsInBounds
+}
+}
+}
+Please note that, as of Go toolchain v1.19, the two hints used in the f4c and f4d functions are not
+workable (but they should).
+In the following example, by adding a redundant if code block in the function NumSameBytes_2,
+all bound checks in the loop are eliminated.
+type T = string
+func NumSameBytes_1(x, y T) int {
+if len(x) > len(y) {
+x, y = y, x
+}
+for i := 0; i < len(x); i++ {
+if x[i] !=
+y[i] { // Found IsInBounds
+return i
+}
+}
+111

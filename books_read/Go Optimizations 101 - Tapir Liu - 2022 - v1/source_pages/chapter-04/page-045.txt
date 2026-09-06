@@ -1,0 +1,45 @@
+4.8.1
+Ensure a value is allocated on heap
+For some rare scenarios, we might expect some values which are only used in the current goroutine
+to be allocated on heap at run time. There are two ways to make sure a value v will escape to heap
+at run time:
+1. let another value allocated on heap reference the value v.
+2. let two goroutines use v and at least one goroutine modifies v after they both start.
+Here, only the first way will be talked about.
+The standard packages internally use a trick like the following code shows to make some values
+escape for sure. The trick uses a package-level variable sink (which is allocated on heap for sure)
+to reference the value which is expected to escape. The line sink = x will be optimized away
+but it will still affect the decisions made by the escape analysis module. Please note that, a value
+referencing the value expected to escape should be passed to the escape function. Generally, the
+passed value is a pointer to the value expected to escape.
+var sink interface{}
+//go:noinline
+func escape(x interface{}) {
+sink = x
+sink = nil
+}
+the following is an example which uses the trick:
+package main
+var sink interface{}
+//go:noinline
+func escape(x interface{}) {
+sink = x
+sink = nil
+}
+func main() {
+var a = 1
+// moved to heap: a
+var b = true // moved to heap: b
+escape(&a)
+escape(&b)
+println(a, b)
+}
+As the //go:noinline directive is only intended to be used in toolchain and standard packages
+development, the code for the trick could be modified as the following in user code. The official
+standard Go compiler will not inline calls to a function which will potentially call itself.
+var sink interface{}
+func escape(x interface{}) {
+if x == nil {
+escape(&x) // avoid being inlined
+panic("x must not nil")
+44

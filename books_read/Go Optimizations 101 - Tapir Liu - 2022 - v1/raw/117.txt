@@ -1,0 +1,44 @@
+for i := range x {
+x[i] = i
+}
+}
+Arrays are often more BCE-friendly than slices. In the following code, the array version functions
+(fb2 and fc2) don’t need bound checks.
+var s = make([]int, 256)
+var a = [256]int{}
+func fb1() int {
+return s[100] // Found IsInBounds
+}
+func fb2() int {
+return a[100]
+}
+func fc1(n byte) int {
+return s[n] // Found IsInBounds
+}
+func fc2(n byte) int {
+return a[n]
+}
+Please note that, the future versions of the standard official Go compiler will become smarter so
+that some BCE-unfriendly code might become BCE-friendly later.
+10.7
+The current official standard Go compiler fails to elimi-
+nate some unnecessary bound checks
+As of Go toolchain v1.19, the official standard Go compiler doesn’t eliminate the following unnec-
+essary bound checks.
+func fb(s, x, y []byte) {
+n := copy(s, x)
+copy(s[n:], y) // Found IsSliceInBounds
+_ = x[n:]
+// Found IsSliceInBounds
+}
+func fc(s []byte) {
+const N = 6
+for i := 0; i < len(s)-(N-1); i += N {
+_ = s[i+N-1] // Found IsInBounds
+}
+}
+func fd(data []int, check func(int) bool) []int {
+var k = 0
+for _, v := range data {
+if check(v) {
+116

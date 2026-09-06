@@ -1,0 +1,49 @@
+that the above hints will become unnecessary later.
+10.6
+Write code in BCE-friendly ways
+In the following example, the f7b and f7c functions makes 3 less bound checks than f7a.
+func f7a(s []byte, i int) {
+_ = s[i+3] // Found IsInBounds
+_ = s[i+2] // Found IsInBounds
+_ = s[i+1] // Found IsInBounds
+_ = s[i]
+// Found IsInBounds
+}
+func f7b(s []byte, i int) {
+s = s[i:i+4] // Found IsSliceInBounds
+_ = s[3]
+_ = s[2]
+_ = s[1]
+_ = s[0]
+}
+func f7c(s []byte, i int) {
+s = s[i:i+4:i+4] // Found IsSliceInBounds
+_ = s[3]
+_ = s[2]
+_ = s[1]
+_ = s[0]
+}
+However, please note that, there might be some other factors which will affect program perfor-
+mances. On my machine (Intel i5-4210U CPU @ 1.70GHz, Linux/amd64), among the above 3
+functions, the function f7b is actually the least performant one.
+Benchmark_f7a-4
+3861 ns/op
+Benchmark_f7b-4
+4223 ns/op
+Benchmark_f7c-4
+3477 ns/op
+In practice, it is encouraged to use the three-index subslice form (f7c).
+In the following example, benchmark results show that
+• the f8z function is the most performant one (in line with expectation)
+• but the f8y function is as performant as the f8x function (unexpected).
+func f8x(s []byte) {
+for i := 0; i < len(s) - 3; i += 4 {
+_ = s[i+3] // Found IsInBounds
+_ = s[i+2] // Found IsInBounds
+_ = s[i+1] // Found IsInBounds
+_ = s[i]
+}
+}
+func f8y(s []byte) {
+for i := 0; i < len(s) - 3; i += 4 {
+113

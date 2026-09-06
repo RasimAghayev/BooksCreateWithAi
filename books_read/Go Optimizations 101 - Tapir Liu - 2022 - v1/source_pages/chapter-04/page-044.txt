@@ -1,0 +1,46 @@
+var s = &t
+var n = *s + 1
+var p = &n
+println(*p)
+println(&t) // 0xc000034760
+println(p)
+// 0xc000034768
+}
+After the rewrite, the compiler easily knows the n variable is only used in the current goroutine so
+lets it not escape.
+4.7.1
+Function inlining is not always helpful for escape analysis
+Currently (Go toolchain v1.19), function inlining is not always helpful for escape analysis. This is
+caused by some small defects in the compiler implementation. For example, in the following code,
+even if the createSlice function call is inlined, the slice returned by it is still allocated on heap,
+because constants don’t propagate well in the current implementation.
+// constinline.go
+package main
+func createSlice(n int) []byte { // line 4
+return make([]byte, n) // line 5
+}
+func main() {
+var x = createSlice(32)
+// line 9
+var y = make([]byte, 32) // line 10
+_, _ = x, y
+}
+Run it:
+$ go run -gcflags="-m" constinline.go
+# command-line-arguments
+./constinline.go:4:6: can inline createSlice
+./constinline.go:8:6: can inline main
+./constinline.go:9:21: inlining call to createSlice
+./constinline.go:5:13: make([]byte, n) escapes to heap
+./constinline.go:9:21: make([]byte, n) escapes to heap
+./constinline.go:10:14: make([]byte, 32) does not escape
+Future versions of the official standard Go compiler might make improvements to avoid more un-
+necessary escapes.
+4.8
+Control memory block allocation places
+As aforementioned, sometimes, it is not a good idea to let some very large memory blocks allocated
+on stack even if these memory blocks are capable of being allocated on stack.
+On the other hand, it is generally a good idea to try to let small memory blocks allocated on stack
+if it is possible.
+The following will introduce some facts and tips to control memory block allocation places.
+43
