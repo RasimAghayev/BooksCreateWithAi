@@ -1,0 +1,56 @@
+10
+CHAPTER 2
+Code and project organization
+return "", errors.New("s1 is empty")
+} else {
+if s2 == "" {
+return "", errors.New("s2 is empty")
+} else {
+concat, err := concatenate(s1, s2)
+if err != nil {
+return "", err
+} else {
+if len(concat) > max {
+return concat[:max], nil
+} else {
+return concat, nil
+}
+}
+}
+}
+}
+func concatenate(s1 string, s2 string) (string, error) {
+// ...
+}
+This join function concatenates two strings and returns a substring if the length is
+greater than max. Meanwhile, it handles checks on s1 and s2 and whether the call to
+concatenate returns an error.
+ From an implementation perspective, this function is correct. However, building a
+mental model encompassing all the different cases is probably not a straightforward
+task. Why? Because of the number of nested levels.
+ Now, let’s try this exercise again with the same function but implemented differently:
+func join(s1, s2 string, max int) (string, error) {
+if s1 == "" {
+return "", errors.New("s1 is empty")
+}
+if s2 == "" {
+return "", errors.New("s2 is empty")
+}
+concat, err := concatenate(s1, s2)
+if err != nil {
+return "", err
+}
+if len(concat) > max {
+return concat[:max], nil
+}
+return concat, nil
+}
+func concatenate(s1 string, s2 string) (string, error) {
+// ...
+}
+You probably noticed that building a mental model of this new version requires less
+cognitive load despite doing the same job as before. Here we maintain only two nested
+Calls a concatenate 
+function to perform some 
+specific concatenation 
+but may return errors

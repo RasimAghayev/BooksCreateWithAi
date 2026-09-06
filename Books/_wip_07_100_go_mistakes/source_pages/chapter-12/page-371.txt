@@ -1,0 +1,34 @@
+351
+12.9
+#99: Not understanding how the GC works
+Figure 12.47
+During one hour, we observe a high frequency of GCs.
+If we know about the heap peak, we can use a trick that forces a large allocation of
+memory to improve the stability of the heap. For example, we can force the allocation
+of 1 GB using a global variable in main.go:
+var min = make([]byte, 1_000_000_000) // 1 GB
+What’s the point of such an allocation? If GOGC is kept at 100, instead of triggering a
+GC every time the heap doubles (which, again, happens extremely frequently during
+these few seconds), Go will only trigger a GC when the heap reaches 2 GB. This
+should reduce the number of GC cycles triggered when all the users connect, reduc-
+ing the impact on average latency.
+ We could argue that when the heap size decreases, this trick will waste a lot of
+memory. But that isn’t the case. On most OSs, allocating this min variable won’t make
+our application consume 1 GB of memory. Calling make results in a system call to
+mmap(), which leads to a lazy allocation. For example, on Linux, memory is virtually
+addressed and mapped through page tables. Using mmap() allocates 1 GB of memory
+in the virtual address space, not the physical space. Only a read or a write will cause a
+page fault leading to an actual physical memory allocation. So even if the application
+starts without any connected clients, it won’t consume 1 GB of physical memory.
+NOTE
+We can validate this behavior using tools such as ps.
+It’s essential to understand how the GC behaves in order to optimize it. As Go devel-
+opers, we can use GOGC to configure when the next GC cycle is triggered. In most
+GC frequency
+Time of day
+8 AM
+4 PM
+12 PM
+Moderate
+High
+Frequent GC

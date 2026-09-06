@@ -1,0 +1,47 @@
+340
+CHAPTER 12
+Optimizations
+For example, the graph in figure 12.35 tells us that
+during 30 seconds, 0.06 seconds were spent in the
+decode method (*FetchResponse receiver). Of
+these 0.06 seconds, 0.02 were spent in Record-
+Batch.decode and 0.01 in makemap (creating a
+map).
+     We can also access this kind of information from
+the web UI with different representations. For
+example, the Top view sorts the functions per exe-
+cution time, and Flame Graph visualizes the execu-
+tion time hierarchy. The UI can even display the
+expensive parts of the source code line by line.
+NOTE
+We can also delve into profiling data via a command line. However, we
+focus on the web UI in this section.
+Thanks to this data, we can get a general idea of how an application behaves:
+Too many calls to runtime.mallogc can mean an excessive number of small
+heap allocations that we can try to minimize.
+Too much time spent in channel operations or mutex locks can indicate exces-
+sive contention that is harming the application’s performance.
+Too much time spent on syscall.Read or syscall.Write means the applica-
+tion spends a significant amount of time in Kernel mode. Working on I/O buff-
+ering may be an avenue for improvement.
+These are the kinds of insights we can get from the CPU profiler. It’s valuable to
+understand the hottest code path and identify bottlenecks. But it won’t determine
+more than the configured rate because the CPU profiler is executed at a fixed pace
+(by default, 10 ms). To get finer-grained insights, we should use tracing, which we dis-
+cuss later in this chapter.
+NOTE
+We can also attach labels to the different functions. For example, imag-
+ine a common function called from different clients. To track the time spent
+for both clients, we can use pprof.Labels. 
+HEAP PROFILING
+Heap profiling allows us to get statistics about the current heap usage. Like CPU pro-
+filing, heap profiling is sample-based. We can change this rate, but we shouldn’t be
+too granular because the more we decrease the rate, the more effort heap profiling
+will require to collect data. By default, samples are profiled at one allocation for every
+512 KB of heap allocation.
+ If we reach /debug/pprof/heap/, we get raw data that can be hard to read. How-
+ever, we can download a heap profile using debug/pprof/heap/?debug=0 and then
+open it with go tool (the same command as in the previous section) to navigate into
+the data using the web UI.
+Figure 12.35
+Example call graph

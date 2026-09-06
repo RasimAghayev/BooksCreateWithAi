@@ -1,0 +1,43 @@
+294
+CHAPTER 11
+Testing
+ As we have seen in this section, because we were reusing the same matrix, CPU
+caches significantly impacted the results. To prevent this, we had to create a new
+matrix during each loop iteration. In general, we should remember that observing a
+function under test may lead to significant differences in results, especially in the con-
+text of micro-benchmarks of CPU-bound functions where low-level optimizations mat-
+ter. Forcing a benchmark to re-create data during each iteration can be a good way to
+prevent this effect.
+ In the last section of this chapter, let’s see some common tips regarding testing in Go. 
+11.9
+#90: Not exploring all the Go testing features
+When it comes to writing tests, developers should know about Go’s specific testing fea-
+tures and options. Otherwise, the testing process can be less accurate and even less
+efficient. This section discusses topics that can make us more comfortable while writ-
+ing Go tests.
+11.9.1 Code coverage
+During the development process, it can be handy to see visually which parts of our code
+are covered by tests. We can access this information using the -coverprofile flag:
+$ go test -coverprofile=coverage.out ./...
+This command creates a coverage.out file that we can then open using go tool cover:
+$ go tool cover -html=coverage.out
+This command opens the web browser and shows the coverage for each line of code.
+ By default, the code coverage is analyzed only for the current package being
+tested. For example, suppose we have the following structure:
+/myapp
+|_ foo
+|_ foo.go
+|_ foo_test.go
+|_ bar
+|_ bar.go
+|_ bar_test.go
+If some portion of foo.go is only tested in bar_test.go, by default, it won’t be shown
+in the coverage report. To include it, we have to be in the myapp folder and use the
+-coverpkg flag:
+go test -coverpkg=./... -coverprofile=coverage.out ./...
+We need to remember this feature to see the current code coverage and decide which
+parts deserve more tests.
+NOTE
+Remain cautious when it comes to chasing code coverage. Having
+100% test coverage doesn’t imply a bug-free application. Properly reasoning
+about what our tests cover is more important than any static threshold. 

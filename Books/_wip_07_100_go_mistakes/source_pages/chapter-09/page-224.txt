@@ -1,0 +1,40 @@
+204
+CHAPTER 9
+Concurrency: Practice
+Once we have received all the messages from messageCh, select does not block and
+chooses the default case (figure 9.6). Hence, we return and stop the goroutine.
+Figure 9.6
+Default case
+This is a way to ensure that we receive all the remaining messages from a channel with
+a receiver on multiple channels. Of course, if a messageCh is sent after the goroutine
+has returned (for example, if we have multiple producer goroutines), we will miss this
+message.
+ When using select with multiple channels, we must remember that if multiple
+options are possible, the first case in the source order does not automatically win.
+Instead, Go selects randomly, so there’s no guarantee about which option will be cho-
+sen. To overcome this behavior, in the case of a single producer goroutine, we can use
+either unbuffered channels or a single channel. In the case of multiple producer
+goroutines, we can use inner selects and default to handle prioritizations.
+ The following section discusses a common type of channel: notification channels. 
+9.5
+#65: Not using notification channels
+Channels are a mechanism for communicating across goroutines via signaling. A sig-
+nal can be either with or without data. But for Go programmers, it’s not always
+straightforward how to tackle the latter case.
+ Let’s look at a concrete example. We will create a channel that will notify us when-
+ever a certain disconnection occurs. One idea is to handle it as a chan bool:
+disconnectCh := make(chan bool)
+Now, let’s say we interact with an API that provides us with such a channel. Because it’s
+a channel of Booleans, we can receive either true or false messages. It’s probably
+clear what true conveys. But what does false mean? Does it mean we haven’t been
+disconnected? And in this case, how frequently will we receive such a signal? Does it
+mean we have reconnected?
+ Should we even expect to receive false? Perhaps we should only expect to receive
+true messages. If that’s the case, meaning we don’t need a specific value to convey
+messageCh
+Receiver
+disconnectCh
+select {
+  case v := <-messageCh:
+  default:
+}

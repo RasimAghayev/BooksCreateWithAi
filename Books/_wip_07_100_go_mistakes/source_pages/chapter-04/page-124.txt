@@ -1,0 +1,58 @@
+104
+CHAPTER 4
+Control structures
+As we can see, instead of storing three different Customer structs, all the elements
+stored in the map reference the same Customer struct: 3. What have we done wrong?
+ Iterating over the customers slice using the range loop, regardless of the number
+of elements, creates a single customer variable with a fixed address. We can verify this
+by printing the pointer address during each iteration:
+func (s *Store) storeCustomers(customers []Customer) {
+for _, customer := range customers {
+fmt.Printf("%p\n", &customer)
+s.m[customer.ID] = &customer
+}
+}
+0xc000096020
+0xc000096020
+0xc000096020
+Why is this important? Let’s examine each iteration:
+During the first iteration, customer references the first element: Customer 1.
+We store a pointer to a customer struct.
+During the second iteration, customer now references another element: Cus-
+tomer 2. We also store a pointer to a customer struct.
+Finally, during the last iteration, customer references the last element: Cus-
+tomer 3. Again, the same pointer is stored in the map.
+At the end of the iterations, we have stored the same pointer in the map three times
+(see figure 4.4). This pointer’s last assignment is a reference to the slice’s last element:
+Customer 3. This is why all the map elements reference the same Customer.
+Figure 4.4
+The customer variable has a constant address, so we store in the map the same pointer.
+So, how do we fix this problem? There are two main solutions. The first is similar to
+what we saw in mistake #1, “Unintended variable shadowing.” It requires creating a
+local variable:
+func (s *Store) storeCustomers(customers []Customer) {
+for _, customer := range customers {
+current := customer
+Prints the customer 
+address
+Customer 1
+Slice elements
+Customer 2
+Customer 3
+First iteration
+Second iteration
+Third iteration
+0xc000096020
+customer variable
+Map
+1
+2
+3
+0xc000096020
+0xc000096020
+0xc000096020
+Range iteration
+Key
+Value
+Creates a local 
+current variable

@@ -1,0 +1,59 @@
+282
+CHAPTER 11
+Testing
+An HTTP handler accepts two arguments: the request and a way to write the response.
+The httptest package provides utilities for both. For the request, we can use http-
+test.NewRequest to build an *http.Request using an HTTP method, a URL, and a
+body. For the response, we can use httptest.NewRecorder to record the mutations
+made within the handler. Let’s write a unit test of this handler:
+func TestHandler(t *testing.T) {
+req := httptest.NewRequest(http.MethodGet, "http://localhost",
+strings.NewReader("foo"))
+w := httptest.NewRecorder()
+Handler(w, req)
+if got := w.Result().Header.Get("X-API-VERSION"); got != "1.0" {
+t.Errorf("api version: expected 1.0, got %s", got)
+}
+body, _ := ioutil.ReadAll(wordy)
+if got := string(body); got != "hello foo" {
+t.Errorf("body: expected hello foo, got %s", got)
+}
+if http.StatusOK != w.Result().StatusCode {
+t.FailNow()
+}
+}
+Testing a handler using httptest doesn’t test the transport (the HTTP part). The
+focus of the test is calling the handler directly with a request and a way to record the
+response. Then, using the response recorder, we write the assertions to verify the
+HTTP header, body, and status code.
+ Let’s look at the other side of the coin: testing an HTTP client. We will write a cli-
+ent in charge to query an HTTP endpoint that calculates how long it takes to drive
+from one coordinate to another. The client looks like this:
+func (c DurationClient) GetDuration(url string,
+lat1, lng1, lat2, lng2 float64) (
+time.Duration, error) {
+resp, err := c.client.Post(
+url, "application/json",
+buildRequestBody(lat1, lng1, lat2, lng2),
+)
+if err != nil {
+return 0, err
+}
+return parseResponseBody(resp.Body)
+}
+This code performs an HTTP POST request to the provided URL and returns the
+parsed response (let’s say, some JSON).
+ What if we want to test this client? One option is to use Docker and spin up a mock
+server to return some preregistered responses. However, this approach makes the test
+Builds
+the request
+Creates the 
+response recorder
+Calls the
+handler
+Verifies the
+HTTP header
+Verifies the 
+HTTP body
+Verifies the HTTP 
+status code

@@ -1,0 +1,46 @@
+196
+CHAPTER 9
+Concurrency: Practice
+Except for the Value method that calls the parent context to retrieve a value, the
+other methods return a default value so the context is never considered expired or
+canceled.
+ Thanks to our custom context, we can now call publish and detach the cancella-
+tion signal:
+err := publish(detach{ctx: r.Context()}, response)
+Now the context passed to publish will never expire or be canceled, but it will carry
+the parent context’s values.
+ In summary, propagating a context should be done cautiously. We illustrated that
+in this section with an example of handling an asynchronous action based on a con-
+text associated with an HTTP request. Because the context is canceled once we return
+the response, the asynchronous action can also be stopped unexpectedly. Let’s bear in
+mind the impacts of propagating a given context and, if necessary, that it is always pos-
+sible to create a custom context for a specific action.
+ The following section discusses a common concurrency mistake: starting a gorou-
+tine without plans to stop it. 
+9.2
+#62: Starting a goroutine without knowing 
+when to stop it
+Goroutines are easy and cheap to start—so easy and cheap that we may not necessarily
+have a plan for when to stop a new goroutine, which can lead to leaks. Not knowing
+when to stop a goroutine is a design issue and a common concurrency mistake in Go.
+Let’s understand why and how to prevent it.
+ First, let’s quantify what a goroutine leak means. In terms of memory, a goroutine
+starts with a minimum stack size of 2 KB, which can grow and shrink as needed (the
+maximum stack size is 1 GB on 64-bit and 250 MB on 32-bit). Memory-wise, a gorou-
+tine can also hold variable references allocated to the heap. Meanwhile, a goroutine
+can hold resources such as HTTP or database connections, open files, and network
+sockets that should eventually be closed gracefully. If a goroutine is leaked, these
+kinds of resources will also be leaked.
+ Let’s look at an example in which the point where a goroutine stops is unclear.
+Here, a parent goroutine calls a function that returns a channel and then creates a
+new goroutine that will keep receiving messages from this channel:
+ch := foo()
+go func() {
+for v := range ch {
+// ...
+}
+}()
+The created goroutine will exit when ch is closed. But do we know exactly when this
+channel will be closed? It may not be evident, because ch is created by the foo
+Uses detach on top 
+of the HTTP context

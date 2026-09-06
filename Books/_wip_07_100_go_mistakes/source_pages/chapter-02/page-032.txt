@@ -1,0 +1,48 @@
+12
+CHAPTER 2
+Code and project organization
+With this new version, the code living previously in the else block is moved to
+the top level, making it easier to read.
+We can also follow this logic with a non-happy path:
+if s != "" {
+// ...
+} else {
+return errors.New("empty string")
+}
+Here, an empty s represents the non-happy path. Hence, we should flip the
+condition like so:
+if s == "" {
+return errors.New("empty string")
+}
+// ...
+This new version is easier to read because it keeps the happy path on the left
+edge and reduces the number of blocks.
+Writing readable code is an important challenge for every developer. Striving to
+reduce the number of nested blocks, aligning the happy path on the left, and return-
+ing as early as possible are concrete means to improve our code’s readability.
+ In the next section, we discuss a common misuse in Go projects: init functions. 
+2.3
+#3: Misusing init functions
+Sometimes we misuse init functions in Go applications. The potential consequences
+are poor error management or a code flow that is harder to understand. Let’s refresh
+our minds about what an init function is. Then, we will see when its usage is or isn’t
+recommended.
+2.3.1
+Concepts
+An init function is a function used to initialize the state of an application. It takes no
+arguments and returns no result (a func() function). When a package is initialized,
+all the constant and variable declarations in the package are evaluated. Then, the init
+functions are executed. Here is an example of initializing a main package:
+package main
+import "fmt"
+var a = func() int {
+fmt.Println("var")
+return 0
+}()
+func init() {
+fmt.Println("init")
+}
+Flips the if 
+condition
+Executed first
+Executed second

@@ -1,0 +1,48 @@
+216
+CHAPTER 9
+Concurrency: Practice
+In our case, locking the mutex only after the age has been checked avoids the dead-
+lock situation. If the age is negative, String is called without locking the mutex
+beforehand.
+ In some conditions, though, it’s not straightforward or possible to restrict the
+scope of a mutex lock. In these conditions, we have to be extremely careful with string
+formatting. Perhaps we want to call another function that doesn’t try to acquire the
+mutex, or we only want to change the way we format the error so that it doesn’t call
+the String method. For example, the following code doesn’t lead to a deadlock
+because we only log the customer ID in accessing the id field directly:
+func (c *Customer) UpdateAge(age int) error {
+c.mutex.Lock()
+defer c.mutex.Unlock()
+if age < 0 {
+return fmt.Errorf("age should be positive for customer id %s", c.id)
+}
+c.age = age
+return nil
+}
+We have seen two concrete examples, one formatting a key from a context and
+another returning an error that formats a struct. In both cases, formatting a string
+leads to a problem: a data race and a deadlock situation, respectively. Therefore, in
+concurrent applications, we should remain cautious about the possible side effects of
+string formatting.
+ The following section discusses the behavior of append when it is called
+concurrently. 
+9.9
+#69: Creating data races with append
+We mentioned earlier what a data race is and what the impacts are. Now, let’s look at
+slices and whether adding an element to a slice using append is data-race-free. Spoiler?
+It depends.
+ In the following example, we will initialize a slice and create two goroutines that
+will use append to create a new slice with an additional element:
+s := make([]int, 1)
+go func() {
+s1 := append(s, 1)
+fmt.Println(s1)
+}()
+go func() {
+s2 := append(s, 1)
+fmt.Println(s2)
+}()
+Do you believe this example has a data race? The answer is no.
+In a new goroutine, appends 
+a new element on s
+Same

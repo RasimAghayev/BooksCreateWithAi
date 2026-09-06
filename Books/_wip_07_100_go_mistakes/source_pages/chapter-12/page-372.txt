@@ -1,0 +1,46 @@
+352
+CHAPTER 12
+Optimizations
+cases, keeping it at 100 should be enough. However, if our application may face
+request peaks leading to frequent GC and latency impacts, we can increase this value.
+Finally, in the event of an exceptional request peak, we can consider using the trick of
+keeping the virtual heap size to a minimum.
+ The last section of this chapter discusses the impacts of running Go in Docker and
+Kubernetes. 
+12.10 #100: Not understanding the impacts of running Go in 
+Docker and Kubernetes
+Writing services with Go is the most common use, according to the 2021 Go developer
+survey (https://go.dev/blog/survey2021-results). Meanwhile, Kubernetes is the most
+widely used platform to deploy these services. It’s important to understand the impli-
+cations of running Go in Docker and Kubernetes, to prevent common situations such
+as CPU throttling.
+ We mentioned in mistake #56, “Thinking concurrency is always faster,” that the
+GOMAXPROCS variable defines the limit of OS threads in charge of executing user-level
+code simultaneously. By default, it’s set to the number of OS-apparent logical CPU
+cores. What does this mean in the context of Docker and Kubernetes?
+ Let’s assume that our Kubernetes cluster is composed of eight-core nodes. When a
+container is deployed in Kubernetes, we can define a CPU limit to ensure that an
+application won’t consume all the host’s resources. For example, the following config-
+uration limits the use of CPU to 4,000 millicpu (or millicores), so four CPU cores:
+spec:
+containers:
+- name: myapp
+image: myapp
+resources:
+limits:
+cpu: 4000m
+We may assume that when our application is deployed, GOMAXPROCS will be based on
+these limits and hence will have a value of 4. But that won’t be the case; it is set to the
+number of logical cores on the host: 8. So, what’s the impact?
+ Kubernetes uses Completely Fair Scheduler (CFS) as a process scheduler. CFS is
+also used to enforce CPU limits for Pod resources. When administrating a Kubernetes
+cluster, an administrator can configure these two parameters:
+
+cpu.cfs_period_us (global setting)
+
+cpu.cfs_quota_us (setting per Pod)
+The former defines a period and the latter a quota. By default, the period is set to 100
+ms. Meanwhile, the default quota value is how much CPU time the application can
+consume in 100 ms. The limit is set to four cores, which means 400 ms (4 × 100 ms).
+Therefore, CFS will ensure that our application never consumes more than 400 ms of
+CPU time for 100 ms.

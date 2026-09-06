@@ -1,0 +1,54 @@
+221
+9.11
+#71: Misusing sync.WaitGroup
+ Let’s now discuss a common mistake while using sync.WaitGroup. 
+9.11
+#71: Misusing sync.WaitGroup
+sync.WaitGroup is a mechanism to wait for n operations to complete; generally, we
+use it to wait for n goroutines to complete. Let’s first recall the public API; then we will
+look at a pretty frequent mistake leading to non-deterministic behavior.
+ A wait group can be created with the zero value of sync.WaitGroup:
+wg := sync.WaitGroup{}
+Internally, a sync.WaitGroup holds an internal counter initialized by default to 0. We
+can increment this counter using the Add(int) method and decrement it using
+Done() or Add with a negative value. If we want to wait for the counter to be equal to 0,
+we have to use the Wait() method that is blocking.
+NOTE
+The counter cannot be negative, or the goroutine will panic.
+In the following example, we will initialize a wait group, start three goroutines that will
+update a counter atomically, and then wait for them to complete. We want to wait for
+these three goroutines to print the value of the counter (which should be 3). Can you
+guess whether there’s an issue with this code?
+wg := sync.WaitGroup{}
+var v uint64
+for i := 0; i < 3; i++ {
+go func() {
+wg.Add(1)
+atomic.AddUint64(&v, 1)
+wg.Done()
+}()
+}
+wg.Wait()
+fmt.Println(v)
+If we run this example, we get a non-deterministic value: the code can print any value
+from 0 to 3. Also, if we enable the -race flag, Go will even catch a data race. How is
+this possible, given that we are using the sync/atomic package to update v? What’s
+wrong with this code?
+ The problem is that wg.Add(1) is called within the newly created goroutine, not in
+the parent goroutine. Hence, there is no guarantee that we have indicated to the wait
+group that we want to wait for three goroutines before calling wg.Wait().
+ Figure 9.11 shows a possible scenario when the code prints 2. In this scenario, the
+main goroutine spins up three goroutines. But the last goroutine is executed after the
+two first goroutines have already called wg.Done(), so, the parent goroutine is already
+unlocked. Therefore, in this scenario, when the main goroutine reads v, it’s equal to
+2. The race detector can also detect unsafe accesses to v.
+Creates 
+a goroutine
+Increments the wait 
+group counter
+Atomically 
+increments v
+Decrements the
+wait group counter
+Waits until all the goroutines have 
+incremented v before printing it

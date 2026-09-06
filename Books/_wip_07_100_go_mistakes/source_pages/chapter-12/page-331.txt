@@ -1,0 +1,90 @@
+311
+12.1
+#91: Not understanding CPU caches
+The cache replacement policy depends on the CPU, but it’s usually a pseudo-LRU pol-
+icy (a real LRU [least recently used] would be too complex to handle). In this case,
+let’s say it replaces our first cache line: 0000000000000. This situation is repeated
+when iterating on row 3: memory address 1100000000000 also has a set index equal to
+00, resulting in replacing an existing cache line.
+ Now, let’s say the benchmark executes the function with a slice pointing to the
+same matrix starting at address 0000000000000. When the function reads s[0][0],
+the address isn’t in the cache. This block was already replaced.
+ Instead of using CPU caches from one execution to another, the benchmark will
+lead to more cache misses. This type of cache miss is called a conflict miss: a miss that
+wouldn’t occur if the cache wasn’t partitioned. All the variables we iterate belong to a
+memory block whose set index is 00. Therefore, we use only one cache set instead of
+having a distribution across the entire cache.
+ Previously we discussed the concept of striding, which we defined as how a CPU
+walks through our data. In this example, this stride is called a critical stride: it leads to
+accessing memory addresses with the same set index that are hence stored to the same
+cache set.
+ Let’s come back to our real-world example with the two functions calculate-
+Sum512 and calculateSum513. The benchmark was executed on a 32 KB eight-way
+set-associative L1D cache: 64 sets total. Because a cache line is 64 bytes, the critical
+stride equals 64 × 64 bytes = 4 KB. Four KB of int64 types represent 512 elements.
+0   0   0   0   0   0   0   0   0   0   0   0   0
+Block size: 64 bytes = 512 bytes
+512 = 2^9
+9 represents the block offset (bo).
+8 lines, two-way set associative
+Number of sets = 8 / 2 = 4
+4 = 2^2
+2 represents the set index (si).
+Cache
+Set 0
+Set 1
+Set 2
+Set 3
+10
+01
+bo
+si
+tb
+0   1   0   0   0   0   0   0   0   0   0   0   0
+bo
+si
+tb
+1   0   0   0   0   0   0   0   0   0   0   0   0
+bo
+si
+tb
+1000000000000
+0100000000000
+s[0][0] ... s[0][7]
+s[0][8] ... s[0][15]
+s[0][16] ... s[0][23]
+s[0][24] ... s[0][31]
+s[1][0] ... s[1][7]
+s[1][8] ... s[1][15]
+s[1][16] ... s[1][23]
+s[1][24] ... s[1][31]
+s[2][0] ... s[2][7]
+s[2][8] ... s[2][15]
+s[2][16] ... s[2][23]
+s[2][24] ... s[2][31]
+s[3][0] ... s[3][7]
+s[3][8] ... s[3][15]
+s[3][16] ... s[3][23]
+s[3][24] ... s[3][31]
+0000000000000
+0001000000000
+0010000000000
+0011000000000
+0100000000000
+0101000000000
+0110000000000
+0111000000000
+1000000000000
+1001000000000
+1010000000000
+1011000000000
+1100000000000
+1101000000000
+1110000000000
+1111000000000
+Memory addresses
+Tag bits
+Figure 12.10
+Memory address 
+1000000000000 replaces an 
+existing cache line in set 0.

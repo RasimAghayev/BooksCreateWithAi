@@ -1,0 +1,69 @@
+322
+CHAPTER 12
+Optimizations
+In the first case, a 32-bit variable was allocated just before i. Therefore, i and j were
+allocated contiguously. In the second case, the 32-bit variable wasn’t allocated before i
+(for example, it was a 64-bit variable); so, i was allocated at the beginning of a word.
+To respect data alignment (an address that is a multiple of 64), j can’t be allocated
+alongside i but to the next multiple of 64. The gray box represents 32 bits of padding.
+ Next, let’s look at when padding can be an issue. We will consider the following
+struct containing three fields:
+type Foo struct {
+b1 byte
+i
+int64
+b2 byte
+}
+We have a byte type (1 byte), an int64 (8 bytes), and another byte type (1 byte). On
+a 64-bit architecture, the struct is allocated in memory as shown in figure 12.23. b1 is
+allocated first. Because i is an int64, its address must be a multiple of 8. Therefore,
+it’s impossible to allocate it alongside b1 at 0x01. What’s the next address that is a mul-
+tiple of 8? 0x08. b2 is allocated to the next available address that is a multiple of
+1: 0x10.
+Because a struct’s size must be a multiple of the word size (8 bytes), its address isn’t 17
+bytes but 24 bytes total. During the compilation, the Go compiler adds padding to
+guarantee data alignment:
+type Foo struct {
+b1 byte
+_
+[7]byte
+i
+Word
+Word
+j
+i
+Word
+Word
+j
+A 32-bit
+variable
+Case 2
+Case 1
+0
+32
+64
+96
+128
+Bits
+0
+32
+64
+96
+128
+Bits
+Figure 12.22
+In both cases, j is 
+aligned to its own size.
+b1
+i
+b2
+24 bytes
+0x00
+0x08
+0x10
+8 bytes (word)
+Figure 12.23
+The struct 
+occupies 24 bytes total.
+Added by 
+the compiler

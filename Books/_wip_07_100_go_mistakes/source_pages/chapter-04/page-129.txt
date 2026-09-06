@@ -1,0 +1,53 @@
+109
+4.5
+#34: Ignoring how the break statement works
+default:
+case 2:
+break
+}
+}
+This code may look right at first glance; however, it doesn’t do what we expect. The
+break statement doesn’t terminate the for loop: it terminates the switch statement,
+instead. Hence, instead of iterating from 0 to 2, this code iterates from 0 to 4: 0 1 2 3 4.
+ One essential rule to keep in mind is that a break statement terminates the execu-
+tion of the innermost for, switch, or select statement. In the previous example, it
+terminates the switch statement.
+ So how can we write code that breaks the loop instead of the switch statement?
+The most idiomatic way is to use a label:
+loop:
+for i := 0; i < 5; i++ {
+fmt.Printf("%d ", i)
+switch i {
+default:
+case 2:
+break loop
+}
+}
+Here, we associate the loop label with the for loop. Then, because we provide the
+loop label to the break statement, it breaks the loop, not the switch. Therefore, this
+new version will print 0 1 2, as we expected.
+Is a break with a label just like goto?
+Some developers may challenge whether a break with a label is idiomatic and see it
+as a fancy goto statement. However, this isn’t the case, and such code is used in
+the standard library. For example, we see this in the net/http package while reading
+lines from a buffer:
+readlines:
+for {
+line, err := rw.Body.ReadString('\n')
+switch {
+case err == io.EOF:
+break readlines
+case err != nil:
+t.Fatalf("unexpected error reading from CGI: %v", err)
+}
+// ...
+}
+This example uses an expressive label with readlines to emphasize the loop’s goal.
+Hence, we should consider breaking a statement using labels an idiomatic approach
+in Go.
+If i equals 2,
+call break.
+Defines a 
+loop label
+Terminates the loop attached to 
+the loop label, not the switch

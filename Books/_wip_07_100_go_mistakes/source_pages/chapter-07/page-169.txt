@@ -1,0 +1,58 @@
+149
+7.3
+#50: Checking an error type inaccurately
+ Let’s review all the different options we tackled.
+To summarize, when handling an error, we can decide to wrap it. Wrapping is about
+adding additional context to an error and/or marking an error as a specific type. If we
+need to mark an error, we should create a custom error type. However, if we just want
+to add extra context, we should use fmt.Errorf with the %w directive as it doesn’t
+require creating a new error type. Yet, error wrapping creates potential coupling as it
+makes the source error available for the caller. If we want to prevent it, we shouldn’t use
+error wrapping but error transformation, for example, using fmt.Errorf with the %v
+directive.
+ This section has shown how to wrap an error with the %w directive. But once we
+start using it, what’s the impact of checking an error type?
+7.3
+#50: Checking an error type inaccurately
+The previous section introduced a possible way to wrap errors using the %w directive.
+However, when we use that approach, it’s also essential to change our way of checking
+for a specific error type; otherwise, we may handle errors inaccurately.
+ Let’s discuss a concrete example. We will write an HTTP handler to return the
+transaction amount from an ID. Our handler will parse the request to get the ID and
+retrieve the amount from a database (DB). Our implementation can fail in two cases:
+If the ID is invalid (string length other than five characters)
+If querying the DB fails
+In the former case, we want to return StatusBadRequest (400), whereas in the latter,
+we want to return ServiceUnavailable (503). To do so, we will create a transient-
+Error type to mark that an error is temporary. The parent handler will check the
+error type. If the error is a transientError, it will return a 503 status code; otherwise,
+it will return a 400 status code.
+ Let’s first focus on the error type definition and the function the handler will call:
+type transientError struct {
+err error
+}
+Option
+Extra context
+Marking an 
+error
+Source error available
+Returning error directly
+No
+No
+Yes
+Custom error type
+Possible (if the error type 
+contains a string field, for 
+example)
+Yes
+Possible (if the source error is 
+exported or accessible via a 
+method)
+fmt.Errorf with %w
+Yes
+No
+Yes
+fmt.Errorf with %v
+Yes
+No
+No

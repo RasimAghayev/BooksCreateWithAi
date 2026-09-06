@@ -1,7 +1,6 @@
 {
-  "book_id": null,
-  "title": null,
-  "status": "none",
-  "started_at": null,
-  "note": "Echo Quick Start Guide (echo_quick_start_2018_v1) 2026-09-06 tarixində tamamlandı. Növbəti kitab Books/ qovluğundan götürüləcək."
+  "book_id": "100_go_mistakes_2022_v1",
+  "title": "100 Go Mistakes and How to Avoid Them",
+  "status": "reading",
+  "started_at": "2026-09-06"
 }

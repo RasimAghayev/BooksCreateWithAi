@@ -1,0 +1,50 @@
+274
+CHAPTER 11
+Testing
+t.Errorf("got: %s, expected: %s", got, tt.expected)
+}
+})
+}
+}
+The tests variable is a map. The key is the test name, and the value represents test
+data: in our case, input and expected string. Each map entry is a new test case that we
+want to cover. We run a new subtest for each map entry.
+ This test solves the two drawbacks we discussed:
+Each test name is now a string instead of a PascalCase function name, making it
+simpler to read.
+The logic is written only once and shared for all the different cases. Modifying
+the testing structure or adding a new test requires minimal effort.
+We need to mention one last thing regarding table-driven tests that can also be a source
+of mistakes: as we mentioned previously, we can mark a test to be run in parallel by call-
+ing t.Parallel. We can also do this in subtests inside the closure provided to t.Run:
+for name, tt := range tests {
+t.Run(name, func(t *testing.T) {
+t.Parallel()
+// Use tt
+})
+}
+However, this closure uses a loop variable. To prevent an issue similar to that discussed
+in mistake #63, “Not being careful with goroutines and loop variables,” which may
+cause the closures to use a wrong value of the tt variable, we should create another
+variable or shadow tt:
+for name, tt := range tests {
+tt := tt
+t.Run(name, func(t *testing.T) {
+t.Parallel()
+// Use tt
+})
+}
+This way, each closure accesses its own tt variable.
+ In summary, if multiple unit tests have a similar structure, we can mutualize them
+using table-driven tests. Because this technique prevents duplication, it makes it sim-
+ple to change the testing logic and easier to add new use cases.
+ Next, let’s discuss how to prevent flaky tests in Go. 
+11.5
+#86: Sleeping in unit tests
+A flaky test is a test that may both pass and fail without any code change. Flaky tests are
+among the biggest hurdles in testing because they are expensive to debug and under-
+mine our confidence in testing accuracy. In Go, calling time.Sleep in a test can be a
+Marks the subtest 
+to be run in parallel
+Shadows tt to make it 
+local to the loop iteration

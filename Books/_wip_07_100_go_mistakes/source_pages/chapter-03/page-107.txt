@@ -1,0 +1,51 @@
+87
+3.12
+#28: Maps and memory leaks
+to store 1 million elements. This saves a lot of computation time because the map
+won’t have to create buckets on the fly and handle rebalancing buckets.
+ Also, specifying a size n doesn’t mean making a map with a maximum number of n
+elements. We can still add more than n elements if needed. Instead, it means asking
+the Go runtime to allocate a map with room for at least n elements, which is helpful if
+we already know the size up front.
+ To understand why specifying a size is important, let’s run two benchmarks. The
+first inserts 1 million elements in a map without setting an initial size, whereas we ini-
+tialize the second map with a size:
+BenchmarkMapWithoutSize-4
+6
+227413490 ns/op
+BenchmarkMapWithSize-4
+13
+91174193 ns/op
+The second version, with an initial size, is about 60% faster. By providing a size, we
+prevent the map from growing to cope with the inserted elements.
+ Therefore, just like with slices, if we know up front the number of elements a map
+will contain, we should create it by providing an initial size. Doing this avoids potential
+map growth, which is quite heavy computation-wise because it requires reallocating
+enough space and rebalancing all the elements.
+ Let’s continue our discussion about maps and look at a common mistake that leads
+to memory leaks. 
+3.12
+#28: Maps and memory leaks
+When working with maps in Go, we need to understand some important characteris-
+tics of how a map grows and shrinks. Let’s delve into this to prevent an issue that can
+cause memory leaks.
+ First, to view a concrete example of this problem, let’s design a scenario where we
+will work with the following map:
+m := make(map[int][128]byte)
+Each value of m is an array of 128 bytes. We will do the following:
+1
+Allocate an empty map.
+2
+Add 1 million elements.
+3
+Remove all the elements, and run a GC.
+After each step, we want to print the size of the heap (using MB this time). This shows
+us how this example behaves memory-wise:
+n := 1_000_000
+m := make(map[int][128]byte)
+printAlloc()
+for i := 0; i < n; i++ {
+m[i] = randBytes()
+}
+Adds 1 million 
+elements

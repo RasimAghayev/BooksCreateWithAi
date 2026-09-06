@@ -1,0 +1,50 @@
+73
+3.6
+#22: Being confused about nil vs. empty slices
+As discussed in mistake #21, “Inefficient slice initialization,” we need to set the length
+(or capacity) in such a scenario to avoid extra allocations and copies. Now, two
+options remain from the example that looks at different ways to initialize a slice:
+Option 2: s := []string(nil)
+Option 3: s := []string{}
+Option 2 isn’t the most widely used. But it can be helpful as syntactic sugar because we
+can pass a nil slice in a single line—for example, using append:
+s := append([]int(nil), 42)
+If we had used option 1 (var s []string), it would have required two lines of code.
+This is probably not the most important readability optimization of all time, but it’s
+still worth knowing.
+NOTE
+In mistake #24, “Not making slice copies correctly,” we will see one
+rationale to append to a nil slice.
+Now, let’s look at option 3: s := []string{}. This form is recommended to create a
+slice with initial elements:
+s := []string{"foo", "bar", "baz"}
+However, if we don’t need to create a slice with initial elements, we shouldn’t use this
+option. It brings the same benefits as option 1 (var s []string), except that the slice
+isn’t nil; hence, it requires an allocation. Therefore, option 3 should be avoided with-
+out initial elements.
+NOTE
+Some linters can catch option 3 without initial values and recommend
+changing it to option 1. However, we should remember that this also changes
+the semantics from a non-nil to a nil slice.
+We should also mention that some libraries distinguish between nil and empty slices.
+This is the case, for example, with the encoding/json package. The following examples
+marshal two structs, one containing a nil slice and the second a non-nil, empty slice:
+var s1 []float32
+customer1 := customer{
+ID:
+"foo",
+Operations: s1,
+}
+b, _ := json.Marshal(customer1)
+fmt.Println(string(b))
+s2 := make([]float32, 0)
+customer2 := customer{
+ID:
+"bar",
+Operations: s2,
+}
+b, _ = json.Marshal(customer2)
+fmt.Println(string(b))
+Nil slice
+Non-nil, 
+empty slice

@@ -1,0 +1,62 @@
+328
+CHAPTER 12
+Optimizations
+As we said, a stack is self-cleaning and is accessed by a single goroutine. Conversely, the
+heap must be cleaned by an external system: the GC. The more heap allocations are
+made, the more we pressure the GC. When the GC runs, it uses 25% of the available
+CPU capacity and may create milliseconds of “stop the world” latency (the phase when
+an application is paused).
+ We must also understand that allocating on the stack is faster for the Go runtime
+because it’s trivial: a pointer references the following available memory address. Con-
+versely, allocating on the heap requires more effort to find the right place and hence
+takes more time.
+ To illustrate these differences, let’s benchmark sumValue and sumPtr:
+var globalValue int
+var globalPtr *int
+func BenchmarkSumValue(b *testing.B) {
+b.ReportAllocs()
+var local int
+for i := 0; i < b.N; i++ {
+local = sumValue(i, i)
+}
+globalValue = local
+}
+func BenchmarkSumPtr(b *testing.B) {
+b.ReportAllocs()
+var local *int
+for i := 0; i < b.N; i++ {
+local = sumPtr(i, i)
+}
+globalValue = *local
+}
+If we run these benchmarks (and still disable inlining), we get the following results:
+BenchmarkSumValue-4
+992800992
+1.261 ns/op
+0 B/op
+0 allocs/op
+BenchmarkSumPtr-4
+82829653
+14.84 ns/op
+8 B/op
+1 allocs/op
+sumPtr is about an order of magnitude slower than sumValue, which is the direct con-
+sequence of using the heap instead of the stack.
+NOTE
+This example shows that using pointers to avoid a copy isn’t necessarily
+faster; it depends on the context. So far in this book, we have only discussed
+values versus pointers via the prism of semantics: using a pointer when a value
+has to be shared. In most cases, this should be the rule to follow. Also bear in
+mind that modern CPUs are extremely efficient at copying data, especially
+within the same cache line. Let’s avoid premature optimization and focus on
+readability and semantics first.
+We should also note that in the previous benchmarks, we called b.ReportAllocs(),
+which highlights heap allocation (stack allocations aren’t counted):
+Reports heap 
+allocations
+Sums by 
+value
+Reports heap 
+allocations
+Sums by 
+pointer

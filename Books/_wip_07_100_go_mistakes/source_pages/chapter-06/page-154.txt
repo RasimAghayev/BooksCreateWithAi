@@ -1,0 +1,51 @@
+134
+CHAPTER 6
+Functions and methods
+func (m *MultiError) Error() string {
+return strings.Join(m.errs, ";")
+}
+MultiError satisfies the error interface because it implements Error() string.
+Meanwhile, it exposes an Add method to append an error. Using this struct, we can
+implement a Customer.Validate method in the following manner to check the cus-
+tomer’s age and name. If the sanity checks are OK, we want to return a nil error:
+func (c Customer) Validate() error {
+var m *MultiError
+if c.Age < 0 {
+m = &MultiError{}
+m.Add(errors.New("age is negative"))
+}
+if c.Name == "" {
+if m == nil {
+m = &MultiError{}
+}
+m.Add(errors.New("name is nil"))
+}
+return m
+}
+In this implementation, m is initialized to the zero value of *MultiError: hence, nil.
+When a sanity check fails, we allocate a new MultiError if needed and then append
+an error. In the end, we return m, which can be either a nil pointer or a pointer to a
+MultiError struct, depending on the checks.
+ Now, let’s test this implementation by running a case with a valid Customer:
+customer := Customer{Age: 33, Name: "John"}
+if err := customer.Validate(); err != nil {
+log.Fatalf("customer is invalid: %v", err)
+}
+Here is the output:
+2021/05/08 13:47:28 customer is invalid: <nil>
+This result may be pretty surprising. The Customer was valid, yet the err != nil con-
+dition was true, and logging the error printed <nil>. So, what’s the issue?
+ In Go, we have to know that a pointer receiver can be nil. Let’s experiment by cre-
+ating a dummy type and calling a method with a nil pointer receiver:
+type Foo struct{}
+func (foo *Foo) Bar() string {
+return "bar"
+}
+Implements the 
+error interface
+Instantiates an 
+empty *MultiError
+Appends an error if 
+the age is negative
+Appends an error 
+if the name is nil

@@ -1,0 +1,64 @@
+325
+12.5
+#95: Not understanding stack vs. heap
+variables for a specific goroutine. When a goroutine starts, it gets 2 KB of contiguous
+memory as its stack space (this size has evolved over time and could change again).
+However, this size isn’t fixed at run time and can grow and shrink as necessary (but it
+always remains contiguous in memory, preserving data locality).
+ When Go enters a function, a stack frame is created, representing an interval in
+memory that only the current function can access. Let’s look at a concrete example to
+understand this concept. Here, the main function will print the result of a sumValue
+function:
+func main() {
+a := 3
+b := 2
+c := sumValue(a, b)
+println(c)
+}
+//go:noinline
+func sumValue(x, y int) int {
+z := x + y
+return z
+}
+There are two things to note here. First, we use the println built-in function instead
+of fmt.Println, which would force allocating the c variable on the heap. Second, we
+disable inlining on the sumValue function; otherwise, the function call would not
+occur (we discuss inlining in mistake #97, “Not relying on inlining”).
+ Figure 12.26 shows the stack following a and b allocations. Because we executed
+main, a stack frame was created for this function. The two variables a and b were allo-
+cated to the stack in this stack frame. All the variables stored are valid addresses,
+meaning they can be referenced and accessed.
+Figure 12.27 shows what happens if we enter into the sumValue function up to the
+return statement. The Go runtime creates a new stack frame as part of the current
+goroutine stack. x and y are allocated alongside z in the current stack frame.
+Calls the sumValue 
+function
+Prints 
+the result
+Disables 
+inlining
+func main() {
+   
+a := 3
+   
+b := 2
+   
+c := sumValue(a, b)
+   
+println(c)
+}
+func sumValue(x, y int) int {
+   
+z := x + y
+   
+return z
+}
+main
+a = 3
+b = 2
+Valid
+Stack 
+Invalid
+Figure 12.26
+a and b are allocated 
+on the stack.

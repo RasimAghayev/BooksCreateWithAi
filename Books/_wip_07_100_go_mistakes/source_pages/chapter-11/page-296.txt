@@ -1,0 +1,57 @@
+276
+CHAPTER 11
+Testing
+defer p.mu.RUnlock()
+return p.got
+}
+func TestGetBestFoo(t *testing.T) {
+mock := publisherMock{}
+h := Handler{
+publisher: &mock,
+n:
+2,
+}
+foo := h.getBestFoo(42)
+// Check foo
+time.Sleep(10 * time.Millisecond)
+published := mock.Get()
+// Check published
+}
+We write a mock of publisher that relies on a mutex to protect access to the pub-
+lished field. In our unit test, we call time.Sleep to leave some time before checking
+the arguments passed to Publish.
+ This test is inherently flaky. There is no strict guarantee that 10 milliseconds will be
+enough (in this example, it is likely but not guaranteed).
+ So, what are the options to improve this unit test? First, we can periodically assert a
+given condition using retries. For example, we can write a function that takes an asser-
+tion as an argument and a maximum number of retries plus a wait time that is called
+periodically to avoid a busy loop:
+func assert(t *testing.T, assertion func() bool,
+maxRetry int, waitTime time.Duration) {
+for i := 0; i < maxRetry; i++ {
+if assertion() {
+return
+}
+time.Sleep(waitTime)
+}
+t.Fail()
+}
+This function checks the assertion provided and fails after a certain number of retries.
+We also use time.Sleep, but we could use a shorter sleep with this code.
+ For example, let’s go back to TestGetBestFoo:
+assert(t, func() bool {
+return len(mock.Get()) == 2
+}, 30, time.Millisecond)
+Instead of sleeping for 10 milliseconds, we sleep each millisecond and configure a
+maximum number of retries. Such an approach reduces the execution time if the test
+succeeds because we reduce the waiting interval. Therefore, implementing a retry
+strategy is a better approach than using passive sleeps.
+Sleeps for 10 milliseconds 
+before checking the arguments 
+passed to Publish
+Checks the
+assertion
+Sleeps 
+before retry
+Fails eventually after 
+a number of retries

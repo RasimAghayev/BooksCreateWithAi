@@ -1,0 +1,62 @@
+308
+CHAPTER 12
+Optimizations
+if a block is placed randomly into L1D, the CPU will have to iterate over 512 cache lines
+in the worst case to read a variable. This kind of cache is called fully associative.
+ To improve how fast an address can be accessed from a CPU cache, designers work
+on different policies regarding cache placement. Let’s skip the history and discuss
+today’s most widely used option: set-associative cache, which relies on cache partitioning.
+ For the sake of clarity in the following figures, we will work with a reduced version
+of the problem:
+We will assume an L1D cache of 512 bytes (8 cache lines).
+The matrix is composed of 4 rows and 32 columns, and we will read only the
+first 8 columns.
+Figure 12.7 shows how this matrix can be stored in memory. We will use the binary
+representation for the memory block addresses. Also, the gray blocks represent the
+first 8 int64 elements we want to iterate over. The remaining blocks are skipped
+during the iteration.
+Each memory block contains 64 bytes and hence 8 int64 elements. The first memory
+block starts at 0x0000000000000, the second begins at 0001000000000 (512 in
+binary), and so on. We also show the cache that can hold 8 lines.
+NOTE
+We will see in mistake #94, “Not being aware of data alignment,” that a
+slice doesn’t necessarily start at the beginning of a block.
+Cache
+s[0][0] ... s[0][7]
+s[0][8] ... s[0][15]
+s[0][16] ... s[0][23]
+s[0][24] ... s[0][31]
+s[1][0] ... s[1][7]
+s[1][8] ... s[1][15]
+s[1][16] ... s[1][23]
+s[1][24] ... s[1][31]
+s[2][0] ... s[2][7]
+s[2][8] ... s[2][15]
+s[2][16] ... s[2][23]
+s[2][24] ... s[2][31]
+s[3][0] ... s[3][7]
+s[3][8] ... s[3][15]
+s[3][16] ... s[3][23]
+s[3][24] ... s[3][31]
+0000000000000
+0001000000000
+0010000000000
+0011000000000
+0100000000000
+0101000000000
+0110000000000
+0111000000000
+1000000000000
+1001000000000
+1010000000000
+1011000000000
+1100000000000
+1101000000000
+1110000000000
+1111000000000
+Memory addresses
+Figure 12.7
+The matrix 
+stored in memory, and an 
+empty cache for the 
+execution

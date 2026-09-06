@@ -1,0 +1,43 @@
+227
+9.12
+#72: Forgetting about sync.Cond
+The call to Wait must happen within a critical section, which may sound odd. Won’t
+the lock prevent other goroutines from waiting for the same condition? Actually, the
+implementation of Wait is the following:
+1
+Unlock the mutex.
+2
+Suspend the goroutine, and wait for a notification.
+3
+Lock the mutex when the notification arrives.
+So, the listener goroutines have two critical sections:
+When accessing donation.balance in for donation.balance < goal
+When accessing donation.balance in fmt.Printf
+This way, all the accesses to the shared donation.balance variable are protected.
+ Now, what about the updater goroutine? The balance update is done within a criti-
+cal section to prevent data races. Then we call the Broadcast method, which wakes all
+the goroutines waiting on the condition each time the balance is updated.
+ Hence, if we run this example, it prints what we expect:
+10$ goal reached
+15$ goal reached
+In our implementation, the condition variable is based on the balance being updated.
+Therefore, the listener variables wake each time a new donation is made, to check
+whether their donation goal is met. This solution prevents us from having a busy loop
+that burns CPU cycles in repeated checks.
+ Let’s also note one possible drawback when using sync.Cond. When we send a
+notification—for example, to a chan struct—even if there’s no active receiver, the
+message is buffered, which guarantees that this notification will be received eventu-
+ally. Using sync.Cond with the Broadcast method wakes all goroutines currently wait-
+ing on the condition; if there are none, the notification will be missed. This is also an
+essential principle that we have to keep in mind.
+Signaling in Go can be achieved with channels. The only event that multiple gorou-
+tines can catch is a channel closure, but this can happen just once. Therefore, if we
+Signal() vs. Broadcast()
+We can wake a single goroutine using Signal() instead of Broadcast(). In terms
+of semantics, it is the same as sending a message in a chan struct in a non-block-
+ing fashion:
+ch := make(chan struct{})
+select {
+case ch <- struct{}{}:
+default:
+}

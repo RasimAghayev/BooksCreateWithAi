@@ -1,0 +1,49 @@
+195
+9.1
+#61: Propagating an inappropriate context
+ How can we fix this issue? One idea is to not propagate the parent context.
+Instead, we would call publish with an empty context:
+err := publish(context.Background(), response)
+Here, that would work. Regardless of how long it takes to write back the HTTP
+response, we can call publish.
+ But what if the context contained useful values? For example, if the context con-
+tained a correlation ID used for distributed tracing, we could correlate the HTTP
+request and the Kafka publication. Ideally, we would like to have a new context that is
+detached from the potential parent cancellation but still conveys the values.
+ The standard package doesn’t provide an immediate solution to this problem.
+Hence, a possible solution is to implement our own Go context similar to the context
+provided, except that it doesn’t carry the cancellation signal.
+ A context.Context is an interface containing four methods:
+type Context interface {
+Deadline() (deadline time.Time, ok bool)
+Done() <-chan struct{}
+Err() error
+Value(key any) any
+}
+The context’s deadline is managed by the Deadline method and the cancellation sig-
+nal is managed via the Done and Err methods. When a deadline has passed or the con-
+text has been canceled, Done should return a closed channel, whereas Err should
+return an error. Finally, the values are carried via the Value method.
+ Let’s create a custom context that detaches the cancellation signal from a parent
+context:
+type detach struct {
+ctx context.Context
+}
+func (d detach) Deadline() (time.Time, bool) {
+return time.Time{}, false
+}
+func (d detach) Done() <-chan struct{} {
+return nil
+}
+func (d detach) Err() error {
+return nil
+}
+func (d detach) Value(key any) any {
+return d.ctx.Value(key)
+}
+Uses an empty context instead 
+of the HTTP request context
+Custom struct acting as a wrapper 
+on top of the initial context
+Delegates the get value call 
+to the parent context

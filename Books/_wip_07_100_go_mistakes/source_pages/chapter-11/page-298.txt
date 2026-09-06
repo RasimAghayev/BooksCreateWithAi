@@ -1,0 +1,53 @@
+278
+CHAPTER 11
+Testing
+11.6
+#87: Not dealing with the time API efficiently
+Some functions have to rely on the time API: for example, to retrieve the current
+time. In such a case, it can be pretty easy to write brittle unit tests that may fail at some
+point. In this section, we go through a concrete example and discuss the options. The
+goal is not to cover every use case and technique but rather to give directions about
+writing more robust tests of functions using the time API.
+ Let’s say an application receives events that we want to store in an in-memory
+cache. We will implement a Cache struct to hold the most recent events. This struct
+will expose three methods that do the following:
+Append events
+Get all the events
+Trim the events for a given duration (we will focus on this method)
+Each of these methods needs to access the current time. Let’s write a first implementa-
+tion of the third method using time.Now() (we will assume that all the events are
+sorted by time):
+type Cache struct {
+mu
+sync.RWMutex
+events []Event
+}
+type Event struct {
+Timestamp time.Time
+Data string
+}
+func (c *Cache) TrimOlderThan(since time.Duration) {
+c.mu.RLock()
+defer c.mu.RUnlock()
+t := time.Now().Add(-since)
+for i := 0; i < len(c.events); i++ {
+if c.events[i].Timestamp.After(t) {
+c.events = c.events[i:]
+return
+}
+}
+}
+We compute a t variable that is the current time minus the provided duration. Then,
+because the events are sorted by time, we update the internal events slice as soon as
+we reach an event whose time is after t.
+ How can we test this method? We could rely on the current time using time.Now to
+create the events:
+func TestCache_TrimOlderThan(t *testing.T) {
+events := []Event{
+{Timestamp: time.Now().Add(-20 * time.Millisecond)},
+Subtracts the given duration 
+from the current time
+Trims 
+the events
+Creates events 
+using time.Now()

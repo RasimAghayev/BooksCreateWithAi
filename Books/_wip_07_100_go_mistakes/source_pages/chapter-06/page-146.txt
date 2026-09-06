@@ -1,0 +1,19 @@
+126
+Functions and methods
+A function wraps a sequence of statements into a unit that can be called elsewhere.
+It can take some input(s) and produces some output(s). On the other hand, a
+method is a function attached to a given type. The attached type is called a receiver
+and can be a pointer or a value. We start this chapter by discussing how to choose
+one receiver type or the other, as this is usually a source of debate. Then we discuss
+named parameters, when to use them, and why they can sometimes lead to mis-
+takes. We also discuss common mistakes when designing a function or returning
+specific values such as a nil receiver.
+This chapter covers
+When to use value or pointer receivers
+When to use named result parameters and their 
+potential side effects
+Avoiding a common mistake while returning a nil 
+receiver
+Why using functions that accept a filename isn’t a 
+best practice
+Handling defer arguments

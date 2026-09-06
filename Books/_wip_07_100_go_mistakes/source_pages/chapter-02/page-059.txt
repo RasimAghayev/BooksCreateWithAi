@@ -1,0 +1,52 @@
+39
+2.10
+#10: Not being aware of the possible problems with type embedding
+What should we conclude about type embedding? First, let’s note that it’s rarely a
+necessity, and it means that whatever the use case, we can probably solve it as well with-
+out type embedding. Type embedding is mainly used for convenience: in most cases,
+to promote behaviors.
+ If we decide to use type embedding, we need to keep two main constraints in mind:
+It shouldn’t be used solely as some syntactic sugar to simplify accessing a field
+(such as Foo.Baz() instead of Foo.Bar.Baz()). If this is the only rationale, let’s
+not embed the inner type and use a field instead.
+It shouldn’t promote data (fields) or a behavior (methods) we want to hide
+from the outside: for example, if it allows clients to access a locking behavior
+that should remain private to the struct.
+NOTE
+Some may also argue that using type embedding could lead to extra
+efforts in terms of maintenance in the context of exported structs. Indeed,
+embedding a type inside an exported struct means remaining cautious when
+this type evolves. For example, if we add a new method to the inner type, we
+should ensure it doesn’t break the latter constraint. Hence, to avoid this extra
+effort, teams can also prevent type embedding in public structs.
+Using type embedding consciously by keeping these constraints in mind can help avoid
+boilerplate code with additional forwarding methods. However, let’s make sure we
+don’t do it solely for cosmetics and not promote elements that should remain hidden.
+ In the next section, we’ll discuss common patterns to deal with optional
+configurations. 
+With embedding, the receiver of Foo remains X. However, with subclassing, the
+receiver of Foo becomes the subclass, Y. Embedding is about composition, not inher-
+itance.
+X
+ Foo()
+Foo() becomes a method of Y;
+X remains the receiver of Foo().
+Y
+ X
+ [Foo()]
+Embedding
+Subclassing
+X
+ Foo()
+Extends
+Foo() becomes a method of Y;
+Y becomes the receiver of Foo().
+Y
+ Foo()
+Promote
+With embedding, the 
+embedded type remains the 
+receiver of a method. 
+Conversely, with subclassing, 
+the subclass becomes the 
+receiver of a method.

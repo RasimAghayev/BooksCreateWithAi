@@ -1,0 +1,45 @@
+251
+10.5
+#79: Not closing transient resources
+We should also understand that a response body must be closed regardless of whether
+we read it. For example, if we are only interested in the HTTP status code and not in
+the body, it has to be closed no matter what, to avoid a leak:
+func (h handler) getStatusCode(body io.Reader) (int, error) {
+resp, err := h.client.Post(h.url, "application/json", body)
+if err != nil {
+return 0, err
+}
+defer func() {
+err := resp.Body.Close()
+if err != nil {
+log.Printf("failed to close response: %v\n", err)
+}
+}()
+return resp.StatusCode, nil
+}
+This function closes the body even though we haven’t read it.
+ Another essential thing to remember is that the behavior is different when we
+close the body, depending on whether we have read from it:
+If we close the body without a read, the default HTTP transport may close the
+connection.
+If we close the body following a read, the default HTTP transport won’t close
+the connection; hence, it may be reused.
+Therefore, if getStatusCode is called repeatedly and we want to use keep-alive con-
+nections, we should read the body even though we aren’t interested in it:
+func (h handler) getStatusCode(body io.Reader) (int, error) {
+resp, err := h.client.Post(h.url, "application/json", body)
+if err != nil {
+return 0, err
+}
+// Close response body
+_, _ = io.Copy(io.Discard, resp.Body)
+return resp.StatusCode, nil
+}
+In this example, we read the body to keep the connection alive. Note that instead of
+using io.ReadAll, we used io.Copy to io.Discard, an io.Writer implementation.
+This code reads the body but discards it without any copy, making it more efficient
+than io.ReadAll.
+Closes the response body 
+even if we don’t read it
+Reads the 
+response body

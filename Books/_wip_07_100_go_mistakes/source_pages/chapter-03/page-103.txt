@@ -1,0 +1,61 @@
+83
+3.10
+#26: Slices and memory leaks
+notice that the GC did not collect the remaining 998 elements after the last step.
+What’s the reason?
+ It’s essential to keep this rule in mind when working with slices: if the element is a
+pointer or a struct with pointer fields, the elements won’t be reclaimed by the GC. In
+our example, because Foo contains a slice (and a slice is a pointer on top of a backing
+array), the remaining 998 Foo elements and their slice aren’t reclaimed. Therefore,
+even though these 998 elements can’t be accessed, they stay in memory as long as the
+variable returned by keepFirstTwoElementsOnly is referenced.
+ What are the options to ensure that we don’t leak the remaining Foo elements?
+The first option, again, is to create a copy of the slice:
+func keepFirstTwoElementsOnly(foos []Foo) []Foo {
+res := make([]Foo, 2)
+copy(res, foos)
+return res
+}
+Because we copy the first two elements of the slice, the GC knows that the 998 ele-
+ments won’t be referenced anymore and can now be collected.
+ There’s a second option if we want to keep the underlying capacity of 1,000 ele-
+ments, which is to mark the slices of the remaining elements explicitly as nil:
+func keepFirstTwoElementsOnly(foos []Foo) []Foo {
+for i := 2; i < len(foos); i++ {
+foos[i].v = nil
+}
+return foos[:2]
+}
+Here, we return a 2-length, 1,000-capacity slice, but we set the slices of the remaining
+elements to nil. Hence, the GC can collect the 998 backing arrays.
+ Which option is the best? If we
+don’t want to keep the capacity at
+1,000 elements, the first option is
+probably the best. However, the deci-
+sion can also depend on the propor-
+tion of the elements. Figure 3.14
+provides a visual example of the
+options we can choose, assuming a
+slice containing n elements where we
+want to keep i elements.
+ The first option creates a copy of i elements. Hence, it must iterate from element
+0 to i. The second option sets the remaining slices to nil, so it must iterate from ele-
+ment i to n. If performance is important and i is closer to n than 0, we may consider
+the second option. This requires iterating over fewer elements (at least, it’s probably
+worth benchmarking the two options).
+0
+1
+i – 1
+...
+i
+...
+n
+Option 1
+Iterate and copy elements
+from 0 to i – 1.
+Option 2
+Set to nil the slices from
+elements i to n.
+Figure 3.14
+Option 1 iterates until i, whereas 
+option 2 iterates from i.

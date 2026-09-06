@@ -1,0 +1,52 @@
+306
+CHAPTER 12
+Optimizations
+total += s[i]
+}
+return total
+}
+Let’s assume that the linked list is allocated contiguously: for example, by a single func-
+tion. On a 64-bit architecture, a word is 64 bits long. Figure 12.5 compares the two data
+structures that the functions receive (linked list or slice); the darker bars represent
+the int64 elements we use to
+increment the total.
+     In both examples, we face sim-
+ilar 
+compaction. 
+Because 
+a
+linked list is a succession of val-
+ues and 64-bit pointer elements,
+we increment the sum using one
+element out of two. Meanwhile,
+the sum2 example reads only one
+element out of two.
+The two data structures have the same spatial locality, so we may expect a similar exe-
+cution time for these two functions. But the function iterating on the slice is signifi-
+cantly faster (about 70% on my machine). What’s the reason?
+ To understand this, we have to discuss the concept of striding. Striding relates to
+how CPUs work through data. There are three different types of strides (see figure
+12.6):
+Unit stride—All the values we want to access are allocated contiguously: for
+example, a slice of int64 elements. This stride is predictable for a CPU and the
+most efficient because it requires a minimum number of cache lines to walk
+through the elements.
+Constant stride—Still predictable for the CPU: for example, a slice that iterates
+over every two elements. This stride requires more cache lines to walk through
+data, so it’s less efficient than a unit stride.
+Figure 12.6
+The three types of strides
+Linked list allocated contiguously.
+Slice iteration, one element out of two
+Value
+Pointer
+Figure 12.5
+In memory, linked lists and slices are 
+compacted in a similar manner.
+Predictable
+Unit stride
+Constant stride
+Non-unit stride
+Predictable but less efficient
+Not predictable
+?
