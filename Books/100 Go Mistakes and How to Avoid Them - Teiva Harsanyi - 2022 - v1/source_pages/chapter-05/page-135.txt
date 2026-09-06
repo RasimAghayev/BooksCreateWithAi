@@ -1,0 +1,41 @@
+115
+5.2
+#37: Inaccurate string iteration
+ These simple characters are encoded using a single byte each. This is why getting
+the length of s returns 5:
+s := "hello"
+fmt.Println(len(s)) // 5
+But a character isn’t always encoded into a single byte. Coming back to the 汉 charac-
+ter, we mentioned that with UTF-8, this character is encoded into three bytes. We can
+validate this with the following example:
+s := "汉"
+fmt.Println(len(s)) // 3
+Instead of printing 1, this example prints 3. Indeed, the len built-in function applied
+on a string doesn’t return the number of characters; it returns the number of bytes.
+ Conversely, we can create a string from a list of bytes. We mentioned that the 汉
+character was encoded using three bytes, 0xE6, 0xB1, and 0x89:
+s := string([]byte{0xE6, 0xB1, 0x89})
+fmt.Printf("%s\n", s)
+Here, we build a string composed of these three bytes. When we print the string,
+instead of printing three characters, the code prints a single one: 汉.
+ In summary:
+A charset is a set of characters, whereas an encoding describes how to translate
+a charset into binary.
+In Go, a string references an immutable slice of arbitrary bytes.
+Go source code is encoded using UTF-8. Hence, all string literals are UTF-8
+strings. But because a string can contain arbitrary bytes, if it’s obtained from
+somewhere else (not the source code), it isn’t guaranteed to be based on the
+UTF-8 encoding.
+A rune corresponds to the concept of a Unicode code point, meaning an item
+represented by a single value.
+Using UTF-8, a Unicode code point can be encoded into 1 to 4 bytes.
+Using len on a string in Go returns the number of bytes, not the number of runes.
+Having these concepts in mind is essential because runes as everywhere in Go. Let’s
+see a concrete application of this knowledge involving a common mistake related to
+string iteration. 
+5.2
+#37: Inaccurate string iteration
+Iterating on a string is a common operation for developers. Perhaps we want to per-
+form an operation for each rune in the string or implement a custom function to
+search for a specific substring. In both cases, we have to iterate on the different runes
+of a string. But it’s easy to get confused about how iteration works.

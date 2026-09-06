@@ -1,0 +1,44 @@
+51
+2.15
+#15: Missing code documentation
+NOTE
+One option could also be to use dot imports to access all the public
+elements of a package without the package qualifier. However, this approach
+tends to increase confusion and should, in most cases, be avoided.
+Also note that we should avoid naming collisions between a variable and a built-in
+function. For example, we could do something like this:
+copy := copyFile(src, dst)
+In this case, the copy built-in function wouldn’t be accessible as long as the copy variable
+lives. In summary, we should prevent variable name collisions to avoid ambiguity. If we
+face a collision, we should either find another meaningful name or use an import alias.
+ In the next section, we will see a common mistake related to code documentation. 
+2.15
+#15: Missing code documentation
+Documentation is an important aspect of coding. It simplifies how clients can con-
+sume an API but can also help in maintaining a project. In Go, we should follow some
+rules to make our code idiomatic. Let’s examine these rules.
+ First, every exported element must be documented. Whether it is a structure, an
+interface, a function, or something else, if it’s exported, it must be documented. The
+convention is to add comments, starting with the name of the exported element. For
+example,
+// Customer is a customer representation.
+type Customer struct{}
+// ID returns the customer identifier.
+func (c Customer) ID() string { return "" }
+As a convention, each comment should be a complete sentence that ends with punc-
+tuation. Also bear in mind that when we document a function (or a method), we
+should highlight what the function intends to do, not how it does it; this belongs to
+the core of a function and comments, not documentation. Furthermore, the docu-
+mentation should ideally provide enough information that the consumer does not
+have to look at our code to understand how to use an exported element.
+Deprecated elements
+It’s possible to deprecate an exported element using the // Deprecated: comment
+this way:
+// ComputePath returns the fastest path between two points.
+// Deprecated: This function uses a deprecated way to compute
+// the fastest path. Use ComputeFastestPath instead.
+func ComputePath() {}
+Then, if a developer uses the ComputePath function, they should get a warning.
+(Most IDEs handle deprecated comments.)
+The copy variable collides with 
+the copy built-in function.

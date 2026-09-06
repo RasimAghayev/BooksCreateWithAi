@@ -1,0 +1,52 @@
+127
+6.1
+#42: Not knowing which type of receiver to use
+6.1
+#42: Not knowing which type of receiver to use
+Choosing a receiver type for a method isn’t always straightforward. When should we
+use value receivers? When should we use pointer receivers? In this section, we look at
+the conditions to make the right decision.
+ In chapter 12, we will thoroughly discuss values versus pointers. So, this section will
+only scratch the surface in terms of performance. Also, in many contexts, using a value
+or pointer receiver should be dictated not by performance but rather by other condi-
+tions that we will discuss. But first, let’s refresh our memories about how receivers work.
+ In Go, we can attach either a value or a pointer receiver to a method. With a value
+receiver, Go makes a copy of the value and passes it to the method. Any changes to the
+object remain local to the method. The original object remains unchanged.
+ As an illustration, the following example mutates a value receiver:
+type customer struct {
+balance float64
+}
+func (c customer) add(v float64) {
+c.balance += v
+}
+func main() {
+c := customer{balance: 100.}
+c.add(50.)
+fmt.Printf("balance: %.2f\n", c.balance)
+}
+Because we use a value receiver, incrementing the balance in the add method doesn’t
+mutate the balance field of the original customer struct:
+100.00
+On the other hand, with a pointer receiver, Go passes the address of an object to the
+method. Intrinsically, it remains a copy, but we only copy a pointer, not the object
+itself (passing by reference doesn’t exist in Go). Any modifications to the receiver are
+done on the original object. Here is the same example, but now the receiver is a
+pointer:
+type customer struct {
+balance float64
+}
+func (c *customer) add(operation float64) {
+c.balance += operation
+}
+func main() {
+c := customer{balance: 100.0}
+c.add(50.0)
+fmt.Printf("balance: %.2f\n", c.balance)
+}
+Value receiver
+The customer balance 
+remains unchanged.
+Pointer receiver
+The customer balance 
+is updated.

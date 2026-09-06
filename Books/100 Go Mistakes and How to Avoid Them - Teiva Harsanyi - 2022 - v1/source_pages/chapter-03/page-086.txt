@@ -1,0 +1,65 @@
+66
+CHAPTER 3
+Data types
+another array by doubling the capacity, copying all the elements, and then inserting
+element 5. Figure 3.5 shows this process.
+Figure 3.5
+Because the initial backing array is full, Go creates another array and 
+copies all the elements.
+NOTE
+In Go, a slice grows by doubling its size until it contains 1,024 ele-
+ments, after which it grows by 25%.
+The slice now references the new backing array. What will happen to the previous
+backing array? If it’s no longer referenced, it’s eventually freed by the garbage collec-
+tor (GC) if allocated on the heap. (We discuss heap memory in mistake #95, “Not
+understanding stack vs. heap,” and we look at how the GC works in mistake #99, “Not
+understanding how the GC works.”)
+ What happens with slicing? Slicing is an operation done on an array or a slice, pro-
+viding a half-open range; the first index is included, whereas the second is excluded.
+The following example shows the impact, and figure 3.6 displays the result in memory:
+s1 := make([]int, 3, 6)
+s2 := s1[1:3]
+0
+1
+0
+2
+3
+4
+5
+ptr
+len
+7
+cap
+12
+0
+1
+0
+2
+3
+4
+Original array
+New array
+s
+Three-length, 
+six-capacity slice
+Slicing from 
+indices 1 to 3
+0
+0
+0
+ptr
+len
+3
+cap
+6
+s1
+ptr
+len
+2
+cap
+5
+s2
+Figure 3.6
+The slices s1 and s2 
+reference the same backing array with 
+different lengths and capacities.

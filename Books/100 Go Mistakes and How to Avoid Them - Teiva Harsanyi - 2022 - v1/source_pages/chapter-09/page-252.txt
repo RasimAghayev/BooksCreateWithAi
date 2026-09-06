@@ -1,0 +1,49 @@
+232
+CHAPTER 9
+Concurrency: Practice
+Counter struct, which also copies the mutex. Therefore, the increment isn't done in a
+shared critical section.
+ sync types shouldn’t be copied. This rule applies to the following types:
+sync.Cond
+sync.Map
+sync.Mutex
+sync.RWMutex
+sync.Once
+sync.Pool
+sync.WaitGroup
+Therefore, the mutex shouldn’t have been copied. What are the alternatives?
+ The first is to modify the receiver type for the Increment method:
+func (c *Counter) Increment(name string) {
+// Same code
+}
+Changing the receiver type avoids copying Counter when Increment is called. There-
+fore, the internal mutex isn’t copied.
+ If we want to keep a value receiver, the second option is to change the type of the
+mu field in Counter to be a pointer:
+type Counter struct {
+mu
+*sync.Mutex
+counters map[string]int
+}
+func NewCounter() Counter {
+return Counter{
+mu: &sync.Mutex{},
+counters: map[string]int{},
+}
+}
+If Increment has a value receiver, it still copies the Counter struct. However, as mu is
+now a pointer, it will perform a pointer copy only, not an actual copy of a sync.Mutex.
+Hence, this solution also prevents data races.
+NOTE
+We also changed the way mu was initialized. Because mu is a pointer, if we
+omit it when creating Counter, it will be initialized to the zero value of a pointer:
+nil. This will cause to the goroutine to panic when c.mu.Lock() is called.
+We may face the issue of unintentionally copying a sync field in the following
+conditions:
+Calling a method with a value receiver (as we have seen)
+Calling a function with a sync argument
+Calling a function with an argument that contains a sync field
+Changes the 
+type of mu
+Changes the way 
+mu is initialized

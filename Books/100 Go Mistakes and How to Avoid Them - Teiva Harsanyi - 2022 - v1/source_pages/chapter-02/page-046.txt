@@ -1,0 +1,47 @@
+26
+CHAPTER 2
+Code and project organization
+approach to follow is similar to what we described in the previous section: abstractions
+should be discovered, not created. This means that it’s not up to the producer to force a
+given abstraction for all the clients. Instead, it’s up to the client to decide whether it
+needs some form of abstraction and then determine the best abstraction level for its
+needs.
+ In the previous example, perhaps one client won’t be interested in decoupling its
+code. Maybe another client wants to decouple its code but is only interested in the
+GetAllCustomers method. In this case, this client can create an interface with a single
+method, referencing the Customer struct from the external package:
+package client
+type customersGetter interface {
+GetAllCustomers() ([]store.Customer, error)
+}
+From a package organization, figure 2.6 shows the result. A couple of things to note:
+Because the customersGetter interface is only used in the client package, it
+can remain unexported.
+Visually, in the figure, it looks like circular dependencies. However, there’s no
+dependency from store to client because the interface is satisfied implicitly.
+This is why such an approach isn’t always possible in languages with an explicit
+implementation.
+The main point is that the client package can now define the most accurate abstrac-
+tion for its need (here, only one method). It relates to the concept of the Interface-
+Segregation Principle (the I in SOLID), which states that no client should be forced
+to depend on methods it doesn’t use. Therefore, in this case, the best approach is to
+expose the concrete implementation on the producer side and let the client decide
+how to use it and whether an abstraction is needed.
+ For the sake of completeness, let’s mention that this approach—interfaces on the
+producer side—is sometimes used in the standard library. For example, the encoding
+package defines interfaces implemented by other subpackages such as encoding/json
+or encoding/binary. Is the encoding package wrong about this? Definitely not. In this
+Package store
+Implementation
+Package client
+Uses
+Some code
+References
+customersGetter
+interface
+Satisﬁes
+Customer struct
+Figure 2.6
+The client package defines 
+the abstraction it needs by creating its 
+own interface.

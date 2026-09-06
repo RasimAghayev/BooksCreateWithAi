@@ -1,0 +1,50 @@
+191
+8.6
+#60: Misunderstanding Go contexts
+In summary, to be a proficient Go developer, we have to understand what a context is
+and how to use it. In Go, context.Context is everywhere in the standard library and
+external libraries. As we mentioned, a context allows us to carry a deadline, a cancella-
+tion signal, and/or a list of keys-values. In general, a function that users wait for
+should take a context, as doing so allows upstream callers to decide when calling this
+function should be aborted.
+ When in doubt about which context to use, we should use context.TODO() instead
+of passing an empty context with context.Background. context.TODO() returns an
+empty context, but semantically, it conveys that the context to be used is either
+unclear or not yet available (not yet propagated by a parent, for example).
+Implementing a function that receives a context
+Within a function that receives a context conveying a possible cancellation or time-
+out, the action of receiving or sending a message to a channel shouldn’t be done in
+a blocking way. For example, in the following function, we send a message to a chan-
+nel and receive one from another channel:
+func f(ctx context.Context) error {
+// ...
+ch1 <- struct{}{}
+v := <-ch2
+// ...
+}
+The problem with this function is that if the context is canceled or times out, we may
+have to wait until a message is sent or received, without benefit. Instead, we should
+use select to either wait for the channel actions to complete or wait for the context
+cancellation:
+func f(ctx context.Context) error {
+// ...
+select {
+case <-ctx.Done():
+return ctx.Err()
+case ch1 <- struct{}{}:
+}
+select {
+case <-ctx.Done():
+return ctx.Err()
+case v := <-ch2:
+// ...
+}
+}
+With this new version, if ctx is canceled or times out, we return immediately, without
+blocking the channel send or receive.
+Receive
+Send
+Sends a message to ch1 or waits 
+for the context to be canceled
+Receives a message from ch2 or waits 
+for the context to be canceled

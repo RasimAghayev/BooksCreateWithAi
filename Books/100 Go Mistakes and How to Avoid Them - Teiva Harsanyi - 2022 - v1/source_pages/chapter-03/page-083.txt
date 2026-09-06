@@ -1,0 +1,54 @@
+63
+3.3
+#19: Not understanding floating points
+ Let’s look at an example with two functions that perform the same sequence of
+operations in a different order. In our example, f1 starts by initializing a float64 to
+10,000 and then repeatedly adds 1.0001 to this result (n times). Conversely, f2 per-
+forms the same operations but in the opposite order (adding 10,000 in the end):
+func f1(n int) float64 {
+result := 10_000.
+for i := 0; i < n; i++ {
+result += 1.0001
+}
+return result
+}
+func f2(n int) float64 {
+result := 0.
+for i := 0; i < n; i++ {
+result += 1.0001
+}
+return result + 10_000.
+}
+Now, let’s run these functions on an x86 processor. This time, however, we’ll vary n.
+Notice that the bigger n is, the greater the imprecision. However, we can also see that
+the f2 accuracy is better than f1. Keep in mind that the order of floating-point calcu-
+lations can affect the accuracy of the result.
+ When performing a chain of additions and subtractions, we should group the
+operations to add or subtract values with a similar order of magnitude before adding
+or subtracting those with magnitudes that aren’t close. Because f2 adds 10,000, in the
+end it produces more accurate results than f1.
+ What about multiplications and divisions? Let’s imagine that we want to compute
+the following:
+a × (b + c)
+As we know, this calculation is equal to
+a × b + a × c
+Let’s run these two calculations with a having a different order of magnitude than b
+and c:
+a := 100000.001
+b := 1.0001
+n
+Exact result
+f1
+f2
+10
+10010.001
+10010.000999999993
+10010.001
+1k
+11000.1
+11000.099999999293
+11000.099999999982
+1m
+1.0101e+06
+1.0100999999761417e+06
+1.0100999999766762e+06

@@ -1,0 +1,57 @@
+272
+CHAPTER 11
+Testing
+if got != expected {
+t.Errorf("got: %s", got)
+}
+}
+func TestRemoveNewLineSuffix_EndingWithMultipleNewLines(t *testing.T) {
+got := removeNewLineSuffixes("a\n\n\n")
+expected := "a"
+if got != expected {
+t.Errorf("got: %s", got)
+}
+}
+func TestRemoveNewLineSuffix_EndingWithoutNewLine(t *testing.T) {
+got := removeNewLineSuffixes("a\n")
+expected := "a"
+if got != expected {
+t.Errorf("got: %s", got)
+}
+}
+Each function represents a specific case that we want to cover. However, there are two
+main drawbacks. First, the function names are more complex (TestRemoveNewLine-
+Suffix_EndingWithCarriageReturnNewLine is 55 characters long), which can quickly
+affect the clarity of what the function is supposed to test. The second drawback is the
+amount of duplication among these functions, given that the structure is always the
+same:
+1
+Call removeNewLineSuffixes.
+2
+Define the expected value.
+3
+Compare the values.
+4
+Log an error message.
+If we want to change one of these steps—for example, include the expected value as
+part of the error message—we will have to repeat it in all the tests. And the more tests
+we write, the more difficult the code becomes to maintain.
+ Instead, we can use table-driven tests so we write the logic only once. Table-driven
+tests rely on subtests, and a single test function can include multiple subtests. For
+example, the following test contains two subtests:
+func TestFoo(t *testing.T) {
+t.Run("subtest 1", func(t *testing.T) {
+if false {
+t.Error()
+}
+})
+t.Run("subtest 2", func(t *testing.T) {
+if 2 != 2 {
+t.Error()
+}
+})
+}
+Runs a first subtest 
+called subtest 1
+Runs a second subtest 
+called subtest 2

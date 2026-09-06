@@ -1,0 +1,58 @@
+215
+9.8
+#68: Forgetting about possible side effects with string formatting
+c.age = age
+return nil
+}
+func (c *Customer) String() string {
+c.mutex.RLock()
+defer c.mutex.RUnlock()
+return fmt.Sprintf("id %s, age %d", c.id, c.age)
+}
+The problem here may not be straightforward. If the provided age
+is negative, we return an error. Because the error is formatted,
+using the %s directive on the receiver, it will call the String method
+to format Customer. But because UpdateAge already acquires the
+mutex lock, the String method won’t be able to acquire it (see fig-
+ure 9.10).
+ Hence, this leads to a deadlock situation. If all goroutines are
+also asleep, it leads to a panic:
+fatal error: all goroutines are asleep - deadlock!
+goroutine 1 [semacquire]:
+sync.runtime_SemacquireMutex(0xc00009818c, 0x10b7d00, 0x0)
+...
+How should we deal with this situation? First, it illustrates how unit
+testing is important. In that case, we may argue that creating a test
+with a negative age isn’t worth it, as the logic is quite simple. How-
+ever, without proper test coverage, we might miss this issue.
+ One thing that could be improved here is to restrict the scope
+of the mutex locking. In UpdateAge, we first acquire the lock and
+check whether the input is valid. We should do the opposite: first
+check the input, and if the input is valid, acquire the lock. This has
+the benefit of reducing the potential side effects but can also have
+an impact performance-wise—a lock is acquired only when it’s
+required, not before:
+func (c *Customer) UpdateAge(age int) error {
+if age < 0 {
+return fmt.Errorf("age should be positive for customer %v", c)
+}
+c.mutex.Lock()
+defer c.mutex.Unlock()
+c.age = age
+return nil
+}
+Locks and defers unlock 
+as we read Customer
+Lock mutex
+If negative
+Check age
+Format an error
+Call String()
+method
+Lock mutex
+Figure 9.10
+UpdateAge 
+execution if age 
+is negative
+Locks the mutex only when 
+input has been validated

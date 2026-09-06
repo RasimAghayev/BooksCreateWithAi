@@ -1,0 +1,52 @@
+103
+4.3
+#32: Ignoring the impact of using pointer elements in range loops
+If we store large structs, and these structs are frequently mutated, we can use
+pointers instead to avoid a copy and an insertion for each mutation:
+func updateMapValue(mapValue map[string]LargeStruct, id string) {
+value := mapValue[id]
+value.foo = "bar"
+mapValue[id] = value
+}
+func updateMapPointer(mapPointer map[string]*LargeStruct, id string) {
+mapPointer[id].foo = "bar"
+}
+Because updateMapPointer accepts a map of pointers, the mutation of the foo
+field can be done in a single step.
+Now it’s time to discuss the common mistake with pointer elements in range loops.
+We will consider the following two structs:
+A Customer struct representing a customer
+A Store that holds a map of Customer pointers
+type Customer struct {
+ID
+string
+Balance float64
+}
+type Store struct {
+m map[string]*Customer
+}
+The following method iterates over a slice of Customer elements and stores them in
+the m map:
+func (s *Store) storeCustomers(customers []Customer) {
+for _, customer := range customers {
+s.m[customer.ID] = &customer
+}
+}
+In this example, we iterate over the input slice using the range operator and store
+Customer pointers in the map. But does this method do what we expect?
+ Let’s give it a try by calling it with a slice of three different Customer structs:
+s.storeCustomers([]Customer{
+{ID: "1", Balance: 10},
+{ID: "2", Balance: -10},
+{ID: "3", Balance: 0},
+})
+Here’s the result of this code if we print the map:
+key=1, value=&main.Customer{ID:"3", Balance:0}
+key=2, value=&main.Customer{ID:"3", Balance:0}
+key=3, value=&main.Customer{ID:"3", Balance:0}
+Copies
+Inserts
+Mutates the map 
+element directly
+Stores the customer 
+pointer in the map

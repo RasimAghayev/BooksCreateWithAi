@@ -1,0 +1,52 @@
+270
+CHAPTER 11
+Testing
+Here, the maximum number of parallel tests is set to 16.
+ Let’s now see another mode while running Go tests: shuffle. 
+11.3.2 The -shuffle flag
+As of Go 1.17, it’s possible to randomize the execution order of tests and bench-
+marks. What’s the rationale? A best practice while writing tests is to make them iso-
+lated. For example, they shouldn’t depend on execution order or shared variables.
+These hidden dependencies can mean a possible test error or, even worse, a bug that
+won’t be caught during testing. To prevent that, we can use the -shuffle flag to ran-
+domize tests. We can set it to on or off to enable or disable test shuffling (its disabled
+by default):
+$ go test -shuffle=on -v .
+However, in some cases, we want to rerun tests in the same order. For example, if tests
+fail during CI, we may want to reproduce the error locally. To do that, instead of pass-
+ing on to the -shuffle flag, we can pass the seed used to randomize the tests. We can
+access this seed value when running shuffled tests by enabling verbose mode (-v):
+$ go test -shuffle=on -v .
+-test.shuffle 1636399552801504000
+=== RUN
+TestBar
+--- PASS: TestBar (0.00s)
+=== RUN
+TestFoo
+--- PASS: TestFoo (0.00s)
+PASS
+ok
+teivah
+0.129s
+We executed the tests randomly, but go test printed the seed value:
+1636399552801504000. To force the tests to be run in the same order, we provide
+this seed value to shuffle:
+$ go test -shuffle=1636399552801504000 -v .
+-test.shuffle 1636399552801504000
+=== RUN
+TestBar
+--- PASS: TestBar (0.00s)
+=== RUN
+TestFoo
+--- PASS: TestFoo (0.00s)
+PASS
+ok
+teivah
+0.129s
+The tests were executed in the same order: TestBar and then TestFoo.
+ In general, we should be cautious about existing test flags and keep ourselves
+informed about new features with recent Go releases. Running tests in parallel can be
+an excellent way to decrease the overall execution time of running all the tests. And
+shuffle mode can help us spot hidden dependencies that may mean testing errors or
+even invisible bugs while running tests in the same order. 
+Seed value

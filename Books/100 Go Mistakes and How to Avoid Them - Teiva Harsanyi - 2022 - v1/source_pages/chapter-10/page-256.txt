@@ -1,0 +1,62 @@
+236
+CHAPTER 10
+The standard library
+be used to implement scenarios such as “If I don’t receive any message in this channel
+for 5 seconds, I will … .” But codebases often include calls to time.After in a loop,
+which, as we describe in this section, may be a root cause of memory leaks.
+ Let’s consider the following example. We will implement a function that repeat-
+edly consumes messages from a channel. We also want to log a warning if we haven’t
+received any messages for more than 1 hour. Here is a possible implementation:
+func consumer(ch <-chan Event) {
+for {
+select {
+case event := <-ch:
+handle(event)
+case <-time.After(time.Hour):
+log.Println("warning: no messages received")
+}
+}
+}
+Here, we use select in two cases: receiving a message from ch and after 1 hour
+without messages (time.After is evaluated during each iteration, so the timeout is
+reset every time). At first sight, this code looks OK. However, it may lead to memory
+usage issues.
+ As we said, time.After returns a channel. We may expect this channel to be closed
+during each loop iteration, but this isn’t the case. The resources created by
+time.After (including the channel) are released once the timeout expires and use
+memory until that happens. How much memory? In Go 1.15, about 200 bytes of mem-
+ory are used per call to time.After. If we receive a significant volume of messages,
+such as 5 million per hour, our application will consume 1 GB of memory to store the
+time.After resources.
+ Can we fix this issue by closing the channel programmatically during each itera-
+tion? No. The returned channel is a <-chan time.Time, meaning it is a receive-only
+channel that can’t be closed.
+ We have several options to fix our example. The first is to use a context instead of
+time.After:
+func consumer(ch <-chan Event) {
+for {
+ctx, cancel := context.WithTimeout(context.Background(), time.Hour)
+select {
+case event := <-ch:
+cancel()
+handle(event)
+case <-ctx.Done():
+log.Println("warning: no messages received")
+}
+}
+}
+The downside of this approach is that we have to re-create a context during every sin-
+gle loop iteration. Creating a context isn’t the most lightweight operation in Go: for
+example, it requires creating a channel. Can we do better?
+Handles 
+the event
+Increments the 
+idle counter
+Main 
+loop
+Creates a context
+with timeout
+Cancels context if we 
+receive a message
+Context 
+cancellation

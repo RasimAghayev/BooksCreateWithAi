@@ -1,0 +1,76 @@
+79
+3.9
+#25: Unexpected side effects using slice append
+sCopy := make([]int, 2)
+copy(sCopy, s)
+f(sCopy)
+result := append(sCopy, s[2])
+// Use result
+}
+func f(s []int) {
+// Update s
+}
+Because we pass a copy to f, even if this function calls append, it will not lead to a side
+effect outside of the range of the first two elements. The downside of this option is
+that it makes the code more complex to read and adds an extra copy, which can be a
+problem if the slice is large.
+ The second option can be used to limit the range of potential side effects to the
+first two elements only. This option involves the so-called full slice expression:
+s[low:high:max]. This statement creates a slice similar to the one created with
+s[low:high], except that the resulting slice’s capacity is equal to max - low. Here’s an
+example when calling f:
+func main() {
+s := []int{1, 2, 3}
+f(s[:2:2])
+// Use s
+}
+func f(s []int) {
+// Update s
+}
+Here, the slice passed to f isn’t s[:2] but s[:2:2].
+Hence, the slice’s capacity is 2 – 0 = 2, as figure 3.12
+shows.
+ When passing s[:2:2], we can limit the range of
+effects to the first two elements. Doing so also pre-
+vents us from having to perform a slice copy.
+ When using slicing, we must remember that we
+can face a situation leading to unintended side
+effects. If the resulting slice has a length smaller than
+its capacity, append can mutate the original slice. If we
+want to restrict the range of possible side effects, we
+can use either a slice copy or the full slice expression,
+which prevents us from doing a copy.
+ In the next section, we continue discussing slices
+but in the context of potential memory leaks. 
+Copies the first two 
+elements of s into sCopy
+Appends s[2] to sCopy to 
+construct the resulting slice
+Passes a subslice using 
+the full slice expression
+1
+2
+10
+ptr
+len
+3
+cap
+3
+s1
+ptr
+len
+2
+cap
+3
+s[0:2]
+ptr
+len
+2
+cap
+2
+s[0:2:2]
+Figure 3.12
+s[0:2] creates a 
+two-length, three-capacity slice, 
+whereas s[0:2:2] creates a 
+two-length, two-capacity slice.

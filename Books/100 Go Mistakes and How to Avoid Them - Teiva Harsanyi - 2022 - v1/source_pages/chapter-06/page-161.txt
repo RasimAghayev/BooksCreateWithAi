@@ -1,0 +1,56 @@
+141
+6.6
+#47: Ignoring how defer arguments and receivers are evaluated
+ Now, what about using defer on a method with a pointer or value receiver? Let’s
+look at these questions. 
+6.6.2
+Pointer and value receivers
+In mistake #42, “Not knowing which type of receiver to use,” we said that a receiver
+can be either a value or a pointer. The same logic related to argument evaluation
+applies when we use defer on a method: the receiver is also evaluated immediately.
+Let’s understand the impact with both receiver types.
+ First, here’s an example that calls a method on a value receiver using defer but
+mutates this receiver afterward:
+func main() {
+s := Struct{id: "foo"}
+defer s.print()
+s.id = "bar"
+}
+type Struct struct {
+id string
+}
+func (s Struct) print() {
+fmt.Println(s.id)
+}
+We defer the call to the print method. As with arguments, calling defer makes the
+receiver be evaluated immediately. Hence, defer delays the method’s execution with a
+struct that contains an id field equal to foo. Therefore, this example prints foo.
+ Conversely, if the pointer is a receiver, the potential changes to the receiver after
+the call to defer are visible:
+func main() {
+s := &Struct{id: "foo"}
+defer s.print()
+s.id = "bar"
+}
+type Struct struct {
+id string
+}
+func (s *Struct) print() {
+fmt.Println(s.id)
+}
+The s receiver is also evaluated immediately. However, calling the method leads to
+copying the pointer receiver. Hence, the changes made to the struct referenced by the
+pointer are visible. This example prints bar.
+ In summary, when we call defer on a function or method, the call’s arguments are
+evaluated immediately. If we want to mutate the arguments provided to defer
+s is evaluated 
+immediately.
+Updates s.id 
+(not visible)
+foo
+s is a pointer, so it is evaluated immediately 
+but may reference another variable when 
+the defer method is executed.
+Updates s.id 
+(visible)
+bar

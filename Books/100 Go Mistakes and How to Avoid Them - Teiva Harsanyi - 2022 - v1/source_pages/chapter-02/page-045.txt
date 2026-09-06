@@ -1,0 +1,69 @@
+25
+2.6
+#6: Interface on the producer side
+2.6
+#6: Interface on the producer 
+side
+We saw in the previous section when inter-
+faces are considered valuable. But Go
+developers often misunderstand one ques-
+tion: where should an interface live?
+ Before delving into this topic, let’s
+make sure the terms we use throughout
+this section are clear:
+Producer side—An interface defined
+in the same package as the concrete
+implementation (see figure 2.4).
+Consumer side—An interface defined
+in an external package where it’s
+used (see figure 2.5).
+It’s common to see developers creating
+interfaces on the producer side, alongside
+the concrete implementation. This design
+is perhaps a habit from developers having
+a C# or a Java background. But in Go, in
+most cases this is not what we should do.
+ Let’s discuss the following example.
+Here, we create a specific package to store
+and retrieve customer data. Meanwhile,
+still in the same package, we decide that all the calls have to go through the following
+interface:
+package store
+type CustomerStorage interface {
+StoreCustomer(customer Customer) error
+GetCustomer(id string) (Customer, error)
+UpdateCustomer(customer Customer) error
+GetAllCustomers() ([]Customer, error)
+GetCustomersWithoutContract() ([]Customer, error)
+GetCustomersWithNegativeBalance() ([]Customer, error)
+}
+We might think we have some excellent reasons to create and expose this interface on
+the producer side. Perhaps it’s a good way to decouple the client code from the actual
+implementation. Or, perhaps we can foresee that it will help clients in creating test
+doubles. Whatever the reason, this isn’t a best practice in Go.
+ As mentioned, interfaces are satisfied implicitly in Go, which tends to be a game-
+changer compared to languages with an explicit implementation. In most cases, the
+Package foo
+Interface
+Satisﬁes
+Implementation
+The interface lives 
+on the producer side.
+Package bar
+Uses
+Some code
+Figure 2.4
+The interface is defined alongside 
+the concrete implementation.
+Package foo
+Implementation
+The interface lives 
+on the consumer side.
+Package bar
+Uses
+Some code
+Interface
+Satisﬁes
+Figure 2.5
+The interface is defined where it’s 
+used.

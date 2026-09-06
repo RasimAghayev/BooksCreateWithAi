@@ -1,0 +1,45 @@
+119
+5.4
+#39: Under-optimized string concatenation
+TrimRight iterates backward over each rune. If a rune is part of the provided set, the
+function removes it. If not, the function stops its iteration and returns the remaining
+string. This is why our example returns 123.
+ On the other hand, TrimSuffix returns a string without a provided trailing suffix:
+fmt.Println(strings.TrimSuffix("123oxo", "xo"))
+Because 123oxo ends with xo, this code prints 123o. Also, removing the trailing suffix
+isn’t a repeating operation, so TrimSuffix("123xoxo", "xo") returns 123xo.
+ The principle is the same for the left-hand side of a string with TrimLeft and
+TrimPrefix:
+fmt.Println(strings.TrimLeft("oxo123", "ox")) // 123
+fmt.Println(strings.TrimPrefix("oxo123", "ox")) /// o123
+strings.TrimLeft removes all the leading runes contained in a set and hence prints
+123. TrimPrefix removes the provided leading prefix, printing o123.
+ One last note related to this topic: Trim applies both TrimLeft and TrimRight on a
+string. So, it removes all the leading and trailing runes contained in a set:
+fmt.Println(strings.Trim("oxo123oxo", "ox")) // 123
+In summary, we have to make sure we understand the difference between TrimRight/
+TrimLeft, and TrimSuffix/TrimPrefix:
+
+TrimRight/TrimLeft removes the trailing/leading runes in a set.
+
+TrimSuffix/TrimPrefix removes a given suffix/prefix.
+In the next section, we will delve into string concatenation. 
+5.4
+#39: Under-optimized string concatenation
+When it comes to concatenating strings, there are two main approaches in Go, and
+one of them can be really inefficient in some conditions. Let’s examine this topic to
+understand which option we should favor and when.
+ Let’s write a concat function that concatenates all the string elements of a slice
+using the += operator:
+func concat(values []string) string {
+s := ""
+for _, value := range values {
+s += value
+}
+return s
+}
+During each iteration, the += operator concatenates s with the value string. At first
+sight, this function may not look wrong. But with this implementation, we forget one
+of the core characteristics of a string: its immutability. Therefore, each iteration
+doesn’t update s; it reallocates a new string in memory, which significantly impacts the
+performance of this function.

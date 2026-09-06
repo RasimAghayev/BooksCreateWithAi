@@ -1,0 +1,49 @@
+89
+3.12
+#28: Maps and memory leaks
+1,000 customers. The map size will remain constant, so we shouldn’t worry about the
+fact that a map cannot shrink.
+ However, let’s say we want to store one hour of data. Meanwhile, our company has
+decided to have a big promotion for Black Friday: in one hour, we may have millions
+of customers connected to our system. But a few days after Black Friday, our map will
+contain the same number of buckets as during the peak time. This explains why we
+can experience high memory consumption that doesn’t significantly decrease in such
+a scenario.
+ What are the solutions if we don’t want to manually restart our service to clean the
+amount of memory consumed by the map? One solution could be to re-create a copy
+of the current map at a regular pace. For example, every hour, we can build a new
+map, copy all the elements, and release the previous one. The main drawback of this
+option is that following the copy and until the next garbage collection, we may con-
+sume twice the current memory for a short period.
+ Another solution would be to change the map type to store an array pointer:
+map[int]*[128]byte. It doesn’t solve the fact that we will have a significant number of
+buckets; however, each bucket entry will reserve the size of a pointer for the value
+instead of 128 bytes (8 bytes on 64-bit systems and 4 bytes on 32-bit systems).
+ Coming back to the original scenario, let’s compare the memory consumption for
+each map type following each step. The following table shows the comparison.
+As we can see, after removing all the elements, the amount of required memory is sig-
+nificantly less with a map[int]*[128]byte type. Also, in this case, the amount of
+required memory is less significant during peak times due to some optimizations to
+reduce the memory consumed.
+NOTE
+If a key or a value is over 128 bytes, Go won’t store it directly in the
+map bucket. Instead, Go stores a pointer to reference the key or the value.
+As we have seen, adding n elements to a map and then deleting all the elements
+means keeping the same number of buckets in memory. So, we must remember that
+because a Go map can only grow in size, so does its memory consumption. There is no
+automated strategy to shrink it. If this leads to high memory consumption, we can try
+different options such as forcing Go to re-create the map or using pointers to check if
+it can be optimized.
+ For the last section of this chapter, let’s discuss comparing values in Go. 
+Step
+map[int][128]byte
+map[int]*[128]byte
+Allocate an empty map.
+0 MB
+0 MB
+Add 1 million elements.
+461 MB
+182 MB
+Remove all the elements and run a GC.
+293 MB
+38 MB

@@ -1,0 +1,55 @@
+202
+CHAPTER 9
+Concurrency: Practice
+guarantee that the order for the messages sent is the same as for the messages
+received, so we can ensure that the disconnection is received last.
+If we fall into the case where we have multiple producer goroutines, it may be impossi-
+ble to guarantee which one writes first. Hence, whether we have an unbuffered
+messageCh channel or a single channel, it will lead to a race condition among the pro-
+ducer goroutines. In that case, we can implement the following solution:
+1
+Receive from either messageCh or disconnectCh.
+2
+If a disconnection is received
+– Read all the existing messages in messageCh, if any.
+– Then return.
+Here is the solution:
+for {
+select {
+case v := <-messageCh:
+fmt.Println(v)
+case <-disconnectCh:
+for {
+select {
+case v := <-messageCh:
+fmt.Println(v)
+default:
+fmt.Println("disconnection, return")
+return
+}
+}
+}
+}
+This solution uses an inner for/select with two cases: one on messageCh and a
+default case. Using default in a select statement is chosen only if none of the other
+cases match. In this case, it means we will return only after we have received all the
+remaining messages in messageCh.
+ Let’s look at an example of how this code works. We will consider the case where
+we have two messages in messageCh and one disconnection in disconnectCh, as
+shown in figure 9.2.
+Inner for/select
+Reads the remaining 
+messages
+Then 
+returns
+messageCh
+Receiver
+1
+2
+disconnectCh
+select {
+  case v := <-messageCh:
+  case <-disconnectCh:
+}
+Figure 9.2
+Initial state

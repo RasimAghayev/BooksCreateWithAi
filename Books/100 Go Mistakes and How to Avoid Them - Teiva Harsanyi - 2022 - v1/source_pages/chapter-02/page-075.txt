@@ -1,0 +1,24 @@
+55
+Summary
+Relying on generics and type parameters can prevent writing boilerplate code
+to factor out elements or behaviors. However, do not use type parameters pre-
+maturely, but only when you see a concrete need for them. Otherwise, they
+introduce unnecessary abstractions and complexity.
+Using type embedding can also help avoid boilerplate code; however, ensure
+that doing so doesn’t lead to visibility issues where some fields should have
+remained hidden.
+To handle options conveniently and in an API-friendly manner, use the func-
+tional options pattern.
+Following a layout such as project-layout can be a good way to start structuring
+Go projects, especially if you are looking for existing conventions to standardize
+a new project.
+Naming is a critical piece of application design. Creating packages such as
+common, util, and shared doesn’t bring much value for the reader. Refactor
+such packages into meaningful and specific package names.
+To avoid naming collisions between variables and packages, leading to confu-
+sion or perhaps even bugs, use unique names for each one. If this isn’t feasible,
+use an import alias to change the qualifier to differentiate the package name
+from the variable name, or think of a better name.
+To help clients and maintainers understand your code’s purpose, document
+exported elements.
+To improve code quality and consistency, use linters and formatters.

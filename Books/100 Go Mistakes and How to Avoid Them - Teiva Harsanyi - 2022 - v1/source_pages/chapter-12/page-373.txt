@@ -1,0 +1,97 @@
+353
+12.10
+#100: Not understanding the impacts of running Go in Docker and Kubernetes
+ Let’s imagine a scenario where multiple goroutines are currently being executed
+on four different threads. Each thread is scheduled on a different core (1, 3, 4, and
+8); see figure 12.48.
+During the first period of 100 ms, four threads are busy, so we consume 400 out of 400
+ms: 100% of the quota. During the second period, we consume 360 out of 400 ms, and
+so on. Everything is fine because the application consumes less than the quota.
+ However, let’s remember that GOMAXPROCS is set to 8. Therefore, in the worst-case
+scenario, we can have eight threads, each scheduled on a different core (figure 12.49).
+100 ms
+100 ms
+100 ms
+100 ms
+100 ms
+100 ms
+100 ms
+100 ms
+75 ms
+100 ms
+CPU cores
+1
+2
+3
+4
+5
+6
+7
+8
+CFS periods
+100 ms
+100 ms
+100 ms
+Time
+Quota: 400 ms
+60 ms
+Used: 400 ms
+Quota: 400 ms
+Used: 360 ms
+Quota: 400 ms
+Used: 275 ms
+Figure 12.48
+For every 100 ms, the 
+application consumes 
+less than 400 ms.
+50 ms
+50 ms
+50 ms
+50 ms
+50 ms
+50 ms
+50 ms
+50 ms
+Throttling
+50 ms
+50 ms
+50 ms
+50 ms
+50 ms
+50 ms
+50 ms
+50 ms
+Throttling
+50 ms
+50 ms
+50 ms
+50 ms
+50 ms
+50 ms
+50 ms
+50 ms
+Throttling
+1
+2
+3
+4
+5
+6
+7
+8
+Quota: 400 ms
+Used: 400 ms
+Quota: 400 ms
+Used: 400 ms
+Quota: 400 ms
+Used: 400 ms
+CPU cores
+CFS periods
+100 ms
+100 ms
+100 ms
+Time
+Figure 12.49
+During each 100 ms 
+period, the CPU is 
+throttled after 50 ms.

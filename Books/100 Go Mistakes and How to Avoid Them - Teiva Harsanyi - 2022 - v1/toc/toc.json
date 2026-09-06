@@ -1,0 +1,90 @@
+{
+  "book": "100 Go Mistakes and How to Avoid Them",
+  "page_offset": 20,
+  "chapters": [
+    {
+      "chapter": 1,
+      "title": "Go: Simple to learn but hard to master",
+      "book_pages": "1-6",
+      "start_pdf_page": 21,
+      "end_pdf_page": 26
+    },
+    {
+      "chapter": 2,
+      "title": "Code and project organization (#1-#16)",
+      "book_pages": "7-55",
+      "start_pdf_page": 27,
+      "end_pdf_page": 75
+    },
+    {
+      "chapter": 3,
+      "title": "Data types (#17-#29)",
+      "book_pages": "56-94",
+      "start_pdf_page": 76,
+      "end_pdf_page": 114
+    },
+    {
+      "chapter": 4,
+      "title": "Control structures (#30-#35)",
+      "book_pages": "95-112",
+      "start_pdf_page": 115,
+      "end_pdf_page": 132
+    },
+    {
+      "chapter": 5,
+      "title": "Strings (#36-#41)",
+      "book_pages": "113-125",
+      "start_pdf_page": 133,
+      "end_pdf_page": 145
+    },
+    {
+      "chapter": 6,
+      "title": "Functions and methods (#42-#47)",
+      "book_pages": "126-142",
+      "start_pdf_page": 146,
+      "end_pdf_page": 162
+    },
+    {
+      "chapter": 7,
+      "title": "Error management (#48-#54)",
+      "book_pages": "143-161",
+      "start_pdf_page": 163,
+      "end_pdf_page": 181
+    },
+    {
+      "chapter": 8,
+      "title": "Concurrency: Foundations (#55-#60)",
+      "book_pages": "162-192",
+      "start_pdf_page": 182,
+      "end_pdf_page": 212
+    },
+    {
+      "chapter": 9,
+      "title": "Concurrency: Practice (#61-#74)",
+      "book_pages": "193-233",
+      "start_pdf_page": 213,
+      "end_pdf_page": 253
+    },
+    {
+      "chapter": 10,
+      "title": "The standard library (#75-#81)",
+      "book_pages": "234-261",
+      "start_pdf_page": 254,
+      "end_pdf_page": 281
+    },
+    {
+      "chapter": 11,
+      "title": "Testing (#82-#90)",
+      "book_pages": "262-298",
+      "start_pdf_page": 282,
+      "end_pdf_page": 318
+    },
+    {
+      "chapter": 12,
+      "title": "Optimizations (#91-#100)",
+      "book_pages": "299-354",
+      "start_pdf_page": 319,
+      "end_pdf_page": 374
+    }
+  ]
+}

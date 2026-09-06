@@ -1,0 +1,52 @@
+9
+2.2
+#2: Unnecessary nested code
+var client *http.Client
+var err error
+if tracing {
+client, err = createClientWithTracing()
+if err != nil {
+return err
+}
+} else {
+// Same logic
+}
+Instead of assigning to a temporary variable first, we can directly assign the result to
+client.
+ Both options are perfectly valid. The main difference between the two alternatives
+is that we perform only one assignment in the second option, which may be consid-
+ered easier to read. Also, with the second option, we can mutualize and implement
+error handling outside the if/else statements, as this example shows:
+if tracing {
+client, err = createClientWithTracing()
+} else {
+client, err = createDefaultClient()
+}
+if err != nil {
+// Common error handling
+}
+Variable shadowing occurs when a variable name is redeclared in an inner block, but we
+saw that this practice is prone to mistakes. Imposing a rule to forbid shadowed variables
+depends on personal taste. For example, sometimes it can be convenient to reuse an
+existing variable name like err for errors. Yet, in general, we should remain cautious
+because we now know that we can face a scenario where the code compiles, but the vari-
+able that receives the value is not the one expected. Later in this chapter, we will also see
+how to detect shadowed variables, which may help us spot possible bugs.
+ The following section shows why it is important to avoid abusing nested code. 
+2.2
+#2: Unnecessary nested code
+A mental model applied to software is an internal representation of a system’s behav-
+ior. While programming, we need to maintain mental models (about overall code
+interactions and function implementations, for example). Code is qualified as read-
+able based on multiple criteria such as naming, consistency, formatting, and so forth.
+Readable code requires less cognitive effort to maintain a mental model; hence, it is
+easier to read and maintain.
+ A critical aspect of readability is the number of nested levels. Let’s do an exercise.
+Suppose that we are working on a new project and need to understand what the fol-
+lowing join function does:
+func join(s1, s2 string, max int) (string, error) {
+if s1 == "" {
+Declares an err variable
+Uses the assignment operator to 
+assign the *http.Client returned 
+to the client variable directly

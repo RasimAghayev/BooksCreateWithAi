@@ -1,0 +1,49 @@
+258
+CHAPTER 10
+The standard library
+Here’s an example of an HTTP client that overrides these timeouts:
+client := &http.Client{
+Timeout: 5 * time.Second,
+Transport: &http.Transport{
+DialContext: (&net.Dialer{
+Timeout: time.Second,
+}).DialContext,
+TLSHandshakeTimeout:
+time.Second,
+ResponseHeaderTimeout: time.Second,
+},
+}
+We create a client with a 1-second timeout for the dial, the TLS handshake, and read-
+ing the response header. Meanwhile, each request has a global 5-second timeout.
+ The second aspect to bear in mind about the default HTTP client is how connec-
+tions are handled. By default, the HTTP client does connection pooling. The default
+client reuses connections (it can be disabled by setting http.Transport.Disable-
+KeepAlives to true). There’s an extra timeout to specify how long an idle connec-
+tion is kept in the pool: http.Transport.IdleConnTimeout. The default value is 90
+seconds, which means the connection can be reused for other requests during this
+time. After that, if the connection hasn’t been reused, it will be closed.
+ To configure the number of connections in the pool, we must override
+http.Transport.MaxIdleConns. This value is set to 100 by default. But there’s some-
+thing important to note: the http.Transport.MaxIdleConnsPerHost limit per host,
+which by default is set to 2. For example, if we trigger 100 requests to the same host,
+only 2 connections will remain in the connection pool after that. Hence, if we trigger
+100 requests again, we will have to reopen at least 98 connections. This configuration
+can also impact the average latency if we have to deal with a significant number of par-
+allel requests to the same host.
+ For production-grade systems, we probably want to override the default timeouts.
+And tweaking the parameters related to connection pooling can also have a signifi-
+cant impact on the latency. 
+HTTP client timeout
+You may have encountered the following error when specifying http.Client
+.Timeout:
+net/http: request canceled (Client.Timeout exceeded while awaiting
+headers)
+This error means the endpoint failed to respond on time. We get this error about
+headers because reading them is the first step while waiting for a response.
+Global request 
+timeout
+Dial timeout
+TLS handshake 
+timeout
+Response 
+header timeout

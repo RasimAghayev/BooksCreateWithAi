@@ -1,0 +1,56 @@
+249
+10.5
+#79: Not closing transient resources
+}
+defer func() {
+err := rows.Close()
+if err != nil {
+log.Printf("failed to close rows: %v\n", err)
+}
+}()
+var (
+department string
+age
+int
+)
+for rows.Next() {
+err := rows.Scan(&department, &age)
+if err != nil {
+return "", 0, err
+}
+}
+return department, age, nil
+}
+In this function, we handle three errors: while executing the query, closing the rows,
+and scanning a row. But this isn’t enough. We have to know that the for rows
+.Next() {} loop can break either when there are no more rows or when an error
+happens while preparing the next row. Following a row iteration, we should call
+rows.Err to distinguish between the two cases:
+func get(ctx context.Context, db *sql.DB, id string) (string, int, error) {
+// ...
+for rows.Next() {
+// ...
+}
+if err := rows.Err(); err != nil {
+return "", 0, err
+}
+return department, age, nil
+}
+This is the best practice to keep in mind: because rows.Next can stop either when we
+have iterated over all the rows or when an error happens while preparing the next
+row, we should check rows.Err following the iteration.
+ Let’s now discuss a frequent mistake: forgetting to close transient resources. 
+10.5
+#79: Not closing transient resources
+Pretty frequently, developers work with transient (temporary) resources that must be
+closed at some point in the code: for example, to avoid leaks on disk or in memory.
+Structs can generally implement the io.Closer interface to convey that a transient
+resource has to be closed. Let’s look at three common examples of what happens
+when resources aren’t correctly closed and how to handle them properly.
+Handles errors while 
+closing the rows
+Handles errors while 
+scanning a row
+Checks rows.Err to determine 
+whether the previous loop 
+stopped because of an error

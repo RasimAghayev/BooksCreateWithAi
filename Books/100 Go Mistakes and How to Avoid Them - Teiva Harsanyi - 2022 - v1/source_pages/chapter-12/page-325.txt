@@ -1,0 +1,54 @@
+305
+12.1
+#91: Not understanding CPU caches
+Foo elements in the slice and 16 elements in the slices of Bar. Each black bar rep-
+resents an int64 that is read to compute the sum, whereas each gray bar represents an
+int64 that is skipped.
+ In the case of sumFoo, we receive a slice of structs containing two fields, a and b.
+Therefore, we have a succession of a and b in memory. Conversely, in the case of sum-
+Bar, we receive a struct containing two slices, a and b. Therefore, all the elements of a
+are allocated contiguously.
+ This difference doesn’t lead to any memory compaction optimization. But the goal
+of both functions is to iterate over each a, and doing so requires four cache lines in
+one case and only two cache lines in the other.
+ If we benchmark these two functions, sumBar is faster (about 20% on my
+machine). The main reason is a better spatial locality that makes the CPU fetch fewer
+cache lines from memory.
+ This example demonstrates how spatial locality can have a substantial impact on
+performance. To optimize an application, we should organize data to get the most
+value out of each individual cache line.
+ However, is using spatial locality enough to help the CPU? We are still missing one
+crucial characteristic: predictability. 
+12.1.4 Predictability
+Predictability refers to the ability of a CPU to anticipate what the application will do to
+speed up its execution. Let’s see a concrete example where a lack of predictability
+negatively impacts application performance.
+ Again, let’s look at two functions that sum a list of elements. The first iterates over
+a linked list and sums all the values:
+type node struct {
+value int64
+next
+*node
+}
+func linkedList(n *node) int64 {
+var total int64
+for n != nil {
+total += n.value
+n = n.next
+}
+return total
+}
+This function receives a linked list, iterates over it, and increments a total.
+ On the other side, let’s again take the sum2 function that iterates over a slice, one
+element out of two:
+func sum2(s []int64) int64 {
+var total int64
+for i := 0; i < len(s); i+=2 {
+Linked list 
+data structure
+Iterates over 
+each node
+Increments 
+total
+Iterates over every 
+two elements

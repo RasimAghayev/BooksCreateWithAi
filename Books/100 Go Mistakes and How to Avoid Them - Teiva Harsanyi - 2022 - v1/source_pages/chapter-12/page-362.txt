@@ -1,0 +1,25 @@
+342
+CHAPTER 12
+Optimizations
+Figure 12.37 shows the kind of data we can access. For example, the amount of heap
+memory held by the newTopicProducer method (top left) has decreased (–513 KB).
+In contrast, the amount held by updateMetadata (bottom right) has increased (+512
+KB). Slow increases are normal. The second heap profile may have been calculated in
+the middle of a service call, for example. We can repeat this process or wait longer;
+the important part is to track steady increases in allocations of a specific object.
+NOTE
+Another type of profiling related to the heap is allocs, which reports
+allocations. Heap profiling shows the current state of the heap memory. To
+get insights about past memory allocations since the application started, we
+can use allocations profiling. As discussed, because stack allocations are
+cheap, they aren’t part of this profiling, which only focuses on the heap. 
+GOROUTINES PROFILING
+The goroutine profile reports the stack trace of all the current goroutines in an appli-
+cation. We can download a file using debug/pprof/goroutine/?debug=0 and use go
+tool again. Figure 12.38 shows the kind of information we can get.
+Figure 12.37
+The 
+differences between the 
+two heap profiles
+Figure 12.38
+Goroutine graph

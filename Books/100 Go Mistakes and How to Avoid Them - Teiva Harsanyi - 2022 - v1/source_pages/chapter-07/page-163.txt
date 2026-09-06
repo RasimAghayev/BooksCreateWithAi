@@ -1,0 +1,19 @@
+143
+Error management
+Error management is a fundamental aspect of building robust and observable
+applications, and it should be as important as any other part of a codebase. In Go,
+error management doesn’t rely on the traditional try/catch mechanism as most
+programming languages do. Instead, errors are returned as normal return values.
+ This chapter will cover the most common mistakes related to errors.
+7.1
+#48: Panicking
+It’s pretty common for Go newcomers to be somewhat confused about error han-
+dling. In Go, errors are usually managed by functions or methods that return an
+This chapter covers
+Understanding when to panic
+Knowing when to wrap an error
+Comparing error types and error values efficiently 
+since Go 1.13
+Handling errors idiomatically
+Understanding how to ignore an error
+Handling errors in defer calls

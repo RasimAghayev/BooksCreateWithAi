@@ -1,0 +1,44 @@
+54
+CHAPTER 2
+Code and project organization
+Again, this section’s goal isn’t to list all the available linters. However, if you’re not a
+regular user of linters, here is a list that you may want to use daily:
+https://golang.org/cmd/vet/—A standard Go analyzer
+https://github.com/kisielk/errcheck—An error checker
+https://github.com/fzipp/gocyclo—A cyclomatic complexity analyzer
+https://github.com/jgautheron/goconst—A repeated string constants analyzer
+Besides linters, we should also use code formatters to fix code style. Here is a list of
+some code formatters for you to try:
+https://golang.org/cmd/gofmt/—A standard Go code formatter
+https://godoc.org/golang.org/x/tools/cmd/goimports—A 
+standard 
+Go
+imports formatter
+Meanwhile, we should also look at golangci-lint (https://github.com/golangci/
+golangci-lint). It’s a linting tool that provides a facade on top of many useful linters
+and formatters. Also, it allows running the linters in parallel to improve analysis
+speed, which is quite handy.
+ Linters and formatters are a powerful way to improve the quality and consistency
+of our codebase. Let’s take the time to understand which one we should use and make
+sure we automate their execution (such as a CI or Git precommit hook). 
+Summary
+Avoiding shadowed variables can help prevent mistakes like referencing the
+wrong variable or confusing readers.
+Avoiding nested levels and keeping the happy path aligned on the left makes
+building a mental code model easier.
+When initializing variables, remember that init functions have limited error
+handling and make state handling and testing more complex. In most cases,
+initializations should be handled as specific functions.
+Forcing the use of getters and setters isn’t idiomatic in Go. Being pragmatic and
+finding the right balance between efficiency and blindly following certain idi-
+oms should be the way to go.
+Abstractions should be discovered, not created. To prevent unnecessary com-
+plexity, create an interface when you need it and not when you foresee needing
+it, or if you can at least prove the abstraction to be a valid one.
+Keeping interfaces on the client side avoids unnecessary abstractions.
+To prevent being restricted in terms of flexibility, a function shouldn’t return
+interfaces but concrete implementations in most cases. Conversely, a function
+should accept interfaces whenever possible.
+Only use any if you need to accept or return any possible type, such as json.
+Marshal. Otherwise, any doesn’t provide meaningful information and can lead
+to compile-time issues by allowing a caller to call methods with any data type.

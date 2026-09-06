@@ -1,0 +1,53 @@
+185
+8.5
+#59: Not understanding the concurrency impacts of a workload type
+this situation, the Go scheduler may also eventually assign all the goroutines to a dif-
+ferent OS thread, but there’s no guarantee about when this should occur. However,
+since one of the main goals of the Go scheduler is to optimize resources (here, the dis-
+tribution of the goroutines), we should end up in such a scenario given the nature of
+the workloads.
+Figure 8.13
+At most two goroutines are running.
+This scenario is still not optimal, because at most two goroutines are running. Let’s say
+the machine is running only our application (other than the OS processes), so P2 and
+P3 are free. Eventually, the OS should move M2 and M3 as shown in figure 8.14.
+Figure 8.14
+At most four goroutines are now running.
+Here, the OS scheduler decided to move M2 to P2 and M3 to P3. Again, there is no
+guarantee about when this situation will happen. But given a machine executing only
+our four-thread application, this should be the final picture.
+ The situation has changed; it has become optimal. The four goroutines are run-
+ning in separate threads and the threads on separate cores. This approach reduces
+the amount of context switching at both the goroutine and thread levels.
+P0
+M0
+Local P0 queue
+P1
+Local P1 queue
+P2
+Local P2 queue
+P3
+Local P3 queue
+M2
+M3
+M1
+G (runnable)
+G (runnable)
+G (executing)
+G (executing)
+P0
+Local P0 queue
+P1
+Local P1 queue
+P2
+Local P2 queue
+P3
+Local P3 queue
+M3
+G (executing)
+M2
+G (executing)
+M1
+G (executing)
+M0
+G (executing)

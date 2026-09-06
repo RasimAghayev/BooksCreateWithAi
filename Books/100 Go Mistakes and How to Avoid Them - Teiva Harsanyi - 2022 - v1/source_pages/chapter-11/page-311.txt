@@ -1,0 +1,36 @@
+291
+11.8
+#89: Writing inaccurate benchmarks
+variable (we discuss these concepts in mistake #95, “Not understanding stack
+vs. heap”). Therefore, we should write each result to a local variable to limit
+the footprint during each loop iteration.
+If we run these two benchmarks, we now get a significant difference in the results:
+cpu: Intel(R) Core(TM) i5-7360U CPU @ 2.30GHz
+BenchmarkPopcnt1-4
+1000000000
+0.2858 ns/op
+BenchmarkPopcnt2-4
+606402058
+1.993 ns/op
+BenchmarkPopcnt2 is the accurate version of the benchmark. It guarantees that we
+avoid the inlining optimizations, which can artificially lower the execution time or
+even remove the call to the function under test. Relying on the results of Benchmark-
+Popcnt1 could have led to wrong assumptions.
+ Let’s remember the pattern to avoid compiler optimizations fooling benchmark
+results: assign the result of the function under test to a local variable, and then assign
+the latest result to a global variable. This best practice also prevents us from making
+incorrect assumptions. 
+11.8.4 Being fooled by the observer effect
+In physics, the observer effect is the disturbance of an observed system by the act of
+observation. This effect can also be seen in benchmarks and can lead to wrong
+assumptions about results. Let’s look at a concrete example and then try to mitigate it.
+ We want to implement a function receiving a matrix of int64 elements. This
+matrix has a fixed number of 512 columns, and we want to compute the total sum of
+the first eight columns, as shown in figure 11.2.
+Figure 11.2
+Computing the sum of the first eight columns
+...
+We iterate over the first eight columns for each line.
+...
+...
+512 columns in total

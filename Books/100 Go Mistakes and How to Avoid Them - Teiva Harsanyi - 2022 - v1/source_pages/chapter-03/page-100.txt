@@ -1,0 +1,62 @@
+80
+CHAPTER 3
+Data types
+3.10
+#26: Slices and memory leaks
+This section shows that slicing an existing slice or array can lead to memory leaks in
+some conditions. We discuss two cases: one where the capacity is leaking and another
+that’s related to pointers.
+3.10.1 Leaking capacity
+For the first case, leaking capacity, let’s imagine implementing a custom binary proto-
+col. A message can contain 1 million bytes, and the first 5 bytes represent the message
+type. In our code, we consume these messages, and for auditing purposes, we want to
+store the latest 1,000 message types in memory. This is the skeleton of our function:
+func consumeMessages() {
+for {
+msg := receiveMessage()
+// Do something with msg
+storeMessageType(getMessageType(msg))
+}
+}
+func getMessageType(msg []byte) []byte {
+return msg[:5]
+}
+The getMessageType function computes the message type by slicing the input slice.
+We test this implementation, and everything is fine. However, when we deploy our
+application, we notice that our application consumes about 1 GB of memory. How is
+that possible?
+ The slicing operation on msg using msg[:5] creates a five-length slice. However, its
+capacity remains the same as the initial slice. The remaining elements are still allo-
+cated in memory, even if eventually msg is not referenced. Let’s look at an example
+with a large message length of 1 million bytes, as shown in figure 3.13.
+Figure 3.13
+After a new loop iteration, msg is no longer used. 
+However, its backing array will still be used by msg[:5].
+Receives a new []byte 
+slice assigned to msg
+Stores the latest 1,000 
+message types in memory
+Computes the message 
+type by slicing msg
+99
+108
+97
+ptr
+len
+1M
+cap
+1M
+msg
+ptr
+len
+5
+cap
+1M
+msg[:5]
+114
+97
+226
+...
+1 million elements
+153
+165

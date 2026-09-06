@@ -1,0 +1,41 @@
+300
+CHAPTER 12
+Optimizations
+because there’s a need to do so, such as making our customers happy or reducing our
+costs. Throughout this chapter, we discuss common optimization techniques; some
+are specific to Go, and some aren’t. We also discuss methods to identify bottlenecks so
+we don’t work blindly.
+12.1
+#91: Not understanding CPU caches
+Mechanical sympathy is a term coined by Jackie Stewart, a three-time F1 world
+champion:
+You don’t have to be an engineer to be a racing driver, but you do have to have
+mechanical sympathy.
+In a nutshell, when we understand how a system is designed to be used, be it an F1 car,
+an airplane, or a computer, we can align with the design to gain optimal performance.
+Throughout this section, we discuss concrete examples where a mechanical sympathy
+for how CPU caches work can help us optimize Go applications.
+12.1.1 CPU architecture
+First, let’s understand the fundamentals of CPU architecture and why CPU caches are
+important. We will take as an example the Intel Core i5-7300.
+ Modern CPUs rely on caching to speed up memory access, in most cases via three
+caching levels: L1, L2, and L3. On the i5-7300, here are the sizes of these caches:
+L1: 64 KB
+L2: 256 KB
+L3: 4 MB
+The i5-7300 has two physical cores but four logical cores (also called virtual cores or
+threads). In the Intel family, dividing a physical core into multiple logical cores is
+called Hyper-Threading.
+ Figure 12.1 gives an overview of the Intel Core i5-7300 (Tn stands for thread n).
+Each physical core (core 0 and core 1) is divided into two logical cores (thread 0 and
+thread 1). The L1 cache is split into two sub-caches: L1D for data and L1I for instruc-
+tions (each 32 KB). Caching isn’t solely related to data—when a CPU executes an
+application, it can also cache some instructions with the same rationale: to speed up
+overall execution.
+ The closer a memory location is to a logical core, the faster accesses are (see
+http://mng.bz/o29v):
+L1: about 1 ns
+L2: about 4 times slower than L1
+L3: about 10 times slower than L1
+The physical location of the CPU caches can also explain these differences. L1 and L2
+are called on-die, meaning they belong to the same piece of silicon as the rest of the

@@ -1,0 +1,38 @@
+{
+  "📘 title_original": "100 Go Mistakes and How to Avoid Them",
+  "🔤 filename_safe": "100 Go Mistakes and How to Avoid Them - Teiva Harsanyi - 2022 - v1",
+  "📚 book": {
+    "📖 title": "100 Go Mistakes and How to Avoid Them",
+    "🧑‍💻 author": "Teiva Harsanyi",
+    "📅 year": 2022,
+    "📖 version": 1,
+    "📄 pages": 364,
+    "🔢 isbn": "9781617299599",
+    "🏢 publisher": "Manning Publications",
+    "📚 series": ""
+  },
+  "🎯 classification": {
+    "💻 primary_language": "Go",
+    "🎯 level": 4,
+    "📛 level_name": "Advanced",
+    "🌟 level_icon": "🚀",
+    "🌐 domains": ["Software Engineering", "Backend Development", "Code Quality", "Performance Optimization"]
+  },
+  "🛠️ technologies": ["Go", "goroutines", "channels", "mutex", "sync", "context", "testing", "benchmark", "profiling", "pprof", "escape analysis", "GC", "Docker", "Kubernetes"],
+  "🏷️ tags": ["#go", "#golang", "#mistakes", "#bestpractices", "#concurrency", "#performance", "#testing", "#optimization", "#memory", "#api", "#advanced"],
+  "📑 chapters": [
+    {"chapter": 1, "title": "Go: Simple to learn but hard to master", "pages": "1-6", "pdf_pages": "21-26"},
+    {"chapter": 2, "title": "Code and project organization (#1-#16)", "pages": "7-55", "pdf_pages": "27-75"},
+    {"chapter": 3, "title": "Data types (#17-#29)", "pages": "56-94", "pdf_pages": "76-114"},
+    {"chapter": 4, "title": "Control structures (#30-#35)", "pages": "95-112", "pdf_pages": "115-132"},
+    {"chapter": 5, "title": "Strings (#36-#41)", "pages": "113-125", "pdf_pages": "133-145"},
+    {"chapter": 6, "title": "Functions and methods (#42-#47)", "pages": "126-142", "pdf_pages": "146-162"},
+    {"chapter": 7, "title": "Error management (#48-#54)", "pages": "143-161", "pdf_pages": "163-181"},
+    {"chapter": 8, "title": "Concurrency: Foundations (#55-#60)", "pages": "162-192", "pdf_pages": "182-212"},
+    {"chapter": 9, "title": "Concurrency: Practice (#61-#74)", "pages": "193-233", "pdf_pages": "213-253"},
+    {"chapter": 10, "title": "The standard library (#75-#81)", "pages": "234-261", "pdf_pages": "254-281"},
+    {"chapter": 11, "title": "Testing (#82-#90)", "pages": "262-298", "pdf_pages": "282-318"},
+    {"chapter": 12, "title": "Optimizations (#91-#100)", "pages": "299-354", "pdf_pages": "319-374"}
+  ],
+  "page_offset": 20
+}

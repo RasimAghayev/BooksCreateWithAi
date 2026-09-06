@@ -1,0 +1,20 @@
+339
+12.8
+#98: Not using Go diagnostics tooling
+can change the interruption rate (even to less than 10 ms). But in most cases, 10 ms
+should be enough, and in decreasing this value (meaning increasing the rate), we
+should be careful not to harm performance. After 30 seconds, we download the
+results of the CPU profiler.
+From this file, we can navigate to the results using go tool:
+$ go tool pprof -http=:8080 <file>
+This command opens a web UI showing the call graph. Figure 12.34 shows an exam-
+ple taken from an application. The larger the arrow, the more it was a hot path. We
+can then navigate into this graph and get execution insights.
+Figure 12.34
+The call graph of an application during 30 seconds
+CPU profiling during benchmarks
+We can also enable the CPU profiler using the -cpuprofile flag, such as when run-
+ning a benchmark:
+$ go test -bench=. -cpuprofile profile.out
+This command produces the same type of file that can be downloaded via /debug/
+pprof/profile.

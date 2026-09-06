@@ -1,0 +1,58 @@
+334
+CHAPTER 12
+Optimizations
+var pool = sync.Pool{
+New: func() any {
+return make([]byte, 1024)
+},
+}
+func write(w io.Writer) {
+buffer := pool.Get().([]byte)
+buffer = buffer[:0]
+defer pool.Put(buffer)
+getResponse(buffer)
+_, _ = w.Write(buffer)
+}
+We define a new pool using the sync.Pool struct and set the factory function to create
+a new []byte with a length of 1,024 elements. In the write function, we try to retrieve
+one buffer from the pool. If the pool is empty, the function creates a new buffer; oth-
+erwise, it selects an arbitrary buffer from the pool and returns it. One crucial step is to
+reset the buffer using buffer[:0], as this slice may already have been used. Then we
+defer the call to Put to put the slice back into the pool.
+ With this new version, calling write doesn’t lead to creating a new []byte slice for
+every call. Instead, we can reuse existing allocated slices. In the worst-case scenario—
+for example, after a GC—the function will create a new buffer; however, the amor-
+tized allocation cost is reduced.
+ In summary, if we frequently allocate many objects of the same type, we can con-
+sider using sync.Pool. It is a set of temporary objects that can help us prevent reallo-
+cating the same kind of data repeatedly. And sync.Pool is safe for use by multiple
+goroutines simultaneously.
+ Next, let’s discuss the concept of inlining to understand that this computer optimi-
+zation is worth knowing about. 
+12.7
+#97: Not relying on inlining
+Inlining refers to replacing a function call with the body of the function. Nowadays,
+inlining is done automatically by compilers. Understanding the fundamentals of inlin-
+ing can also be a way to optimize particular code paths of an application.
+ Let’s see a concrete example of inlining with a simple sum function that sums two
+int types:
+func main() {
+a := 3
+b := 2
+s := sum(a, b)
+println(s)
+}
+func sum(a int, b int) int {
+return a + b
+}
+Creates a pool and sets 
+the factory function
+Gets a []byte from the 
+pool or creates one
+Resets the buffer
+Puts the buffer 
+back into the pool
+Writes the response 
+to the provided buffer
+Inlines the 
+function

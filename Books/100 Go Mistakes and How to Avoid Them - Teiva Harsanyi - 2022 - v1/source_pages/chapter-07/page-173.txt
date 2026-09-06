@@ -1,0 +1,48 @@
+153
+7.4
+#51: Checking an error value inaccurately
+ We want to design a Query method that allows us to execute a query to a database.
+This method returns a slice of rows. How should we handle the case when no rows are
+found? We have two options:
+Return a sentinel value: for example, a nil slice (think about strings.Index,
+which returns the sentinel value –1 if a substring isn’t present).
+Return a specific error that a client can check.
+Let’s take the second approach: our method can return a specific error if no rows are
+found. We can classify this as an expected error, because passing a request that returns
+no rows is allowed. Conversely, situations like network issues and connection polling
+errors are unexpected errors. It doesn’t mean we don’t want to handle unexpected
+errors; it means that semantically, those errors convey a different meaning.
+ If we take a look at the standard library, we can find many examples of sentinel errors:
+
+sql.ErrNoRows—Returned when a query doesn’t return any rows (which was
+exactly our case)
+
+io.EOF—Returned by an io.Reader when no more input is available
+That’s the general principle behind sentinel errors. They convey an expected error
+that clients will expect to check. Therefore, as general guidelines,
+Expected errors should be designed as error values (sentinel errors): var
+ErrFoo = errors.New("foo").
+Unexpected errors should be designed as error types: type BarError struct
+{ … }, with BarError implementing the error interface.
+Let’s get back to the common mistake. How can we compare an error to a specific
+value? By using the == operator:
+err := query()
+if err != nil {
+if err == sql.ErrNoRows {
+// ...
+} else {
+// ...
+}
+}
+Here, we call a query function and get an error. Checking whether the error is an
+sql.ErrNoRows is done using the == operator.
+ However, just as we discussed in the previous section, a sentinel error can also
+be wrapped. If an sql.ErrNoRows is wrapped using fmt.Errorf and the %w directive,
+err == sql.ErrNoRows will always be false.
+ Again, Go 1.13 provides an answer. We have seen how errors.As is used to check
+an error against a type. With error values, we can use its counterpart: errors.Is. Let’s
+rewrite the previous example:
+err := query()
+if err != nil {
+Checks error against the 
+sql.ErrNoRows variable
