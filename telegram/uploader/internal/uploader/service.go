@@ -100,7 +100,7 @@ func (u *Uploader) processBook(ctx context.Context, pair *scanner.UploadPair) er
 	})
 
 	jsonPath := filepath.Join(pair.Dir, pair.BookFile)
-	pdfPath := strings.Replace(jsonPath, ".json", ".pdf", 1)
+	bookPath := findBookFile(jsonPath)
 
 	const uploadAttempts = 2
 	allSuccess := true
@@ -125,7 +125,7 @@ func (u *Uploader) processBook(ctx context.Context, pair *scanner.UploadPair) er
 				continue
 			}
 
-			if err := u.uploadPdfToChannel(ctx, pair, channelCfg, pdfPath, bookID); err != nil {
+			if err := u.uploadPdfToChannel(ctx, pair, channelCfg, bookPath, bookID); err != nil {
 				logProcess(fmt.Sprintf("Upload to %s failed for %s [book_id=%s]: %v", ch, pair.Metadata.Title, bookID, err))
 				fmt.Printf("  Upload to %s failed: %v\n", ch, err)
 				u.store.MarkFailed(bookID, pair.BookFile, ch, err.Error())
@@ -154,18 +154,20 @@ func (u *Uploader) processBook(ctx context.Context, pair *scanner.UploadPair) er
 	return nil
 }
 
-func (u *Uploader) uploadPdfToChannel(ctx context.Context, pair *scanner.UploadPair, ch config.ChannelConfig, pdfPath string, bookID string) error {
+func (u *Uploader) uploadPdfToChannel(ctx context.Context, pair *scanner.UploadPair, ch config.ChannelConfig, bookPath string, bookID string) error {
 	jsonPath := filepath.Join(pair.Dir, pair.BookFile)
 
-	pdfData, err := os.ReadFile(pdfPath)
+	bookData, err := os.ReadFile(bookPath)
 	if err != nil {
-		return fmt.Errorf("failed to read pdf file: %w", err)
+		return fmt.Errorf("failed to read book file: %w", err)
 	}
+
+	uploadName := filepath.Base(bookPath)
 
 	caption := buildCaption(pair.Metadata)
 
 	client := telegram.NewClient(ch.Token, ch.ChatID, time.Duration(u.config.APITimeout)*time.Second)
-	result, err := client.SendDocument(ctx, pair.BookFile+".pdf", pdfData, caption)
+	result, err := client.SendDocument(ctx, uploadName, bookData, caption)
 	if err != nil {
 		return err
 	}
@@ -283,9 +285,21 @@ func (u *Uploader) channelMatches(meta *scanner.BookMetadata, ch config.ChannelC
 
 func (u *Uploader) cleanup(pair *scanner.UploadPair) {
 	jsonPath := filepath.Join(pair.Dir, pair.BookFile)
-	pdfPath := strings.Replace(jsonPath, ".json", ".pdf", 1)
-	_ = os.Remove(pdfPath)
+	bookPath := findBookFile(jsonPath)
+	_ = os.Remove(bookPath)
 	_ = os.Remove(jsonPath)
+}
+
+// findBookFile json sidecar yoluna uyğun kitab faylını tapır (hər hansı genişlənmə).
+func findBookFile(jsonPath string) string {
+	base := strings.TrimSuffix(jsonPath, ".json")
+	for _, ext := range []string{".pdf", ".epub", ".djvu"} {
+		p := base + ext
+		if _, err := os.Stat(p); err == nil {
+			return p
+		}
+	}
+	return base + ".pdf"
 }
 
 func (u *Uploader) archiveCompletedBook(pair *scanner.UploadPair) {
@@ -301,14 +315,19 @@ func (u *Uploader) archiveCompletedBook(pair *scanner.UploadPair) {
 
 	bookDirName := strings.TrimSuffix(pair.BookFile, ".json")
 	srcDir := filepath.Join(booksDir, bookDirName)
-	dstDir := filepath.Join(booksReadDir, bookDirName)
+	// Yeni iyerarxiya (SYSTEM_PROMPT.md Bölmə 3): books_read/{primary_language}/L{level}/{filename_safe}
+	langDir := "General"
+	if pair.Metadata.PrimaryLanguage != "" {
+		langDir = pair.Metadata.PrimaryLanguage
+	}
+	dstDir := filepath.Join(booksReadDir, langDir, fmt.Sprintf("L%d", pair.Metadata.Level), bookDirName)
 
 	if _, err := os.Stat(srcDir); os.IsNotExist(err) {
 		logProcess(fmt.Sprintf("Book directory not found for archiving: %s", srcDir))
 		return
 	}
 
-	if err := os.MkdirAll(booksReadDir, 0755); err != nil {
+	if err := os.MkdirAll(filepath.Dir(dstDir), 0755); err != nil {
 		logProcess(fmt.Sprintf("Failed to create books_read dir: %v", err))
 		return
 	}
@@ -325,8 +344,8 @@ func (u *Uploader) archiveCompletedBook(pair *scanner.UploadPair) {
 		logProcess(fmt.Sprintf("Deleted source/ for %s", bookDirName))
 	}
 
-	logProcess(fmt.Sprintf("Archived %s to books_read/%s", pair.Metadata.Title, bookDirName))
-	fmt.Printf("  Archived to books_read/%s\n", bookDirName)
+	logProcess(fmt.Sprintf("Archived %s to %s", pair.Metadata.Title, dstDir))
+	fmt.Printf("  Archived to %s\n", dstDir)
 }
 
 func logProcess(message string) {
