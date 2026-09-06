@@ -1,0 +1,50 @@
+package main
+import (
+    "fmt"
+    "net/http"
+    "os"
+)
+// Простой сервер-счётчик
+type Counter struct {
+    n int
+}
+func (ctr *Counter) ServeHTTP(w http.ResponseWriter, req *http.Request) {
+    ctr.n++
+    fmt.Fprintf(w, "counter = %d\n", ctr.n)
+}
+// Более простой сервер-счётчик
+type SimpleCounter int
+// Обратите внимание, интерфейс может быть реализован примитивом
+func (ctr *SimpleCounter) ServeHTTP(w http.ResponseWriter, req *http.Request) {
+    *ctr++
+    fmt.Fprintf(w, "counter = %d\n", *ctr)
+}
+// Канал для уведомления при посещении страницы
+type Chan chan *http.Request
+func (ch Chan) ServeHTTP(w http.ResponseWriter, req *http.Request) {
+    ch <- req
+    fmt.Fprint(w, "уведомление отправлено")
+}
+// Сервер аргументов
+func ArgServer(w http.ResponseWriter, req *http.Request) {
+    fmt.Fprintln(w, os.Args)
+}
+func main() {
+    // Пример с сервером-счётчиком (структура)
+    ctr := new(Counter)
+    http.Handle("/counter", ctr)
+    // Пример с простым счётчиком (целое число)
+    var simpleCtr SimpleCounter
+    http.Handle("/simple-counter", &simpleCtr)
+    // Пример с каналом
+    // Он должен быть буферизированным
+    // Здесь, например, мы можем посетить 10 раз страницу
+    // После чего страница не будет загружаться
+    // Потому что канал не читается, а только заполняется
+    ch := make(Chan, 10)
+    http.Handle("/notify", ch)
+    // Пример с выводом аргументов сервера
+    http.Handle("/args", http.HandlerFunc(ArgServer))
+    // Запуск сервера на порту 8080
+    http.ListenAndServe(":8080", nil)
+}
