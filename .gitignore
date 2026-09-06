@@ -16,3 +16,7 @@ telegram/channels/*/.env
 telegram/uploader/uploads.json
 
 uploads.json
+extract_pdf.py
+copy_source_pages.ps1
+create_chapters.py
+telegram_upload_tmp_check.txt
