@@ -1,1 +1,0 @@
-Transport Layer Security (TLS) built-in if requested by the developer.

@@ -1,3 +1,0 @@
-reimplement a file-serving handler themselves. This feature allows developers to
-package up static content such as HTML, JavaScript and CSS content within the
-Go deployment artifact directly.

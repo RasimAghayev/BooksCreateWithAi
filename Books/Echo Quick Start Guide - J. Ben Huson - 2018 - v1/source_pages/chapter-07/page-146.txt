@@ -1,7 +1,0 @@
-Unit testing
-Unit testing is a form of testing that is close to the application code itself. Often
-times, unit test code lives directly adjacent to the feature code within the code
-base. The goal of unit testing is to provide a quick answer to the question: Does
-this unit of code do what I think it should be doing? This is the first level of
-testing that is typically performed, as it lives and runs against the lowest unit of
-functionality.

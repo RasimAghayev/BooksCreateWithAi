@@ -1,7 +1,11 @@
 {
-  "book_id": null,
-  "title": null,
-  "status": "none",
-  "started_at": null,
-  "note": "From Ruby to Golang (from_ruby_to_golang_2021_v1) 2026-09-06 tarixində tamamlandı. Növbəti kitab Books/ qovluğundan götürüləcək."
+  "book_id": "cloud_native_go_ru_2022_v1",
+  "title": "Облачный Go / Создание надежных служб в ненадежных окружениях",
+  "author": "Мэтью А. Титмус",
+  "year": 2022,
+  "version": 1,
+  "pages": 419,
+  "status": "reading",
+  "started_at": "2026-09-06",
+  "filename_safe": "Облачный Go - Создание надежных служб в ненадежных окружениях - Титмус М.А. - 2022 - v1"
 }

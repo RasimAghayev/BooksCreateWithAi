@@ -1,3 +1,0 @@
-It is important to note that there is nothing magical about middleware within
-Echo. Middleware can be boiled down to an ordered set of nested function calls
-of which the handler is the last nested function call.

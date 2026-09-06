@@ -1,7 +1,0 @@
-Benchmark testing
-Benchmark testing is critically important in distributed systems' quality
-assurance. Benchmark testing is testing the speed and throughput capabilities of
-a segment of code. Commonly found right next to unit tests, benchmark testing
-can also be performed at the integration level, as well as the unit level.
-Benchmark testing provides a clear answer on Does this code/system perform as
-well as I think it should?

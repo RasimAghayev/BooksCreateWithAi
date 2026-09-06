@@ -1,9 +1,6 @@
-Books/**/source/
-Books/**/raw/
-Books/**/external/source-code/
-Books_*/
+Books/
+_wip_*/
 archive/
-books_read/
 logs/
 telegram_upload/*
 telegram/channels/*/.env

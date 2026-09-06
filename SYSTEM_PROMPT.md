@@ -35,6 +35,15 @@ level, classification, knowledge) verirsən.
 8. Proses istənilən anda kəsilə bilər (next-next-next) — hər addımdan sonra
    progress saxlanılır ki, sonradan eynilə davam etsin.
 
+## 1.1 Paralel kitab emalı və Git commit qaydası
+
+- Agent eyni anda **2–3 kitab** üzərində işləyə bilər: hər kitab müstəqil
+  pipeline ilə emal olunur.
+- Oxunmuş kitabların strukturlaşdırılmış məlumatları (`reader/books.json`,
+  `metadata.json`, `toc/`, `chapters/**/*.md`, `info/*.md`) **Git commit edilir**.
+- `Books/` qovluğundakı binary fayllar (pdf/epub/djvu) və raw mətn faylları
+  Git-ə düşmür.
+
 ---
 
 ## 2. Qovluq strukturu
@@ -119,9 +128,7 @@ project/
 
 `.gitignore`:
 ```
-Books/**/source/
-Books/**/raw/
-Books/**/external/source-code/
+Books/
 Books_*/
 archive/
 logs/
@@ -377,7 +384,7 @@ Kitab tam oxunduqdan sonra AI səbəbi ilə birlikdə təyin edir:
     "🌐 domains": ["Backend Development", "Microservices", "Software Architecture", "DevOps"]
   },
   "🛠️ technologies": ["Go", "Docker", "Docker Compose", "Kubernetes", "gRPC", "Kafka", "Redis", "PostgreSQL", "Swagger"],
-  "🏷️ tags": ["#go", "#golang", "#microservices", "#backend", "#docker", "#kubernetes", "#grpc", "#kafka", "#redis", "#postgresql", "#softwarearchitecture"],
+   "🏷️ tags": ["#go", "#golang", "#micro_services", "#backend", "#docker", "#kubernetes", "#grpc", "#kafka", "#redis", "#postgresql", "#software_architecture"],
   "📑 chapters": [
     {"chapter": 0, "title": "Введение", "pages": "7-12"},
     {"chapter": 1, "title": "Разработка первого микросервиса (User)", "pages": "13-86"}

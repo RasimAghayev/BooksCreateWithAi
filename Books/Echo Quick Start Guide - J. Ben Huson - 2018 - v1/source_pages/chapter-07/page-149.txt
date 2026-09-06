@@ -1,9 +1,0 @@
-Integration testing
-Integration testing, and the related so-called full-flow testing, of an application is
-a gauge of how well your application will integrate with other systems within
-your environment. For example, let's say we use a database system for storing
-users login information. How do we know for sure your code handles real data
-correctly? Within the unit testing level of testing, we may have mocked response
-data that we know will work with our system. Integration testing is important,
-and for better or worse, when developers hear the word testing they think of
-integration testing.

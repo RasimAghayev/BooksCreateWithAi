@@ -1,6 +1,0 @@
-e.GET("/health-check", handlers.HealthCheck)
-// Authentication routes e.POST("/login", handlers.Login) e.POST("/logout",
-handlers.Logout)
-// Authentication routes
-g := e.Group("/v1") g.POST("/login", handlers.Login) g.POST("/logout",
-handlers.Logout)
