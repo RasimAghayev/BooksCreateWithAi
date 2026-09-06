@@ -1,0 +1,6 @@
+// Store user information from token into context.
+c.Set(config.ContextKey, token) return next(c)
+}
+This allows our handlers to remain completely ignorant of the fact that we need
+to perform authentication, causing our routes to be less complex and easier to
+read.

@@ -1,0 +1,11 @@
+// HealthCheck - Health Check Handler func HealthCheck(c echo.Context) error
+{
+if reqID, ok := c.Get(middlewares.RequestIDContextKey).(uuid.UUID); ok {
+<br/> c.Logger().Debugf("RequestID: %s", reqID.String())<br/> }
+resp := renderings.HealthCheckResponse{
+Message: "Everything is good!",<br/> }
+return c.JSON(http.StatusOK, resp) }
+As you can see from the preceding simple code, we are able to call the
+c.Logger() function, which will return the Logger implementation from the
+echo.Context object we are passed in our handler function. From there, in this
+code, we call the Debugf function, which will log a debug log entry.

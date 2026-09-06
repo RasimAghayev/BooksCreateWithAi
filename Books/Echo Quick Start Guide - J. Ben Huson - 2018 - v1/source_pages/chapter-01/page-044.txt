@@ -1,0 +1,12 @@
+workspace as a go directory within your home directory. The command will also
+set your GOPATH environment variable to use this workspace for downloading go
+packages. Next, we need to set the PATH variable to include the bin directory that
+was installed in /usr/local/go/, which is where the Go compiler, as well as other
+tools such as gofmt that come with Go, reside. Finally, we add all of these
+environment variables into your .bashrc so that every time you log in, these
+environment variables are set appropriately.
+Windows installation
+You can download the MSI installer for Go: https://dl.google.com/go/go1.10.windows-
+amd64.msi.
+The Windows installer will, by default, install Go in the c:\Go\ folder. The
+installer will take care of setting up all necessary environment variables for you.

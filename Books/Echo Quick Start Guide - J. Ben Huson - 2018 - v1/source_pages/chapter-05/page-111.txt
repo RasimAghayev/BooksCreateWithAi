@@ -1,0 +1,4 @@
+The context is central to application development within Echo, as you can see
+based on the handler function signature. From the context structure, you have
+access to the original request structure, response writer, as well as a shared
+request, processing state from upstream middleware functions.

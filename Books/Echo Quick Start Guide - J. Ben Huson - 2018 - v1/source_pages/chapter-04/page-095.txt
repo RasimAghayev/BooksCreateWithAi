@@ -1,0 +1,8 @@
+It is important to clarify that there are four logical boundaries where middleware
+can be applied from an API design standpoint:
+Global Middleware Before Routing
+Global Middleware After Routing
+Grouped Route Middleware
+Route Specific Middleware
+Though there are four logical boundaries to think about when using middleware
+applications, within the Echo implementation, there are really only two. There's

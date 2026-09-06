@@ -1,0 +1,11 @@
+of what is happening within your application.
+The error level is used when there is an application error that the system could
+recover from, and which needs to be investigated. The error log level is higher
+than the warn log level, and will be emitted when the log level is higher than
+warn.
+The fatal level is used when the application has encountered an error from which
+there is no recovery, and the application will stop. The panic level is used when
+the application cannot continue and needs to panic, causing the application to
+stop. Typical use cases for the Logger.Fatal and Logger.Panic methods are when your
+web application is unable to start for some reason, such as if it is impossible to
+connect to a database on startup, or the application is unable to bind to the port.

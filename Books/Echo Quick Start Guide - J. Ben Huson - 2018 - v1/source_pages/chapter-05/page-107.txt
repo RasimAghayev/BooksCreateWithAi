@@ -1,0 +1,26 @@
+Maintaining context
+Throughout early Go web application development, there was much contention
+surrounding how to weave together context when chaining handler function calls
+together. If we examine the standard library http.HandlerFunc definition, type
+HandlerFunc func(ResponseWriter, *Request), this type is not conducive for building a
+chained middleware scheme, or calling other request handlers from within
+handlers whatsoever. This is because of the two different parameters,
+http.ResponseWriter and *http.Request. The http.ResponseWriter is an interface that is
+designed primarily to write a sequence of bytes back to the caller, whereas the
+second parameter, the *http.Request, is a pointer to the data structure that
+represents the request.
+Prior to Go 1.7, there was no mechanism in place within the http.Request type to
+store extra information to keep the state from one nested handler function call to
+the next. This absence of a means of keeping context, or extra information
+created from the request in prior handlers, caused web application handlers to
+grow very large, as they were effectively responsible for handling all of the
+business logic that is commonly implemented in a middleware pipeline.
+This lack of being able to keep the context within the confines of the standard
+library lead to a few different solutions. The three primary solutions that were
+used are as follows:
+Frameworks that use a single global mapping of requests to request context
+data
+Frameworks that implement a new function signature for web handlers that
+include a context parameter
+Frameworks that hid the metadata within the request data structure
+Each of these solutions are discussed in the following subsections.

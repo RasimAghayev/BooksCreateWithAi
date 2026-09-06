@@ -1,0 +1,2 @@
+frameworks and Echo, we need to keep in mind how the features will affect our
+application, which in the end is a simple text-based protocol.

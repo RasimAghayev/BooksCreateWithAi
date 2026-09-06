@@ -1,0 +1,29 @@
+The cmd directory can be thought of as the "entrypoint" for the
+application. By separating the cmd/service package from the root
+package of the project, we are adding structure to allow for multiple
+applications in one project.
+For example, if you wanted to implement the scheduler portion of the
+application as a standalone daemon that needs to use modules defined
+within the same repository, you are able to do so by creating a new
+cmd/scheduler package to handle this case.
+Eventually, after a product is developed, it is often found that creating
+microservices is useful. With this cmd package, we would be able to
+easily create different packages which will become new executable
+services, and still use the existing codebase structure to support this
+task.
+handlers
+The handlers package is where we will store all of our Echo web
+application-handler code and business logic for the application
+middlewares
+The middlewares package is where we will store all of our Echo web
+application middleware code and business logic that is applicable for
+more than one handler within our service
+Example middleware from our use-case diagram would be the "Verify
+Token" functionality, which will validate whether the requester is who
+they say they are.
+models
+Within an application, you will have application-specific data
+structures that you will need to persist to a database for instance. The
+models package will house the application-specific types.
+The models package is separated from bindings and renderings, as you
+may wish to have both binding types and rendering types be based on

@@ -1,64 +1,10 @@
 {
   "books": [
-    {
-      "book_id": "go_in_action_2016_v1",
-      "title": "Go in Action",
-      "author": "William Kennedy with Brian Ketelsen and Erik St. Martin",
-      "year": 2016,
-      "version": 1,
-      "pages": 266,
-      "status": "completed",
-      "started_at": "2026-09-05",
-      "completed_at": "2026-09-05",
-      "filename_safe": "Go in Action - William Kennedy, Brian Ketelsen, Erik St. Martin - 2016 - v1"
-    },
-    {
-      "book_id": "go_web_programming_2016_v1",
-      "title": "Go Web Programming",
-      "author": "Sau Sheong Chang",
-      "year": 2016,
-      "version": 1,
-      "pages": 314,
-      "status": "completed",
-      "started_at": "2026-09-05",
-      "completed_at": "2026-09-06",
-      "filename_safe": "Go Web Programming - Sau Sheong Chang - 2016 - v1"
-    },
-    {
-      "book_id": "get_programming_with_go_2018_v1",
-      "title": "Get Programming with Go",
-      "author": "Nathan Youngman, Roger Peppé",
-      "year": 2018,
-      "version": 1,
-      "pages": 360,
-      "status": "completed",
-      "started_at": "2026-09-06",
-      "completed_at": "2026-09-06",
-      "filename_safe": "Get Programming with Go - Nathan Youngman, Roger Peppé - 2018 - v1"
-    },
-    {
-      "book_id": "go_in_practice_2016_v1",
-      "title": "Go in Practice",
-      "author": "Matt Butcher, Trevor Matteson",
-      "year": 2016,
-      "version": 1,
-      "pages": 314,
-      "status": "completed",
-      "started_at": "2026-09-06",
-      "completed_at": "2026-09-06",
-      "filename_safe": "Go in Practice - Matt Butcher, Trevor Matteson - 2016 - v1"
-    },
-    {
-      "book_id": "production_go_2018_v1",
-      "title": "Production Go",
-      "author": "Herman Schaaf, Shawn Smith",
-      "year": 2018,
-      "version": 1,
-      "pages": 147,
-      "status": "completed",
-      "started_at": "2026-09-06",
-      "completed_at": "2026-09-06",
-      "filename_safe": "Production Go - Herman Schaaf, Shawn Smith - 2018 - v1"
-    }
+    {"book_id": "go_in_action_2016_v1", "title": "Go in Action", "author": "William Kennedy with Brian Ketelsen and Erik St. Martin", "year": 2016, "version": 1, "pages": 266, "status": "completed", "started_at": "2026-09-05", "completed_at": "2026-09-05", "filename_safe": "Go in Action - William Kennedy, Brian Ketelsen, Erik St. Martin - 2016 - v1"},
+    {"book_id": "go_web_programming_2016_v1", "title": "Go Web Programming", "author": "Sau Sheong Chang", "year": 2016, "version": 1, "pages": 314, "status": "completed", "started_at": "2026-09-05", "completed_at": "2026-09-06", "filename_safe": "Go Web Programming - Sau Sheong Chang - 2016 - v1"},
+    {"book_id": "get_programming_with_go_2018_v1", "title": "Get Programming with Go", "author": "Nathan Youngman, Roger Peppé", "year": 2018, "version": 1, "pages": 360, "status": "completed", "started_at": "2026-09-06", "completed_at": "2026-09-06", "filename_safe": "Get Programming with Go - Nathan Youngman, Roger Peppé - 2018 - v1"},
+    {"book_id": "go_in_practice_2016_v1", "title": "Go in Practice", "author": "Matt Butcher, Trevor Matteson", "year": 2016, "version": 1, "pages": 314, "status": "completed", "started_at": "2026-09-06", "completed_at": "2026-09-06", "filename_safe": "Go in Practice - Matt Butcher, Trevor Matteson - 2016 - v1"},
+    {"book_id": "production_go_2018_v1", "title": "Production Go", "author": "Herman Schaaf, Shawn Smith", "year": 2018, "version": 1, "pages": 147, "status": "completed", "started_at": "2026-09-06", "completed_at": "2026-09-06", "filename_safe": "Production Go - Herman Schaaf, Shawn Smith - 2018 - v1"},
+    {"book_id": "echo_quick_start_2018_v1", "title": "Echo Quick Start Guide", "author": "J. Ben Huson", "year": 2018, "version": 1, "pages": 180, "status": "completed", "started_at": "2026-09-06", "completed_at": "2026-09-06", "filename_safe": "Echo Quick Start Guide - J. Ben Huson - 2018 - v1"}
   ]
 }

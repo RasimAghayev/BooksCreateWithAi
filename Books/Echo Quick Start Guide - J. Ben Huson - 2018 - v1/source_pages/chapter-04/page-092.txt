@@ -1,0 +1,4 @@
+before it even reaches the handler if the caller is not authorized for the request.
+Within the next section, we will be talking about how middleware chaining
+works within the Echo framework in depth, as well as how we can insert
+middleware into our web application.

@@ -1,0 +1,6 @@
+Security testing
+Security testing, or penetration testing, is often overlooked up until the point that
+there is a security breach caused by application code. Items of interest tested in
+this real situation include Cross Site Scripting, SQL and command injection,
+Cross Origin Resource Sharing, and many others. This testing will prove Is this
+application as secure as I think it is?

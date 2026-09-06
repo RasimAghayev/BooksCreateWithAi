@@ -1,7 +1,7 @@
 {
   "book_id": null,
   "title": null,
-  "status": "idle",
+  "status": "none",
   "started_at": null,
-  "last_completed": "production_go_2018_v1"
+  "note": "Echo Quick Start Guide (echo_quick_start_2018_v1) 2026-09-06 tarixində tamamlandı. Növbəti kitab Books/ qovluğundan götürüləcək."
 }

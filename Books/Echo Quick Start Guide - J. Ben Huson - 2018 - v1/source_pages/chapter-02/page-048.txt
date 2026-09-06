@@ -1,0 +1,25 @@
+Developing Echo Projects
+Of the most compelling reasons to use a web application framework for a
+project, the most important is that it offers clean, organized code. Frameworks
+offer defined structure for application development, as well as helpful
+functionality that minimizes the energy the developer has to use to create an
+application. Within an Echo project, the developer has the flexibility in
+implementation and project structure.
+We will begin by diving into an example of an Echo project. Once we have the
+basic directory structure of our application defined, and the reasoning for the
+structure in place, we will begin to explore some fundamental building blocks
+and features of Echo in our example project. Firstly, we will cover target-path
+routing and application-handler development. Then, we will explain a high-level
+overview of the most commonly used features within Echo, including concepts
+of routing, middleware, bindings, and response rendering.
+Within this chapter, the following concepts will be covered:
+Organizing an Echo project
+Defining and implementing Echo handlers
+High-level overview of the following features:
+Routing
+Middleware
+Data binding and rendering
+By the end of this chapter, you will have all of the knowledge necessary to start
+creating your own Echo project. You will have a working reference
+implementation of a non-trivial application that utilizes the key features within
+Echo in order to become immediately productive.

@@ -1,0 +1,11 @@
+Basic handler routing
+As you may recall, a URI path component determines the resource
+representation for a web application. Within the HTTP request message
+structure, not only do we have a target in the request line, but we also have the
+requested method as well. HTTP methods, or verbs, explain the intent of the
+request to act on the resource identified by the target. Within the realm of
+application development, the request method, in conjunction with the target
+resource identifier, will determine what application code the service is supposed
+to run. To this end, we will start by talking about how to add route mappings to
+your Echo project, and more importantly, how Echo uses the information in the
+request to run your handlers.

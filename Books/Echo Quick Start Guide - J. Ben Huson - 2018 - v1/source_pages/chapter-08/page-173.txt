@@ -1,0 +1,7 @@
+As you can see, implementing templates within your Echo project is very simple.
+There are few moving parts and only one interface to implement
+(echo.Renderer) in order to produce template-driven renderings to your callers.
+When married to the functionality of the html/template and text/template
+capabilities built into the Go standard library, you will be able to produce server-
+rendered templates very easily. Within the next section, we will discuss how to
+reach back into Echo from templates.

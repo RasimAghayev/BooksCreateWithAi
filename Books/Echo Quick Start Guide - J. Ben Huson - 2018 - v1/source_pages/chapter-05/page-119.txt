@@ -1,0 +1,40 @@
+method on our request input structures, we first we need to set up an Echo
+Validator and register it with the Echo framework, which is done by
+implementing the Validator interface in $GOPATH/src/github.com/PacktPublishing/Echo-
+Essentials/chapter5/bindings/common.go, as shown in the following code snippet:
+type Validatable interface {
+        Validate() error
+}
+var ErrNotValidatable = errors.New("Type is not validatable")
+type Validator struct{}
+func (v *Validator) Validate(i interface{}) error {
+        if validatable, ok := i.(Validatable); ok {
+                return validatable.Validate()
+        }
+        return ErrNotValidatable
+}
+As seen in the preceding code, our custom Validator structure must implement a
+Validate method that takes an interface{} as a parameter, which represents the
+structure to which we have bound our input. Since our preferred design keeps the
+validation code as close to the structure to which it is validating, our solution
+presented in this chapter's sample code needs to be as generic as possible.
+This particular custom Validator is type checking that the input implements the
+Validatable interface, and then runs Validate on that type. By creating this new
+Validatable interface in our project, any structure that has a method called Validate
+that returns an error type as the response can be fed into the Validator.Validate
+function. This provides a very slick abstraction that will help organize your input
+bindings better, and make validation much easier for your project. In order for
+our request type to implement the Validatable interface, we will update our login
+bindings in $GOPATH/src/github.com/PacktPublishing/Echo-
+Essentials/chapter5/bindings/login.go to resemble the following:
+package bindings
+type LoginRequest struct {
+        Username string `json:"username"`
+        Password string `json:"password"`
+}
+func (lr *LoginRequest) Validate() error {
+        errs := new(RequestErrors)
+        if lr.Username == "" {
+                errs.Append(ErrUsernameEmpty)
+        }
+        if lr.Password == "" {

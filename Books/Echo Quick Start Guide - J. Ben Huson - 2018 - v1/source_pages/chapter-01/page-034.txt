@@ -1,0 +1,36 @@
+p/#Request.
+Additionally, and optionally, the request can contain the following data and
+metadata if applicable within the structure of the HTTP message:
+Request header fields (RFC-7230 3.2): Request header fields, known as
+just headers, are key/value pairs of metadata associated with either of the
+HTTP message types, request or response. This metadata is used to further
+describe attributes of the request, such as the length of the content body, or
+authentication credentials. The key/value pairs are separated by a :
+character, and are enumerated directly after the start-line of the message,
+one line per pair. There is a helpful list of registered headers that are
+commonly in use, which can provide guidance on request and response
+metadata. These registered headers are defined here: http://www.iana.org/assig
+nments/message-headers. Within the http.Request type, there is a Header attribute
+which is a key to value mapping.
+Message body (RFC-7230 3.3): The message body is the payload of the
+request or response in the HTTP message protocol. The client and server
+are signaled the fact that the message body is present by the existence of the
+Content-Length or Transfer-Encoding headers. The Go web server implementation
+takes care of these headers automatically when a response is written to the
+response writer. The message body on a request is accessible from the Body
+attribute on the Request type in the net/http package. Of particular note here
+is that the Body is an implementation of the io.ReadCloser interface, which
+contains two methods: Read and Close.
+The following is a more complete HTTP request message:
+POST /file.txt HTTP/1.1
+        Host: localhost
+        Accept: */*
+        Content-Length: 8
+        Content-Type: application/x-www-form-urlencoded
+        hi=there
+In the preceding example, the request dictates that we want to use the POST
+method on the `/file.txt` target resource. Our request headers specify that we are
+attempting to contact a particular host which is localhost, and are willing to
+accept any type of response content. Since we have a request body that is URL
+encoded, we need a Content-Type header specifying the content type as well as the
+length of the request body in bytes. Finally, our request body, hi=there, is

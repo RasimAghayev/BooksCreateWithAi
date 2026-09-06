@@ -1,0 +1,14 @@
+Summary
+Throughout this chapter, we have learned about middleware and how to
+implement and use middleware within the Echo framework. Middleware serves
+as a means to minimize duplication within your handler code by abstracting
+common functionality out of the handlers. By using middleware, your code will
+become more streamlined and easier to maintain as changes can be made without
+touching every handler within your web application. This means that your web
+application can remain ignorant to the functionality that the middleware
+provides. This chapter also outlines a variety of middleware functions that come
+with the Echo framework that have been contributed to by the community.
+The next chapter will dive into details mentioned within this chapter of request
+data binding. We will also cover the echo.Context primitive, which allows us to
+pass application context from the Echo framework through middleware
+functionality, all the way to the end handler code.

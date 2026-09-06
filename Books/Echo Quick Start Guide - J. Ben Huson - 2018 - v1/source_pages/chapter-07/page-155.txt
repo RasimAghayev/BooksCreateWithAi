@@ -1,0 +1,40 @@
+  }
+  return nil, nil
+}
+//...
+The preceding code creates our new MockDB structure which implements all of the
+methods defined by the interface that is mirroring the sql.DB type. As you can see
+by having attributes on the structure where you can override the default behavior
+of the MockDB methods, you can inject whatever functionality you need into this
+structure. Following is an example of how we can use this scheme within a unit
+test, taken from github.com/PacktPublishing/Echo-Essentials/chapter7/models/user_test.go:
+func TestGetUserByUsername(t *testing.T) {
+  db := &MockDB{
+    mockQuery: func(query string, args ...interface{}) (*sql.Rows, error) {
+      return nil, errors.New("test query failure!")
+    },
+  }
+  _, err := GetUserByUsername(db, "test")
+  if err != nil {
+    if errors.Cause(err).Error() != "test query failure!" {
+      t.Errorf("incorrect failure expected: %s", err.Error())
+    }
+  }
+}
+An example of monkey patching in Go is explained in https://bou.ke/blog/monkey-pa
+tching-in-go/ and effectively replaces a function definition during run-time. This
+is handy when creating tests because you are able to change how the application
+code functions and mimic particular cases to exercise your code. For example if
+you want to test out what your code will do if the call to sql.Open fails. By using
+this monkey patching technique your test will replace sql.Open with a function
+you define within your test, that is able to produce the particular error you are
+wanting to test. One thing to keep in mind is, when you do this technique you
+will loose the ability to run the tests in parallel as you are really replacing the
+function.
+Take care when mocking to not over mock, or over monkey patch within your
+tests. It is a great way to increase coverage, but ultimately when you are
+mocking an integration, you are feeding your code what your code expects to be
+fed. Just because you have 100% unit test coverage from your mocking, doesn’t
+mean that the integration will work perfectly. Later in this chapter, we talk about
+integration testing and how to use external testing frameworks to exercise your
+code.

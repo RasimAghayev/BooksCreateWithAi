@@ -1,0 +1,34 @@
+}
+As you can see in the Go code, we have a structure defined as Reminder which
+includes as attributes, Name, Due, ID. We are also creating a new list of these
+reminder instances. At that point, we generate a new template by calling
+template.New("reminders").Parse(tmpl) that will read in the template string.
+You could also use ParseFiles instead of Parse, if you had a file or several you
+wanted to read in. It is much easier to work with templates as files, as opposed to
+strings within the application. It is important to note that in a web service it is
+often best to perform the parsing of the template files at the entry point of the
+application instead of parsing the templates for every single request. Parsing the
+templates for every single request would lead to a lot of waste, and should be
+avoided.
+After we have parsed the file, we need to create the data structure that we will
+feed into the template engine, namely a structure that includes attributes for
+Title and Reminders that we reference from within the template. With tmplData
+populated as an anonymous struct, we are able to feed the tmplData into the
+template with the t.Execute method, which takes in as parameters an
+io.Writer and interface{} data. Alternatively, instead of using a struct to
+contain the data for the template it is possible to use a map structure instead.
+As you can see, within the syntax of the template language, there are conditions
+such as the else on the range. That specifically says if there are no entries within
+Reminders, perform the else block.
+The following is a high-level outline of the capabilities of the template engine,
+so that you will be equipped to make use of all of the features included in Go
+templates:
+{{/* comment */}}
+Comments are discarded and will not show up within the rendered
+output
+Comments may be multiple lines, though you are not able to nest
+comments
+{{pipeline}}
+Think of a pipeline as a contextual denoted variable, such as
+{{.Title}}
+This will print out the variable using the default output representation

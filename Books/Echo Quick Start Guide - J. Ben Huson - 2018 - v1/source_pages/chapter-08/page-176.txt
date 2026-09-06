@@ -1,0 +1,11 @@
+                        </tr>
+                        
+        </body>
+</html>
+As you can see, we have a new line in our template rendered output that shows
+<a href=/login>Login</a> which is a link to the login route. This very simple change
+has allowed us to inject the Echo instance's Reverse method into our template
+effectively. It is fairly trivial to add more functionality to this TmplData structure to
+allow for your templates to have access to any aspect of your application. This
+sort of flexibility will allow you to quickly create server-side rendered templates
+that make your application more dynamic and flexible.
