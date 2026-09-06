@@ -1,0 +1,32 @@
+RESTful API Overview
+The interoperability between systems, be it between different software
+applications or between frontend and backend components of the same
+application, is often enabled through Application Programming Interfaces
+(APIs). Among the various architectural styles of APIs, RESTful API, or
+simply REST, stands out as one of the most widely accepted practices.
+Embracing a set of constraints and principles, RESTful APIs are designed
+to tap into standard HTTP methods, making them simple to understand and
+use.
+Background
+Representational State Transfer (REST) was conceptualized by Roy
+Fielding in 2000. In essence, REST is an architectural style that employs
+standard HTTP methods, grounded in the principles of simplicity,
+scalability, and performance. A RESTful API is merely an API that adheres
+to the principles of REST. Drawing an analogy from our GitforGits
+Bookstore web application, consider the process of fetching details of a
+book. With RESTful services, this task involves a straightforward HTTP
+GET request, which returns the book details in a format like JSON or XML.
+Stateless Interactions
+A defining feature of REST is its statelessness. Every request from the
+client to the server must contain all the information needed to understand
+and process the request. To put it differently, the server should not retain
+any client state between requests. For instance, in GitforGits Bookstore,
+when a user wants to check out a book, they send a request to the server.
+The server processes it, sends back the relevant data, and does not
+remember anything about the user’s state after the transaction. This
+approach ensures that each request can be processed independently,
+bolstering scalability and reliability.
+Client-Server Architecture
+REST is built upon the principle of separating the user interface concerns
+from the data storage concerns, making it a perfect fit for web applications.
+In GitforGits Bookstore, the frontend (client) interacts with the user, while

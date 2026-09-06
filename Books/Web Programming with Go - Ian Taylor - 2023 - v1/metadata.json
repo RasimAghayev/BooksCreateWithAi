@@ -1,0 +1,36 @@
+{
+  "📘 title_original": "Web Programming with Go: Building and Scaling Interactive Web Applications with Go's Robust Ecosystem",
+  "🔤 filename_safe": "Web Programming with Go - Ian Taylor - 2023 - v1",
+  "📚 book": {
+    "📖 title": "Web Programming with Go",
+    "🧑‍💻 author": "Ian Taylor",
+    "📅 year": 2023,
+    "📖 version": 1,
+    "📄 pages": 264,
+    "🔢 isbn": "978-93-91526-99-9",
+    "🏢 publisher": "GitforGits",
+    "📚 series": ""
+  },
+  "page_offset": 0,
+  "🎯 classification": {
+    "💻 primary_language": "Go",
+    "🎯 level": 3,
+    "📛 level_name": "Intermediate",
+    "🌟 level_icon": "🎯",
+    "🌐 domains": ["Backend Development", "Web Development", "REST APIs", "Databases", "Authentication"]
+  },
+  "🛠️ technologies": ["Go", "net/http", "gorilla/mux", "html/template", "database/sql", "PostgreSQL", "goroutines", "channels", "sync", "bcrypt", "OAuth2", "testing", "pprof"],
+  "🏷️ tags": ["#go", "#golang", "#web", "#backend", "#rest", "#http", "#database", "#postgresql", "#concurrency", "#authentication", "#oauth", "#testing"],
+  "📑 chapters": [
+    {"chapter": 1, "title": "Introduction to Web Development in Go", "pages": "19-46", "pdf_pages": "19-46"},
+    {"chapter": 2, "title": "Structuring Go Web Application", "pages": "47-79", "pdf_pages": "47-79"},
+    {"chapter": 3, "title": "Handling HTTP Requests and Routing", "pages": "81-114", "pdf_pages": "81-114"},
+    {"chapter": 4, "title": "Templating and Rendering Content", "pages": "115-139", "pdf_pages": "115-139"},
+    {"chapter": 5, "title": "Interaction with Databases", "pages": "140-162", "pdf_pages": "140-162"},
+    {"chapter": 6, "title": "Concurrency in Go", "pages": "163-185", "pdf_pages": "163-185"},
+    {"chapter": 7, "title": "Sessions, Authentication, and Authorization", "pages": "186-205", "pdf_pages": "186-205"},
+    {"chapter": 8, "title": "Frontend and Backend Communication", "pages": "206-230", "pdf_pages": "206-230"},
+    {"chapter": 9, "title": "Testing and Debugging", "pages": "231-261", "pdf_pages": "231-261"},
+    {"chapter": 10, "title": "Epilogue / Acknowledgement", "pages": "262-264", "pdf_pages": "262-264"}
+  ]
+}

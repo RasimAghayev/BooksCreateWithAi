@@ -1,0 +1,24 @@
+    connStr := "user=username dbname=gitforgits_bookstore
+password=password host=localhost sslmode=disable"
+   db, err := sql.Open("postgres", connStr)
+   if err != nil {
+       log.Fatal(err)
+   }
+   defer db.Close()
+}
+Do not forget the use of an underscore _ when importing the pq driver. This
+ensures the driver registers itself with the database/sql package without
+adding any other bloat to the namespace.
+Crafting and Executing Queries
+With a connection established, you can begin crafting SQL queries for the
+bookstore. For instance, to retrieve a list of books:
+rows, err := db.Query("SELECT title, author FROM books")
+if err != nil {
+   log.Fatal(err)
+}
+defer rows.Close()
+for rows.Next() {
+   var title, author string
+    if err := rows.Scan(&title, &author); err != nil {
+       log.Fatal(err)
+   }

@@ -1,0 +1,25 @@
+Routes Programming
+Setting up Routes
+As users navigate GitforGits Bookstore, each URL they access should
+correspond to a specific function or piece of code that dictates the
+application's behavior for that URL.
+http.HandleFunc("/books", BookListHandler)
+In the snippet above, when a user accesses the /books URL, the
+BookListHandler function is invoked, which could display a list of books
+available in the bookstore.
+Dynamic Routes and Route Variables
+For a bookstore, static routes won't suffice. If a user wants to view details of
+a specific book, the URL would likely contain the book's ID or title. Such
+dynamic routes can be crafted with third-party routers like gorilla/mux, a
+popular choice for Go developers.
+r := mux.NewRouter()
+r.HandleFunc("/book/{id:[0-9]+}", BookDetailHandler)
+With gorilla/mux, the route pattern /book/{id:[0-9]+} captures numerical
+IDs and passes them to BookDetailHandler. Inside this handler, you can
+retrieve the id to fetch and display the corresponding book's details. Over
+the period as the GitforGits Bookstore grows, categorizing routes becomes
+crucial. For instance, all book-related routes could be grouped under a
+/books prefix.
+bookRouter := r.PathPrefix("/books").Subrouter()
+bookRouter.HandleFunc("/", AllBooksHandler)
+bookRouter.HandleFunc("/{id:[0-9]+}", BookDetailHandler)

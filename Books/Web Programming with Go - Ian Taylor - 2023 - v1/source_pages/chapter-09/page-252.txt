@@ -1,0 +1,19 @@
+}
+This approach yields logs in JSON format, which can be ingested by
+modern log aggregation tools or platforms like ELK stack or Splunk.
+Error Tracing
+Beyond logging, tracing allows you to follow a request's path through
+various microservices or internal functions. Tracing libraries like
+OpenTracing can be used in Go to establish spans, which represent units of
+work.
+When an error occurs, not only can you log the error, but you can also
+capture a trace of all operations leading up to the error. This holistic view
+enables developers to pinpoint bottlenecks, latency issues, or failures in the
+system.
+As the Bookstore app grows, logs can become voluminous. Centralized log
+management solutions, such as Logstash or Fluentd, help aggregate, filter,
+and analyze logs. They offer dashboards, alerts, and insights into
+application behavior.
+When integrating such solutions, ensure that the log format (e.g., JSON)
+from your application matches what these tools expect. Middleware can be
+utilized to forward logs from the app to these management solutions.

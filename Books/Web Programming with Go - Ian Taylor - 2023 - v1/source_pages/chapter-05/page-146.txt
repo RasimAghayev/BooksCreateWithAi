@@ -1,0 +1,28 @@
+Sample 
+Program: 
+Design 
+Robust
+Database
+Nature of Data
+The heart of the GitforGits Bookstore is, undoubtedly, its vast collection of
+books. However, a closer look reveals intricate interrelations between
+various data entities: users, their reading habits, book genres, reviews, and
+more. A meticulously designed database schema ensures that the
+application not only stores data but captures the rich tapestry of
+relationships, interactions, and dynamics.
+Books as Core Entity
+The central table in our schema will be books. Each book has unique
+attributes and can be associated with multiple categories, reviews, and
+transactions.
+CREATE TABLE books (
+   id SERIAL PRIMARY KEY,
+   title VARCHAR(255) NOT NULL,
+   author VARCHAR(255) NOT NULL,
+   isbn VARCHAR(13),
+   description TEXT,
+   publication_date DATE,
+   genre_id INT,
+   price DECIMAL(10,2)
+);
+This structure captures essential details of a book. The genre_id is a foreign
+key, hinting at another table that catalogs genres.

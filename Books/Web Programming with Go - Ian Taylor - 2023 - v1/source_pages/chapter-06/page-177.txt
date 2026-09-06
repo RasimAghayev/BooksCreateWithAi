@@ -1,0 +1,23 @@
+func (c *ConcurrentCache) Fetch(key string) (*BookDetails, bool)
+{
+   c.mutex.Lock()
+   value, exists := c.data[key]
+   c.mutex.Unlock()
+   return value, exists
+}
+A cache without eviction might grow indefinitely. In our bookstore, if an
+item is less accessed or if the cache gets too large, we should remove some
+entries. A simple Least Recently Used (LRU) strategy can be employed.
+This would involve tracking access times and removing the least accessed
+items. But, for brevity, we shall consider a simple size-based eviction.
+const MAX_CACHE_SIZE = 1000 // for instance
+func (c *ConcurrentCache) CheckEviction() {
+   c.mutex.Lock()
+   if len(c.data) > MAX_CACHE_SIZE {
+       for key := range c.data {
+           delete(c.data, key) // Simplified eviction
+           break
+       }
+   }
+   c.mutex.Unlock()
+}

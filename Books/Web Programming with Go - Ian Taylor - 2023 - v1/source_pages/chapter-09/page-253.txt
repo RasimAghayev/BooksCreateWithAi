@@ -1,0 +1,27 @@
+Application Performance Profiling
+Profiling is an essential aspect of understanding application performance.
+By analyzing how a program utilizes resources like CPU and memory,
+developers can pinpoint performance bottlenecks and optimize accordingly.
+Go, with its rich toolset, provides native support for various types of
+profiling, including CPU, memory, and block (synchronization) profiling.
+For the GitforGits Bookstore application, leveraging these tools can ensure
+it runs efficiently, offering users a smooth and responsive experience.
+CPU Profiling
+CPU profiling helps identify functions consuming a significant portion of
+CPU time. This can spotlight compute-intensive portions of code that might
+benefit from optimization.
+To begin, you'll want to import the necessary package:
+import _ "net/http/pprof"
+Initiate CPU profiling in your main function or just before the section you
+wish to profile:
+f, _ := os.Create("cpu.pprof")
+defer f.Close()
+pprof.StartCPUProfile(f)
+defer pprof.StopCPUProfile()
+After running your application, you'll get a cpu.pprof file, which can be
+analyzed using the go tool pprof command. This offers a variety of
+commands, such as top to view the top functions by CPU usage.
+Block Profiling
+Block profiling aids in understanding how goroutines synchronize and how
+they're blocked waiting on channel operations, network IO, or accessing
+shared memory.

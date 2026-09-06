@@ -1,0 +1,2 @@
+necessary to learn both the basics and dive into more complex subjects like
+goroutines, synchronization, error handling, and testing.

@@ -1,0 +1,30 @@
+   })
+}
+While both parallelism and concurrency aim to optimize the system's
+performance, their approach and use-cases can differ.
+Do's and Don'ts
+Do Understand Concurrency vs Parallelism
+Start by understanding the distinction between concurrency and parallelism.
+While they are often used interchangeably, they address different aspects of
+computation. As we previously learned, concurrency is about managing
+multiple tasks at once—it doesn't necessarily mean things happen at the
+same time. Parallelism, however, is about doing multiple things at the same
+time, leveraging multiple CPU cores. In the context of GitforGits,
+concurrency will primarily help handle user requests efficiently. While
+parallelism can speed up heavy computational tasks, the bookstore's
+primary challenge is handling numerous user interactions, making
+concurrency the tool of choice.
+Don't Neglect Data Races
+A common pitfall in concurrent programming is the data race, where two
+goroutines access the same variable concurrently, and at least one of the
+accesses is a write. This can lead to unpredictable results and hard-to-
+diagnose bugs. When multiple parts of your application, say different
+goroutines, try to read and write to shared resources, ensure synchronization
+mechanisms like sync.Mutex are in place to prevent simultaneous access.
+Do Use Goroutines Sparingly
+Goroutines are lightweight and efficient, but that doesn't mean they should
+be spawned recklessly. Every goroutine consumes resources. If GitforGits
+were to start a new goroutine for every minor task, it could lead to resource
+exhaustion. It's essential to strike a balance. Use goroutines for tasks that
+genuinely benefit from concurrent execution, like handling independent
+user requests or performing non-blocking operations.

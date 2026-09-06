@@ -1,0 +1,24 @@
+import (
+"fmt"
+"net/http"
+)
+The net/http package provides functionalities for building HTTP servers
+and clients, while fmt will be used for formatting our output.
+Now, define the main function and set up the server:
+func main() {
+http.HandleFunc("/", homeHandler)
+http.ListenAndServe(":8080", nil)
+}
+In the following, two crucial steps are taken:
+1.        http.HandleFunc("/", homeHandler): This line maps the root URL
+("/") to a function named homeHandler, which we'll define shortly.
+2.        http.ListenAndServe(":8080", nil): This instructs the application to
+start an HTTP server on port 8080.
+Next, we shall define the homeHandler function:
+func homeHandler(w http.ResponseWriter, r *http.Request) {
+fmt.Fprintf(w, "Hello GitforGits BookStore!")
+}
+This function takes in two parameters: http.ResponseWriter and
+*http.Request. The http.ResponseWriter is an interface that allows sending
+a response back to the client, while *http.Request provides information
+about the incoming request.

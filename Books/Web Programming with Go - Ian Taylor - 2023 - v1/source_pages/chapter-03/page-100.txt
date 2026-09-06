@@ -1,0 +1,35 @@
+Navigate 
+Web 
+Routing 
+with
+Gorilla/Mux
+In the extensive ecosystem of Go's libraries, gorilla/mux stands out as the
+foremost routing library. Renowned for its flexibility, performance, and ease
+of use, it's the de facto choice for many Go developers when building web
+applications. 
+While 
+Go's 
+standard 
+library 
+offers 
+basic 
+routing
+functionalities, gorilla/mux elevates this with features like path parameters,
+advanced matching, and middleware support, making it a staple for
+sophisticated web projects like GitforGits Bookstore.
+Setting up Gorilla/Mux
+Installation
+To integrate gorilla/mux into your project, you need to install it first:
+go get -u github.com/gorilla/mux
+Executing the above command fetches the gorilla/mux library and adds it to
+your Go project.
+Initialization and Basic Routing
+Once installed, initializing a new router with gorilla/mux is a breeze.
+package main
+import (
+   "net/http"
+   "github.com/gorilla/mux"
+)
+func main() {
+   r := mux.NewRouter()
+   // Basic route

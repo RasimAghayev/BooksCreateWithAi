@@ -1,0 +1,24 @@
+Sample Data
+For the sake of this example, we shall consider we have some sample data
+of books stored in a slice.
+var books = []Book{
+{ID: 1, Title: "Go Basics", Author: "John Doe", Price:
+10.99},
+{ID: 2, Title: "Advanced Go", Author: "Jane Smith", Price:
+15.49},
+}
+Creating Endpoint Function
+Now, we shall create a function fetchBookDetails that will handle the
+HTTP request to fetch the details of a specific book.
+func fetchBookDetails(w http.ResponseWriter, r *http.Request) {
+// Fetch book ID from the URL parameter
+bookID := r.URL.Query().Get("id")
+for _, book := range books {
+if strconv.Itoa(book.ID) == bookID {
+// Convert the "book" variable to JSON
+json.NewEncoder(w).Encode(book)
+return
+}
+}
+// If book not found, return an error response
+w.WriteHeader(http.StatusNotFound)

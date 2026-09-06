@@ -1,0 +1,30 @@
+Up and Running with Synchronization
+Importance of Synchronization
+Goroutines, by their very nature, introduce a level of complexity when
+multiple threads operate concurrently. This concurrency, while powerful,
+can lead to intricate challenges, particularly around managing shared
+resources and ensuring operations complete in a controlled manner. Without
+proper synchronization, concurrent operations can interfere with each other,
+leading to race conditions or data inconsistencies, which can significantly
+hamper the reliability and integrity of an application.
+To mitigate such concurrency-related issues, Go provides robust
+synchronization tools, namely sync.WaitGroup and sync.Mutex. The
+sync.WaitGroup is essential for scenarios where there's a need to wait for a
+collection of Goroutines to finish executing. It allows the program to block
+until all goroutines have completed their tasks, ensuring a coordinated
+workflow. On the other hand, sync.Mutex (mutual exclusion) plays a crucial
+role in protecting shared resources. It ensures that only one Goroutine
+accesses a particular section of code at a time, preventing simultaneous
+access that could lead to data corruption or unexpected behavior.
+sync.WaitGroup
+Think about the following scenario: you start multiple Goroutines to
+retrieve book details, but before you can send a consolidated list to the user,
+you have to wait for all of them to finish what they are doing. To sync,
+enter.WaitGroup functions as a counter; you add one to it for each
+Goroutine that you initiate, and you subtract one from it when a Goroutine
+completes. When this occurs, the primary function is able to wait until the
+counter has returned to zero.
+Let us say the bookstore wants to retrieve information about books from
+both categories at the same time.
+var wg sync.WaitGroup
+func fetchBooks(category string) {

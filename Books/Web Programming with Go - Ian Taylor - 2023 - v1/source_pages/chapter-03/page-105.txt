@@ -1,0 +1,15 @@
+r := mux.NewRouter()
+r.Use(func(h http.Handler) http.Handler {
+    return http.HandlerFunc(func(w http.ResponseWriter, r
+*http.Request) {
+       defer InternalServerErrorHandler(w, r)
+       h.ServeHTTP(w, r)
+   })
+})
+Using a middleware, the InternalServerErrorHandler captures any panics
+during request processing and serves a tailored error response.
+The distinction between a good and great web application often lies in error
+handling. For GitforGits Bookstore, addressing 404 and 500 errors with
+grace and clarity ensures users always feel valued, even amidst technical
+glitches. Custom error messages infused with the bookstore's personality
+ensure users stay engaged, fostering loyalty.

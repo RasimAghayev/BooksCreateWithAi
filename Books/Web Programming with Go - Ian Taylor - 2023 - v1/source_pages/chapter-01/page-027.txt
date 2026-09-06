@@ -1,0 +1,20 @@
+Go Toolchain
+Go's toolchain is a collection of tools that were developed to make the
+processes of compiling, linking, testing, and managing Go code easier. It is
+the source of Go's efficient and powerful programming language. The
+implementation of this toolchain, which was developed concurrently with
+the language itself, exemplifies Go's commitment to delivering an
+integrated and all-encompassing development environment. The toolchain
+for Go is included in the standard distribution, which ensures that it is
+consistent and reliable. This is in contrast to the majority of languages,
+which heavily rely on tools provided by third parties for essential
+development tasks.
+Fig 1.1 Go Toolkit
+Compiler
+One of the most important tools in the Go toolchain is the compiler, which
+is responsible for converting Go source code into machine code that can be
+executed. Accessible through the go build command, the compiler is built
+with speed in mind, allowing it to generate binaries in a short amount of
+time. The generated binaries are static by default, which means that they
+include all dependencies and libraries. This eliminates the typical
+"dependency hell" that many developers are familiar with. Installing

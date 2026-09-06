@@ -1,0 +1,10 @@
+Implementing RESTful Services with Go
+Its standard library, in particular the net/http package, contributes
+significantly to the ease with which RESTful services can be developed. It
+is common practice for developers to make use of the http.HandleFunc()
+method or third-party routers in order to define endpoints and associate
+HTTP methods such as GET, POST, PUT, and DELETE with these
+endpoints. This package gives developers the ability to do so. For the
+purpose of identifying resources in REST, URIs are utilized, and the
+powerful URL parsing capabilities of Go come in handy for this purpose.
+Fig 1.4 Implementing RESTful Services in Go

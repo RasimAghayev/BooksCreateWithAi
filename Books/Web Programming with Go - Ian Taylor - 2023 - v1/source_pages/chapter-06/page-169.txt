@@ -1,0 +1,29 @@
+Goroutines Channeling
+Need of Channels
+While Goroutines grant GitforGits Bookstore the power of concurrent
+operations, they raise a pivotal question: how do these concurrently running
+Goroutines communicate safely? Enter Go's channels—a means of
+conveying data between Goroutines. Think of channels as pipes where data
+is sent from one end and received at the other. They are inherently
+synchronized, meaning they're designed to handle data safely without the
+pitfalls of race conditions.
+Consider a scenario in which multiple Goroutines are responsible for
+updating a shared database in the GitforGits Bookstore's environment. It is
+possible that you will run into situations in which Goroutines will conflict
+with each other or overwrite each other's data if you do not have a
+mechanism like channels. Channels provide a synchronized means of
+exchanging data, which helps to ensure that data integrity is maintained. In
+essence, they bridge the gap, transforming isolated Goroutines into a
+community that is integrated and shares data.
+Using Channels
+Creating a channel is as straightforward as defining its type. If our
+bookstore needed a channel to pass book titles as strings, it'd be:
+bookChannel := make(chan string). To send data, you'd use the send
+statement: bookChannel <- "Golang in Action", and to receive data, you'd
+employ: title := <-bookChannel.
+Sometimes, you'll want a Goroutine to only send or only receive data to
+ensure safety. Go supports this through channel directions. Consider our
+bookstore processing orders. An 'order processing' Goroutine might only
+send data, while a 'billing' Goroutine might only receive.
+func processOrder(ch chan<- Order) {
+   // Logic to process order

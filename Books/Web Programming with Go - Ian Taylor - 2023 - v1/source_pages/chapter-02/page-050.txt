@@ -1,0 +1,30 @@
+It is a testament to Go's commitment to simplicity and efficiency that the
+process of adding a new dependency in a Go project using Modules is
+remarkably straightforward. When a developer imports a package that is not
+already included in the project, the build command (go build or go test)
+causes Go to automatically locate, download, and add that dependency to
+the go.mod file. This occurs when the build command is executed. After
+that, this file functions as a manifest, providing information about the
+particular versions of each dependency that is utilized in the project. This
+automated addition helps to reduce the amount of manual oversight that is
+required and guarantees that all necessary dependencies are declared
+explicitly.
+In scenarios where developers need to fetch a specific version of a module,
+the go get command becomes indispensable:
+go get <module-path>@<version>
+This command allows precise control over the versions of dependencies
+being used. For instance, if a particular version of a library is known to
+work best with the project, it can be explicitly specified. This command
+updates the go.mod file to reflect the specified version, ensuring
+consistency across different development environments.
+go mod tidy
+This powerful command cleans up the go.mod and the accompanying
+go.sum file, which maintains a checksum for each dependency. It removes
+references to dependencies no longer used in the project, making the
+go.mod file a true reflection of the project's current state.
+Understanding Module Proxies
+An intermediary between Go projects and source repositories is the primary
+function of a module proxy in Go. This role is performed by the module
+proxy. If a Go project makes a request for a module, the proxy will retrieve
+and store the module from its source, which could be a website such as
+GitHub. Subsequent requests for the same module are served from the

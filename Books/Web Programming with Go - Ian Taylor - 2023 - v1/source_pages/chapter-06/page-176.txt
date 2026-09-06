@@ -1,0 +1,26 @@
+Implement Concurrent Cache
+Fetching details of a popular book repeatedly from a database can be
+resource-intensive and slow. A cache stores these frequent data retrievals in
+memory, offering speedier access. But, when we introduce concurrent
+operations, managing this cache without data clashes becomes crucial. This
+is where the concurrent cache enters the scene, ensuring fast data access
+while maintaining data integrity in the face of simultaneous access.
+The concurrent cache will be a map to store book details and a sync.Mutex
+to ensure concurrent safety. This structure safeguards our cache from
+concurrent writes, which could compromise its integrity.
+type ConcurrentCache struct {
+   data  map[string]*BookDetails
+   mutex sync.Mutex
+}
+When a book detail is fetched, it’s stored in the cache for future quick
+access. Following is how you'd safely add data to our cache:
+func (c *ConcurrentCache) Store(key string, value *BookDetails)
+{
+    c.mutex.Lock() // Locking for concurrent safety
+   c.data[key] = value
+    c.mutex.Unlock() // Always remember to unlock
+}
+Retrieving data is equally straightforward. However, we don't need to lock
+the cache for read operations as map reads are safe in concurrent scenarios.
+Still, for complete isolation from any writes that might be happening, we
+can use the mutex.

@@ -1,0 +1,25 @@
+}
+func (a *App) getBooks(w http.ResponseWriter, r *http.Request)
+{
+    // Handler logic to fetch and return list of books
+}
+func (a *App) Run(addr string) {
+   http.ListenAndServe(addr, a.Router)
+}
+func main() {
+   config := map[string]string{
+       "database": "user:password@/dbname",
+   }
+   app := &App{}
+   app.Initialize(config)
+   app.Run(":8080")
+}
+Decoding the Script
+The Application Structure: Our App struct encapsulates the
+Router, a connection to the database, and configuration details.
+Initialization: The Initialize method takes care of the
+foundational setup. It connects to the database and sets up the
+main router.
+Routes: Using the powerful gorilla/mux package, we initiate
+routing. The initializeRoutes method maps different routes to
+their respective handlers.

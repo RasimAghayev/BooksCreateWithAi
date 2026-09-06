@@ -1,0 +1,27 @@
+Goroutine is updating the inventory count, no other Goroutine can modify it
+until the operation is complete. This protection mechanism is critical in
+preventing scenarios like double decrementing of a book count, which
+could occur if two Goroutines try to reduce the inventory simultaneously
+without understanding that another Goroutine is already making a similar
+change.
+Consider the task of updating book inventory after a sale.
+var mutex sync.Mutex
+var inventory = make(map[string]int)
+func updateInventory(bookName string, sold int) {
+    mutex.Lock() // Locking the critical section
+   inventory[bookName] -= sold
+   mutex.Unlock() // Releasing the lock
+}
+With Mutex guarding the inventory update, even if multiple Goroutines
+execute this function, each update will be sequential, preserving data
+integrity.
+Combining WaitGroup and Mutex
+During your experience of using the bookstore app, there may be situations
+in which you are required to wait for multiple Goroutines to complete their
+tasks while simultaneously ensuring that the shared resources that are
+accessed by these Goroutines are safeguarded. There is potential for a high
+level of efficiency when WaitGroup is used for orchestration and Mutex is
+used for resource protection.
+Imagine if our bookstore had to process bulk orders, each potentially
+updating multiple book inventories.
+var wg sync.WaitGroup

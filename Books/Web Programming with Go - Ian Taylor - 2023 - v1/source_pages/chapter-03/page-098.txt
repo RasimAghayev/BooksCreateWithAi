@@ -1,0 +1,24 @@
+bookRouter.HandleFunc("/", AllBooksHandler)
+// Detail a specific book by ID
+bookRouter.HandleFunc("/{id:[0-9]+}", BookDetailHandler)
+// Fetch reviews for a specific book
+bookRouter.HandleFunc("/{id:[0-9]+}/reviews",
+BookReviewsHandler)
+These endpoints, logically clustered under /books, deal exclusively with
+books, offering listing, detailed view, and review access.
+User Account Management
+A bookstore application requires user account management for actions like
+registration, login, and profile access.
+userRouter := r.PathPrefix("/users").Subrouter()
+// User registration
+userRouter.HandleFunc("/register", RegisterHandler)
+// User login
+userRouter.HandleFunc("/login", LoginHandler)
+// View user profile
+userRouter.HandleFunc("/profile", ProfileHandler)
+Grouped under /users, these routes handle user-related functionalities,
+ensuring a seamless user experience.
+Order and Cart Management
+Users will likely wish to manage their cart, check out books, or view past
+orders.
+orderRouter := r.PathPrefix("/orders").Subrouter()

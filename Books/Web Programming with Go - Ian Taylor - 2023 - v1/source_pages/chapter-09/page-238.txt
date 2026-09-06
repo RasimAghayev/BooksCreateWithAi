@@ -1,0 +1,24 @@
+Initiating Testing
+Setting up Environment
+It's pivotal to ensure your environment is well-configured. Fortunately, Go's
+innate support for testing implies that no extra installation is required. All
+you need is the standard Go toolchain. Ensure you have it installed by
+running:
+go version
+If you see the Go version displayed, you're set. If not, refer to chapter 1 to
+install the Go toolkit.
+Test File Structure
+In Go, tests live alongside the code they test. For instance, if you have a Go
+file named book.go containing functionalities related to books, the
+corresponding test file would be named book_test.go. This co-location
+promotes better code organization and makes it easier to find related tests.
+Fetching a Book
+Imagine we have a function in book.go that fetches a book based on its
+ISBN:
+func FetchBookByISBN(isbn string) (*Book, error) {
+   // ... implementation here ...
+}
+We'll now write a test for this function in book_test.go.
+package main
+import (
+   "testing"

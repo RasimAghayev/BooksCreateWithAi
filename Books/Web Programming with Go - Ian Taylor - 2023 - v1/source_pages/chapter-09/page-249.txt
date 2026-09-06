@@ -1,0 +1,9 @@
+   return m.reviews[bookID], nil
+}
+Mocking provides a controlled environment for your tests. You don't have
+to worry about external services being down or the internet being slow.
+Every test run is consistent, making failures easier to diagnose. However,
+it's crucial to remember that while mocks simulate external behaviors, they
+might not capture every nuance of the real thing. It's still essential to have
+integration tests, in addition to unit tests, to ensure all parts of your system
+work together correctly.

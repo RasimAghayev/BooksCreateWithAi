@@ -1,0 +1,20 @@
+json.NewEncoder(w).Encode("Book not found")
+}
+Setting up Server
+Now that the function to fetch book details is ready, let us set up the server
+to listen for requests.
+func main() {
+http.HandleFunc("/book", fetchBookDetails)
+http.ListenAndServe(":8080", nil)
+}
+Testing Endpoint
+With everything in place, run your Go application. Using a tool like
+Postman or simply a browser, navigate to http://localhost:8080/book?id=1
+to fetch the details for the book with ID 1. The returned data should be in
+JSON format.
+Although the above setup works, for a real-world application, you'd use
+additional packages and middleware to handle routes better, manage CORS,
+logging, etc. Additionally, you would move away from a static data slice
+and integrate with a persistent database. Also ensure your endpoints have
+proper error handling. For instance, if a user doesn't provide an 'id' or
+provides an invalid one, return a meaningful error message.

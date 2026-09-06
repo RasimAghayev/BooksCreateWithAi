@@ -1,0 +1,14 @@
+Reusability: Components, especially views and models, can be
+reused across different parts of the application. For example, a
+book model can be used in various contexts – search,
+recommendations, user history – without duplication.
+Maintenance: A well-structured MVC application simplifies maintenance.
+With clear boundaries between components, locating issues, updating
+features, or refactoring becomes more straightforward.
+Fig 2.3 MVC Architecture in Go
+Applying MVC to GitforGits Bookstore
+The heart of our application, the model, would include data structures
+related to books, users, orders, and reviews. Residing within pkg/models,
+they would interact with the database, ensuring data consistency, validation,
+and business logic. For example, the book.go file might contain the book
+struct, methods to retrieve books, add new books, or modify existing ones.

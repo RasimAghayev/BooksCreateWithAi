@@ -1,0 +1,23 @@
+       books: []Book{
+           {ID: 1, Name: "Go Basics", Author: "A. Developer"},
+       },
+   }
+   book, err := FetchBookDetails(mockDB, 1)
+    if err != nil || book.Name != "Go Basics" {
+       t.Fail()
+   }
+}
+Similarly, for mocking external services or APIs, you can create interfaces
+that represent the operations you perform on those services. Then, for tests,
+create mock implementations that return predefined data.
+Let us say you have a function that fetches book reviews from an external
+API:
+type ReviewAPI interface {
+   FetchReviewsForBook(bookID int) ([]Review, error)
+}
+A mock might look like:
+type MockReviewAPI struct {
+   reviews map[int][]Review
+}
+func (m *MockReviewAPI) FetchReviewsForBook(bookID int)
+([]Review, error) {

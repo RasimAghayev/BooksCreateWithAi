@@ -1,0 +1,31 @@
+Explore Go Modules
+The next evolutionary step in dependency management for the Go
+programming language is represented by modules. Prior to the introduction
+of modules, the Go ecosystem was dependent on the GOPATH workspace,
+which was a place where all source codes and the dependencies that
+accompany them coexisted. In spite of the fact that it was functional, this
+structure presented difficulties in terms of versioning and project isolation.
+Go Modules, which were first introduced in Go version 1.11, emerged as a
+solution to these challenges. They revolutionized the way dependencies are
+handled, making it simpler, more intuitive, and detached from the
+GOPATH.
+Essence of Go Modules
+At its core, a Go module is a collection of Go packages stored in a file tree
+with a go.mod file at the root. This file is the module's manifest, detailing
+its module path, which is its import path prefix, and its dependency
+requirements.
+Modules offer several compelling advantages:
+Modules inherently support versioning. Developers can specify
+which version of a dependency they wish to use, and Go
+ensures that that exact version is employed consistently across
+builds.
+With modules, projects are isolated. Gone are the days of the
+monolithic GOPATH. Developers can now work on multiple
+projects with differing dependencies without conflict.
+The go.sum file, accompanying the go.mod file, ensures that the
+modules used are precisely what the developer expects. It
+contains cryptographic checksums of module content, providing
+an added layer of security and consistency.
+Modules can be located anywhere, not just in GOPATH or
+version control systems. They can reside on local file systems,
+network servers, or even be fetched via proxy servers.

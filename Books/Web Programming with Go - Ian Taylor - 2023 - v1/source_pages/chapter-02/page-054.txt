@@ -1,0 +1,31 @@
+3.       Api Directory: Given the importance of clear API definitions in
+modern web apps:
+api/definitions: Potential OpenAPI or gRPC definitions,
+detailing the contract our server provides.
+4.       Web Directory: All things front-end:
+web/static: Static assets, including CSS, JS, images, or
+even third-party libraries.
+web/templates: Go HTML templates, allowing dynamic
+content rendering.
+5.       Internal Directory: Code meant exclusively for this application and
+not for external use.
+internal/handlers: HTTP handlers, like bookHandler.go for
+serving book-related requests or userHandler.go for user
+operations.
+internal/middleware: Essential middleware functions for
+tasks like logging, CORS, or authentication.
+internal/config: 
+Configuration-related 
+logic, 
+maybe
+config.go which might fetch and parse configuration
+details.
+6.       Scripts Directory: Any script aiding development, deployment, or
+other operations:
+scripts/deploy.sh: A potential script to handle deployment.
+scripts/test.sh: Running tests or linters across the project.
+7.       Database Directory: For database-related files and scripts.
+database/migrations: SQL scripts or other migration tools
+to ensure database structure consistency.
+database/seeds: Scripts or data files that seed initial data
+into the database.

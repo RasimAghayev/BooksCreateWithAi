@@ -1,0 +1,25 @@
+FROM books
+GROUP BY author_id
+HAVING COUNT(*) = (
+SELECT MAX(book_count)
+    FROM (SELECT author_id, COUNT(*) as book_count FROM
+books GROUP BY author_id) as counts
+);
+In the above, the inner query counts books per author, and the outer query
+identifies the author with the most books.
+Aggregations
+The purpose of aggregation functions is to process multiple rows of data
+and then compile the extracted information into a single, summarized result
+that offers valuable insights. Through the use of aggregations, GitforGits is
+able to gain a better understanding of customer behavior, monitor trends in
+sales, and even perform inventory management.
+An example of an aggregation function would be one that determines the
+total number of books sold, the average price of books, or the authors or
+genres that are the most popular. It is essential for the GitforGits team to
+have these summarized results in order to make educated decisions,
+formulate marketing strategies, or tailor the inventory in order to more
+effectively meet the demands of the customers.
+COUNT
+Calculates the number of rows. To determine the total number of books:
+SELECT COUNT(*) FROM books;
+SUM

@@ -1,0 +1,8 @@
+GitforGits, users might want to view reviews of a specific book written
+after a certain date, such as:
+URL: gitforgits.com/book/5678/reviews?after=2023-01-01
+Both the book ID (path parameter) and the date (query parameter) influence
+the content displayed. By understanding and implementing dynamic URL
+parameters, developers empower the bookstore to be more than a static
+platform. It becomes a fluid, responsive entity, always ready to cater to each
+user's unique literary journey.

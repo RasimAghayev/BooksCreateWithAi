@@ -1,0 +1,16 @@
+net/http Package
+net/http Overview
+Go's net/http package sits at the core of its web development capabilities.
+As a part of the standard library, this package offers a plethora of
+functionalities, ranging from the basics of setting up a server and handling
+HTTP requests, to more intricate aspects like cookies, redirects, and file
+uploads. The true beauty of net/http lies in its simplicity, abstracting away
+the complexities of the HTTP protocol while allowing developers to focus
+on the application logic.
+Fig 1.2 Overview of net/http Package
+HTTP Servers and Clients
+The dual capability of net/http to both function as an HTTP client and to set
+up HTTP servers is the core competency of this programming language.
+Using the ListenAndServe function, developers are able to quickly start a
+server. This function begins listening on a particular port for incoming
+HTTP requests and begins listening for them. When it comes to server

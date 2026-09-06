@@ -1,0 +1,31 @@
+   r.HandleFunc("/", HomeHandler)
+   // Start the server
+   http.ListenAndServe(":8080", r)
+}
+In this snippet, a new mux router is created and a basic route (/) is
+associated with the HomeHandler function.
+Advanced Route Matching
+The power of gorilla/mux becomes evident when defining complex routes.
+// Route with a path parameter
+r.HandleFunc("/book/{id:[0-9]+}", BookDetailHandler)
+// Route restricted to a specific HTTP method
+r.HandleFunc("/book/add", AddBookHandler).Methods("POST")
+In these examples, the first route captures numerical book IDs, while the
+second route is specifically for POST requests to add a new book.
+Middleware Integration
+Building on previous learnings, integrating middleware with gorilla/mux is
+intuitive. For GitforGits, an authentication middleware for user-related
+routes can be implemented as:
+userRouter := r.PathPrefix("/users").Subrouter()
+userRouter.Use(AuthenticationMiddleware)
+Every 
+route 
+under 
+userRouter 
+will 
+now 
+be 
+processed 
+by
+AuthenticationMiddleware before reaching its designated handler.
+Configuring Gorilla/Mux for Optimal Performance

@@ -1,0 +1,30 @@
+Error Handling in Go
+Mistakes can happen in any web app, no matter how well-designed or
+complicated it is. How these apps deal with these kinds of surprises greatly
+influences how users view and interact with them. The 404 (Not Found) and
+500 (Internal Server Error) statuses are two of the most common types of
+errors encountered in web applications. The 404 error typically occurs when
+a user attempts to access a page or resource that does not exist, possibly as a
+result of a mistyped URL or a broken link, whereas the 500 error is a more
+general server-side error indicating that something has gone wrong on the
+website's server. Both of these errors, if not handled correctly, can result in
+user frustration and a loss of user trust.
+Web developers can significantly improve the user experience by
+addressing these errors in a user-friendly manner, such as through custom
+error pages that maintain the site's look and feel, provide clear and helpful
+information, and offer links to guide users back to active parts of the site.
+These custom error pages not only mitigate the negative impact of an error,
+but also provide an opportunity to reinforce the website's branding and
+potentially even delight users in what would otherwise be a frustrating
+moment. This approach to error handling is critical in maintaining user
+engagement and trust, ensuring that even when things go wrong, the user's
+experience remains positive and seamless.
+404 Not Found Error
+A 404 error occurs when a user requests a resource (like a web page or an
+API endpoint) that the server can't locate. For GitforGits Bookstore, this
+might happen if someone tries accessing a book that doesn't exist.
+Out of the box, gorilla/mux offers default error responses. However, to
+provide a tailored experience, you can set a custom 404 handler.
+func CustomNotFoundHandler(w http.ResponseWriter, r
+*http.Request) {
+   w.WriteHeader(http.StatusNotFound)

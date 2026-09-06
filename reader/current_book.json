@@ -1,11 +1,7 @@
 {
-  "book_id": "web_programming_with_go_2023_v1",
-  "title": "Web Programming with Go",
-  "author": "Ian Taylor",
-  "year": 2023,
-  "version": 1,
-  "pages": 264,
-  "status": "reading",
-  "started_at": "2026-09-06",
-  "filename_safe": "Web Programming with Go - Ian Taylor - 2023 - v1"
+  "book_id": null,
+  "title": null,
+  "status": "none",
+  "started_at": null,
+  "note": "Web Programming with Go (web_programming_with_go_2023_v1) 2026-09-06 tarixində tamamlandı. 13 kitab completed. Növbəti kitab Books/ qovluğundan götürüləcək."
 }

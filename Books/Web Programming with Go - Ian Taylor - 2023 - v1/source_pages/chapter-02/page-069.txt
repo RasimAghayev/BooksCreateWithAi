@@ -1,0 +1,40 @@
+Configuration 
+and 
+Environment
+Variables
+The ability to externalize settings from the application code is made
+possible for developers by means of configuration files or environment
+variables. Runtime settings such as port numbers, database connection
+details, and API keys are examples of what might fall under this category.
+Through the process of externalizing configurations of this kind, an
+application can become more flexible and adaptable to a variety of
+environments, 
+including 
+production, 
+testing, 
+and 
+development
+environments.
+At the operating system level, environment variables are a subset of
+configuration that control the environment. They are key-value pairs that
+can be accessed by software that is currently operating on the system. It is
+possible to make modifications to them without having to modify the
+application code, which is their greatest strength. When it comes to
+sensitive information, such as database passwords or API keys, this is
+especially helpful because it ensures that such essential data is not hard-
+coded into the application.
+Implementing 
+Configuration 
+and 
+Environment
+Variables
+The os package, which is provided by the standard library of Go, is
+equipped with functionalities that allow them to interact with the underlying
+operating system. These functionalities include the ability to retrieve
+environment variables.
+During the process of local development, it is convenient to use a .env file
+to simulate the environment variables that will be set on production
+systems. These variables will be set at the operating system level. There is a
+package called godotenv that gives developers the ability to load
+environment variables into the Go application from a .env file.
+package main

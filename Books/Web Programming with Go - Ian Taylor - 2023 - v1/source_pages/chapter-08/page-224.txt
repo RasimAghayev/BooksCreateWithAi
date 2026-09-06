@@ -1,0 +1,26 @@
+When a user initiates a request, the accompanying token undergoes
+validation, verifying the user’s authenticity and granting them the
+corresponding access. This method is not only secure but also efficient, as it
+eliminates the need for repeated verifications of the user’s credentials.
+Moreover, token-based authentication aligns seamlessly with stateless
+protocols, a characteristic intrinsic to modern web applications, thereby
+enhancing scalability and performance.
+Generating and Validating Tokens
+A straightforward way to generate tokens in Go is by using JWT (JSON
+Web Tokens). The github.com/dgrijalva/jwt-go package can assist in
+creating and verifying JWTs.
+Generating a Token
+Upon user login or signup, generate a JWT that embeds the user's details,
+then return this token.
+import (
+"github.com/dgrijalva/jwt-go"
+)
+func GenerateToken(userID string) (string, error) {
+   token := jwt.NewWithClaims(jwt.SigningMethodHS256,
+jwt.MapClaims{
+       "userID": userID,
+   })
+   return token.SignedString([]byte("your_secret_key"))
+}
+The token can be decoded to extract the user's details, and its signature
+ensures it hasn't been tampered with.

@@ -1,0 +1,27 @@
+Program Data Fetching
+Fetching data pertains to retrieving specific pieces of information from a
+data source, such as a database, and serving it to the user. In modern web
+applications, the process often involves using RESTful APIs. When we
+learn data fetching in the context of Go and our bookstore app, we're
+looking at how to set up an endpoint in the app that will communicate with
+the database, retrieve the required book data, and then send this data to the
+user in a specific format, usually JSON.
+Setting up Endpoint
+Go's net/http package, as learned in previous chapters, makes it
+straightforward to create HTTP servers and handle requests. To set up an
+endpoint that fetches book data, we first define a route that maps to a
+specific function, which will contain our logic to retrieve the data.
+http.HandleFunc("/books", getBooks)
+http.ListenAndServe(":8080", nil)
+In the above, we've created a route /books that will trigger the getBooks
+function when accessed.
+Interacting with Database
+To fetch data from a database, you would typically use a database driver
+specific to your database system. For this example, let us assume you're
+using a SQL database with the database/sql package in Go.
+Before fetching, establish a connection:
+import (
+   _ "github.com/go-sql-driver/mysql"
+)
+db, err := sql.Open("mysql", "user:password@/dbname")
+if err != nil {

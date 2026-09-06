@@ -1,0 +1,37 @@
+JSON and Its Importance
+JSON, an acronym for JavaScript Object Notation, is a universally
+acknowledged data interchange format renowned for its lightweight and
+human-readable properties. Its ease of use for both humans and machines –
+simple to read and write for the former, and equally straightforward to parse
+and generate for the latter – marks it as a premier choice in web
+development. Initially rooted in JavaScript, JSON has transcended its
+origins to become a language-independent format, garnering widespread
+support across various programming languages, including Go, which is
+especially relevant in the context of our learning around the GitforGits
+Bookstore application.
+The fundamental role of JSON in web development cannot be overstated. It
+serves as the backbone for data transmission between a server and a web
+application, as well as among web applications themselves. This pivotal
+role stems from its concise yet flexible syntax, which not only facilitates
+ease of data interchange but also ensures that the data is easily understood
+and manipulated by developers. For web applications built on JavaScript or
+that 
+interact 
+with 
+JavaScript-heavy 
+frontends, 
+JSON’s 
+inherent
+compatibility with JavaScript is invaluable. It allows for seamless parsing
+and manipulation of JSON data within these applications, creating a fluid
+and efficient bridge between the server and the client side.
+Basic JSON Structure
+A JSON value can be an object, array, string, number, or one of the literals:
+true, false, or null. Objects are wrapped in curly braces {} and are an
+unordered collection of key-value pairs. Arrays are ordered lists of values,
+wrapped in square brackets []. Strings in JSON must be enclosed in double
+quotes.
+Go offers native support for JSON encoding and decoding through its
+encoding/json package. To represent JSON data in Go, you typically use
+structs, but you can also use maps.
+We shall take the Book struct as an example:

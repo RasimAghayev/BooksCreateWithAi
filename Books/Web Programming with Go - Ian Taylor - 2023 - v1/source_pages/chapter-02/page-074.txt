@@ -1,0 +1,35 @@
+replace actual implementations with mock objects or stubs. This
+is made available by injecting dependencies. Having this
+isolation makes it possible to conduct unit tests that are more
+focused, allowing the focus to be on the logic of the component
+rather than its dependencies.
+Flexibility and Maintainability: With DI, the configuration of
+components is externalized from the components themselves,
+which allows for greater flexibility and maintainability. Because
+of this separation, any modifications that are made to the
+configuration or the implementation of a dependency do not
+require any changes to be made to the component that is the
+recipient of those modifications. Applications end up becoming
+more adaptable and less difficult to maintain as a consequence
+of this.
+Lifecycle Management: Containers that manage the lifecycle of
+dependencies are frequently used to facilitate a distributed
+infrastructure (DI). In order to maximize the utilization of
+resources and the management of those resources, these
+containers determine when to create new instances or reuse
+existing ones. The automated management of lifecycles is
+especially useful in complex applications, where the manual
+management of object lifecycles can be prone to errors and can
+be a burdensome process.
+Scalability and Integration: As applications expand, DI makes it
+simpler to incorporate new components or services into the
+software development process. Increasing the size of the
+application or integrating services provided by third parties
+becomes easier to manage when components are not tightly
+coupled to one another.
+Consistency and Standardization: DI encourages a consistent
+and standardized approach to managing dependencies across an
+application, which makes it possible to achieve greater
+consistency and standardization. The application of this
+uniformity is advantageous, particularly in large teams, because
+it establishes a distinct pattern for developers to adhere to.

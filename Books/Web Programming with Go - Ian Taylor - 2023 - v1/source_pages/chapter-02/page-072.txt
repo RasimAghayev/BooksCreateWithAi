@@ -1,0 +1,14 @@
+Clear Naming Conventions: Ensure that environment variable
+names 
+are 
+clear 
+and 
+self-explanatory. 
+For 
+instance,
+GITFORGITS_DB_USER is clearer than GFG_DB_U.
+Configuration and environment variables ensure that our GitforGits
+Bookstore Web App remains adaptable to varied environments and keeps
+sensitive data shielded. As we delve deeper into building our web app, this
+foundation will continually prove instrumental in ensuring a seamless,
+efficient, and secure development and deployment process.

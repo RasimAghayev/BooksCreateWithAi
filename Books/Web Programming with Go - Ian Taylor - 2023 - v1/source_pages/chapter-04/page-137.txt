@@ -1,0 +1,25 @@
+Scenario#2: Missing or Mismatched Data
+Imagine you're rendering user reviews, but accidentally reference a non-
+existent field:
+{{.UserRevu}} <!-- Typo in the field name -->
+Debugging Approach
+Errors related to missing data will emerge at runtime when
+executing the template, not during parsing.
+Cross-reference the template's placeholders with the data
+structure it's expected to represent.
+Ensure there aren't any typos or mismatches between the data
+field names and their references in the template.
+Scenario#3: Incorrect Logic or Conditions
+Suppose you're offering discounts on certain books, and your template
+contains logic to showcase the discount:
+{{if .Discount > 50}}
+   <p>Major Discount!</p>
+{{else}}
+   <p>Regular Price</p>
+{{end}}
+However, you forgot that Discount is a string representing a percentage, not
+an integer.
+Debugging Approach
+This scenario might not throw a direct error. Instead, it may lead
+to unexpected behavior, like showing "Regular Price" for a 60%
+discount.

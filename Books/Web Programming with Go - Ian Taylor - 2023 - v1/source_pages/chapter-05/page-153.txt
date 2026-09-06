@@ -1,0 +1,29 @@
+Secondary indexing, on the other hand, involves creating indexes on
+columns other than the primary key. These are particularly useful for
+speeding up queries that involve non-primary key columns. For example, in
+GitforGits Bookstore, users might want to search for books by author,
+genre, or publication date. Secondary indexes on these columns would
+significantly enhance the speed of these searches. Unlike primary indexes,
+secondary indexes are not automatically created and must be defined based
+on the query patterns and requirements of the application.
+Primary vs. Secondary Indexes
+While primary keys inherently come indexed, secondary indexes need to be
+explicitly defined. In the context of GitforGits, the id columns of tables like
+books, users, and reviews have primary indexes. However, scenarios where
+searches happen on non-primary key columns, like searching books by title
+or isbn, necessitate secondary indexes.
+CREATE INDEX idx_books_title ON books(title);
+This command establishes an index on the title column, expediting search
+operations centered around book titles.
+Composite Indexes
+Queries often involve multiple columns. For example, one might want to
+retrieve all books of a specific genre published after a certain date. A
+composite index, indexing both the genre_id and publication_date columns,
+enhances such queries.
+CREATE INDEX idx_books_genre_date ON books(genre_id,
+publication_date);
+For GitforGits, anticipating the nature of queries and creating composite
+indexes accordingly can drastically improve performance.
+Covering Indexes
+Covering indexes elevates optimization by including all the columns a
+query needs within the index itself. Suppose GitforGits often queries book

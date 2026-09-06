@@ -1,0 +1,30 @@
+Navigate User Interactions
+Request-Response Paradigm
+The internet's foundation lies in a dance of requests and responses. When a
+user performs an action online, like clicking on a link to view a book's
+details, they're essentially sending a request to a server. This server
+processes the request and sends back a response, which might be the book's
+details or an error message if the book isn't available. This iterative process
+of requesting and receiving is ubiquitous, powering every interaction on the
+web.
+Request Phase
+Imagine a user, Alice, browsing the GitforGits Bookstore. She's intrigued
+by a new novel and clicks on its title to see more.
+At this click:
+Initiation: Alice's browser initiates an HTTP GET request. This
+request is directed to the server hosting the GitforGits
+Bookstore, specifically asking for details about the novel.
+Header Composition: Along with the primary request, the
+browser sends headers containing meta-information, like
+browser type or any cookies associated with GitforGits.
+Routing: As the request reaches the server, the application's
+router takes over. It discerns that Alice is asking for book details
+based on the URL and the GET method.
+Handler Invocation: Post routing, the request lands in a handler
+– a function designed to fetch book details.
+Response Phase
+Once the server receives Alice's request:
+1.       Handler Logic: The handler function communicates with the
+database, fetching the novel's details.
+2.        Crafting the Response: With the details fetched, the server crafts an
+HTTP response. This includes:

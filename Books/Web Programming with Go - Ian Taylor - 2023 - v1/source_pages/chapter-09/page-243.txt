@@ -1,0 +1,25 @@
+               t.Errorf("Add(%d, %d) = %d; want %d", tt.a, tt.b, got,
+tt.want)
+           }
+       })
+   }
+}
+In the above, you define a slice of anonymous structs, each representing a
+test case. You then range over this slice, running each test. Using t.Run
+allows for each test case to run independently and provides a clearer output
+of which test cases pass or fail.
+Utilizing Helper Functions
+Helper functions can be instrumental in reducing code redundancy,
+especially when setting up the context for tests or cleaning up after them.
+For instance, if testing various functionalities of the bookstore app requires
+initializing a mock database, you could use a helper function to handle that.
+func setupMockDatabase() *MockDB {
+   db := &MockDB{}
+    // ... some setup code ...
+   return db
+}
+func tearDownMockDatabase(db *MockDB) {
+   // ... cleanup code ...
+}
+In your tests, you can call these functions before and after running test
+cases, ensuring each test has the necessary context and cleanup.

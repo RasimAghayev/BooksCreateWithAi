@@ -1,0 +1,24 @@
+Performing CRUD Operations
+Creating Book
+To usher a new book into the GitforGits Bookstore, you'd need an endpoint
+that supports the creation of book records. Using the POST method ensures
+data submission for a fresh book.
+func CreateBookHandler(w http.ResponseWriter, r *http.Request)
+{
+   var newBook Book
+   decoder := json.NewDecoder(r.Body)
+   err := decoder.Decode(&newBook)
+   if err != nil {
+       http.Error(w, "Invalid book data", http.StatusBadRequest)
+       return
+   }
+   BookstoreDB.Create(&newBook)
+   w.WriteHeader(http.StatusCreated)
+   json.NewEncoder(w).Encode(newBook)
+}
+Once integrated, posting JSON book data to this endpoint would result in a
+new book record. Essential fields like title, author, and genre can be part of
+the submitted data.
+Reading Book Details
+Read operations allow users to fetch details about a book. It's akin to
+picking a book from a shelf and examining its cover, blurb, and author.

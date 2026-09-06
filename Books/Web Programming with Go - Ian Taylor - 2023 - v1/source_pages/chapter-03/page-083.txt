@@ -1,0 +1,27 @@
+new account or adds a review for a book, a POST request is
+issued. Unlike GET, it modifies data on the server.
+PUT: Used to update an existing resource or create it if it
+doesn't exist. If a user wanted to update their account details or
+change a book review, a PUT request would be ideal. It ensures
+idempotence; making the same request multiple times results in
+the same outcome.
+DELETE: As the name suggests, this method deletes the
+specified resource. If a user wanted to delete a book review or
+remove a book from their wishlist, the application would utilize
+a DELETE request.
+HEAD: Similar to GET, but it only retrieves the headers of the
+response, not the actual data. It's useful when one only needs
+meta-information about a resource.
+PATCH: Used to apply partial modifications to a resource. If a
+user wanted to update just their email address but leave other
+account details unchanged, a PATCH request could be
+employed.
+OPTIONS: This method describes the communication options
+for the target resource. It provides information about the
+communication possibilities and is a way to ascertain the
+capabilities of a web server.
+In the GitforGits Bookstore application, each of these HTTP methods plays
+a distinct role, ensuring users can interact with the platform seamlessly.
+From merely browsing books (GET) to adding them to a cart (POST) or
+updating user details (PATCH/PUT), these methods ensure every action is
+captured, processed, and responded to with precision.

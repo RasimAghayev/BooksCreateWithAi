@@ -1,0 +1,26 @@
+Design Main Page Layout
+The main page of any website is akin to a storefront. For GitforGits
+Bookstore, it's the virtual entrance, inviting users to explore the vast literary
+treasures within. It should not only showcase the variety but also offer a
+glimpse into special features, like bestsellers, new arrivals, and user
+reviews. This is where design meets functionality, ensuring a compelling
+and seamless browsing experience.
+Structuring Base Layout
+To get started, try visualizing the components that make up the main page's
+structure. Imagine the layout of a website that includes a prominent header
+that contains links to navigation, a dynamic content area that displays
+books, and a footer that contains essential information about the website.
+Each of these components can be crafted as a separate template, which
+enables modular design and reusability of the product.
+{{define "base"}}
+<html>
+<head>
+   <title>GitforGits Bookstore: Home</title>
+</head>
+<body>
+   {{template "header" .}}
+   {{template "mainContent" .}}
+   {{template "footer" .}}
+</body>
+</html>
+{{end}}

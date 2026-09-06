@@ -1,0 +1,29 @@
+gorilla/mux in Go, allows developers to provide more meaningful, user-
+centric error responses. This approach not only enhances the user
+experience but also offers a more professional and polished look to your
+application.
+When a user encounters an error, the default server response can be
+confusing or unhelpful. Custom error handling transforms this experience.
+It involves detecting errors and responding with messages or pages that are
+specifically designed to be helpful and relevant to the user's context. For
+instance, in the GitforGits Bookstore, if a user tries to access a non-existent
+book page, instead of a stark "404 Not Found" message, they could be
+greeted with a custom page suggesting similar books or a search bar to find
+what they're looking for. For example, Gorilla/mux simplifies the process of
+setting up custom error handlers. It allows developers to define what should
+happen when an HTTP error occurs. For example, a custom 404 page can
+be set up to handle requests to unknown routes as below:
+func NotFoundHandler(w http.ResponseWriter, r *http.Request) {
+   w.WriteHeader(http.StatusNotFound)
+    w.Write([]byte("Book not found. Visit our catalog to explore
+other books."))
+}
+r.NotFoundHandler = http.HandlerFunc(NotFoundHandler)
+Whenever a user accesses an invalid URL or a non-existent book, the
+NotFoundHandler provides a friendly message guiding them back.
+With libraries like gorilla/mux, Go's flexibility allows developers to create
+routes that are intuitive, dynamic, and efficient. The users' experience is
+guaranteed to be smooth, well-organized, and enjoyable as they make their
+way through the bookstore thanks to these suggested routes. Every URL
+that they visit, every book that they investigate, and every review that they
+read is made possible by routes that have been meticulously programmed.

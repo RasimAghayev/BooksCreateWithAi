@@ -1,0 +1,25 @@
+func (a *App) detailedHealthCheckHandler(w
+http.ResponseWriter, r *http.Request) {
+   // Check database health
+    if err := a.DB.Ping(); err != nil {
+       w.WriteHeader(http.StatusInternalServerError)
+       w.Write([]byte("Database Unreachable"))
+       return
+   }
+    // Additional checks (external services, cache systems, etc.) can
+be added here
+   w.WriteHeader(http.StatusOK)
+   w.Write([]byte("OK"))
+}
+// During route initialization:
+a.Router.HandleFunc("/detailed-healthcheck",
+a.detailedHealthCheckHandler).Methods("GET")
+Accessing or performing a detailed-health check provides a set of
+validations. If any check fails, it returns an error message indicating the
+problematic component. While health checks are valuable, exposing
+detailed system information can be a security concern. It's wise to secure
+detailed health check endpoints, ensuring only authorized personnel or
+systems can access them.
+These above endpoints offer a proactive mechanism to detect issues,
+potentially even before they impact users, ensuring that the digital
+bookstore provides a seamless, uninterrupted experience to its audience.

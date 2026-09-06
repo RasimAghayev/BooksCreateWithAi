@@ -1,0 +1,10 @@
+       <img src="facebook-icon.png">
+       <img src="twitter-icon.png">
+   </div>
+   <p>&copy; 2023 GitforGits Bookstore</p>
+</div>
+{{end}}
+This modular approach ensures each section gets the attention it deserves.
+From the welcoming embrace of the header to the diverse literary showcase
+in the main content, down to the resource-rich footer, every pixel is
+meticulously crafted.

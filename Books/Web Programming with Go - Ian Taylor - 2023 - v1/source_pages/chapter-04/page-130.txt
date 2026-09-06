@@ -1,0 +1,13 @@
+Once a form is submitted, the server needs to process the input data. With
+Go, the net/http package makes this task straightforward. The Request
+object contains form data which can be easily parsed and processed.
+Now, once the registration form is submitted, the server can extract the
+form data using:
+username := r.FormValue("username")
+email := r.FormValue("email")
+password := r.FormValue("password")
+The addition of forms to GitforGits Bookstore enhances its interactivity and
+user-centric approach. It is guaranteed that the user will always feel heard,
+that their preferences will be honored, and that their data will be secure
+thanks to the dialogue that is initiated through forms and is supported by the
+processing power of Go.

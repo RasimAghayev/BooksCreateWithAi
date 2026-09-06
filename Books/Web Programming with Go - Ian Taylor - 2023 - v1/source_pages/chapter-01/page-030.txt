@@ -1,0 +1,26 @@
+Setting up Go on Linux
+Installing Go
+Setting up Go on Linux is straightforward due to the availability of pre-
+compiled binary distributions. Before initiating the installation, ensure you
+have a suitable Linux version. Most modern distributions, be it Ubuntu,
+CentOS, Fedora, or Debian, support Go.
+To start, download the latest Go tarball from the official site. Navigate to
+Go Downloads and select the appropriate version for Linux.
+After downloading, follow these steps:
+1. Open your terminal. Navigate to the directory containing the
+downloaded tarball, typically the Downloads folder.
+2. Extract the tarball to /usr/local using the command:
+sudo tar -C /usr/local -xzf go$VERSION.$OS-$ARCH.tar.gz
+3. Replace $VERSION, $OS, and $ARCH with the appropriate
+values from your downloaded file.
+4. Adjust the system's PATH to include Go's binaries by editing the
+profile or bashrc:
+echo "export PATH=$PATH:/usr/local/go/bin" >> ~/.profile
+5. Reload the profile using source ~/.profile to ensure the new
+PATH setting is active.
+Configuring Go Workspace
+The GOPATH workspace structure was the one that Go utilized in the past.
+Since the introduction of Go Modules, the implementation of a rigid
+workspace structure is no longer required. Despite this, it is still possible
+that organizing your Go projects will be beneficial.
+1. Create a directory for your Go projects:

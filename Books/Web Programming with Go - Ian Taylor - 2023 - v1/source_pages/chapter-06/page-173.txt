@@ -1,0 +1,35 @@
+   defer wg.Done()
+   // Fetching logic here
+}
+categories := []string{"Thriller", "Sci-Fi", "History"}
+for _, category := range categories {
+   wg.Add(1)
+   go fetchBooks(category)
+}
+wg.Wait() // This will block until all book fetches are complete
+By utilizing WaitGroup, the main function holds off until all book details
+are gathered, ensuring the user gets a comprehensive list.
+sync.Mutex
+As the application grows, it's common to have multiple Goroutines
+executing concurrently, often needing to access and modify shared
+resources, such as the inventory database. Imagine a scenario where
+multiple Goroutines attempt to update the inventory count of a specific
+book simultaneously. Without a mechanism to manage this concurrency,
+these 
+simultaneous 
+operations 
+could 
+overlap, 
+leading 
+to 
+data
+inconsistencies, such as incorrect inventory counts, and potentially causing
+significant issues in inventory management and customer experience. This
+is where sync.Mutex becomes an invaluable tool in the Go programmer’s
+arsenal. Acting as a mutual exclusion lock, sync.Mutex ensures that only
+one Goroutine can access or modify a shared resource at any given time.
+When a Goroutine accesses a section of code protected by a Mutex, it locks
+the Mutex, performs its operations, and then unlocks the Mutex upon
+completion.
+For instance, when updating the book inventory in GitforGits Bookstore,
+wrapping the update logic with sync.Mutex ensures that when one

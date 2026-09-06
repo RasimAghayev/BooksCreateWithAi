@@ -1,0 +1,31 @@
+Introduction to Persistent Storage
+Data is central to most web applications. Data drives functionality and user
+experience, whether it's user profiles, order histories, or product catalogs.
+However, for data to truly serve its purpose, it requires a dependable storage
+mechanism that keeps information longer than the ephemeral lifecycle of a
+single server instance or user session. This is where persistent storage
+comes into play, providing a long-term, stable repository for data that
+underpins the core functions of the application.
+While the primary function of persistent storage is to protect data, the
+implications are numerous. It allows for features such as user
+personalization, order tracking, and product recommendations. This means
+remembering a user's reading preferences, bookmarking their last read page,
+and suggesting books based on their reading history for GitforGits
+Bookstore. Every interaction with the website would be stateless, devoid of
+history or context, severely limiting the depth of user engagement.
+Databases inevitably take center stage when learning persistent storage.
+They not only store data but also provide structured methods for querying,
+retrieving, and manipulating it. Relational databases, such as PostgreSQL or
+MySQL, and NoSQL databases, such as MongoDB, are two types of
+databases. The database of choice is frequently determined by the
+application's specific requirements. For example, an inventory-centric
+application such as GitforGits Bookstore may favor relational databases due
+to their structured nature, which allows for complex queries on book titles,
+authors, genres, and user reviews.
+Drivers or libraries that translate high-level programming logic into
+database-specific commands are used by web applications to communicate
+with databases. This could include leveraging the database/sql package, as
+well as drivers specific to the chosen database, in the context of GitforGits
+developed in Go. A web application's relationship with its database is
+delicate; efficient data retrieval and storage mechanisms have a direct
+impact on the application's performance, scalability, and user experience.

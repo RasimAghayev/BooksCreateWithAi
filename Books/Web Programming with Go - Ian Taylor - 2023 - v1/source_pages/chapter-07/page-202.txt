@@ -1,0 +1,29 @@
+Implement and Operate OAuth
+'Login with Google' or 'Login with Facebook' buttons are examples of
+buttons that are frequently found in contemporary web applications and so
+it does in GitforGits Bookstore. OAuth is a standardized protocol that
+enables third-party applications to access user data without revealing the
+user's password. These buttons are the defining characteristics of OAuth.
+The integration of OAuth into GitforGits Bookstore would make it possible
+for users to quickly gain access to the platform without having to create a
+new account, which would significantly improve the user experience.
+Understanding OAuth
+OAuth (Open Authorization) is a token-based authentication process.
+Instead of sharing passwords, applications request tokens from a central
+server and use these tokens to prove identity. This process involves
+redirecting a user to the OAuth provider, where they log in, and then return
+with an access token. GitforGits can then use this token to fetch required
+data, like the user's name or email, from the provider.
+The choice of an OAuth provider is paramount. For our bookstore, we
+might consider popular providers like Google, Facebook, or Twitter. Each
+comes with its own set of APIs, user base, and considerations. For instance,
+while Google offers a vast user base, Facebook might offer richer
+demographic data.
+Setting up OAuth
+To begin integrating OAuth, register the GitforGits app with the desired
+provider. This registration provides crucial credentials like the client ID and
+client secret.
+import (
+"golang.org/x/oauth2"
+"golang.org/x/oauth2/google"
+)

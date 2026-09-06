@@ -1,0 +1,12 @@
+Thoroughly review any template logic or conditions. Ensure
+data types and conditions align with expectations.
+Consider introducing unit tests or template tests. For GitforGits
+Bookstore, having tests for critical template logic ensures they
+render as expected under different data conditions.
+Apart from manual checks, tools can be indispensable:
+Go Playground: For basic templates, Go's online playground
+can be useful to test and debug templates in isolation.
+Custom Error Wrappers: Consider writing a custom wrapper
+around the template.Execute() method. This wrapper can
+capture errors and provide additional context, making
+debugging more straightforward.

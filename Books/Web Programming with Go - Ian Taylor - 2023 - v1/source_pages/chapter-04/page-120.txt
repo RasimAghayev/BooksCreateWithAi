@@ -1,0 +1,26 @@
+Nested Templates in Action
+Essentially, think of nested templates as building blocks, each fitting
+seamlessly within another, forming a coherent and structured whole. For
+GitforGits Bookstore, the utility of nested templates becomes apparent
+when considering the array of different sections that make up the site -
+headers, footers, sidebars, main content, and more. Each of these sections
+can be a standalone template, and when constructing a full page, these
+templates can be nested within a primary template. This modular approach
+ensures ease of updates, consistency across pages, and a unified design
+language.
+Constructing the Framework
+We shall begin by crafting a base template for the bookstore. This
+foundational template can have placeholders for nested templates, ensuring
+flexibility in content rendering.
+{{define "base"}}
+<html>
+<head>
+   <title>GitforGits Bookstore</title>
+</head>
+<body>
+   {{template "header" .}}
+   {{template "content" .}}
+   {{template "footer" .}}
+</body>
+</html>
+{{end}}

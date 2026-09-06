@@ -1,0 +1,24 @@
+for _, genre := range genres {
+   go searchBooksByGenre(genre, resultsChannel)
+}
+var allBooks []Book
+for i := 0; i < len(genres); i++ {
+   books := <-resultsChannel
+   allBooks = append(allBooks, books...)
+}
+In the above sample program, each genre search happens concurrently.
+Once all searches are complete, the results are aggregated.
+Beyond searches, Goroutines excel in data-intensive operations. Suppose
+the GitforGits Bookstore wants to process user reviews to derive sentiments
+(positive, negative, neutral). Instead of processing each review one-by-one,
+it's efficient to process multiple reviews concurrently.
+func processReview(review Review, ch chan<- Sentiment) {
+   sentiment := deriveSentiment(review)
+   ch <- sentiment
+}
+reviews := fetchPendingReviews()
+sentimentsChannel := make(chan Sentiment, len(reviews))
+for _, review := range reviews {
+   go processReview(review, sentimentsChannel)
+}
+var sentiments []Sentiment

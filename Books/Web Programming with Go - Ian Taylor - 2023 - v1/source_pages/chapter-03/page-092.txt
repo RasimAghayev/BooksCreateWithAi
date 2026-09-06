@@ -1,0 +1,25 @@
+bookRouter.HandleFunc("/{id:[0-9]+}/reviews",
+BookReviewHandler)
+This structure neatly compartmentalizes book-related functionalities,
+ensuring the code remains organized and scalable.
+Middleware in Routing
+Middleware functions operate before the primary handler, allowing for pre-
+processing of requests. A common use-case of middleware for GitforGits
+might be user authentication.
+func AuthenticationMiddleware(next http.Handler) http.Handler {
+    return http.HandlerFunc(func(w http.ResponseWriter, r
+*http.Request) {
+       if !userIsAuthenticated(r) {
+           http.Redirect(w, r, "/login", 302)
+           return
+       }
+       next.ServeHTTP(w, r)
+   })
+}
+bookRouter.Use(AuthenticationMiddleware)
+With the above, every request passing through bookRouter undergoes
+authentication. If a user isn't logged in, they're redirected to the login page.
+Error Handling and Custom 404 Pages
+By default, web servers provide generic error messages, but these are often
+not user-friendly or informative enough to guide users effectively. Custom
+error handling, especially in the context of using frameworks like

@@ -1,0 +1,24 @@
+You can use context values to pass this data. For instance, middleware can
+be used to attach a unique request ID to every incoming request. This ID
+can then be used in subsequent logging throughout the request's lifecycle.
+Integrating Advanced Logging Libraries
+While Go's native log package is sufficient for basic logging, the ecosystem
+offers advanced logging libraries like logrus and zap. These libraries offer
+structured logging, where logs are created as structured data (like JSON),
+making them easily parseable and more informative.
+For instance, with logrus:
+import log "github.com/sirupsen/logrus"
+func init() {
+   log.SetFormatter(&log.JSONFormatter{})
+   log.SetLevel(log.InfoLevel)
+}
+func fetchBookDetails(bookID int) (Book, error) {
+   // ... fetch operation ...
+   if err != nil {
+       log.WithFields(log.Fields{
+           "bookID": bookID,
+           "error":  err,
+       }).Error("Failed to fetch book details")
+       return Book{}, err
+   }
+   return book, nil

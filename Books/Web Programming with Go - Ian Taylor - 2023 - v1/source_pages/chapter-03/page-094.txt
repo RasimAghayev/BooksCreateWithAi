@@ -1,0 +1,39 @@
+These routes serve as the silent sentinels that guide and enhance every
+interaction.
+URL Parameters
+The creation of dynamic and interactive web applications is made possible
+by URL parameters, which are an essential component of web development
+and play a crucial role in the process. Additionally, they make it possible for
+data to be transmitted through URLs, which enables the customization of
+user experiences based on the actions or inputs of the user. When it comes
+to the development of web applications, there are primarily two categories
+of URL parameters: Query Parameters and Path Parameters (also known as
+Route Variables). Each of these categories serves a distinct function.
+Types of URL Parameters
+1.        Query Parameters: Often seen after a ? in URLs, these parameters
+follow the format key=value. For instance, in gitforgits.com/books?
+genre=fiction, genre is the key, and fiction its value. Multiple query
+parameters can be chained using &.
+2.        Path Parameters (or Route Variables): These are embedded within
+the URL path itself. For example, in gitforgits.com/book/1234, 1234
+is a path parameter representing a specific book's ID.
+For GitforGits Bookstore:
+Query 
+Parameters 
+might 
+filter 
+book 
+listings:
+gitforgits.com/books?author=doe could display books only by
+author 'Doe'.
+Path 
+Parameters 
+would 
+identify 
+unique 
+entities:
+gitforgits.com/book/5678 would detail the book with ID 5678.
+Implementing Dynamic URL Parameters
+Harnessing a router like gorilla/mux can streamline the implementation of
+dynamic URL parameters.
+Setting up Path Parameters

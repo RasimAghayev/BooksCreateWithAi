@@ -1,0 +1,26 @@
+Implement User Authentication
+Every web application that stores user-specific data or functionalities is
+required to have an authentication mechanism in place. Through the use of
+user authentication, GitforGits Bookstore is able to provide customers with
+a personalized shopping experience, as well as maintain user profiles and
+keep track of previous purchases. In addition to improving the user
+experience, it also strengthens the security of our application by ensuring
+that only authorized users are able to access particular functionalities or
+data.
+Setting up Database
+Our bookstore application must store user credentials in a database.
+However, for security reasons, it's not advisable to store plain-text
+passwords. Instead, we will store a hashed version. When a user tries to log
+in, the system hashes the entered password and compares it with the stored
+hash.
+type User struct {
+   ID       int
+   Username string
+    Password string // This will store the hashed password
+}
+Registering New User
+When a new user signs up, their entered password should be hashed before
+storage. Go offers the bcrypt library for this purpose, which is renowned for
+its security robustness.
+import "golang.org/x/crypto/bcrypt"
+func RegisterUser(username, password string) error {

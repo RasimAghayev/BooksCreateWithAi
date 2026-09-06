@@ -1,0 +1,18 @@
+Handlers: Functions like getBooks are where the application's
+main logic resides. This function, for instance, would query our
+database for books and return them to the user.
+Running the Application: The Run method starts our server,
+listening on a given address and serving requests via the defined
+router.
+The Main Function: This is where our application kicks off. We
+define configurations, create an instance of our App, initialize
+it, and finally, run it.
+There is still more work to be done in order to create a full-fledged
+application, despite the fact that the setup described above provides an
+elementary look into the main application object. Additional enhancements
+to our application would include the addition of middleware functions, error
+handling mechanisms, and richer configurations (which could be derived
+from environment variables or configuration files). In order to add logging
+middleware, for example, it would be necessary to modify the Initialize
+method and implement new functions in order to process each and every
+request that is received.

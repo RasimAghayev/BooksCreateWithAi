@@ -1,0 +1,28 @@
+Grouping Routes
+Overview
+The concept of grouping routes in web applications revolves around the
+organization. Without categorized shelves for fiction, non-fiction, fantasy,
+or history, locating a book would be chaotic. Similarly, in web applications,
+as the number of endpoints increases, clustering related endpoints ensures
+clarity, scalability, and maintainability.
+Grouping routes serves multiple purposes:
+Code Organization: By bundling related endpoints, developers
+can maintain a structured and logical codebase. This enhances
+readability and eases maintenance.
+Middleware Application: Certain middleware might be relevant
+only for specific groups. By clustering related routes, applying
+middleware selectively becomes straightforward.
+Scalability: As applications expand, adding new routes or
+modifying existing ones is more manageable when they're
+organized logically.
+Consistent URL Patterns: Grouped routes lead to intuitive URL
+patterns. For users and developers alike, predicting or
+remembering URLs becomes simpler.
+Sample Program: Structuring Endpoints
+Harnessing a powerful router like gorilla/mux can make route grouping
+intuitive.
+Book-Related Routes
+Given that books form the crux of the GitforGits Bookstore, let us try to
+have a dedicated route group.
+bookRouter := r.PathPrefix("/books").Subrouter()
+// List all books

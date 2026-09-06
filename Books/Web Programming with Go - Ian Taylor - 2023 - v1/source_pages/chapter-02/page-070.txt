@@ -1,0 +1,23 @@
+import (
+   "os"
+   "log"
+   "github.com/joho/godotenv"
+)
+type Configuration struct {
+   ServerAddress  string
+   DbUser         string
+   DbPassword     string
+   DbHost         string
+   DbName         string
+}
+func loadConfiguration() Configuration {
+    // Load .env file during local development
+   err := godotenv.Load(".env")
+   if err != nil {
+       log.Println("Error loading .env file, assuming production
+environment with OS level environment variables")
+   }
+   return Configuration{
+       ServerAddress: os.Getenv("SERVER_ADDRESS"),
+       DbUser:        os.Getenv("DB_USER"),
+       DbPassword:    os.Getenv("DB_PASSWORD"),

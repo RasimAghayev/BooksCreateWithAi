@@ -1,0 +1,15 @@
+Running the Server
+To experience the magic of the first server, navigate to the project directory
+in your terminal and run:
+go run main.go
+If everything goes as planned, the server starts listening on port 8080. By
+visiting http://localhost:8080 in a web browser, the greeting "Hello
+GitforGits BookStore!" should warmly welcome you.
+Despite the fact that this initial server might appear to be straightforward, it
+will serve as the foundation upon which the entire BookStore application
+will be constructed. A directory structure has been established, the
+fundamental flow of a Go-based server has been comprehended, and we
+have become acquainted with fundamental concepts such as handlers. The
+subsequent chapters and sections will delve deeper, introducing dynamic
+content rendering, intricate routing, and database connections. These will be
+built upon the foundation that has been laid.

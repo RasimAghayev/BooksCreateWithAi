@@ -1,0 +1,34 @@
+Handlers and HandlerFuncs
+When it comes to managing incoming HTTP requests, handlers are an
+essential component of the net/http package that needs to be utilized. Any
+object that satisfies the requirements of the http.Handler interface is
+considered 
+to 
+be 
+a 
+handler. 
+One 
+method, 
+namely
+ServeHTTP(ResponseWriter, *Request), is required to be used for this
+interface. It stipulates that any type that implements this method is capable
+of performing the function of a handler, which functions to process HTTP
+requests and send back responses.
+Understanding HandlerFuncs
+While defining a whole new type to satisfy the http.Handler interface might
+seem cumbersome for simple applications or individual routes, Go offers a
+shortcut: the http.HandlerFunc type. This is essentially a type alias for a
+function with the signature func(ResponseWriter, *Request). It lets
+developers write standalone functions as handlers without creating new
+types. What's even more powerful is that http.HandlerFunc has a
+ServeHTTP method, enabling it to satisfy the http.Handler interface,
+providing immense flexibility.
+We shall consider a scenario where a user wants to view a list of books.
+This action would necessitate a handler that retrieves the list from a
+database and displays it.
+func BookListHandler(w http.ResponseWriter, r *http.Request) {
+    books := getBooksFromDatabase() // Fetch the books
+   renderBooks(w, books)           // Render the books to the user
+}
+To use this handler with the default Go HTTP router, you’d register it as:
+http.HandleFunc("/books", BookListHandler).

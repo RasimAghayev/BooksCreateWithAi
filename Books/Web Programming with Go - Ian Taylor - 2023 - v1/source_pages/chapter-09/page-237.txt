@@ -1,0 +1,18 @@
+func TestSum(t *testing.T) {
+   tests := []struct {
+       a, b, expected int
+   }{
+       {2, 3, 5},
+       {-2, 3, 1},
+       {0, 0, 0},
+   }
+    for _, tt := range tests {
+       result := sum(tt.a, tt.b)
+       if result != tt.expected {
+           t.Errorf("For (%d, %d), expected %d, but got %d", tt.a, tt.b,
+tt.expected, result)
+       }
+   }
+}
+This structure is especially useful for web applications where various input
+scenarios must be tested to ensure reliability.

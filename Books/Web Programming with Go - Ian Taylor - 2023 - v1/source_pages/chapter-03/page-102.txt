@@ -1,0 +1,11 @@
+For large-scale applications including GitforGits Bookstore, fine-tuning
+configurations ensures peak performance. The SkipClean option, when set,
+prevents the router from cleaning URLs. While this can offer performance
+boosts, caution is advised as unclean URLs can lead to unforeseen
+behaviors.
+r := mux.NewRouter().SkipClean(true)
+Despite the fact that the bookstore is growing, this powerful library
+guarantees that the routing process will continue to be streamlined,
+organized, and effective. Because every book that is added, every user that
+registers, and every review that is written will be routed in a seamless
+manner, users will have access to an unparalleled browsing experience.

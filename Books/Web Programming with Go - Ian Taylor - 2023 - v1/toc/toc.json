@@ -1,0 +1,76 @@
+{
+  "book": "Web Programming with Go: Building and Scaling Interactive Web Applications with Go's Robust Ecosystem",
+  "page_offset": 0,
+  "chapters": [
+    {
+      "chapter": 1,
+      "title": "Introduction to Web Development in Go",
+      "book_pages": "19-46",
+      "start_pdf_page": 19,
+      "end_pdf_page": 46
+    },
+    {
+      "chapter": 2,
+      "title": "Structuring Go Web Application",
+      "book_pages": "47-79",
+      "start_pdf_page": 47,
+      "end_pdf_page": 79
+    },
+    {
+      "chapter": 3,
+      "title": "Handling HTTP Requests and Routing",
+      "book_pages": "81-114",
+      "start_pdf_page": 81,
+      "end_pdf_page": 114
+    },
+    {
+      "chapter": 4,
+      "title": "Templating and Rendering Content",
+      "book_pages": "115-139",
+      "start_pdf_page": 115,
+      "end_pdf_page": 139
+    },
+    {
+      "chapter": 5,
+      "title": "Interaction with Databases",
+      "book_pages": "140-162",
+      "start_pdf_page": 140,
+      "end_pdf_page": 162
+    },
+    {
+      "chapter": 6,
+      "title": "Concurrency in Go",
+      "book_pages": "163-185",
+      "start_pdf_page": 163,
+      "end_pdf_page": 185
+    },
+    {
+      "chapter": 7,
+      "title": "Sessions, Authentication, and Authorization",
+      "book_pages": "186-205",
+      "start_pdf_page": 186,
+      "end_pdf_page": 205
+    },
+    {
+      "chapter": 8,
+      "title": "Frontend and Backend Communication",
+      "book_pages": "206-230",
+      "start_pdf_page": 206,
+      "end_pdf_page": 230
+    },
+    {
+      "chapter": 9,
+      "title": "Testing and Debugging",
+      "book_pages": "231-261",
+      "start_pdf_page": 231,
+      "end_pdf_page": 261
+    },
+    {
+      "chapter": 10,
+      "title": "Epilogue / Acknowledgement",
+      "book_pages": "262-264",
+      "start_pdf_page": 262,
+      "end_pdf_page": 264
+    }
+  ]
+}

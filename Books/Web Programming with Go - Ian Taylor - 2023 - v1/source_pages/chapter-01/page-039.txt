@@ -1,0 +1,32 @@
+Go RESTful Services
+It is possible to have a comprehensive understanding of RESTful services in
+Go by looking at them through the lens of REST's fundamental principles
+and the distinctive capabilities of the Go programming language. An
+architectural style that was conceived of by Dr. Roy Fielding is known as
+REST, which is an acronym that stands for "Representational State
+Transfer." In contrast to a standard, it is a set of guidelines for the
+development of web services that are scalable and easy to maintain. These
+guidelines are typically implemented using HTTP.
+Key Principles of REST
+The REST methodology is based on a number of fundamental principles. It
+places an emphasis on statelessness, which means that every request that is
+sent from a client to a server must contain all of the information that is
+required for the server to process it, without relying on any session state
+that has been stored. This approach is consistent with the design of Go,
+which has a preference for straightforwardness and simplicity. The client-
+server architecture that is used in REST serves to encourage a separation of
+concerns. The client is responsible for the user interface and experience,
+while the server is in charge of the data and the operations that take place
+on the back end. When it comes to managing the various components of an
+application, this separation is analogous to the modular approach that Go
+takes.
+Cacheability is another principle, which states that RESTful responses
+should be explicitly marked as cacheable or non-cacheable. This results in
+improved performance, which is a goal that Go also strives to achieve due
+to the fact that it is compiled and efficient. Go's ability to create scalable
+and maintainable systems is reminiscent of the layered system that is used
+in REST. In this system, a client interacts with an end server or
+intermediaries without having to differentiate between them. The uniform
+interface principle simplifies the architecture by making interactions
+predictable and standardized. This is similar to the straightforward syntax of
+Go as well as its approach to interfaces and methods.

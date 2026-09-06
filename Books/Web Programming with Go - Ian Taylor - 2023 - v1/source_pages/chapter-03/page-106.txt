@@ -1,0 +1,28 @@
+Rate Limiting and Request Throttling
+Overview
+Web applications, like the GitforGits Bookstore, must be able to handle the
+huge number of requests that come in every millisecond. This is where rate
+limiting comes in: it's a mechanism that limits the number of requests a user
+or IP can make to a server within a given time frame. Rate limiting ensures
+fair usage, protects against DDoS attacks, and maintains a high quality of
+service for all users by imposing these "speed limits."
+Request throttling is a more nuanced technique that is frequently used
+interchangeably with rate limiting. While rate limiting limits the number of
+requests, throttling regulates the rate at which they are made. Consider the
+GitforGits Bookstore's server to be a librarian; if she is bombarded with
+multiple book queries at once, she will become overwhelmed. Throttling
+ensures that she answers each query methodically, ensuring that no question
+goes unanswered.
+For GitforGits Bookstore, these mechanisms are pivotal for several reasons:
+Resource Management: Ensures server resources aren't
+overwhelmed by sudden traffic surges.
+Security: Curtails potential threats by restricting malicious or
+excessively frequent requests.
+Fair Usage: Ensures all users have equitable access to the
+bookstore's resources.
+Rate Limiting for GitforGits Bookstore
+One popular Go middleware for rate limiting is golang.org/x/time/rate. This
+package provides token bucket-based rate limiting.
+Installing the necessary package:
+go get golang.org/x/time/rate
+Consider setting a limit of 5 requests per minute for each user.

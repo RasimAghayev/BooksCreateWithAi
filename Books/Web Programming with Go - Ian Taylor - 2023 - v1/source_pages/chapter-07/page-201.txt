@@ -1,0 +1,16 @@
+Brute force attacks involve trying every possible combination until the right
+password is found. To render these attacks impractical, we use iterative
+hashing. By hashing the password thousands, or even millions of times, we
+significantly slow down the verification process. This minimal delay is
+imperceptible to users but makes brute-forcing infeasible for attackers.
+Up-to-date Algorithms
+Cryptographic methods evolve. What’s considered secure today might be
+vulnerable tomorrow. It's crucial to stay updated with current cryptographic
+standards and be ready to migrate to stronger algorithms. Libraries like
+bcrypt automatically handle many complexities, but developers must be
+vigilant and proactive.
+Beyond these methods, follow general security guidelines. Use HTTPS to
+ensure passwords aren't intercepted during transmission. Implement
+security headers to protect against attacks like Cross-site Scripting (XSS),
+which could be used to steal passwords. Regularly audit your code and
+dependencies for vulnerabilities.

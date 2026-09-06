@@ -1,0 +1,24 @@
+Refining Test with Mock Data
+To make tests predictable and avoid potential flakiness, it's advisable to use
+mock data. For our test, instead of fetching a book from a real database,
+we'd fetch it from a mock datastore.
+We shall assume we have a mock function:
+func MockFetchBookByISBN(isbn string) (*Book, error) {
+    return &Book{ISBN: "1234567890", Title: "Go in Action"}, nil
+}
+To use this mock function in tests, adjust the test function:
+func TestFetchBookByISBN(t *testing.T) {
+   book, err := MockFetchBookByISBN("1234567890")
+    // rest of the test remains unchanged ...
+}
+Now, our test is independent of external data sources, making it more
+robust.
+Enhancing Test
+We previously touched on table-driven tests, and they shine in situations
+like this. You can test multiple ISBNs, expecting different results, without
+writing separate test functions for each case. Instead, define a table of test
+cases and iterate over them.
+func TestFetchBookByISBN(t *testing.T) {
+   tests := []struct {
+       isbn         string
+       expectedISBN string

@@ -1,0 +1,31 @@
+When it comes to the development of modern software, package
+management is an essential component. It is able to ensure consistency
+across all developer environments, isolate project dependencies, and enable
+reproducible builds thanks to its capabilities. These capabilities provide the
+essential foundations for software projects that are scalable and
+maintainable throughout their lifetime.
+Consistency Across Environments
+Package managers allow all developers working on a project to use
+precisely the same versions of external libraries and modules. This
+consistency eliminates bugs and errors that can emerge when some
+engineers use updated packages while others use older legacy versions.
+Package managers install dependencies in a contained project context,
+ensuring everyone harmonizes around a uniform set of packages.
+Isolation from Global State
+Package managers enable dependency isolation by installing packages in an
+encapsulated project context rather than globally. This allows distinctly
+defining a project's dependencies, separate from any packages installed
+globally on the system. Isolation enhances portability and enables a project
+to function uniformly across different target environments.
+Reproducible and Reliable Builds
+By using a fixed and consistent set of dependency versions during builds,
+package managers enable reliably reproducible builds. Automated builds
+will integrate the exact same dependencies defined in the project manifest
+file. This reproducibility provides tremendous confidence during
+continuous delivery pipelines. Build artifacts can be identically recreated
+across environments. Reproducible builds also aid tremendously with
+debugging by eliminating uncertainty around underlying packages.
+Need of Vendoring
+In the Go programming language, the process of copying all of your
+external dependencies into your project directory is referred to as
+"vendoring." Prior to the introduction of Go Modules, the recommended

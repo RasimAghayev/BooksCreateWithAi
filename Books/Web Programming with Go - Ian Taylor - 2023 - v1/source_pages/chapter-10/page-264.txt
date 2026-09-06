@@ -1,0 +1,12 @@
+Acknowledgement
+I owe a tremendous debt of gratitude to GitforGits, for their unflagging
+enthusiasm and wise counsel throughout the entire process of writing this
+book. Their knowledge and careful editing helped make sure the piece was
+useful for people of all reading levels and comprehension skills. In addition,
+I'd like to thank everyone involved in the publishing process for their efforts
+in making this book a reality. Their efforts, from copyediting to advertising,
+made the project what it is today.
+Finally, I'd like to express my gratitude to everyone who has shown me
+unconditional love and encouragement throughout my life. Their support
+was crucial to the completion of this book. I appreciate your help with this
+endeavour and your continued interest in my career.

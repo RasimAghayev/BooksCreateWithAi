@@ -1,0 +1,7 @@
+Understanding and resolving these common issues not only improves the
+functionality of our Bookstore application, but also provides us with the
+knowledge to avoid similar challenges in future endeavors. This chapter
+reinforced the idea that, while coding is a creative endeavor, the ability to
+thoroughly test and debug code is equally important in web application
+development. 
+Thank You

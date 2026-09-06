@@ -1,0 +1,36 @@
+Parallelism vs. Concurrency
+Unveiling Parallelism
+The need to do more with less time is fundamental to contemporary
+computational systems. Taking advantage of the multi-core architectures
+found in modern CPUs, parallelism allows for the simultaneous execution
+of multiple tasks or processes. Each lane on a multi-lane highway stands in
+for a core, and the cars zipping along them stand in for processes running in
+parallel. In contrast, on a single-lane road, vehicles will have to wait in line
+and, no matter how fast they go, will not be able to match the throughput of
+a multi-lane highway.
+Contrarily to parallelism, which emphasizes doing many things
+simultaneously, 
+concurrency 
+emphasizes 
+managing 
+many 
+things
+simultaneously. Simultaneous execution is not always implied by
+concurrency. Rather, it is concerned with the non-blocking coordination of
+individual jobs. To continue with our road analogy, concurrency would be
+like a single lane of traffic where vehicles are continuously entering and
+exiting, moving forward and stopping at signals, but constantly checking to
+make sure there are no delays.
+Think about two possible situations. One is that the store experiences an
+influx of thousands of users during a flash sale. Not all of these requests
+need to be processed at once, but the system should handle them all so no
+user has to wait too long. In this context, concurrency really excels. A
+seamless user experience is guaranteed by the efficient management of each
+request, which is a Goroutine.
+Now the second situation is that the bookshop decides to make book
+recommendations after looking at each customer's 100 most recent
+purchases. If done sequentially, analyzing these purchases for thousands of
+users would take a lot of time. But if the system splits the work among
+numerous CPU cores and runs them all at once, the job finishes a lot
+quicker. Right here we see parallelism at work.
+Sample Program: Book Recommendation Function

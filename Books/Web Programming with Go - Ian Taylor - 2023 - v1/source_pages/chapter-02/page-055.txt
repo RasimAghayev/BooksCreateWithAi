@@ -1,0 +1,21 @@
+8.       Docs Directory: For comprehensive documentation, other than the
+main README.
+docs/setup.md: Setup and installation instructions.
+docs/api.md: API endpoints, request-response examples,
+and other API-related documentation.
+Creating the Directory Structure
+To set up this structure, simple terminal commands can be used:
+mkdir gitforgits-bookstore && cd gitforgits-bookstore
+mkdir cmd pkg api web internal scripts database docs
+mkdir cmd/server pkg/models pkg/utils api/definitions web/static
+web/templates internal/handlers internal/middleware internal/config
+database/migrations database/seeds
+touch go.mod README.md LICENSE
+The directory structure outlined is both conventional, adhering to Go best
+practices, and tailored, meeting the specific needs of the GitforGits
+Bookstore Web App. The aim is to ensure that any developer, familiar with
+Go or new to the project, can quickly understand the application's layout
+and know precisely where to look for specific functionalities. As we
+progress through the subsequent chapters and delve deeper into the
+intricacies of web application development using Go, this structure will be
+our guiding map, ensuring that every piece of code finds its logical home.

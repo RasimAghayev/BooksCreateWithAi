@@ -1,0 +1,14 @@
+Managing User Sessions
+Once the user is authenticated, the application needs to maintain that state
+so that the user doesn't have to re-authenticate with every request. This is
+achieved using sessions. After successful authentication, a session token is
+generated and sent to the user as a cookie. This token is then used to verify
+the user's identity on subsequent requests.
+Logging Out User
+Logging out essentially means invalidating the user's session. To
+accomplish this, the session token is deleted from both the server and the
+client-side.
+func LogoutUser(sessionToken string) {
+    // Remove the session token from server storage
+    // Send a response to the client to delete the session cookie
+}

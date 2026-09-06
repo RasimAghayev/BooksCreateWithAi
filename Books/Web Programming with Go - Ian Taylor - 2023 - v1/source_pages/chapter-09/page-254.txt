@@ -1,0 +1,18 @@
+Start block profiling with:
+runtime.SetBlockProfileRate(1)
+And at the point where you wish to save the profile:
+f, _ := os.Create("block.pprof")
+pprof.Lookup("block").WriteTo(f, 0)
+The block.pprof file can be examined using go tool pprof to detect potential
+synchronization bottlenecks in the Bookstore application.
+Memory Profiling
+Memory profiling can identify places where the application might be using
+more memory than expected, leading to increased garbage collection or
+potential memory leaks.
+To profile memory usage:
+f, _ := os.Create("memory.pprof")
+pprof.WriteHeapProfile(f)
+f.Close()
+The resulting memory.pprof can be analyzed using go tool pprof. The top
+command in the pprof tool can help identify functions responsible for the
+most memory allocations.

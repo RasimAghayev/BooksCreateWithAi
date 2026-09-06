@@ -1,0 +1,13 @@
+for i := 0; i < len(reviews); i++ {
+   sentiment := <-sentimentsChannel
+   sentiments = append(sentiments, sentiment)
+}
+Although Goroutines have the potential to significantly improve
+performance, it is important to use them with caution. It's not a good idea to
+automatically generate a Goroutine for every insignificant task. It is of the
+utmost importance to identify situations in which concurrency brings
+tangible benefits, such as operations that are bound by input/output (I/O),
+tasks that are data-intensive, or computations that are CPU-intensive. Tasks
+such as batch processing of orders, parallel searches, and background tasks
+such as generating recommendations could fall under this category for the
+GitforGits Bookstore.

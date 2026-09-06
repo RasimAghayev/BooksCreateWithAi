@@ -1,0 +1,15 @@
+Using Go's concurrency model to handle simultaneous user
+requests efficiently.
+Writing tests for the application, debugging issues, and ensuring
+code reliability.
+Taking the application live, understanding cloud hosting,
+containerization, and ensuring the application scales with user
+demand.
+The Bookstore application isn't just another project; it's a representation of
+real-world web applications that millions interact with daily. By building it,
+you not only understand the "how" but also the "why" behind design
+decisions, tool choices, and architectural considerations. Each feature of the
+Bookstore is carefully chosen to introduce a new concept or deepen
+understanding of an existing one. You aren't just learning Go web
+development in isolation; you're understanding it in the context of the
+broader web development landscape.

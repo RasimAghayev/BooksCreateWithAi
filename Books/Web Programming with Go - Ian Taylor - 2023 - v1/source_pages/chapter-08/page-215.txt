@@ -1,0 +1,23 @@
+type Book struct {
+   ID     int    `json:"id"`
+   Title  string `json:"title"`
+   Author string `json:"author"`
+   Price  float64 `json:"price"`
+}
+In the above, struct tags (like json:"id") indicate how the corresponding
+struct field should be encoded/decoded to/from JSON.
+Encoding Go Data
+To convert a Go value to JSON, you can use the json.Marshal function.
+book := Book{ID: 1, Title: "Go Basics", Author: "John Doe",
+Price: 10.99}
+jsonData, err := json.Marshal(book)
+if err != nil {
+   log.Fatalf("Error encoding data: %v", err)
+}
+fmt.Println(string(jsonData))
+The result will be a JSON string representing the book's data.
+Decoding JSON
+Decoding is just as straightforward. Suppose you received a JSON string
+and wanted to parse it into a Go struct.
+jsonString := `{"id":1,"title":"Go Basics","author":"John
+Doe","price":10.99}`

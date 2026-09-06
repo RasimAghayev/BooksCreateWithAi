@@ -1,0 +1,30 @@
+Template Caching
+Overview
+Imagine going to GitforGits and finding that the store's layout is completely
+rearranged with each page you turn to. Infuriating, don't you think? A
+phenomenon that is analogous to this one occurs in modern web
+applications due to the fact that templates are parsed and loaded from
+scratch for each and every user request. Not only does it result in a waste of
+computational resources, but it also causes lag, which in turn reduces the
+quality of the user experience. For the purposes of this learnings, template
+caching is comparable to the process of establishing a stable floor plan in a
+physical store, which guarantees uniformity and facilitates quick navigation
+for each and every customer.
+A straightforward explanation of template caching is that it involves storing
+pre-parsed templates in memory. This makes them readily available for
+subsequent requests without the need for reparsing, which is an overhead.
+The response times of the server are significantly improved by this
+mechanism, which guarantees that the end user will receive content in a
+timely manner.
+Go's Template Package
+Go's html/template package is adept at parsing and storing templates.
+Typically, when rendering a response, one might use template.ParseFiles()
+or template.ParseGlob() on-the-fly. While effective, it's computationally
+intensive if repeated for every request. Instead of parsing templates within
+handler functions, the parsing can be performed at application startup. By
+doing so, a cache of parsed templates is created, held in memory, and
+readily available for use.
+var templateCache = template.New("").Delims("{{", "}}")
+func LoadTemplates() {
+   templates, err :=
+templateCache.ParseGlob("./templates/*.gohtml")

@@ -1,0 +1,30 @@
+Templates Deep Dive
+Symphony of Variables
+Every template engine thrives on dynamic content insertion. The beating
+heart of this dynamic nature is variables. In the Go template package,
+variables allow data to flow seamlessly from your Go code into the HTML
+rendering.
+Each book, with its title, author, and genre, can be a variable in a template.
+When displaying a book page, the Go backend might send a Book struct to
+the template. Using {{.Title}}, {{.Author}}, or {{.Genre}} in the template
+would dynamically display the book's details. This is the magic of
+variables: they act as placeholders that the template engine replaces with
+actual data during rendering.
+Loops
+Often, web pages need to display lists of items. For the bookstore, imagine
+displaying a list of bestsellers. Instead of manually creating a block for each
+book, loops in templates come to the rescue.
+In Go templates, the {{range .Books}}...{{end}} construct allows iterative
+rendering. Within this block, individual book details can be accessed and
+displayed. This mechanism is incredibly efficient. If the bookstore has a
+promotional week with a curated list of ten special books, the same
+template, without any modification, can render all of them, thanks to the
+power of loops.
+Conditions
+Sometimes, content rendering needs decisions. What if the GitforGits
+Bookstore wants to display a special badge for rare, collector's edition
+books? Conditions within templates provide this capability.
+Using the {{if .IsRare}}...{{else}}...{{end}} construct, templates can make
+decisions. If a book is marked as a rare edition in the backend data, the
+condition evaluates as true, and the corresponding block within the if gets
+rendered. Otherwise, the else block (if provided) takes over. This

@@ -1,0 +1,28 @@
+Integrate External APIs
+Modern web applications often require functionalities that can be better
+served by specialized external services. Rather than reinventing the wheel,
+leveraging third-party APIs or services can provide efficient, scalable, and
+updated solutions. Imagine the need for payment processing, book reviews,
+or even integrating with a service that provides book summaries or author
+interviews. External APIs play a pivotal role in enhancing the app's
+functionalities and improving the user experience.
+Choose and Communicate Third-Party API
+When considering an external service, it's essential to evaluate its reliability,
+cost, scalability, and compatibility with your application's needs.
+Documentation quality, community support, and the provider's reputation
+are also critical. For our Bookstore app, if we were looking for book
+reviews, we might consider APIs like Goodreads or a book metadata API
+like Open Library.
+Go's standard library provides robust tools to communicate with external
+APIs. The net/http package, which we've explored earlier, can be used to
+send requests and handle responses from these APIs. For example, to fetch
+book reviews from an external service, we'd use:
+resp, err :=
+http.Get("https://bookreviewsapi.com/book/{bookID}")
+Sample Program: Integration of Payment Gateway
+Let us consider Stripe, a popular choice as a payment gateway for our
+bookstore application::
+import (
+   "github.com/stripe/stripe-go"
+   "github.com/stripe/stripe-go/charge"
+)

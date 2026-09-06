@@ -1,0 +1,25 @@
+   if err != nil {
+       log.Fatal(err)
+   }
+   templateCache = templates
+}
+In this snippet, the LoadTemplates function populates the global
+templateCache with parsed templates. By invoking this function at
+application start, the parsed templates become readily accessible throughout
+the application's lifecycle.
+Deploying Cached Templates
+With the cache in place, rendering a response becomes a streamlined
+process. Suppose a user accesses a book listing on GitforGits:
+func BookListHandler(w http.ResponseWriter, r *http.Request) {
+   books := fetchBooks()
+   err := templateCache.ExecuteTemplate(w, "booklist.gohtml",
+books)
+   if err != nil {
+       http.Error(w, "Internal Server Error",
+http.StatusInternalServerError)
+   }
+}
+In the BookListHandler, instead of parsing the template anew, the handler
+directly taps into the templateCache, swiftly serving the request using the
+pre-parsed "booklist.gohtml" template.
+The outcomes of template caching are multi-fold:

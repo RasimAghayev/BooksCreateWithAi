@@ -1,0 +1,21 @@
+   }{
+       {"1234567890", "1234567890"},
+       {"0987654321", "0987654321"},
+       // ... add more test cases as needed ...
+   }
+    for _, tt := range tests {
+       book, err := MockFetchBookByISBN(tt.isbn)
+       if err != nil {
+           t.Fatalf("Expected no error for ISBN '%s', but got: %v",
+tt.isbn, err)
+       }
+       if book.ISBN != tt.expectedISBN {
+           t.Errorf("For ISBN '%s', expected '%s', but got '%s'",
+tt.isbn, tt.expectedISBN, book.ISBN)
+       }
+   }
+}
+Testing is an integral part of Go development, fostering confidence in code
+quality. Go's built-in testing tools, combined with best practices like using
+mock data and table-driven tests, allow for comprehensive testing of web
+applications.

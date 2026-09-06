@@ -1,0 +1,23 @@
+CREATE TABLE reviews (
+   id SERIAL PRIMARY KEY,
+   user_id INT REFERENCES users(id),
+   book_id INT REFERENCES books(id),
+    rating INT CHECK (rating >= 1 AND rating <= 5),
+   comment TEXT,
+   review_date DATE DEFAULT CURRENT_DATE
+);
+This schema captures the review, the associated user, and book, ensuring
+every opinion finds its rightful place in the ecosystem.
+Transactions
+When users buy books, the transactions need tracking. Transactions tie a
+user to a book, signifying a successful sale.
+CREATE TABLE transactions (
+   id SERIAL PRIMARY KEY,
+   user_id INT REFERENCES users(id),
+   book_id INT REFERENCES books(id),
+   purchase_date DATE DEFAULT CURRENT_DATE,
+   amount DECIMAL(10,2)
+);
+Inventory Management
+To ensure books are in stock, an inventory table is essential.
+CREATE TABLE inventory (

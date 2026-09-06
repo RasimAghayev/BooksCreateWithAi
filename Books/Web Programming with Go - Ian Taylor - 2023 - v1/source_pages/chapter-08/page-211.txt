@@ -1,0 +1,24 @@
+Build My First API
+An essential step in the process of establishing communication between the
+frontend and the backend is the preparation of an application programming
+interface (API) endpoint that will retrieve book information from our
+GitforGits Bookstore app. The procedure will be broken down into its
+component parts.
+Project Initialization and Import Packages
+Start with the initialization of the project and importing necessary packages.
+The net/http package from the Go standard library will be the primary
+package we'll use to set up our server and endpoints.
+package main
+import (
+"net/http"
+"encoding/json"
+)
+Defining Book Structure
+The next step is to define the data structure for a book. This will give clarity
+on what information a book holds.
+type Book struct {
+ID     int    `json:"id"`
+Title  string `json:"title"`
+Author string `json:"author"`
+Price  float64 `json:"price"`
+}
