@@ -1,0 +1,16 @@
+{
+  "book_id": "learning_go_2e_2024_v2",
+  "title": "Learning Go, Second Edition",
+  "author": "Jon Bodner",
+  "year": 2024,
+  "version": 2,
+  "pages": 526,
+  "chapters_processed": 15,
+  "knowledge_language": "az",
+  "completed_at": "2026-09-07",
+  "structure": {
+    "toc": true,
+    "chapters": 15,
+    "info_files": ["summary.az.md", "terminology.az.md", "teacher-notes.az.md", "cheatsheet.az.md"]
+  }
+}

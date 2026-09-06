@@ -209,6 +209,21 @@
       "workspace": "books_read/Go/L4/gRPC Microservices in Go - Huseyin Babal - 2023 - v1",
       "telegram_upload": "done",
       "fingerprint": "grpc microservices in go|hüseyin babal|2023|1"
+    },
+    {
+      "book_id": "learning_go_2e_2024_v2",
+      "title": "Learning Go, Second Edition",
+      "author": "Jon Bodner",
+      "year": 2024,
+      "version": 2,
+      "pages": 526,
+      "status": "completed",
+      "started_at": "2026-09-07",
+      "completed_at": "2026-09-07",
+      "filename_safe": "Learning Go - Jon Bodner - 2024 - v2",
+      "workspace": "books_read/Go/L3/Learning Go - Jon Bodner - 2024 - v2",
+      "telegram_upload": "done",
+      "fingerprint": "learning go, second edition|jon bodner|2024|2"
     }
   ]
 }

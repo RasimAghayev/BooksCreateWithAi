@@ -1,0 +1,141 @@
+﻿{
+    "📘 title_original":  "Learning Go: An Idiomatic Approach to Real-World Go Programming, Second Edition",
+    "🔤 filename_safe":  "Learning Go - Jon Bodner - 2024 - v2",
+    "📚 book":  {
+                    "📖 title":  "Learning Go, Second Edition",
+                    "🧑‍💻 author":  "Jon Bodner",
+                    "📅 year":  2024,
+                    "📖 version":  2,
+                    "📄 pages":  526,
+                    "🔢 isbn":  "978-1-0981-3028-6",
+                    "🏢 publisher":  "O\u0027Reilly Media",
+                    "📚 series":  ""
+                },
+    "page_offset":  0,
+    "🎯 classification":  {
+                              "💻 primary_language":  "Go",
+                              "🎯 level":  3,
+                              "📛 level_name":  "Intermediate",
+                              "🌟 level_icon":  "📙",
+                              "🌐 domains":  [
+                                                 "Core Language",
+                                                 "Software Engineering",
+                                                 "Concurrency",
+                                                 "Testing"
+                                             ]
+                          },
+    "🛠️ technologies":  [
+                             "Go",
+                             "go modules",
+                             "goroutines",
+                             "channels",
+                             "context",
+                             "testing",
+                             "generics",
+                             "reflect",
+                             "cgo",
+                             "make"
+                         ],
+    "🏷️ tags":  [
+                     "#go",
+                     "#golang",
+                     "#learning",
+                     "#core_language",
+                     "#concurrency",
+                     "#testing",
+                     "#generics"
+                 ],
+    "📑 chapters":  [
+                        {
+                            "chapter":  1,
+                            "title":  "Setting Up Your Go Environment",
+                            "start_page":  13,
+                            "end_page":  36
+                        },
+                        {
+                            "chapter":  2,
+                            "title":  "Primitive Types and Declarations",
+                            "start_page":  37,
+                            "end_page":  64
+                        },
+                        {
+                            "chapter":  3,
+                            "title":  "Composite Types",
+                            "start_page":  65,
+                            "end_page":  100
+                        },
+                        {
+                            "chapter":  4,
+                            "title":  "Blocks, Shadows, and Control Structures",
+                            "start_page":  101,
+                            "end_page":  132
+                        },
+                        {
+                            "chapter":  5,
+                            "title":  "Functions",
+                            "start_page":  133,
+                            "end_page":  158
+                        },
+                        {
+                            "chapter":  6,
+                            "title":  "Pointers",
+                            "start_page":  159,
+                            "end_page":  188
+                        },
+                        {
+                            "chapter":  7,
+                            "title":  "Types, Methods, and Interfaces",
+                            "start_page":  189,
+                            "end_page":  230
+                        },
+                        {
+                            "chapter":  8,
+                            "title":  "Errors",
+                            "start_page":  231,
+                            "end_page":  252
+                        },
+                        {
+                            "chapter":  9,
+                            "title":  "Modules, Packages, and Imports",
+                            "start_page":  253,
+                            "end_page":  288
+                        },
+                        {
+                            "chapter":  10,
+                            "title":  "Concurrency in Go",
+                            "start_page":  289,
+                            "end_page":  316
+                        },
+                        {
+                            "chapter":  11,
+                            "title":  "The Standard Library",
+                            "start_page":  317,
+                            "end_page":  345
+                        },
+                        {
+                            "chapter":  12,
+                            "title":  "The Context",
+                            "start_page":  346,
+                            "end_page":  366
+                        },
+                        {
+                            "chapter":  13,
+                            "title":  "Writing Tests",
+                            "start_page":  367,
+                            "end_page":  404
+                        },
+                        {
+                            "chapter":  14,
+                            "title":  "Here There Be Dragons: Reflect, Unsafe, and Cgo",
+                            "start_page":  405,
+                            "end_page":  438
+                        },
+                        {
+                            "chapter":  15,
+                            "title":  "A Look at the Future: Generics in Go",
+                            "start_page":  439,
+                            "end_page":  460
+                        }
+                    ],
+    "📦 workspace":  "books_read/Go/L3/Learning Go - Jon Bodner - 2024 - v2"
+}
