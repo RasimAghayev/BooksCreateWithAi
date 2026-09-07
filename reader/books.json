@@ -247,12 +247,12 @@
       "year": 2024,
       "version": 4,
       "pages": 737,
-      "status": "reading",
+      "status": "completed",
       "started_at": "2026-09-07",
-      "completed_at": null,
+      "completed_at": "2026-09-07",
       "filename_safe": "Mastering Go - Mihalis Tsoukalos - 2024 - v4",
-      "workspace": "Books/Mastering_Go_Tsoukalos_2024",
-      "telegram_upload": "pending",
+      "workspace": "books_read/Go/L4/Mastering Go - Mihalis Tsoukalos - 2024 - v4",
+      "telegram_upload": "done",
       "fingerprint": "mastering go, fourth edition|mihalis tsoukalos|2024|4"
     }
   ]
