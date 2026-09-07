@@ -359,6 +359,19 @@
       "workspace": "books_read/Go/L2/Everyday_Golang_Alex_Ellis_2021_v1",
       "telegram_upload": "done",
       "fingerprint": "everyday golang|alex ellis|2021|1"
+    },
+    {
+      "book_id": "beyond_effective_go_p2_2024_v1",
+      "title": "Beyond Effective Go: Part 2 - Striving for High-Quality Code",
+      "author": "Corey Scott",
+      "year": 2024,
+      "version": 1,
+      "pages": 357,
+      "status": "reading",
+      "started_at": "2026-09-07",
+      "filename_safe": "Beyond_Effective_Go_Corey_Scott_2024_v1",
+      "workspace": "Books/Beyond_Effective_Go_Corey_Scott_2024_v1",
+      "fingerprint": "beyond effective go: part 2 - striving for high-quality code|corey scott|2024|1"
     }
   ]
 }
