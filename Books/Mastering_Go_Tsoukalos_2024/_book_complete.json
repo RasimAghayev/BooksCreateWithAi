@@ -1,0 +1,16 @@
+{
+  "book_id": "mastering_go_4e_2024_v4",
+  "title": "Mastering Go, Fourth Edition",
+  "author": "Mihalis Tsoukalos",
+  "year": 2024,
+  "version": 4,
+  "pages": 737,
+  "chapters_processed": 16,
+  "knowledge_language": "az",
+  "completed_at": "2026-09-07",
+  "structure": {
+    "toc": true,
+    "chapters": 16,
+    "info_files": ["summary.az.md", "terminology.az.md", "teacher-notes.az.md", "cheatsheet.az.md"]
+  }
+}

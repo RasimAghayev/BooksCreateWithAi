@@ -1,0 +1,157 @@
+{
+    "📘 title_original": "Mastering Go, Fourth Edition",
+    "🔤 filename_safe": "Mastering Go - Mihalis Tsoukalos - 2024 - v4",
+    "📚 book": {
+        "📖 title": "Mastering Go, Fourth Edition",
+        "🧑‍💻 author": "Mihalis Tsoukalos",
+        "📅 year": 2024,
+        "📖 version": 4,
+        "📄 pages": 737,
+        "🔢 isbn": "978-1805127147",
+        "🏢 publisher": "Packt",
+        "📚 series": "Mastering Go"
+    },
+    "page_offset": 31,
+    "🎯 classification": {
+        "💻 primary_language": "Go",
+        "🎯 level": 4,
+        "📛 level_name": "Advanced",
+        "🌟 level_icon": "📕",
+        "🌐 domains": [
+            "Backend Development",
+            "Systems Programming",
+            "Web Services",
+            "DevOps",
+            "Observability"
+        ]
+    },
+    "🛠️ technologies": [
+        "Go",
+        "goroutines",
+        "channels",
+        "generics",
+        "net/http",
+        "gorilla/mux",
+        "cobra",
+        "viper",
+        "SQLite",
+        "WebSocket",
+        "RabbitMQ",
+        "Prometheus",
+        "Grafana",
+        "eBPF",
+        "Docker"
+    ],
+    "🏷️ tags": [
+        "#go",
+        "#golang",
+        "#advanced",
+        "#concurrency",
+        "#generics",
+        "#web",
+        "#rest",
+        "#testing",
+        "#observability",
+        "#performance",
+        "#gc"
+    ],
+    "📦 workspace": "Books/Mastering_Go_Tsoukalos_2024",
+    "📑 chapters": [
+        {
+            "chapter": 1,
+            "title": "A Quick Introduction to Go",
+            "start_page": 1,
+            "end_page": 44
+        },
+        {
+            "chapter": 2,
+            "title": "Basic Go Data Types",
+            "start_page": 47,
+            "end_page": 102
+        },
+        {
+            "chapter": 3,
+            "title": "Composite Data Types",
+            "start_page": 105,
+            "end_page": 130
+        },
+        {
+            "chapter": 4,
+            "title": "Go Generics",
+            "start_page": 133,
+            "end_page": 152
+        },
+        {
+            "chapter": 5,
+            "title": "Reflection and Interfaces",
+            "start_page": 153,
+            "end_page": 198
+        },
+        {
+            "chapter": 6,
+            "title": "Go Packages and Functions",
+            "start_page": 201,
+            "end_page": 263
+        },
+        {
+            "chapter": 7,
+            "title": "Telling a UNIX System What to Do",
+            "start_page": 265,
+            "end_page": 318
+        },
+        {
+            "chapter": 8,
+            "title": "Go Concurrency",
+            "start_page": 321,
+            "end_page": 385
+        },
+        {
+            "chapter": 9,
+            "title": "Building Web Services",
+            "start_page": 387,
+            "end_page": 424
+        },
+        {
+            "chapter": 10,
+            "title": "Working with TCP/IP and WebSocket",
+            "start_page": 427,
+            "end_page": 464
+        },
+        {
+            "chapter": 11,
+            "title": "Working with REST APIs",
+            "start_page": 467,
+            "end_page": 517
+        },
+        {
+            "chapter": 12,
+            "title": "Code Testing and Profiling",
+            "start_page": 519,
+            "end_page": 578
+        },
+        {
+            "chapter": 13,
+            "title": "Fuzz Testing and Observability",
+            "start_page": 581,
+            "end_page": 624
+        },
+        {
+            "chapter": 14,
+            "title": "Efficiency and Performance",
+            "start_page": 627,
+            "end_page": 659
+        },
+        {
+            "chapter": 15,
+            "title": "Changes in Recent Go Versions",
+            "start_page": 661,
+            "end_page": 670
+        },
+        {
+            "chapter": 16,
+            "title": "Appendix: The Go Garbage Collector",
+            "start_page": 673,
+            "end_page": 685
+        }
+    ]
+}
