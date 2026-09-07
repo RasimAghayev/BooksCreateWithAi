@@ -277,12 +277,12 @@
       "year": 2022,
       "version": 1,
       "pages": 404,
-      "status": "reading",
+      "status": "completed",
       "started_at": "2026-09-07",
-      "completed_at": null,
+      "completed_at": "2026-09-07T06:51:57Z",
       "filename_safe": "The Power of Go Tests - John Arundel - 2022 - v1",
-      "workspace": "Books/The_Power_of_Go_Tests_Arundel",
-      "telegram_upload": "pending",
+      "workspace": "books_read/Go/L3/The Power of Go Tests - John Arundel - 2022 - v1",
+      "telegram_upload": "completed",
       "fingerprint": "the power of go: tests|john arundel|2022|1"
     }
   ]

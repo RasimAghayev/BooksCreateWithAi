@@ -1,0 +1,1327 @@
+8. Testing the untestable
+Testing is an infinite process of comparing the
+invisible to the ambiguous in order to avoid the
+unthinkable happening to the anonymous.
+—Saying
+Most of the testing we’ve done so far in this book has been of the
+“compare want and got” kind. We call some function with
+prepared inputs, and compare its results to what we expected.
+This is straightforward, as most of these functions have been
+pure, meaning that their results depend only on their inputs, and
+they have no side effects.
+It’s not always that easy, though. Some functions and programs
+can be challenging to test, at least at first sight. In the next few
+chapters, we’ll look at a few techniques for testing the so-called
+untestable, and we’ll see that many apparent difficulties melt
+away if we can approach the problem in the right frame of mind.
+First, how do we even start? When we begin a new project, we
+may not even have a clear idea of exactly what it should do and
+how it should behave. We need to do some prototyping, so let’s
+
+
+talk about that process.
+Building a “walking skeleton”
+When starting a new project, to avoid getting bogged down in
+too much detail, it’s a great idea to get something running as soon
+as you can. This needn’t be feature-complete, or anything like it.
+Indeed, it’s better to focus on running the simplest possible
+program that does anything useful at all.
+This has been aptly called a walking skeleton:
+A walking skeleton is an implementation of the
+thinnest possible slice of real functionality that we
+can build, deploy, and test end-to-end.
+We keep the skeleton’s application functionality so
+simple that it’s obvious and uninteresting, leaving us
+free to concentrate on the infrastructure.
+—Steve Freeman and Nat Pryce, “Growing
+Object-Oriented Software, Guided by Tests”
+Software engineering is, it turns out, more about the connections
+between components than the internals of the components
+themselves. It will probably take you longer to design and debug
+these connections than to write any individual component, so it’s
+wise to start this process as early as possible.
+Ideally, you’d just hook up a bunch of mostly dummy
+components in what looks like the right way, run it, and see what
+happens. You can iterate very fast on a walking skeleton,
+precisely because it has so little actual functionality.
+Once we’ve got a walking—or rather, running—skeleton, our
+first priority is to move all its important behaviours into a
+package, covered by tests. This provides a solid foundation on
+which we can build each new increment of functionality, until
+we eventually have the complete system.
+But we shouldn’t abandon “runnability” at this point. Indeed, we
+should try never to get too far away from a runnable program.
+
+
+That means, naturally enough, that any changes we make must
+be small and incremental, which we already know is a good
+thing from a design point of view. So runnability helps keep our
+development process from going too far off the rails.
+Once we’ve discarded our skeletal prototype, and started
+rebuilding it as an importable package, guided by tests, the next
+priority should be to deploy this to production as soon as
+possible.
+There’s one piece of advice that I find myself giving
+consistently during the very early days: get the
+simplest version you can think of into prod, as soon
+as you can. Focus solely on what’s needed to get a
+“Hello, world” version of your new system up and
+running in a real production environment. No more,
+no less. I call this a Hello, Production release.
+—Pete Hodgson, “Hello, Production”
+Really? Production? Not a test environment?
+Yup. If we want it to work in the real environment, then we’d
+better try it there. After all, we implicitly test in production all
+the time. We may as well accept that fact, and start doing it a
+little more rigorously. However much we might test the system
+in isolation, that only tells us how it behaves in isolation, which is
+of limited value.
+Once you deploy, you aren’t testing code anymore,
+you’re testing systems—complex systems made up
+of users, code, environment, infrastructure, and a
+point in time. These systems have unpredictable
+interactions, lack any sane ordering, and develop
+emergent properties which perpetually and eternally
+defy your ability to deterministically test.
+The phrase “I don’t always test, but when I do, I test
+in production” seems to insinuate that you can only
+do one or the other: test before production or test in
+production. But that’s a false dichotomy. All
+
+
+responsible teams perform both kinds of tests.
+—Charity Majors, “I test in prod”
+The “hello, production” release will not only catch many show-
+stopping issues that could affect the design of the system, but it
+also means that, because we have the full pipeline working, we
+could ship at almost any time if we had to. It’s hard to make
+predictions, especially, as the saying goes, about the future.
+There might not always be quite as much time to get things
+finished as we expect.
+A very bad time to find major design issues, on the other hand, is
+when we’re close to the deadline, worn out, frazzled, and under
+tremendous pressure to ship. If you’ve ever wondered why some
+software seems a bit half-finished, well, now you know.
+The remedy is to get the system half-finished as soon as possible,
+and to maintain it always in a mostly-runnable state. So how do
+we go from a walking skeleton to a runnable, but half-finished
+system, guided by tests?
+The first test
+The first test of any system, or even any user story, is usually the
+hardest to write, and that’s no surprise. Any non-trivial system
+has lots of behaviours. When we look at it from the outside,
+considering the user-facing behaviour, it can seem so
+complicated as to defy testing altogether.
+The trick is not to solve that problem. Instead, pick some much
+smaller and simpler version of the problem, and solve that. Then
+iterate.
+Make the problem easy, then solve the easy problem
+(warning: making the problem easy may be hard).
+Kent Beck, “Is TDD Dead?”
+For example, suppose you need to test some “buy product” HTTP
+endpoint that takes some form data supplied by a user, processes
+their payment details, and creates an order in the database.
+
+
+That’s horrendous! No one could write a test for that kind of
+thing straight off. And if we’re smart, we won’t even try.
+Instead, make the problem simpler. Cut out the payment
+handling, and don’t worry about creating orders. Just have the
+handler ignore the form data altogether, and respond with a
+simple “hello, world” message. Is that useful? No. But could we
+test it? Yes. And could we then incrementally build up the
+behaviour we need, guided by the test? Yes, indeed.
+Solving big problems
+Solving big problems is hard, so we don’t do that. Instead, we eat
+the elephant one bite at a time. We say “if I had this component,
+and that component, then I could solve the problem by plugging
+them together”. If there’s a big complex behaviour, like “Be a
+CRM system”, we break it down into lots of little behaviours, like
+“Store customer’s name and address”, or “Generate invoices”.
+Keep on breaking down behaviours into smaller units until you
+get to something that you could actually imagine implementing.
+This isn’t just shuffling paper: by analysing complex behaviours
+into simpler ones, you’re defining them more precisely, adding
+more and more detail to the overall design as you go.
+The secret to building large apps is NEVER build
+large apps. Break up your applications into small
+pieces. Then assemble those testable, bite-sized
+pieces into your big application.
+—Justin Meyer, “Organizing A jQuery
+Application”
+Good software systems tend to be made up of lots of small
+behaviours, each of which has a well-defined responsibility and
+so is easy to understand and change. It stands to reason that if
+we build software by breaking up complex behaviours into small,
+well-specified units, the structure of our code will end up
+reflecting that modular organisation too. And that’s something
+we’ll appreciate as we come to maintain and extend it over time.
+Designing with tests
+
+
+Once you know what the behaviour of the system should be, the
+next challenge is to design a good API for it. In other words, how
+should users interact with this component? What should it be
+called, what information do they need to pass to it, and what
+should they expect in return?
+It’s hard, in general, to come up with design ideas from nothing,
+and the ideas we come up with usually don’t work out perfectly
+in practice. Rather than try to design a function from scratch, in
+isolation, it’s better to design its API by actually using it.
+Indeed, a useful way to think about what we’re doing is not so
+much writing a function as creating a language in which users can
+elegantly express their programs. The functions we design as part
+of our system are merely words in that language.
+The purpose of abstracting is not to be vague, but to
+create a new semantic level in which one can be
+absolutely precise.
+—Edsger W. Dijkstra, “The Humble
+Programmer”
+This implies that we should think about our APIs from the user’s
+point of view first, not the implementer’s.
+For example, suppose we’re designing the constructor API for
+some LoadTester object. It has a lot of fields:
+type LoadTester struct {
+    URL               string
+    Output, ErrOutput io.Writer
+    HTTPClient        *http.Client
+    Fanout            int
+    UserAgent         string
+
+
+}
+(Listing load/1)
+How should we write NewLoadTester, then? We might start
+with something like the following:
+func NewLoadTester(URL string, stdout, stderr io.Writer
+    httpClient *http.Client, fanout int, userAgent stri
+    *LoadTester {
+    ...
+}
+(Listing load/1)
+But this is annoying to use. Look how much information we have
+to pass at the site of the function call:
+got := load.NewLoadTester("https://example.com", os.Std
+    os.Stderr, http.DefaultClient, 20, "loadtest")
+(Listing load/1)
+Not only are there too many arguments, most of them are usually
+unnecessary, since they have sensible default values. For
+example, users will usually want the load tester to write to
+os.Stdout and os.Stderr, so there’s no point making them
+specify the obvious values every time.
+The ideal API would be one where if you need to specify some
+parameter, you can, but if you don’t, you can omit it. A popular
+pattern for this is to use functional options (see The Power of Go:
+Tools for more about these).
+With a functional-option API, if users don’t need to customise
+anything, they can write a very concise function call:
+
+
+got := load.NewLoadTester("https://example.com")
+On the other hand, customisation is available when it’s needed:
+got := load.NewLoadTester("https://example.com",
+    load.WithOutput(buf),
+    load.WithErrOutput(buf),
+    load.WithHTTPClient(&http.Client{Timeout: time.Seco
+    load.WithConcurrentRequests(20),
+    load.WithUserAgent("loadtest"),
+)
+(Listing load/2)
+Everyone’s happy.
+Simple things should be simple, complex things
+should be possible.
+—Alan Kay, “The Wiki Way”
+See Listing load/2 if you’re interested in how these functional
+options are implemented. It’s not complicated, but it does require
+a bit of extra boilerplate. However, this extra effort is well
+worthwhile if it eliminates a large number of mandatory
+parameters from your API.
+Unexported functions
+Throughout this book, and others, I’ve emphasised that we
+should think about testing user-visible behaviours, not functions.
+That leads us naturally to so-called external tests: that is, we write
+the tests in a different package from the one we’re testing.
+Your test files should always be in a different
+
+
+package. Why? Because it forces you to test
+behavior rather than implementation.
+If you are in a different package, you only have
+access to the API of the package; you do not have
+access to internal state. So you are forced to treat
+the package as a black box, which is a good thing.
+That way, you are free to change internals without
+breaking tests as long as the API does not change.
+—Michael Sorens, “Go Unit Tests: Tips from the
+Trenches”
+This sometimes creates a puzzle when we want to test some
+unexported function. As you probably know, in Go a function
+whose name begins with a lowercase letter can only be called
+internally: that is, from within the same package.
+How can we call it from a test in a different package, then?
+We can’t, but that’s okay. By making the function unexported,
+we’re saying it’s not something users need to know about.
+Therefore, it doesn’t need to be tested—at least, not directly.
+Instead, we’ll end up testing these functions indirectly, by calling
+the exported functions that use them. In other words, it’s the
+user-facing behaviour that matters. Users don’t care how that’s
+actually implemented, and nor should our tests.
+We’ve adopted a habit of putting tests in a different
+package from the code they’re exercising. We want
+to make sure we’re driving the code through its
+public interfaces, like any other client, rather than
+opening up a package-scoped back door for testing.
+—Steve Freeman and Nat Pryce, “Growing
+Object-Oriented Software, Guided by Tests”
+Tests are a special case of users, but not that special: they should
+go through the “front door” like everybody else. After all, that’s
+the door we really care about.
+
+
+It does sometimes make sense to write a few internal tests. For
+example, we discovered in the previous chapter that it’s difficult
+to test hidden behaviour such as caching when you test through
+the public API. The most straightforward way to check that the
+cache is being correctly updated is to write an internal test, but
+these should be kept separate from the others:
+If you do need to test some internals, create another
+file with _internal_test.go as the suffix.
+Internal tests will necessarily be more brittle than
+your [external] tests, but they’re a great way to
+ensure internal components are behaving.
+—Mat Ryer, “5 simple tips and tricks for writing
+tests in Go”
+Internal tests will necessarily be more brittle than external ones,
+because by definition they care about implementation details. If
+you change the implementation, even in a way that doesn’t
+change the public behaviour, you’re likely to break internal tests
+that rely on it—but that’s a price we sometimes have to accept.
+Concurrency
+Another kind of function can be tricky to test, not because we
+can’t call it, but because its execution is concurrent. For example,
+a function that uses a go statement to initiate a goroutine,
+possibly returning before the goroutine has completed.
+How, then, can we test that the function has done its job, if that
+job may not actually complete for some unknown time? Writing
+concurrent programs is hard in general, and testing is one of the
+things that’s hard about it.
+The best way to solve the problem of testing a concurrent API is
+not to write a concurrent API. As we’ve seen before, a difficulty
+that surfaces in testing can point to an underlying design issue.
+The tests are a canary in a coal mine revealing by
+their distress the presence of evil design vapors.
+
+
+—Kent Beck, “Test-Driven Development by
+Example”
+Users find concurrent APIs hard to understand and call correctly,
+too. The only way for an asynchronous function to communicate
+with its caller is via channels, and channels are awkward for
+users to consume. In essence, by providing a concurrent API, we
+force users to write concurrent programs in order to call it. This
+introduces a lot of complexity and many opportunities for
+obscure and difficult bugs.
+It’s much easier to test an API which is
+synchronous: that is, it doesn’t export channels.
+There’s a lot of cognitive overhead: who owns the
+channel, what is the life cycle of the channel, who
+closes it, is it buffered or unbuffered?
+If you write your test in a synchronous way it
+communicates the intent much better, and you don’t
+have to worry about all of those additional
+semantics.
+—Alan Braithwaite, “Advanced Testing
+Techniques”
+Instead, a better plan is to leave concurrency to the caller. Dave
+Cheney advances the following two examples in his Practical Go:
+// ListDirectory returns the contents of dir.
+func ListDirectory(dir string) ([]string, error)
+// ListDirectory returns a channel over which
+// directory entries will be published. When the list
+// of entries is exhausted, the channel will be closed.
+func ListDirectory(dir string) chan string
+
+
+The first version, which returns a []string, is clearly
+synchronous. It doesn’t return until the work is done, at which
+point it returns the complete set of results all at once. This might
+take a while, though, and consume arbitrary amounts of
+memory, and meanwhile the user’s program must block.
+The second version is equally clearly asynchronous, because it
+returns a channel. The work will proceed concurrently, with
+results being sent over this channel as they are generated. The
+responsibility is on the user to figure out how to consume this
+channel, and to know when the work is done.
+What’s the most likely way for them to do that? Surely
+something like this:
+var entries []string
+entriesChan := ListDirectory(dir)
+for entry := range entriesChan {
+    entries = append(entries, entry)
+}
+The for ... range loop continues to execute until the
+channel is closed, at which point we have built up a slice
+containing all the results in entries.
+But this is precisely what the synchronous version of the function
+returns! The following code is much simpler from the caller’s
+point of view:
+entries := ListDirectory(dir)
+Indeed, the concurrency is of no value after all, since the user’s
+program ends up blocking until all the results are known. It’s
+effectively synchronous anyway.
+So the synchronous version wastes the user’s time, while the
+asynchronous version wastes their effort instead. Is there a better
+
+
+way? Cheney suggests using a callback. That is, passing a user-
+supplied function as an argument:
+func ListDirectory(dir string, fn func(string))
+In other words, the user calls ListDirectory and provides a
+function that will be called repeatedly—the callback—each time
+receiving the latest result as an argument. This is the pattern
+used by standard library functions such as fs.WalkDir, for
+example:
+fs.WalkDir(fsys, ".", func(p string, d fs.DirEntry, err
+    error {
+    if filepath.Ext(p) == ".go" {
+        count++
+    }
+    return nil
+})
+The function literal here receives each successive file path
+discovered by fs.WalkDir as a string, and can do whatever it
+needs to do with it. In this case, it increments a counter when the
+file path matches a certain extension. (See The Power of Go:
+Tools for more about fs.WalkDir and this example.)
+It’s now up to the user to decide whether this work should be
+concurrent. If so, they can call this function in a goroutine of
+their own, and get on with other work while it runs. The point is
+that concurrency isn’t required as part of the API: it’s optional.
+But supposing that, as testers, we don’t have that option, what
+should we do? For example, how should we test a pre-existing
+asynchronous API? Well, we’ll need to write an asynchronous
+test, using the wait for success pattern:
+
+
+An asynchronous test must wait for success and use
+timeouts to detect failure. This implies that every
+tested activity must affect the system so that its
+observable state becomes different. This sounds
+obvious but it drives how we think about writing
+asynchronous tests.
+If an activity has no observable effect, there is
+nothing the test can wait for, and therefore no way
+for the test to synchronize with the system it is
+testing.
+—Steve Freeman and Nat Pryce, “Growing
+Object-Oriented Software, Guided by Tests”
+Let’s take the common case of starting some kind of network
+server (for example, an HTTP server). Suppose its API is
+something like this:
+// returns immediately
+serve.ListenAsync(addr)
+Let’s first of all deal with an issue we’ll encounter testing any
+kind of network server: which address to have it listen on.
+Sometimes the server has to listen on a specific port to be useful:
+for example, a DNS server must listen on port 53, because that’s
+the DNS port.
+For other servers the port number may not matter, but in order
+to test servers in general we’ll need to be able to specify an
+arbitrary port. The reason is straightforward: each test needs to
+be able to start its own independent server, concurrently with
+other tests.
+We could just assign arbitrary port numbers to each test, but
+that’s fragile: we might accidentally end up with two tests using
+the same port, or worse still, one of the ports we assigned might
+already be in use by some other program.
+Let’s solve both problems by constructing a test helper that finds
+
+
+a random port number that happens to be free. How can we do
+that? There’s a trick.
+If we start a network listener on port zero, that has the effect of
+asking the kernel to assign us some random free port. We can
+then ask the resulting listener what its address really is. That’s
+the address we’ll use in the test:
+func randomLocalAddr(t *testing.T) string {
+    t.Helper()
+    l, err := net.Listen("tcp", "localhost:0")
+    if err != nil {
+        t.Fatal(err)
+    }
+    defer l.Close()
+    return l.Addr().String()
+}
+(Listing serve/1)
+The actual address returned will probably be something like:
+127.0.0.1:60606
+So now we know how to get a unique, available network address
+for each test, we can pass this to ListenAsync and proceed to
+test the server by trying to connect to it.
+We might start with something like this:
+
+
+func TestListenAsyncEagerly(t *testing.T) {
+    t.Parallel()
+    addr := randomLocalAddr(t)
+    serve.ListenAsync(addr)
+    _, err := net.Dial("tcp", addr)
+    if err != nil {
+        t.Fatal(err)
+    }
+}
+(Listing serve/1)
+Seems promising, but unfortunately it doesn’t work:
+serve_test.go:16: dial tcp 127.0.0.1:60733:
+connect: connection
+refused
+And a little thought will make it clear why not. Presumably,
+since ListenAsync returns immediately, it uses a goroutine to
+start the server concurrently.
+But our test, having called ListenAsync, then instantly tries to
+make the connection with net.Dial. This is unlikely to succeed,
+because the server goroutine won’t have had a chance to run yet.
+We’re being too eager. Concurrency is not parallelism, as Rob
+Pike has observed, and while starting a goroutine is usually fast,
+it’s not instant. Setting up the server and listener itself may also
+take a while.
+We need to wait a little. Should we add, for example, some fixed
+delay to the test? Would, say, ten milliseconds be enough?
+
+
+func TestListenAsyncWithSleep(t *testing.T) {
+    t.Parallel()
+    addr := randomLocalAddr(t)
+    serve.ListenAsync(addr)
+    time.Sleep(10 * time.Millisecond)
+    _, err := net.Dial("tcp", addr)
+    if err != nil {
+        t.Fatal(err)
+    }
+}
+(Listing serve/2)
+Well, maybe. But also maybe not. The test is now flaky. If we run
+it ten times in a row, it will sometimes fail, sometimes pass:
+go test -count 10 -run ListenAsyncWithSleep
+--- FAIL: TestListenAsyncWithSleep (0.02s)
+    serve_test.go:18: dial tcp :61707: connect:
+connection refused
+--- FAIL: TestListenAsyncWithSleep (0.01s)
+    serve_test.go:18: dial tcp :61710: connect:
+connection refused
+The test’s goroutine is racing with the server goroutine:
+sometimes the server starts first, sometimes it doesn’t. The
+shorter the fixed sleep, the more likely the test is to flake, or
+“flicker”:
+A test can fail intermittently if its timeout is too
+close to the time the tested behavior normally takes
+to run. An occasional flickering test might not cause
+problems, but as the test suite grows, it becomes
+
+
+increasingly difficult to get a test run in which none
+of the flickering tests fail.
+—Steve Freeman and Nat Pryce, “Growing
+Object-Oriented Software, Guided by Tests”
+But making the fixed sleep longer also makes the test suite
+slower overall. There’s no right length for this interval. If it’s
+long enough that the test passes 95% of the time, then we’ll
+waste a lot of time overall. Are we compelled to choose between
+flaky tests or slow tests, or is there a better option? Maybe there
+is.
+Just waiting isn’t good enough by itself, it turns out. As Freeman
+& Pryce observe, the trick is to wait for success. In other words,
+the test needs to try the connection, understanding that it may
+fail, and keep retrying until either it succeeds, or the test times
+out:
+func TestListenAsyncPatiently(t *testing.T) {
+    t.Parallel()
+    addr := randomLocalAddr(t)
+    serve.ListenAsync(addr)
+    _, err := net.Dial("tcp", addr)
+    for err != nil {
+        t.Log("retrying")
+        time.Sleep(time.Millisecond)
+        _, err = net.Dial("tcp", addr)
+    }
+}
+
+
+(Listing serve/3)
+Note that we still call time.Sleep, but now it’s for a much
+shorter time, because we call it inside a loop. It’s possible,
+though unlikely, that the very first net.Dial will succeed, in
+which case we never enter the loop at all.
+If it fails, though, we log a message to say that we’re retrying,
+sleep a little, and call net.Dial again. Let’s see what happens
+when we run this test with logging enabled:
+go test -run ListenAsyncPatiently -v
+=== RUN   TestListenAsyncPatiently
+=== PAUSE TestListenAsyncPatiently
+=== CONT  TestListenAsyncPatiently
+    server_test.go:17: retrying
+    server_test.go:17: retrying
+    server_test.go:17: retrying
+    server_test.go:17: retrying
+    server_test.go:17: retrying
+--- PASS: TestListenAsyncPatiently (0.02s)
+It looks as though the server is taking around five retries to
+become ready, amounting to about five milliseconds in total. The
+exact length of time isn’t the point here, though: the point is that
+the test waits as long as it takes the server to start, but never
+much longer than that.
+One question may already have occurred to you, though: what if
+the server never starts up at all? Will the test simply wait
+forever?
+No, because all tests time out after a certain period anyway (by
+default, 10 minutes, but we can control this with the -timeout
+flag to go test). However, we may not want to wait this long
+to find out that the server isn’t starting.
+Instead, we can add some timeout code to the test itself, using
+the ever-useful time.Timer:
+
+
+func TestListenAsyncWithTimeout(t *testing.T) {
+    t.Parallel()
+    addr := randomLocalAddr(t)
+    serve.ListenAsync(addr)
+    timeout := time.NewTimer(100 * time.Millisecond)
+    _, err := net.Dial("tcp", addr)
+    for err != nil {
+        select {
+        case <-timeout.C:
+            t.Fatal("timed out")
+        default:
+            t.Log("retrying: ", err)
+            time.Sleep(time.Millisecond)
+            _, err = net.Dial("tcp", addr)
+        }
+    }
+}
+(Listing serve/4)
+As before, if the first connection attempt fails, we enter the retry
+loop. But now we have a select statement that attempts to
+receive from the timer’s channel (timeout.C). If this receive
+succeeds, we have timed out, so we fail the test.
+
+
+On the other hand, if there is no message for us on the timeout
+channel, meaning that there’s still some time left, we sleep and
+retry the connection as before.
+One question that might occur to you is why don’t we just start
+our own goroutine in the test that sleeps for a fixed duration and
+then calls t.Fatal? Something like this, for example:
+go func() {
+    time.Sleep(100 * time.Millisecond)
+    t.Fatal("timeout") // has no effect
+}()
+Alas, that’s no good. t.Fatal only works when it’s called from
+the test’s own goroutine, which is also why we can’t use
+time.AfterFunc, for example. A select statement does the
+trick, though.
+In practice, since we’re likely to need this “wait for server” code
+in several tests, let’s outsource it to another helper function:
+func waitForServer(t *testing.T, addr string) {
+    t.Helper()
+
+
+    timeout := time.NewTimer(100 * time.Millisecond)
+    _, err := net.Dial("tcp", addr)
+    for err != nil {
+        select {
+        case <-timeout.C:
+            t.Fatal("timed out")
+        default:
+            t.Log("retrying: ", err)
+            time.Sleep(time.Millisecond)
+            _, err = net.Dial("tcp", addr)
+        }
+    }
+}
+(Listing serve/5)
+The waitForServer helper cleans up the actual tests
+considerably, leaving us free to express what we’re really testing
+here:
+func TestListenAsyncWithHelper(t *testing.T) {
+    t.Parallel()
+    addr := randomLocalAddr(t)
+    serve.ListenAsync(addr)
+    waitForServer(t, addr)
+    // test whatever we're really testing
+}
+(Listing serve/5)
+Indeed, we could move all this setup code into a synchronous
+helper function (startTestServer) that starts the server,
+waits for it to be ready, and then returns. But you get the point:
+when testing asynchronous APIs, wait for success to avoid
+
+
+flakiness.
+Concurrency safety
+As we’ve seen, it’s wise to avoid exposing concurrency in your
+API unless its purpose is to be concurrent. Synchronous APIs are
+easier to understand, easier to use, and easier to test.
+But even with an API that doesn’t use concurrency itself, it’s also
+wise to assume that users will call it concurrently: this is Go,
+after all. That means that we always need to be concerned about
+avoiding data races, even when we’re not using concurrency
+ourselves.
+It’s common to see Go packages written to use some kind of
+global mutable state, like this:
+package kvstore
+var data = map[string]string{} // no! data race!
+func Set(k, v string) {
+    data[k] = v
+}
+func Get(k string) string {
+    return data[k]
+}
+(Listing kvstore/1)
+How could there be a data race here? It doesn’t look like the
+package even uses concurrency. Well, no, it doesn’t. But what if
+the user’s program, or a test, does?
+
+
+For example, consider a test like this:
+func TestSmokeKVStore(t *testing.T) {
+    t.Parallel()
+    var wg sync.WaitGroup
+    wg.Add(1)
+    go func() {
+        for i := 0; i < 1000; i++ {
+            kvstore.Set("foo", strconv.Itoa(i))
+        }
+        wg.Done()
+    }()
+    for i := 0; i < 1000; i++ {
+        _ = kvstore.Get("foo")
+        runtime.Gosched()
+    }
+    wg.Wait()
+}
+(Listing kvstore/1)
+We start one goroutine doing a thousand Sets on the map, and
+in the test’s own goroutine we concurrently do a thousand Gets.
+This should be enough to trigger a crash if (as we suspect) the
+kvstore package is not concurrency safe.
+
+
+And indeed, that’s what we see:
+go test
+fatal error: concurrent map read and map write
+There’s a data race, because the data map is shared between
+multiple goroutines, at least one of those goroutines writes to it,
+and there is no synchronisation to ensure that accesses to the
+variable happen in a deterministic order.
+The author of kvstore evidently wasn’t thinking about
+concurrency, because they weren’t using concurrency. But in Go,
+we always need to think about concurrency! At least, since any
+function can be called concurrently, we need to assume that it
+will be, and prepare accordingly.
+One way to check concurrency safety is to call the package from
+a smoke test, such as the one in our example, that repeatedly calls
+the function from multiple goroutines, hoping to trigger a data
+race. And in this case we succeeded.
+But this is a matter of luck: a fatal error like this may not
+actually happen. The order in which goroutines execute is
+unpredictable: that’s why concurrency safety is an issue in the
+first place. We don’t want flaky tests, and we can’t rely on luck to
+detect a bug like this. But we have a secret weapon: Go’s race
+detector.
+By running the race detector on this test, using the -race flag,
+we get the benefit of its ability to detect even many potential data
+races:
+go test -race
+==================
+WARNING: DATA RACE
+Write at 0x00c000016360 by goroutine 8:
+  runtime.mapassign_faststr()
+      /usr/local/go/src/runtime/
+map_faststr.go:203 +0x0
+
+
+  kvstore.Set()
+      .../kvstore/1/kvstore.go:6 +0x91
+  kvstore_test.TestSmokeKVStore.func1()
+      .../kvstore/1/kvstore_test.go:18 +0x66
+Previous read at 0x00c000016360 by goroutine 7:
+  runtime.mapaccess1_faststr()
+      /usr/local/go/src/runtime/
+map_faststr.go:13 +0x0
+  kvstore.Get()
+      .../kvstore/1/kvstore.go:10 +0x105
+  kvstore_test.TestSmokeKVStore()
+      .../kvstore/1/kvstore_test.go:23 +0xda
+  ...
+==================
+--- FAIL: TestSmokeKVStore (0.00s)
+    testing.go:1319: race detected during
+execution of test
+This is telling us, formally, what we already knew, informally:
+calling Set and Get concurrently is not safe. The problem is
+with the basic design of kvstore: it has global mutable state, so
+it can’t safely be called concurrently.
+Let’s see how to fix this, by using a mutex to synchronise access
+to the map, and eliminating the global data variable. We’ll
+create a new Store type to hold the data and the mutex that
+protects it:
+
+
+type Store struct {
+    m    *sync.Mutex
+    data map[string]string
+}
+func NewStore() *Store {
+    return &Store{
+        m:    new(sync.Mutex),
+        data: map[string]string{},
+    }
+}
+func (s *Store) Set(k, v string) {
+    s.m.Lock()
+    defer s.m.Unlock()
+    s.data[k] = v
+}
+func (s *Store) Get(k string) string {
+    s.m.Lock()
+    defer s.m.Unlock()
+    return s.data[k]
+}
+(Listing kvstore/2)
+Now we can have multiple stores instead of just one, which is
+useful, and each of those stores is in turn concurrency safe,
+because its Set and Get methods use the mutex to (briefly) get
+exclusive access to the map.
+We haven’t created too much extra paperwork for users. The API
+
+
+now looks like this:
+s := kvstore.NewStore()
+s.Set("a", "b")
+...
+Let’s try our smoke test, with the race detector enabled:
+go test -race
+PASS
+While the race detector is a wonderful tool, it can’t detect every
+possible data race in the program. It can only inspect the code
+paths that happen to be executed by a given test. A smoke test
+can help, but we can’t guarantee to catch everything.
+This is a limitation of testing in general. We can’t just bang out
+some unsafe code and assume the tests will catch any problems.
+Tests are not a substitute for thinking:
+We say, “I can make a change because I have tests.”
+Who does that? Who drives their car around
+banging into the guard rails?
+—Rich Hickey, “Simple Made Easy”
+And however careful our smoke testing, we may not be able to
+put enough load on the system to actually trigger a race. Indeed,
+data races are most likely to cause crashes in production, at times
+of peak demand. In other words, exactly when you don’t want
+them.
+Long-running tasks
+One common application for concurrency in Go is to enable long-
+running tasks to proceed independently. For example, any
+function that calls an external network service, such as a remote
+API, could in principle take a long time. Or we might need to
+execute some lengthy batch job, such as a backup, in a goroutine
+
+
+so that we can get other work done while we’re waiting.
+In cases like these, as with any other concurrent job, we may
+need a way to cancel the job, either because some other event has
+rendered it unnecessary, or perhaps because we simply got tired
+of waiting.
+The context package is the standard way to cancel or time out
+concurrent tasks in Go, and it works like this. The caller creates a
+context.Context object and passes it to the potentially long-
+running function. When the caller gets bored, it can cancel the
+context, signalling the job that it should terminate.
+We saw earlier in this chapter how to time out slow operations in
+a test, using time.Timer, for example. When testing functions
+that take a context, though, we have a built-in timeout facility, in
+the context package itself.
+Suppose we need to test some function RunBatchJob, for
+example. Under test conditions, it should return fairly quickly,
+but it might take a long time, or even hang. We want to detect
+that without slowing down our tests too much.
+We could write something like this:
+func TestRunBatchJob(t *testing.T) {
+    t.Parallel()
+    ctx, cancel := context.WithTimeout(context.Backgrou
+
+
+        10*time.Millisecond)
+    defer cancel()
+    go func() {
+        batch.RunBatchJob(ctx)
+        cancel()
+    }()
+    <-ctx.Done()
+    if errors.Is(ctx.Err(), context.DeadlineExceeded) {
+        t.Fatal("timed out")
+    }
+}
+(Listing batch/1)
+First, we create a context with a pre-set timeout of 10ms. We
+defer calling its cancel function, to make sure that however the
+test exits, the operation will be cancelled, to avoid wasting time
+or resources. Next, we start the operation itself, asynchronously,
+by calling RunBatchJob in a little goroutine and passing it the
+context.
+Now, we almost certainly need to wait a bit, so we block on
+receiving from the context’s Done channel, to give the job a
+chance to run.
+As you probably know, a blocked channel receive statement is
+unblocked when the channel is closed, and a so-called close-only
+channel is a common idiom in Go programs. No messages will
+actually be sent on such a channel: the closing of the channel is
+the message.
+So the test will wait for something to happen, and only proceed
+once the context’s Done channel is closed. This will be for one of
+two reasons: either the job completed normally, or it ran too long
+and the context timed out.
+Let’s see how that works. Suppose RunBatchJob is behaving
+well, and returns within the specified time. In this case, the little
+goroutine calls cancel() itself and exits. This in turn unblocks
+the receive from ctx.Done() in the test’s main goroutine,
+
+
+allowing the test to proceed.
+At this point, we know the context is done, one way or the other:
+either the job has completed normally, or the timeout has fired.
+In order to find out which it was, we now check the value of
+ctx.Err().
+In the happy path, the job completed on time, and so the context
+was cancelled by us. In this case, the value returned by
+ctx.Err() will be context.Cancelled. This is as expected,
+so that’s the end of the test: pass.
+On the other hand, what happens if RunBatchJob takes too
+long? Now the 10ms timer will fire, and the Done channel will
+be closed, allowing the test to proceed. But when we check the
+reason (by looking at ctx.Err()), we will find that it is
+context.DeadlineExceeded, meaning that the context timed
+out. That’s a problem, so we fail the test with t.Fatal.
+The exact details of this example don’t matter, but the main idea
+is that, when testing a potentially long-running operation that
+takes a context.Context, we can pass it a context with a
+timeout. We start the operation asynchronously, and wait on the
+context’s Done channel. When it’s done, we check to see if the
+context timed out.
+User interaction
+Some simple-looking functions can be quite tricky to test in Go,
+because they interact directly with the user’s terminal. Here’s an
+example:
+func Greet() {
+    fmt.Print("Your name? ")
+    var name string
+    fmt.Scanln(&name)
+
+
+    fmt.Printf("Hello, %s!\n", name)
+}
+(Listing greet/1)
+The resulting interaction might go something like this:
+Your name? John
+Hello, John!
+Very friendly. Now let’s try to write a test for the Greet
+function, starting with calling it:
+func TestGreet(t *testing.T) {
+    t.Parallel()
+    greet.Greet()
+}
+(Listing greet/1)
+We run into a problem straight away, though: how and when
+should this test fail?
+Greet doesn’t return anything, so there’s no result value to
+check. Let’s run the test anyway and see what happens:
+go test
+Your name? Hello, !
+PASS
+ok      greet   0.193s
+So we have a useless test, that tests nothing and can’t fail, and it
+also prints junk to the terminal, cluttering up the test results. Not
+good. Should we just give up, and reject this function as
+untestable?
+Maybe. But maybe there’s something we can do. The first
+question to ask, as usual, is “What are we really testing here?”
+
+
+The behaviour we want is something like this: Greet prints a
+prompt, reads a string as input, then prints a greeting
+incorporating that string.
+When you put it that way, it becomes clear that Greet interacts
+with the user in two separate ways: “printing”, that is, writing to
+some io.Writer, and “reading”, that is, reading from some
+io.Reader. This insight is the key to writing a useful test.
+Let’s start with the first problem: how to test that Greet prints a
+prompt. We saw in the earlier chapter on test data that a
+*bytes.Buffer implements the io.Writer interface, so it’s
+something we can print to. And because we can then interrogate
+the contents of the buffer, we can find out exactly what was
+printed.
+This sounds like a potential way forward, but there’s still a
+problem. Here’s the code in Greet that prints the prompt
+message:
+func Greet() {
+    fmt.Print("Your name? ")
+    // ...
+}
+This code calls fmt.Print, which doesn’t use some io.Writer
+variable; it just prints to the terminal.
+But how does fmt.Print know that it should print to the
+terminal anyway? Is that just hard-wired somehow? Let’s take a
+look at the source code of the fmt package and see:
+func Print(a ...any) (n int, err error) {
+    return Fprint(os.Stdout, a...)
+}
+
+
+It turns out that fmt.Print is just a thin wrapper around
+another function fmt.Fprint, supplying os.Stdout as its first
+argument, along with whatever values the user passed to Print.
+So the more general function is Fprint, which can print to any
+writer.
+So how can we make the Greet function print somewhere else,
+given that it uses Print rather than the more flexible Fprint?
+For example, how could we make it print to a buffer created in a
+test?
+Our first idea might be to assign that buffer to the os.Stdout
+variable, but this is a bad idea. Firstly, if this happens in parallel
+tests we would have a data race. Secondly, we don’t have
+exclusive use of os.Stdout: Go needs it too, for example when
+printing the test results.
+A function that’s hard-wired to print to os.Stdout is hard to
+test in general. So we don’t test that function. We test this
+function instead, which takes an io.Writer, and prints to it:
+func Greet(out io.Writer) {
+    fmt.Fprint(out, "Your name? ")
+    var name string
+    fmt.Scanln(&name)
+    fmt.Fprintf(out, "Hello, %s!\n", name)
+}
+(Listing greet/2)
+We’ve pulled off another magician’s switch, replacing a tricky
+problem (how to safely replace os.Stdout) with an easy one:
+how to create an io.Writer in the test, and pass it to the
+Greet function.
+This is straightforward to solve:
+
+
+func TestGreet(t *testing.T) {
+    t.Parallel()
+    buf := new(bytes.Buffer)
+    greet.Greet(buf)
+    want := "Your name? Hello, !\n"
+    got := buf.String()
+    if want != got {
+        t.Error(cmp.Diff(want, got))
+    }
+}
+(Listing greet/2)
+And, of course, if we’d written this test first, this is exactly the
+kind of idea we would have come up with. Knowing that we
+needed to pass an io.Writer to the function, we would have
+designed it to take one as a parameter. We simply can’t write
+untestable functions when the test comes first.
+Fine, but what if this is a legacy system? What if the Greet
+function has already been written, without being guided by tests,
+and now the job of adding a test after the fact has landed in our
+unwilling lap? Is there anything we can do?
+Indeed there is: we can refactor the function to accept an
+io.Writer, as we’ve done here. Now the test becomes easy to
+write, so we write it. Legacy systems that weren’t designed to be
+testable can usually be refactored in a fairly simple way to make
+them testable, as in this example.
+However, this test is still too feeble. It tests that Greet prints
+
+
+something, successfully, but it doesn’t test that it then reads
+anything.
+Let’s turn to the second problem, then: reading “user input”.
+How does fmt.Scanln know where to read input from,
+anyway? Could it be simply a convenience wrapper around some
+other function, as we found previously with fmt.Print?
+Let’s take a look:
+func Scanln(a ...any) (n int, err error) {
+    return Fscanln(os.Stdin, a...)
+}
+Just as before, we’ve found a more general API (Fscanln)
+concealed behind a more convenient one (Scanln). And, just as
+before, we can refactor our function to call fmt.Fscanln
+directly, passing it some io.Reader to read from:
+func Greet(in io.Reader, out io.Writer) {
+    fmt.Fprint(out, "Your name? ")
+    var name string
+    fmt.Fscanln(in, &name)
+    fmt.Fprintf(out, "Hello, %s!\n", name)
+}
+(Listing greet/3)
+Now all we need in the test is something that satisfies
+io.Reader, and that we can pre-load with some string
+representing what the “user” types at the prompt.
+Here’s a simple way to construct just such a reader, using
+strings.NewReader:
+
+
+func TestGreet(t *testing.T) {
+    t.Parallel()
+    buf := new(bytes.Buffer)
+    input := strings.NewReader("fakename\n")
+    greet.Greet(input, buf)
+    want := "Your name? Hello, fakename!\n"
+    got := buf.String()
+    if want != got {
+        t.Error(cmp.Diff(want, got))
+    }
+}
+(Listing greet/3)
+By supplying the input and the output streams as parameters to
+the function, we make it far easier to test. But what about the
+real program? When we call Greet from main, what values
+should we pass it for in and out so that it will read and write to
+the user’s terminal?
+Well, we already know the answer to that:
+func main() {
+    greet.Greet(os.Stdin, os.Stdout)
+}
+So now that we’ve succeeded in crafting a test for Greet, we can
+ask: is it a good test? Are there any bugs in Greet that a more
+
+
+demanding test (or simply a more imaginative choice of test
+data) might uncover?
+My friend Mary Jo suggested this modification to the test, for
+example:
+func TestGreet(t *testing.T) {
+    t.Parallel()
+    buf := new(bytes.Buffer)
+    input := strings.NewReader("Mary Jo\n")
+    greet.Greet(input, buf)
+    want := "Your name? Hello, Mary Jo!\n"
+    got := buf.String()
+    if want != got {
+        t.Error(cmp.Diff(want, got))
+    }
+}
+(Listing greet/4)
+Let’s see if her choice of test input behaves differently to mine:
+--- FAIL: TestGreet (0.00s)
+    -   "Your name? Hello, Mary Jo!\n",
+    +   "Your name? Hello, Mary!\n",
+What’s going on? Have we accidentally written a sexist function
+that doesn’t listen to women?
+Or is there a more subtle, if no less serious, problem? Actually,
+the clue lies in a closer reading of the documentation for
+
+
+fmt.Fscan:
+// Fscan scans text read from r, storing successive
+// space-separated values into successive arguments...
+The key phrase here is “space-separated”. In other words, Fscan
+treats spaces in the input as delimiters. When we ask it to read a
+string value, as in this example, it stops when it sees the first
+space, and returns everything it’s read up to that point. The
+remainder of the input is simply lost. That’s bad news for Mary
+Jo, and everybody else who happens to have a name containing
+spaces.
+By being a little more imaginative in our choice of test inputs, or
+perhaps by having a more diverse team of contributors, we
+successfully uncovered an important bug. And this is the kind of
+situation where fuzz tests, which we discussed in a previous
+chapter, could also be very helpful in generating new test cases.
+So, just out of interest, what should we have used instead of
+fmt.Fscan?
+Whenever we’re interested in reading lines of input, as opposed
+to bytes, for instance, then a bufio.Scanner is a good choice:
+func Greet(in io.Reader, out io.Writer) {
+    fmt.Fprint(out, "Your name? ")
+    scanner := bufio.NewScanner(in)
+    if !scanner.Scan() {
+        return
+    }
+    fmt.Fprintf(out, "Hello, %s!\n", scanner.Text())
+}
+
+
+(Listing greet/5)
+bufio.NewScanner takes an input stream—that is, some
+io.Reader—and returns a scanner object that will read from
+the stream. We can then call its Scan method to ask it to do
+some scanning. If it successfully scanned a line, the method
+returns true, and we can then get the line by calling Text().
+One issue here is what to do if Scan returns false, meaning that
+no input was read. Well, we can’t return an error from Greet
+without changing its signature, and we don’t want everyone who
+calls this function to have to check for some error which will
+rarely happen in the real program: that would be irritating.
+It also doesn’t really make sense to choose a default name if we
+can’t read one from the user. The best thing in this situation is
+probably just to do nothing and return.
+Command-line interfaces
+We’ve discussed in previous chapters how important it is to make
+sure that our system is always runnable, or at least not too far
+away from being runnable. One reason for this is to avoid the
+embarrassing situation where all your tests pass, but the program
+doesn’t actually work when the user runs it.
+If the program is well-designed, then as much of its important
+behaviour as possible will be implemented as an importable
+package. And if we’ve built that package guided by tests, then we
+should feel reasonably confident that it’s correct.
+But there’s one important function that we can’t easily test:
+main. And if that doesn’t work, nothing else will. So it’s worth
+asking: what could be wrong with the main function?
+Well, quite a lot, actually. It could do nothing at all, or if it calls
+into the package, it could do it the wrong way, or it could ignore
+the user’s command-line arguments and options, or misinterpret
+them. It could crash or panic if arguments are missing or invalid.
+As long as all this logic is in main, it’s difficult to test without
+
+
+compiling and invoking the binary. Sometimes that’s an
+appropriate thing to do, and we’ll talk about a convenient way to
+do it in the next chapter. But for now, let’s think about how we
+could get that logic out of the main package and put it
+somewhere we can directly test it.
+There’s a bunch of stuff that almost all command-line tools have
+in common, regardless of what they actually do. They usually
+take arguments and flags, they may reference environment
+variables or configuration files, they might read from their
+standard input, and they usually write to their standard output or
+standard error.
+Let’s refer to these aspects of the program’s behaviour as its
+command-line interface (CLI), as distinct from whatever it is that
+the program actually does.
+So how can we test the command-line interface, specifically? For
+example, if the program takes a command-line argument, how
+can we test that supplying this argument actually has the desired
+effect?
+For example, suppose we’re writing a timer program whose job is
+simply to wait for a specified period, then exit. Users might
+interact with it by running the binary with a command-line
+argument, like this:
+timer 10s
+Starting a timer for 10s...
+[time passes]
+...done.
+Since specifying the timer period is an important part of the user
+interface, we’d like to test that the program interprets that
+argument correctly. It will presumably do so by looking at the
+value of os.Args.
+How could we supply arbitrary arguments to the program from a
+test, then?
+
+
+One effective, but rather laborious, way would be to build it, by
+executing go build as a subprocess in our test, and then
+executing the resulting binary. That’s doable, but it’s an awful lot
+of work just to get some arbitrary values into os.Args.
+One way around this problem, suggested by Mat Ryer and others,
+is to have main do nothing but call some other function and pass
+it os.Args:
+func main() {
+    timer.Main(os.Args)
+}
+You might recognise this as the same refactoring pattern we used
+in the previous section, on testing user interaction. In that earlier
+case, we passed I/O streams to the function. Here, we pass its
+command-line arguments instead.
+Now it’s easy to test the program’s argument-handling behaviour
+by passing arbitrary arguments to timer.Main:
+func TestTimer(t *testing.T) {
+    t.Parallel()
+    args := []string{"program", "arg1", "arg2", "arg3"}
+    timer.Main(args)
+    ... // test something
+}
+That takes care of invoking the program with arbitrary
+arguments, but it’s still not clear how to test what it actually does
+as a result.
+And maybe we don’t need to. After all, what are we really testing
+here? Essentially, that the program correctly interprets its
+
+
+command-line arguments.
+All the test needs to show is that, given the argument 10ms, for
+example, the program understands that it should sleep for 10ms.
+The sleeping behaviour itself is not part of the interface testing.
+We can presume this is tested separately, in isolation from the
+CLI.
+So how can we check only that the program correctly parses its
+arguments, without having to test the sleeping as well?
+A simple way to do this is to break up its behaviour into two
+functions, ParseArgs and Sleep:
+func main() {
+    interval := timer.ParseArgs(os.Args)
+    timer.Sleep(interval)
+}
+(Listing timer/1)
+Assuming Sleep is independently tested, all we need to worry
+about here is testing ParseArgs. And because that’s a pure
+function, this is now quite straightforward:
+func TestParseArgs(t *testing.T) {
+    t.Parallel()
+    want := 10 * time.Millisecond
+    got := timer.ParseArgs([]string{"timer", "10ms"})
+    if !cmp.Equal(want, got) {
+        t.Error(cmp.Diff(want, got))
+
+
+    }
+}
+(Listing timer/1)
+With a program this simple, that’s just about all we need. But
+you can imagine that if there were two or three configuration
+parameters, this API would start to become annoying to use.
+ParseArgs would have to return two or three values, and it’s
+hard to scale much beyond that.
+When that’s the case, we can group together all the necessary
+config settings into a single struct. Since this object represents a
+timer that’s configured in a specific way, let’s call it simply a
+Timer:
+type Timer struct {
+    Interval time.Duration
+}
+(Listing timer/2)
+It makes sense that Sleep now becomes a method on the timer,
+since it needs access to its configuration:
+func (t Timer) Sleep() {
+    time.Sleep(t.Interval)
+}
+(Listing timer/2)
+The main function still looks reasonable, but now the
+configuration can scale to as many parameters as we want,
+without creating burdensome paperwork:
+
+
+func main() {
+    t := timer.NewTimerFromArgs(os.Args)
+    t.Sleep()
+}
+(Listing timer/2)
+Testing the command-line interface is now a matter of calling
+NewTimerFromArgs with some arbitrary arguments, and
+checking that we get back the expected value of Timer:
+func TestNewTimerFromArgs(t *testing.T) {
+    t.Parallel()
+    args := []string{"program", "10s"}
+    want := timer.Timer{
+        Interval: 10 * time.Second,
+    }
+    got := timer.NewTimerFromArgs(args)
+    if !cmp.Equal(want, got) {
+        t.Error(cmp.Diff(want, got))
+    }
+}
+(Listing timer/2)
+One answer to the vexed question of how to test CLI tools, then,
+is to decouple the command-line interface from the rest of the
+program, and test them both separately. A decoupled design is a
+better design, as we’ve seen throughout this book.
+
+
+But sometimes there’s no substitute for actually running the
+program directly and seeing what it does, especially when we
+want to test what output and error messages the user should see
+in different circumstances.
+In the next chapter, we’ll look at a neat way to do this, using test
+scripts.

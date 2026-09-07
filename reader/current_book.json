@@ -1,7 +1,4 @@
 {
-  "book_id": "the_power_of_go_tests_2022_v1",
-  "title": "The Power of Go: Tests",
-  "status": "reading",
-  "started_at": "2026-09-07",
-  "note": "ALL_START: The Power of Go Tests emal edilir"
+  "current_book": null,
+  "status": "idle"
 }

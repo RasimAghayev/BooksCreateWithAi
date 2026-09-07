@@ -1,0 +1,1020 @@
+3. Communicating with tests
+Tests are stories we tell the next generation of
+programmers on a project. They allow a developer
+to see exactly what an application is made of and
+where it started.
+—Roy Osherove, “The Art of Unit Testing”
+What are tests, actually? One interesting and slightly unusual
+way to think about them is as a way of communicating. Not with
+the computer, except in a shallow sense.
+Rather, we’re really communicating with our fellow
+programmers, our successors, and even our future selves. So
+what is it that we’re communicating, in fact? What’s the point of
+a test?
+Tests capture intent
+
+
+Tests aren’t just about verifying that the system works, because
+we could do that (slowly) by hand. The deeper point about tests
+is that they capture intent. They document what was in our minds
+when we built the software; what user problems it’s supposed to
+solve; how the system is supposed to behave in different
+circumstances and with different inputs.
+As we’re writing the tests, they serve to help us clarify and
+organise our thoughts about what we actually want the system to
+do. Because if we don’t know that, how on earth can we be
+expected to code it?
+No amount of elegant programming or technology
+will solve a problem if it is improperly specified or
+understood to begin with.
+—Milt Bryce, “Bryce’s Laws”
+So the first person you need to communicate with when you’re
+writing a test is yourself. Start by describing the required
+behaviour in words: “When the user does X, then Y happens, and
+so on.” As you do this, the very act of description will prompt
+you to fill in some of the blanks: what if this happens? What if
+you get that input?
+This won’t be straightforward. If it were, this step wouldn’t be
+necessary, but it is. Our brains are wonderful at ignoring
+irrelevant details, and picking out what’s really important. They
+evolved that way. If there’s a sabre-toothed cat leaping at you,
+you don’t need to know what colour its stripes are. You just need
+to run like hell.
+But computers don’t work like that. If they did, we could just
+type one sentence and be done: Do what I mean! Instead, we have
+to explain every step, every twist and turn, and every change in
+circumstance.
+In other words, we have to be clear.
+The most important single aspect of software
+development is to be clear about what you are trying
+
+
+to build.
+—Bjarne Stroustrup, “The C++ Programming
+Language”
+The first question we need to ask ourselves before writing a test,
+then, is:
+What are we really testing here?
+Until we know the answer to that, we won’t know what test to
+write. And until we can express the answer in words, ideally as a
+short, clear sentence, we can’t be sure that the test will
+accurately capture our intent.
+Test names should be sentences
+So now that we have a really clear idea about the behaviour we
+want, the next step is to communicate that idea to someone else.
+The test as a whole should serve this purpose, but let’s start with
+the test name.
+You know that test functions in Go need to start with the word
+Test, but the rest of the function name is up to us. Usually, we
+don’t think too hard about this part.
+But maybe we’re missing a trick. The name of the test isn’t just
+paperwork, it’s an opportunity for communication. And
+communication has a lot more to do with great software
+engineering than you might think:
+It’s possible that a not-so-smart person, who can
+communicate well, can do much better than a super
+smart person who can’t communicate well. That is
+good news because it is much easier to improve your
+communication skills than your intelligence.
+—Kevin Kelly, “103 Bits of Advice I Wish I Had
+Known”
+Tests communicate by failing. When this test fails, as it surely
+will at some time or other, what will be printed out before
+
+
+anything else? Its name.
+So, just like the specific failure string that we pass to t.Error or
+t.Fatal, the name of the test is also a message. What should it
+say? It should describe the behaviour of the system that the test
+checks. In other words, the name of the test is the behaviour that
+it’s designed to disprove.
+Let’s take an example. Suppose we have some function called
+Valid that takes some input and checks whether or not it’s
+valid. It doesn’t matter what the input is, or what “valid” means
+in this context. Let’s just say that the input is valid if it’s the
+exact string "valid input". Any other string will be
+considered invalid.
+To write the test, we’ll start by writing out the behaviour
+explicitly as a sentence, as concisely as we can without
+sacrificing relevant detail:
+Valid returns true for valid input
+It may not be possible to express in detail what “valid input”
+means in a single short sentence, but that’s okay. The job of this
+initial sentence is to describe the focus of this test, not every
+detail about it.
+Now it’s time to expand this into runnable code. Here’s the test
+that most Go programmers would probably write, if they’re not
+used to thinking of tests as a communication tool:
+func TestValid(t *testing.T) {
+    t.Parallel()
+    want := true
+    got := valid.Valid("valid input")
+
+
+    if want != got {
+        t.Errorf("want %t, got %t", want, got)
+    }
+}
+(Listing valid/1)
+Failures are a message to the future
+There doesn’t seem to be too much wrong with this, and indeed
+there isn’t; it’s a perfectly reasonable test. But it doesn’t
+communicate as much as it could. When it fails, what do we see?
+--- FAIL: TestValid (0.00s)
+    valid_test.go:12: want true, got false
+How useful is this output? Remember, we won’t be looking at the
+code for the test function when we see this. All we’ll see is this
+message, and it might be in the middle of a long list of other
+output. It conveys no context about what’s going on, what the
+test was trying to do, what the input was, or what this failure
+means.
+All we know is what we see: “TestValid: want true, got false”.
+That’s pretty opaque. It leaves the reader with many questions:
+•  What value were we inspecting?
+•  Why did we expect it to be true?
+•  For what input?
+•  What does it mean that we got false instead?
+•  In what respect is the system not behaving as specified?
+In order to solve the problem indicated by this failing test, we
+need to do a fair amount of work. We have to find the relevant
+test, read it through and understand what it’s doing overall, look
+at the specific line that’s failing, understand why it might have
+failed, and only then go and fix the system code.
+Multiply this by more than a few test failures, and it’s clear that
+we’re inadvertently creating a lot of unfair extra work for some
+poor, harassed developer in the future. This is a serious problem,
+
+
+not least because that developer might well be us.
+Can we do more to help? Is there any work we could do in
+advance of the test failure, to make it easier to diagnose when it
+does happen?
+Let’s start with the name of the test. Something vague like
+TestValid is no help (what about Valid?) Instead, we could
+use the test name to describe the required behaviour in detail.
+We already have a short sentence that does this:
+Valid returns true for valid input
+Why shouldn’t we simply remove the spaces from this sentence
+and use the result as the name of the test?
+func TestValidIsTrueForValidInput(t *testing.T) {
+Remember, when the test fails, this name will be the first thing
+printed out:
+--- FAIL: TestValidIsTrueForValidInput (0.00s)
+In fact, this name conveys so much information, we may not
+need to say very much else. If Valid is supposed to be true for
+valid input, and we’re seeing this failure, then we can
+immediately infer that it must have, in fact, been false for valid
+input.
+It’s still good practice to have t.Error report the actual result,
+even if there’s only one possibility, as in this case. So here’s the
+updated test:
+func TestValidIsTrueForValidInput(t *testing.T) {
+    t.Parallel()
+    if !valid.Valid("valid input") {
+
+
+        t.Error(false)
+    }
+}
+(Listing valid/2)
+So the complete failure message, including the name of the test,
+is:
+--- FAIL: TestValidIsTrueForValidInput (0.00s)
+    main_test.go:20: false
+And even though the failure message is much shorter than our
+original version, it actually gives much more information when
+combined with a test name in the form of a sentence.
+Are we testing all important behaviours?
+Taking advantage of an otherwise neglected communication
+channel—the test name—helps make future test failures easier to
+fix. But there’s another benefit, too.
+In order to write a useful sentence describing the system’s
+behaviour, we needed to include three things: the action, the
+condition, and the expectation. In other words:
+Test names should be ACE: they should include Action,
+Condition, and Expectation.
+For example, in the test for our Valid function, these are as
+follows:
+•  Action: calling Valid
+•  Condition: with valid input
+•  Expectation: returns true
+By being explicit about these, the test sentence can also suggest
+other possibilities. For example, how should Valid behave
+under different conditions? What should it do when given invalid
+input?
+And that’s something we need to know. While it’s important that
+
+
+Valid is true for valid input, it’s equally important (if not more
+important) that it’s false for invalid input. After all, it might just
+always be true, which would pass this test, but still not be useful
+in the real program.
+In other words, we need to think about implementations of
+Valid that would pass the “valid input” test, but nevertheless be
+incorrect. Here’s a simple example:
+func Valid(input string) bool {
+    return true
+}
+(Listing valid/3)
+The point of Valid is to reject invalid input, but we don’t have
+to look too hard at the code to see that, in fact, it can never do
+this. Yet our test will pass, and if we check coverage, we’ll see
+that the function is 100% covered by the test.
+Many real tests are just like this. The developers feel good about
+the system, because the tests pass, and the code is well covered.
+But they’re not looking closely enough at what the tests are
+really testing. Let’s not make the same mistake.
+After we’ve written a test, then, it’s important to ask ourselves
+the question:
+What are we really testing here?
+It’s possible to set out with a very clear intention, yet end up
+writing a test that doesn’t actually do quite what we meant it to.
+We need to review the code afterwards and see whether it really
+expresses the intent captured by the original behaviour sentence.
+If it does, are there other important behaviours remaining that we
+haven’t yet tested?
+By saying everything two ways—both as code and
+as tests—we hope to reduce our defects enough to
+
+
+move forward with confidence. From time to time
+our reasoning will fail us and a defect will slip
+through. When that happens, we learn our lesson
+about the test we should have written and move on.
+—Kent Beck, “Test-Driven Development by
+Example”
+The power of combining tests
+What we’ve realised by going through this thought process is that
+Valid actually has two important behaviours, and we’ve only
+tested one of them: that it returns true for valid input.
+That’s the “happy path”, if you like, and it’s important, but it’s
+also easy to pass with a completely broken implementation of
+Valid, as we’ve seen.
+To have confidence that Valid can actually discriminate between
+valid and invalid inputs, we need to test the “sad path” too. For
+example:
+func TestValidIsFalseForInvalidInput(t *testing.T) {
+    t.Parallel()
+    if valid.Valid("invalid input") {
+        t.Error(true)
+    }
+}
+(Listing valid/4)
+Of course, this test is also insufficient by itself. If this were the
+only test we had, it would be easy to pass by simply having
+Valid always return false, whatever its input.
+The point is that the two tests combined can give us confidence in
+
+
+the correctness of Valid. Each test tells us something useful
+about the system’s behaviour on its own, but not the whole story.
+Only by running them together can we detect faulty
+implementations such as always returning a fixed value.
+Another way to think about this is there are two possible
+behaviours of Valid, so we need to cover both of them with
+tests. Remember, test behaviours, not functions. Each behaviour
+of the system is a distinct code path that needs to be exercised by
+some test if we’re to have confidence in it.
+The “lazy” Valid implementation might seem unrealistic, but
+it’s the sort of thing that can easily happen in large projects, with
+many developers and testers, and not enough time. Maybe the
+implementer had multiple failing tests, and needed to “fix” them
+quickly to bypass the normal deployment checks. They might
+even have left a comment to remind themselves to implement the
+function properly later:
+return true // TODO: write real implementation
+Unfortunately, tests can’t read comments. And, if we’re being
+honest with ourselves, TODO comments like this almost never
+result in action anyway. They represent the graveyard of things
+we’ll never get around to.
+Bugs aren’t always as obvious as this, though. If only they were,
+our work would be a lot easier. Let’s look at another possible
+incorrect implementation of Valid:
+func Valid(input string) bool {
+    return strings.Contains(input, "valid input")
+}
+(Listing valid/4)
+This almost looks reasonable, doesn’t it? And it will pass the
+“valid input” test. But it’s still wrong. Can you see how? If not,
+think about what would happen if we called Valid with the
+
+
+string "invalid input".
+Recall that we defined the input as valid if it’s exactly the string
+valid input. In other words, it’s not good enough for input
+just to contain that string: it also mustn’t contain anything else.
+So strings.Contains isn’t the right thing to use here.
+This is why we also need a test that Valid returns false when
+given input that contains valid input as a substring. We can
+imagine an incorrect implementation that’s equivalent to
+strings.Contains, so we need a bug detector that detects
+this.
+Even when we’re being very disciplined and writing tests first,
+it’s easy to end up writing this sort of bug. And because we have
+passing tests, this can give us a completely unjustified confidence
+in the system.
+Over time, this can create a dangerous complacency. The tests
+have been passing for months! So the system must be correct.
+Mustn’t it?
+Just as a car needs regular inspection and service, it’s a good
+idea for us to take a really close look at our tests every so often
+and ask:
+What are we really testing here?
+And, as we’ve seen, one effective way to answer this is to
+imagine some incorrect implementations that could nevertheless
+pass the test. Then we extend the tests so that we can
+automatically detect and eliminate such bugs.
+The thing that most people forget about code is that it changes
+over time. Even if the implementation is correct now, someone
+might look at it in a few months or years and ask, “Could I
+refactor this function to just return true?” If they try this, and it
+passes the tests, they will quite justifiably assume that their
+refactoring is correct.
+That’s why we need to write more robust tests. Remember the
+
+
+“bug detector” that Martin Fowler talks about? It needs to detect
+not only the bugs that we write today, but also the bugs that we
+—or someone else—might write in the future.
+Reading tests as docs, with gotestdox
+The combined power of our two tests is too much for even the
+laziest and most malicious implementer. Now the quickest and
+easiest way to get the tests passing is simply to write a correct
+implementation of Valid. Here’s one:
+func Valid(input string) bool {
+    return input == "valid input"
+}
+(Listing valid/5)
+And since most people will understandably get their jobs done in
+the quickest, easiest way possible, it’s a good idea to make the
+easiest way also the correct one. These tests do exactly that.
+We now have two very short, very focused, and very important
+tests for Valid. Let’s see what their names tell us, as behaviour
+sentences:
+func TestValidIsTrueForValidInput(...)
+func TestValidIsFalseForInvalidInput(...)
+We now have a complete description of the important behaviour
+of Valid. It’s almost like documentation. Indeed, we could take
+just these test names, strip out the func boilerplate, add some
+spaces back in, and print them out like this:
+Valid is true for valid input
+Valid is false for invalid input
+These are the sentences we started with: the ones that guided our
+
+
+writing of the original tests. They perfectly capture our intent.
+They say what we’re really testing here.
+And wouldn’t it be handy to automate this process, so we could
+just run our test code through some translator that prints out
+these sentences?
+Funny you should ask that. There’s a tool called gotestdox you
+might like to try. Let’s install it:
+go install github.com/bitfield/gotestdox/cmd/
+gotestdox@latest
+If we run it in our package directory, it will run the tests, and
+report the results, while simultaneously translating the test
+names into readable sentences:
+gotestdox
+valid:
+ ✔ Valid is true for valid input (0.00s)
+ ✔ Valid is false for invalid input (0.00s)
+Why the name gotestdox? Because these aren’t just test results:
+they’re docs. This isn’t a new idea, it turns out:
+My first “Aha!” moment occurred as I was being
+shown a deceptively simple utility called
+agiledox, written by my colleague, Chris
+Stevenson. It takes a JUnit test class and prints out
+the method names as plain sentences.
+The word “test” is stripped from both the class name
+and the method names, and the camel-case method
+name is converted into regular text. That’s all it
+does, but its effect is amazing.
+Developers discovered it could do at least some of
+their documentation for them, so they started to
+write test methods that were real sentences.
+—Dan North, “Introducing BDD”
+
+
+When you see your test names printed out as sentences, it’s
+suddenly clear how much more they could communicate. You’ll
+start thinking about your tests in a new way, by writing names
+that are real sentences.
+One of the first steps I take when code-reviewing a student’s
+project is to run its test names through gotestdox, and show
+them the result. It’s a very effective way of getting them to think
+about their test names as a useful communication channel, and
+usually has a significant effect on improving the tests.
+Most developers, as we’ve seen, instinctively name their tests
+after the action involved: calling Valid, for example. That’s a
+good start. But by naming the test with a complete sentence,
+we’re forced to also include the two other relevant facts about
+the test. Those are the conditions under which Valid is being
+tested, and our corresponding expectations about what it should
+do in that case.
+Without these, a test name doesn’t really tell us much. A name
+like TestValid isn’t a sentence. If you try to read it that way, as
+a statement about the behaviour of Valid, it’s incomplete:
+Valid…
+Now you know how to complete that sentence, don’t you? By
+saying what Valid does, and when. For example, “Valid returns
+true for valid input.”
+Running the test suite through a tool like gotestdox can point
+out a lot of opportunities to add useful information to our test
+names, and maybe even some new tests.
+I see a lot of Go unit tests without the condition, just
+a list of expectations (or contrariwise, just a list of
+states without expectations). Either way, it can
+easily lead to blind spots, things you are not testing
+that you should be.
+—Michael Sorens, “Go Unit Tests: Tips from the
+Trenches”
+
+
+Definitions: “does”, not “should”
+If you’re now convinced that test names should be sentences, or
+you’re at least intrigued by the possibilities of this idea, let’s
+think a little more about what those sentences might say, and
+how they should say it.
+First, as we’ve seen, the sentence should describe the behaviour
+of taking some action under some particular conditions, and it
+should say specifically what our expectation is in that case. For
+example:
+Valid is true for valid input.
+Notice that we didn’t say, for example:
+Valid should be true for valid input.
+It’s tempting to include “should” in every test sentence,
+especially if we’re writing the test first. I don’t think that’s
+necessary, and we can keep our test sentences short and to the
+point by omitting words like “should”, “must”, and “will”. Just
+say what it does.
+A good way to think of this is to imagine that every test sentence
+implicitly ends with the words “…when the code is correct”.
+Let’s try that out:
+Valid is true for valid input when the code is
+correct.
+We wouldn’t say that Valid should be true when the code is
+correct, we would say it is true! This isn’t an aspiration, in other
+words: it’s a definition.
+Let me ask you, what’s the purpose of your test? To
+test that “it works”? That’s only half the story. The
+biggest challenge in code is not to determine whether
+“it works”, but to determine what “it works” means.
+—Kevlin Henney, “Program with GUTs”
+
+
+gotestdox will not only format this definition for us in a
+helpful way, it will also report on its status. If the test is passing,
+the sentence will be preceded by a checkmark:
+ ✔ Valid is true for input (0.00s)
+If the test fails, an x before the test sentence shows that the
+relevant part of the system is not yet correct:
+ x Valid is false for invalid input (0.00s)
+A sentence is about the right size for a unit
+If you find that it’s difficult to express the behaviour you’re
+testing as a single concise sentence, then that can be a useful
+signal in itself. You may be trying to cram too much behaviour
+into a single test.
+If it takes more than a sentence to explain what
+you’re doing, that’s almost always a sign that it’s
+too complicated.
+—Sam Altman, “How to Start a Startup”
+To make things easier for both yourself and anyone trying to
+read the tests, split the behaviour up into multiple tests instead.
+What to call your test is easy: it’s a sentence
+describing the next behaviour in which you are
+interested. How much to test becomes moot: you can
+only describe so much behaviour in a single
+sentence.
+—Dan North, “Introducing BDD”
+Indeed, maybe you’re trying to cram too much behaviour into a
+single unit. That’s a smell, too. Turning that around, we might
+say that a well-designed unit should have no more behaviour
+than can be expressed in a few short sentences, each of which
+can be translated directly into a test.
+It turns out that the information contained in a single sentence
+
+
+corresponds quite well to the amount of behaviour that a unit
+should have. In both cases, it’s about how much complexity our
+minds are comfortable dealing with in a single chunk.
+And if you can’t actually express your test in terms of some user-
+visible behaviour, or as fulfilling some external requirement for
+the system, then maybe you’re not really testing anything useful.
+Perhaps you should just skip this test altogether.
+Your unit test name should express a specific
+requirement. This requirement should be somehow
+derived from either a business requirement or a
+technical requirement. If your test is not
+representing a requirement, why are you writing it?
+Why is that code even there?
+—Roy Osherove, “Naming Standards for Unit
+Tests”
+Let’s look at some examples from the Go project itself, as
+reported by gotestdox:
+std/encoding/csv:
+ ✔ Read simple (0.00s)
+ ✔ Read bare quotes (0.00s)
+ ✔ Read bare double quotes (0.00s)
+ ✔ Read bad double quotes (0.00s)
+ ✔ Read bad field count (0.00s)
+ ✔ Read trailing comma EOF (0.00s)
+ ✔ Read non ASCII comma and comment (0.00s)
+ ✔ Read quoted field multiple LF (0.00s)
+ ✔ Read multiple CRLF (0.00s)
+ ✔ Read huge lines (0.00s)
+...
+The moment any of these tests fails, it’ll be really clear what
+specific behaviour is not happening as expected:
+ x Read huge lines (0.00s)
+Keeping behaviour simple and focused
+
+
+Limiting the behaviour under test to what can be described in a
+single sentence not only helps us focus on what’s important, it
+can help prevent us over-engineering the system.
+When we’re just writing a function directly, without being
+guided by tests, it can be difficult to know where to stop. Should
+we think about this or that edge case? What could go wrong
+here? Should we define some custom error type to return if we
+hit this problem? You could keep writing code all day and not be
+sure when you’re done.
+By contrast, a test tells us exactly when we’re done, because it
+starts passing! It’s a way of limiting scope in advance, and
+forcing us to decide in advance what we do and don’t consider
+important—at least, at this stage.
+Good design is not only about what we have the imagination to
+put in, but also what we have the clarity of purpose to leave out:
+The difference between a good and a poor architect
+is that the poor architect succumbs to every
+temptation and the good one resists it.
+—Ludwig Wittgenstein, “Culture and Value”
+Again, tests act as a useful quality filter for our ideas. Of course
+we have lots of ideas as we’re programming (“What about this?
+What about that?”), and that’s great. But the disciplined
+programmer will simply note these ideas down on the list of
+possible user stories for later, and continue to focus on the
+current task.
+It’s quite likely that we’ll come along and extend the required
+behaviour later on, when we know more about the system. But at
+every stage, the test specifies the behaviour we care about right
+now, and defines what “done” means for that particular
+behaviour. And that starts with expressing the name of the test as
+a short sentence.
+Shallow abstractions: “Is this even worth it?”
+
+
+Sometimes when we write the required behaviour as a sentence
+we find, not that the unit under test is doing too much, but that
+it’s doing too little. This can be a clue that the behaviour you’re
+testing isn’t actually necessary, or operates at too low a level to
+be worth the cost of building and using it.
+Abstractions, to be useful, should be deep: that is, they should
+conceal powerful machinery behind a simple API. A shallow
+abstraction, on the other hand, just creates paperwork and
+doesn’t provide any value for users. We’ve all come across plenty
+of those.
+The best modules are deep: they have a lot of
+functionality hidden behind a simple interface. On
+the other hand, a shallow module is one whose
+interface is relatively complex in comparison to the
+functionality that it provides.
+Shallow modules don’t help much in the battle
+against complexity, because any benefit they provide
+is negated by the cost of learning and using their
+interfaces.
+—John Ousterhout, “A Philosophy of Software
+Design”
+If your abstraction is too shallow, that’ll often become clear as
+you try to write the test sentence for it. If the sentence implies
+that the abstraction really doesn’t do much, take this as a cue to
+redesign it.
+Try to increase the ratio between the complexity of its API and
+the amount of work it actually does for the user. The bigger this
+ratio, the deeper the abstraction, and thus the more leverage it
+gives you.
+Don’t worry about long test names
+You might be concerned that naming tests as sentences will
+result in some awkwardly long names for your test functions:
+
+
+TestValidIsTrueForValidInput
+True, we probably wouldn’t want to use function names as long
+as this in our system code. Good code is concise, and in normal
+programming we tend to choose names that are as short as
+possible, while still remaining clear. But test names are a little
+different.
+We never call these functions, so we don’t refer to those names in
+code. And users of our package won’t see them, because they’re
+not part of the public API. So if their names don’t matter to
+anyone but us, why shouldn’t we make them something
+meaningful?
+A tool like gotestdox, which gives us a clear picture of exactly
+what information our tests are communicating, can be a very
+useful thinking aid. It can help us break up the system itself into
+more focused and self-contained units of behaviour. It can help
+us design better, more comprehensive, and more readable tests
+for those units.
+And it can help bring about a fundamental change in the way we
+think about tests. We can switch from treating tests as dull but
+necessary paperwork, to using them as a clear, expressive, and
+automatically verifiable description of the system itself, in
+language that users understand.
+The next time you write a test, then, you might like to try asking,
+not just “what are we really testing here?”, but also “what intent
+is this test communicating?”
+Crafting informative failure messages
+While the name of the test is an important tool for
+communicating intent, its failure messages are arguably even
+more important.
+When we’re writing the system code we tend to focus on the
+happy path: what the function does when everything goes
+according to plan. Writing test code, though, is all about
+imagining errors that might happen, and bugs that might be
+
+
+present, and then designing experiments to detect them.
+This is one reason that more experienced programmers write
+better tests: we’ve simply written more bugs over the years. Not
+only do we have a good sense of what kind of bugs are possible
+or likely in a given code path (off-by-one errors, for example),
+we’ve also learned something about the kind of mistakes that we
+personally tend to make.
+We all have our own individual style of programming, and
+similarly, we all have particular blind spots and bad habits.
+Being aware of them and being able to catch them with tests is a
+crucial part of our development as software engineers.
+If we accept that tests are for failing, then the implication is
+clear: the most important parts of the test must be the failure
+messages.
+Again, this tends to be the area that inexperienced programmers
+pay the least attention to. The worst mistake you can make in a
+test, as we’ve seen, is not to catch the problem at all, but the next
+worst is to report nothing useful about it:
+if want != got {
+    t.Error("fail")
+}
+That’s redundant. If we’re seeing a message at all when running
+the tests, it means something failed. But what? We have no idea.
+This is only marginally better:
+if want != got {
+    t.Error("want not equal to got")
+}
+Again, we could have inferred this from the fact that the test is
+
+
+failing in the first place. What would be useful here is some
+information about what should have happened:
+if want != got {
+    t.Errorf("want %v, but didn't get it", want)
+}
+Even this is a frustrating failure message to see, though. It tells us
+what was supposed to happen, and that it didn’t, but we have no
+clue as to why not, or what happened instead. What’s the first
+thing we would do to start diagnosing a failure like this?
+We’d print out the actual value of got, of course. So the helpful
+test writer will save us this step, by anticipating it:
+if want != got {
+    t.Errorf("want %v, got %v", want, got)
+}
+If the values of want and got are long, complicated, or
+otherwise hard to read (slices of bytes, for example), we can use
+cmp.Diff again:
+if want != got {
+    t.Error(cmp.Diff(want, got))
+}
+In the case of a failure, the test output might look something like
+this:
+  Thing{
+    X: 10,
+-   Y:  99,
++   Y:  100,
+    Z: 5,
+
+
+  }
+Here, what was expected was Y: 99, but what we got was Y:
+100. That information by itself may well be enough for the
+programmer to guess what the underlying problem is.
+It’s good to know that want doesn’t equal got, and what the
+difference is, but even that’s not particularly useful in isolation.
+A failure like this doesn’t actually tell us what that mismatch
+means, in terms of the behaviour under test.
+A good test failure should say something about what user-visible
+problem the test has detected:
+if want != got {
+    t.Error("wrong account balance after concurrent dep
+        cmp.Diff(want, got))
+}
+If the test’s job is to demonstrate that a particular input value
+causes a problem, that should also be included in the failure
+message:
+if err != nil {
+    t.Error("input %d caused unexpected error: %v", inp
+}
+Ideally, the developer reading the test failure message should
+have all the information they need to find and fix the problem,
+based purely on the message. They shouldn’t have to read the test
+code at all.
+Exercising failure messages
+Failure messages, then, if they’re well-crafted, are the most
+critical and valuable parts of any test. Isn’t it strange, in that
+
+
+case, that they’re never seen by the majority of programmers
+writing them?
+You already know that it’s important to see every test fail when
+you know the system is incorrect. It’s our way of evaluating the
+test logic: does it detect the bug it’s supposed to detect? And
+that’s an important thing to check, but we need to do more.
+Once the system is implemented and working (we think), we can
+start to evaluate the various failure messages of our tests. For
+each failure path, of which there may be several in any given
+test, we want to see the test output. We need to check that it
+makes sense, prints what it’s supposed to print, and includes all
+the relevant information. How can we do that?
+The test is designed to catch a problem in the system code, so if
+we want to know whether it will successfully do that, we need to
+introduce a problem in the system code.
+Don’t be tempted to tweak the test code, for example by
+changing the value of want. In fact, the correct value of want is
+one of the things we’re supposed to see when the test fails. So
+changing it just to induce the failure would be
+counterproductive.
+Suppose we have a test for some function Double that looks like
+this:
+func TestDouble2Returns4(t *testing.T) {
+    t.Parallel()
+    want := 4
+    got := double.Double(2)
+    if want != got {
+        t.Errorf("Double(2): want %d, got %d", want, go
+
+
+    }
+}
+(Listing double/1)
+How should we induce this failure artificially, in order to check
+the output of the t.Errorf call? We could change want to 5,
+but that’s silly. In order to know that the test can detect a bug in
+the function, we need to add a bug to the function, not the test.
+For example, we could add a temporary change to the Double
+function to skew its result slightly:
+func Double(n int) int {
+    return n*2 + 1
+}
+(Listing double/1)
+If that doesn’t cause the test to fail, what would? If it does,
+though, we can have reasonable confidence that the test tests
+something useful about Double. Don’t forget to remove your
+deliberately-inserted bug once you’ve checked this, though.
+Executable examples
+As we’ve seen, there’s a lot we can communicate to readers using
+Go tests, starting with the test names, and continuing with the
+logic of the tests themselves. By using the system in a test, we
+can not just verify things about its behaviour, but also show users
+how they can call the system, and how they should expect it to
+behave.
+That’s great, but sometimes these two aims conflict a little. For
+example, many tests require a fair amount of code to set up an
+environment that resembles the one in which it would really be
+used. But users don’t need to do that, because they’re writing real
+programs, not tests. So the communication aspect gets slightly
+obscured by the verification aspect.
+
+
+Similarly, while we might write wonderful documentation
+comments on each of our exported functions, our tests won’t
+appear as part of the resulting autogenerated documentation. So
+someone reading about your package on pkg.go.dev, for
+example, will see your documentation, but not your code or
+tests.
+What we’d like is a way to write code that will be included in the
+autogenerated documentation, and whose behaviour can be
+automatically verified in the same way as the tests. That’s exactly
+what Go provides, with a feature called executable examples.
+A good example can be a more succinct or intuitive
+way to convey the behavior of a library function
+than its prose description, especially when used as a
+reminder or quick reference.
+And unlike examples within comments, example
+functions are real Go code, subject to compile-time
+checking, so they don’t become stale as the code
+evolves.
+—Alan Donovan & Brian Kernighan, “The Go
+Programming Language”
+An executable example is like a test function, but even simpler.
+Its name must begin with the word Example, but it doesn’t take
+any parameters, or return anything:
+func ExampleDouble() {
+    fmt.Println(double.Double(2))
+    // Output:
+    // 4
+}
+(Listing double/2)
+
+
+Very straightforward. In this example, we call Double(2) and
+print the result. A comment shows that the expected output is 4.
+So what? Well, the neat thing is that this example function is
+automatically included in the documentation for your package.
+Here’s what that might look like on pkg.go.dev:
+We can see that the program has been reformatted to put the
+example code inside a main function, and that the expected
+output is shown separately.
+Indeed, you can run the example directly in your browser by
+clicking the Run button on the website. Try it with the examples
+from the script package:
+•  https://pkg.go.dev/github.com/bitfield/script
+When you click Run, the example program is built, its
+dependencies downloaded, the resulting binary run, and the
+
+
+output displayed, all right in the browser. You can also edit the
+example to do whatever you like, and try out your modified
+program in the same way.
+In fact, the examples are being run using the Go Playground, and
+you can do the same kind of thing by browsing to:
+•  https://go.dev/play/
+and entering whatever program you like.
+There are some common-sense restrictions on code that runs in
+the playground (and thus on executable examples running on
+pkg.go.dev). For example, there’s no networking available,
+and the amounts of CPU, memory, and execution time are
+limited to prevent abuse.
+And, interestingly, you’ll find that the time and date returned by
+time.Now in playground programs is always the same: 11pm on
+Tuesday, November 10, 2009. This is a significant date for
+Gophers, naturally, but it also means that the behaviour of time-
+related code is deterministic.
+When you run your examples locally, on your own machine,
+using go test, these restrictions don’t apply, but just be aware
+that they will apply to people running them on go.pkg.dev.
+Your executable examples are not only included in the
+documentation for your package, but they’re also run whenever
+you run go test. What exactly is being tested here, then, you
+might wonder? And how could such a test fail?
+Let’s try changing the comment showing the expected output,
+and see what happens. For example, suppose we make it “5”,
+instead of “4”:
+func ExampleDouble() {
+
+
+    fmt.Println(double.Double(2))
+    // Output:
+    // 5
+}
+Running go test produces this result:
+--- FAIL: ExampleDouble (0.00s)
+got:
+4
+want:
+5
+FAIL
+So that Output comment is not just a comment, it turns out. It’s
+also an expectation that the test machinery will verify.
+We check the behaviour of the function, in other words, by
+asserting something about its standard output, ignoring any
+leading and trailing whitespace.
+We can use examples to test functions that print to standard
+output by just calling them directly. Indeed, it’s easier to test
+such functions using executable examples than it would be with
+a regular test:
+func ExamplePrintHello() {
+    PrintHello()
+    // Output:
+    // Hello
+}
+If the function doesn’t happen to print anything, but instead
+returns a result, we can use fmt.Println to print that result, as
+in the Double example, and then verify it with the Output
+comment.
+
+
+We can also match multiline output, if necessary:
+func ExamplePrintHello() {
+    PrintHello()
+    PrintHello()
+    // Output:
+    // Hello
+    // Hello
+}
+If we know what lines should be present in the output, but not in
+what order they will appear, we can use a different version of the
+Output comment:
+func ExamplePrintMap() {
+    m := map[int]bool{
+        1: true,
+        3: true,
+        2: false,
+    }
+    for k, v := range m {
+
+
+        fmt.Println(k, v)
+    }
+    // Unordered output:
+    // 1 true
+    // 2 false
+    // 3 true
+}
+By specifying the example’s unordered output, we’re saying that
+each of these lines must be present in the output, but they can
+appear in a different order to that given. This will likely be true
+when ranging over a map, for example.
+You might also be wondering how Go knows that
+ExampleDouble, for instance, should be attached to the
+documentation for the Double function. That’s easy: whatever
+follows the word Example in the example name is taken to be
+the name of the function it documents.
+So if your function is called Greet, and you want to provide an
+example for it, you would name that example function
+ExampleGreet. The documentation tool will then automatically
+associate the example with the Greet function.
+What if you want to give more than one example for the same
+function? You can do that by adding a suffix after the function
+name:
+func ExampleDouble_with2() {
+    fmt.Println(double.Double(2))
+
+
+    // Output:
+    // 4
+}
+func ExampleDouble_with3() {
+    fmt.Println(double.Double(3))
+    // Output:
+    // 6
+}
+(Listing double/2)
+In fact, you can supply as many examples as you want, provided
+each has a unique name, whose suffix begins with a lowercase
+letter (for example, with2).
+If you want to write an example for the whole package, rather
+than any specific function, just name it Example:
+func Example() {
+    // this demonstrates how to use the entire package
+    ...
+}
+Otherwise, Go will assume that whatever follows the word
+Example is the name of the thing you’re documenting.
+This works with types, too. Suppose you define some type User:
+type User struct {
+    Name string
+}
+(Listing user/1)
+As part of your documentation, you can supply an example in
+your test file:
+
+
+func ExampleUser() {
+    u := user.User{ Name: "Gopher" }
+    fmt.Println(u)
+    // Output:
+    // {Gopher}
+}
+(Listing user/1)
+What about methods on types? We can give examples for those
+too. Suppose you add a method on User named NameString, to
+return the user’s name as a string:
+func (u User) NameString() string {
+    return u.Name
+}
+(Listing user/1)
+You can add an example to your test file that shows what this
+method does:
+func ExampleUser_NameString() {
+    u := user.User{Name: "Gopher"}
+    fmt.Println(u.NameString())
+    // Output:
+    // Gopher
+}
+
+
+(Listing user/1)
+The convention is simple: the word Example is followed by the
+name of the type we’re documenting (in this case User), then an
+underscore, then the name of the specific method (here it’s
+NameString).
+It’s always a great idea to use code examples as part of our
+documentation anyway, but if they’re just text, there’s a danger
+that they’ll become out of date and stop working. Indeed, they
+might never have worked in the first place.
+We’ve probably all had the unpleasant experience of copying and
+pasting an example code snippet from someone’s documentation,
+and finding not only that it doesn’t behave the way we expected,
+but that it doesn’t even compile. Not a good look for the project.
+So it’s nice that Go provides a way for us to supply examples that
+are automatically included in our documentation, that users can
+edit and run in a web browser without even needing Go
+installed, and that are also automatically checked every time we
+run go test.
+Go itself uses executable examples quite widely in the standard
+library documentation (see the strings package
+documentation, for instance). But most third-party packages
+don’t bother to include examples, which I think is a shame. It’s
+an easy way to add a lot of value to your package, and also lends
+a rather professional appearance to the documentation.
+In this chapter we’ve explored some interesting ways to think
+about tests as communication tools. In the next, we’ll examine
+the tests themselves in greater detail, with a focus on testing
+error behaviour.

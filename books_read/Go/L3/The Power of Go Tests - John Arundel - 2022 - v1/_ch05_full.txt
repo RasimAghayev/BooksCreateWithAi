@@ -1,0 +1,903 @@
+5. Users shouldn’t do that
+Ella discovered that dragging text from a text box
+on the screen and dropping it in another window
+resulted in a crash. She figured the tester would
+want to know about the problem, so she stopped by
+his cubicle and said, “Hey, let me show you
+something.” She then demonstrated what she’d
+found.
+The tester stared at her for a few seconds and then
+replied. “Yeah?”
+“Don’t you think it’s a bug?”
+“No. Users shouldn’t do that.”
+—Gerald Weinberg, “Perfect Software: And
+Other Illusions About Testing”
+Even the best-written tests are only as reliable as the cases they
+check. In this chapter, we’ll talk about how to design good tests
+and test data, and introduce some techniques for generating
+
+
+them.
+Constructing effective test inputs
+Testing is, at best, sampling. Since we can’t test
+everything, any set of real tests is some kind of
+sample. Fundamentally, sampling is a psychological
+process—and an emotional one. A sample that
+satisfies one person may not satisfy another in the
+slightest.
+—Gerald Weinberg, “Perfect Software: And
+Other Illusions About Testing”
+Since we usually can’t test every possible input to the system,
+how should we decide which ones to test? Emotion and
+psychology should never be neglected in programming, but can
+we also introduce some logic to guide the sampling process?
+As we’ve seen in previous chapters, one way to generate useful
+test inputs is to imagine what could be wrong with the system. For
+example, could it be a maliciously lazy implementation that
+simply returns hard-coded responses? To catch these, we can
+simply supply more inputs. But which?
+Perhaps we just choose a few random values from the input space,
+that is, the set of all possible inputs that the system could take.
+On the other hand, maybe not all inputs are equally likely to
+trigger problems. For example, given a function that calculates
+square roots, we might test it all day long with positive numbers
+and never find a failure. But the moment we pass it a negative
+number, it might panic, or return the wrong answer.
+The computer-sciency term for this is equivalence class. In the
+square root example, all positive inputs are of equivalent value
+for testing. If the function works for a handful of them, it will
+probably work for all. But negative numbers are in a different
+equivalence class: the result of the square root operation is not
+defined for them.
+In other words, knowing where to usefully sample the input
+
+
+space depends partly on knowing how the program actually
+works.
+Devising good test cases demands the same rigorous
+thinking as programming in general.
+—Alan Donovan & Brian Kernighan, “The Go
+Programming Language”
+When choosing our test data, then, we should try to pick a good
+sample of inputs from each equivalence class. Partitioning the
+input space in this way helps to reduce the number of inputs we
+need to get a given level of confidence in the system’s
+correctness.
+Another good place to look is the boundary between equivalence
+classes. For example, boundary values for a square root function
+might be 1, 0, and -1. We’ve all made off-by-one errors in
+programming. If there’s such an error in the system, choosing
+inputs on or near boundaries will help flush it out.
+A good tester thinks adversarially when designing test inputs.
+Perhaps users won’t deliberately be trying to crash your
+software, but sometimes it can seem that way. If you can’t think
+up some unlikely and bizarre inputs that crash the system, your
+users certainly will.
+A QA engineer walks into a bar. Orders a beer.
+Orders 0 beers. Orders 99999999999 beers. Orders
+a lizard. Orders -1 beers.
+—Brenan Keller
+This especially applies to functions that validate their inputs,
+because the validation may well be insufficient. For example,
+consider this code:
+
+
+func DoRequests(reqs int) error {
+    if reqs == 0 {
+        return errors.New("number of requests must be n
+    }
+    ... // do requests
+}
+What’s wrong with this? If it’s well tested, we will have already
+verified that it does the right thing with values of reqs such as
+5, 10, or 100. And because the error behaviour is part of the API,
+we will also have tested that DoRequests(0) returns an error.
+So what are we missing?
+To figure that out, think like a QA engineer ordering a beer… or,
+in this case, ordering -1 beers. No sane person would ever ask the
+function to do a negative number of requests, would they? What
+would that even mean? I don’t know, but since it’s possible, we
+need to make sure the system does something sensible in that
+case, such as returning an error.
+It happens, in this example, that we can use Go’s type system to
+enforce the requirement that reqs be non-negative, by declaring
+it as uint instead of int:
+func DoRequests(reqs uint) error {
+A test that tries to call DoRequests with a negative number,
+such as -1, won’t even compile when we do this. Instead, we’ll
+get a build error:
+cannot use -1 (untyped int constant) as uint
+value in argument
+to DoRequests (overflows)
+This is a big advantage of statically typed languages such as Go:
+we can use the compiler to enforce a number of useful
+preconditions, such as non-negativity. We can think of the type
+system, indeed, as being a key part of our tests:
+The type system is the set of tests that the language
+
+
+designer could think up without ever seeing your
+program.
+—Michael Feathers, “Testing Patience”
+So that’s one way to solve the “feeble validation” problem, but
+maybe not the best way. The fact that we can’t compile a test like
+DoRequests(-1) means we can’t use that case as a regression
+test, to catch any future bugs we might introduce to the
+validation code.
+So it may be a better idea to handle this by tightening up our if
+statement instead. It should check not just that reqs is not zero,
+but that it’s also not negative:
+func DoRequests(reqs int) error {
+    if reqs < 1 {
+        return errors.New("number of requests must be >
+    }
+    ... // do requests
+}
+When designing test inputs, then, try to think of things that
+nominally can’t happen, or that only a crazy person would do,
+and test them. If you don’t, then as we’ve seen, your users will
+test them for you. It’s been wisely said that a good programmer
+is one who looks both ways before crossing a one-way street.
+User testing
+Another good source of crazy user inputs is actually using the
+software yourself, to the extent that it’s usable at this point. If you
+have any kind of a runnable program yet, run it, and see what
+inputs you can find that cause breakage, or other weird
+behaviour. Mash the buttons until something interesting
+happens. You probably won’t have to mash too long. Once
+
+
+you’ve found a bug, add a test case for it, make it pass, and go
+back to button-mashing.
+Margaret Hamilton, a NASA programmer and one of the most
+distinguished software engineers of the 20th century, describes
+an incident that occured while she was developing the flight
+control software for the Apollo spacecraft:
+I would take my six-year-old daughter to work on
+nights and weekends, and she would watch me
+testing out the software. She got very interested, and
+started “playing astronaut”, and all of a sudden the
+system crashed.
+I realised she had selected P01 (a pre-launch
+program) during “flight”. I started to worry about
+what if the astronauts did what she just did, and I
+went to the management saying “I think we need to
+put a change in.” They said, “Won’t ever happen.
+The astronauts are well-trained, they don’t make
+mistakes.”
+On the next mission, Apollo 8, this very thing
+happened.
+—Margaret Hamilton, “The Language as a
+Software Engineer”
+The lesson is clear: users have a blithe disregard for what they’re
+not supposed to do, whether they’re astronauts or six-year-olds.
+Don’t listen to anyone who tells you not to worry about
+something because “users shouldn’t do that”. Expect the
+impossible, and test for it.
+You can improve the user experience of your programs a great
+deal by simply being a user of them. What’s the first thing most
+people do with some new program? Run it without any
+arguments, perhaps. Try this with one of your own programs.
+Does it do something helpful? Something unhelpful? Crash?
+Delete files without asking?
+
+
+Many developers find it hard to put themselves into the mindset
+of a typical user, yet this is easier than you might think. After all,
+you and I are users of other people’s programs, and we know
+how frustrating an experience that can be from time to time. We
+don’t know what to do, so we try something apparently sensible,
+but it doesn’t work. We don’t know that users shouldn’t do that.
+When you use your own software in this way, you’re bound to
+find all sorts of problems. Better to find them early, before it gets
+too expensive to fix them.
+Don’t rely on actual users to submit bug reports: most people
+don’t do this. Instead, if your software doesn’t seem to be
+working for them, they’ll usually just find some other way to
+solve their problem. So an absence of user bug reports doesn’t
+mean your program is perfect. It’s just that users don’t care as
+much about your program’s correctness as you do.
+Put yourself in the place of a user who wants to solve their
+problem, yet knows nothing about your program, and try things
+that they might try. Do those things work? If not, make them
+work. Just as writing test code will show what’s wrong with your
+API, using your program will show you what’s wrong with its
+user interface.
+Roll up your sleeves and try to break your
+application. Use a destructive mindset and come up
+with ways to provoke issues and errors in your
+application. Document everything you find for later.
+Watch out for bugs, design issues, slow response
+times, missing or misleading error messages and
+everything else that would annoy you as a user of
+your software.
+—Ham Vocke, “The Practical Test Pyramid”
+Above all, don’t dismiss the problems you find as mere “usability
+issues”, to be solved by better documentation, or training. They
+are bugs. Fix them, guided by tests.
+
+
+The developer said, “After a few crashes, they’ll
+learn. Smart people learn fast not to do things that
+make the system crash.”
+Developers can’t control what “smart” people will
+learn. Perhaps users will learn to assume that the
+product could crash and lose data at any moment.
+Perhaps they will learn to avoid using this product
+at all. Perhaps they will learn the merits of working
+with a competing product.
+—Gerald Weinberg, “Perfect Software: And
+Other Illusions About Testing”
+And the quicker you can get the software in front of real users
+(that is, someone who’s not you), the better. They will certainly
+find all sorts of problems you wouldn’t have thought of. Fixing
+them now will be easier and cheaper than fixing them later.
+If you can’t find real users to test the system on, your fellow
+programmers will do nearly as well. Enlist their help:
+A hallway usability test is where you grab the next
+person that passes by in the hallway and force them
+to try to use the code you just wrote. If you do this
+to five people, you will learn 95% of what there is
+to learn about usability problems in your code.
+—Joel Spolsky, “The Joel Test: 12 Steps to Better
+Code”
+If possible, be present while they try out the software, but in any
+case have them record their screen and voice during the test.
+Give them one or two typical user problems to solve using the
+system, and ask them to give a running commentary on what
+they’re thinking and what they’re trying to achieve at each stage.
+You should stay silent and resist the urge to intervene and help
+them. Remember, the goal is to discover what they can’t do
+without your help.
+You’ll find this kind of feedback is invaluable, though you’ll also
+
+
+feel a strong temptation to say to yourself, “But users shouldn’t
+do that!”
+User testing doesn’t stop when the software goes to production—
+indeed, that’s when it really starts. Make sure that all the
+responsible developers get detailed reports from the tech support
+department on every problem that users have reported. Don’t let
+some well-meaning person filter out things like usability
+problems before they get to you: insist on seeing every support
+ticket that relates to the parts of the system you’re responsible
+for.
+You’ll find lots of bugs of all kinds this way, and, naturally, you
+should fix them guided by tests, so that they’re fixed not just for
+now, but forever.
+Crafting bespoke bug detectors
+We’ve discussed choosing effective test inputs in an adversarial
+way, picking likely boundary values, and so on. Depending on
+the kind of behaviour under test, there are also lots of classic
+“weird inputs” that professional testers know and love: long
+strings, accented characters, huge numbers, illegal values of all
+kinds. If the program asks for an IP address, try giving it
+999.999.999.999 and see what happens.
+We can and should attack the system with all these kinds of
+adversarial inputs, but we can do even more. Because we know
+exactly how the system is implemented, we have a good idea of
+what kind of bugs might be lurking in it.
+If the code ranges over a slice, try passing it a nil slice, or one
+with no elements. If it takes a pointer, give it nil. If it writes to
+files, check what would happen if there is no disk space available
+or the filesystem is not writable (this is hard to simulate in a test,
+but you can check the code manually to see how it would handle
+the situation).
+Read over the system code carefully, asking yourself at each
+stage “What could go wrong here?” Verify your ideas with tests.
+Even if it happens that the system does handle these problems
+
+
+right now, capturing them as tests ensures that no one can
+introduce such a bug in the future.
+Table tests and subtests
+Assuming we’ve managed to generate a bunch of effective test
+inputs, by various means, how should we organise them for
+testing in a logical, readable way?
+In the first chapter we saw an example of a table test, one that
+performs the same check for each of a set of test cases. These are
+typically given as a slice of Go structs of some arbitrary type,
+chosen to suit the test.
+We usually don’t bother to name this type, since we won’t need a
+name for it: it’s just a convenient way of organising the data.
+Here’s what our ListItems test cases look like if we rewrite
+them using an anonymous struct:
+func TestListItems(t *testing.T) {
+    t.Parallel()
+    cases := []struct {
+        input []string
+        want  string
+    }{
+
+
+        {
+            input: []string{},
+            want:  "",
+        },
+        {
+            input: []string{
+                "a battery",
+            },
+            want: "You can see a battery here.",
+        },
+        ... // and so on
+(Listing game/9)
+For each case, we’ll call ListItems with the input and check
+its result against want. If any case fails, we’ll see the diff
+between want and got.
+This is fine, but sometimes we’d like to be more explicit about
+precisely which test case is failing. In other words, as well as
+showing how want differed from got, we’d like to say
+something about which input caused this problem.
+We could, of course, include input in the message generated by
+t.Errorf or t.Fatalf. But since there might be several places
+where the test can fail, it’s tedious to include the input in each
+message, and for large input slices, it’ll also obscure the
+message.
+Even reporting the input that caused the failure might not be
+enough information. To be as helpful as possible, we’d like to
+give a descriptive name to each test case. One way to do this is to
+set out our test cases in the form of a map, keyed by suitably
+informative strings:
+
+
+func TestListItems(t *testing.T) {
+    t.Parallel()
+    cases := map[string]struct {
+        input []string
+        want  string
+    }{
+        "no items": {
+            input: []string{},
+            want:  "",
+        },
+        "one item": {
+            input: []string{
+                "a battery",
+            },
+            want: "You can see a battery here.",
+        },
+        ... // and so on
+(Listing game/10)
+This is already an improvement, because we could simply loop
+over these as we did before and print out the name of the case for
+each failure. But we can do better, by using the t.Run method:
+
+
+for name, tc := range cases {
+    t.Run(name, func(t *testing.T) {
+        got := game.ListItems(tc.input)
+        if tc.want != got {
+            t.Error(cmp.Diff(tc.want, got))
+        }
+    })
+}
+(Listing game/10)
+Note first that in looping over a map with range we get two
+values, the name, and the tc struct it identifies. Inside this loop,
+we then call t.Run with two arguments: the name we just
+obtained, and a function literal of this form:
+func(t *testing.T) { ... }
+This function is called a subtest in Go. When any subtest fails, its
+name is printed out automatically as a prefix to the failure
+message:
+--- FAIL: TestListItems/two_items (0.00s)
+    game_test.go:46:   strings.Join({
+        "You can see here a battery",
+    +   ",",
+        " and a key.",
+        }, "")
+In this example, we can see that the parent test is
+TestListItems, and this particular failing case—this subtest—
+is named two items. In the failure output, any spaces in the
+name of a subtest are replaced with underscores, so this is
+printed as `two_items’.
+The subtest name often describes the inputs, but we can use it to
+add any labelling information that would be helpful. For
+example, if this case reproduces a reported bug, we could use the
+bug ID as the subtest name. Or if the inputs are chosen to trigger
+
+
+a specific problem, we could name the subtest after that problem
+(for example, “invalid input data”).
+An interesting side effect of organising our test cases as a Go map
+is that the range loop will iterate over them in some unspecified
+order. After all, map keys have no inherent ordering, and that’s
+useful in this context.
+Suppose there were some hidden bug in the system that caused
+our test cases to pass only when run in a certain order. Looping
+over a map of cases would be likely to expose this, since the
+iteration order is unstable and is likely to change from one run to
+the next.
+Table tests group together similar cases
+Table tests are a powerful idea, but sometimes people get a bit
+too attached to them, and start trying to turn everything into a
+table test. For example, they might try to mix valid and invalid
+input cases in the same test:
+tcs := []struct {
+    {
+        input: -1,
+        wantError: true,
+    },
+    {
+        input: 0,
+        wantError: false,
+    },
+
+
+    ... // and so on
+}
+This can lead to some complicated logic in the subtest body,
+because now there are two kinds of possible cases: ones with
+valid input that are expected to succeed, and ones with invalid
+input that are expected to fail. In other words, the subtest would
+need to look something like this:
+if tc.wantError {
+    ... // test as an invalid input case
+} else {
+    ... // test as a valid input case
+}
+That’s complicated both to write and to read, and also
+unnecessary. We can simplify the whole thing by just splitting it
+into two tests, one for valid input and one for invalid input. Each
+can have subtests, but now the subtest body itself is shorter and
+simpler, because it knows exactly what kind of case it has to deal
+with.
+Watch out for this kind of smell in your own tests. Any time we
+have some if statement in the test body that selects different
+test logic based on something about the case, we should probably
+refactor into multiple tests, one for each kind of case we have.
+Conversely, we can say that any time we’re testing the exact same
+thing about a set of different inputs, we have a good candidate
+for a table test.
+Just a note of warning: many IDEs have built-in facilities for
+generating table tests automatically. Indeed, the only kind of test
+they seem to know about is a table test. For example, if you put
+the cursor on some function in VS Code and run the Go: Generate
+Unit Tests for Function command, it generates a table test with a
+slice of test case structs, inviting you to fill in the missing data.
+
+
+I don’t recommend you use this feature. It can pressure you into
+trying to test the function, not its behaviour, by jamming different
+kinds of cases into a single test where they don’t really belong.
+And, as we’ve seen, named subtests are better organised as a map
+than as a slice.
+Using dummy names to mark irrelevant test inputs
+In the examples we’ve seen so far, the test inputs and
+expectations have been pretty small, and we’ve simply quoted
+them directly in the test as literals. What kinds of data does it
+make sense to use in this situation?
+Actually, we should distinguish between two kinds of test data:
+relevant to the test, and irrelevant. For example:
+func TestGreetingReturnsCorrectGreetingForLanguage(t *t
+    t.Parallel()
+    u := user.New("刘慈欣")
+    u.Language = "Chinese"
+    want := "你好"
+    got := u.Greeting()
+    if want != got {
+        t.Error(cmp.Diff(want, got))
+    }
+}
+(Listing user/4)
+In this test, we create some user named 刘慈欣, set his preferred
+language to Chinese, and check that the system’s generated
+greeting for him is “你好”, which should make all civilised
+
+
+persons feel right at home.
+We have two pieces of test input data here: the user’s name, and
+his language setting. Which of these is relevant to the test, and
+which is irrelevant? It’s not instantly clear to the reader.
+In fact, it turns out that the user’s name has no effect whatosever
+on the greeting generated by the system. That is entirely
+determined by the language setting.
+So the user’s name is irrelevant: changing it wouldn’t affect the
+test. We could signal that by using an obviously fake name as the
+data:
+u := user.New("Fake User")
+That makes it really clear that the value passed to CreateUser
+can’t affect the test, because we’d be unlikely to write a system
+that has some special behaviour when the username is “Fake
+User”. If we had, that would be a mistake, because we can’t
+safely assume that no real person has that name.
+On the other hand, the language value “Chinese” is important to
+this test. If we changed it to “Spanish”, we might instead expect
+a greeting like “¿Que tal?”
+If the language were not relevant, on the other hand, we could
+indicate that by using an obviously fake value here:
+u.Language = "Bogus Language"
+And the fact that we haven’t done that tells the reader to pay
+attention to the Language value. By using the name of a real
+language, we’re signalling that it’s relevant to the behaviour
+under test.
+Another example: suppose we have some CallAPI function that
+takes an authentication token. And suppose the test looks like
+this:
+token := "eyJhbGciOiJIUzI1N"
+
+
+got, err := CallAPI(req, token)
+Is the value of token relevant to the test here? We can’t tell. It
+looks like it could be a real token. On the other hand, if we used
+a different token value, then maybe it would affect the test, and
+maybe it wouldn’t.
+Instead, let’s send a clear signal to the reader, by choosing a
+value that’s obviously fake:
+got, err := CallAPI(req, "dummy token")
+Now the reader can easily infer that CallAPI doesn’t care about
+the token, at least under the conditions of this test. It has to be
+there syntactically, and an empty string wouldn’t have been a
+useful substitute: the reader might well wonder if it’s important
+that it be empty.
+By using the string “dummy token”, we spell out the fact that it
+doesn’t matter. Small signals like this, consistently applied, can
+make it much easier to readers to understand the purpose of a
+test.
+Use data that makes the tests easy to read and
+follow. You are writing tests to an audience. Don’t
+scatter data values around just to be scattering data
+values around. If there is a difference in the data,
+then it should be meaningful.
+—Kent Beck, “Test-Driven Development by
+Example”
+Outsourcing test data to variables or functions
+Sometimes the data can be quite large, and putting it in the test
+code can be distracting and create clutter. What could we do
+instead?
+One answer is to use variables for the data. This has the
+advantage that we can give the variable an informative name
+(validInput), and by moving it outside the test, up to package
+level, we keep the test free of visual clutter.
+
+
+For example:
+func TestParseHandlesValidInput(t *testing.T) {
+    got, err := parse.Parse(validInput)
+    ... // check the results
+}
+var validInput = `TGlzdGVuaW5nIGlzIGxvdmUuCuKAlEplYW4gS
+This is helpful when it doesn’t matter what the data actually is.
+In other words, the exact contents of the string validInput are
+irrelevant to the test. What the reader needs to know is simply
+that it is an example of valid input.
+Clarity in code is often as much a matter of what you don’t say as
+of what you do. By “not saying” the value of the input data, we
+avoid distracting the reader, who might otherwise wonder “Do I
+need to read this string? Are its contents significant in some
+way?” No, and no, our test says.
+It often happens that many tests can use the same pieces of data.
+For example, there might be several tests that can use the
+validInput variable, and by doing so we helpfully declutter all
+those tests as well as reducing duplication.
+Note that we gave the variable definition after the test that uses
+it. In general, it’s a good idea to put your test functions first in
+any test file, and then follow them with all the variables, helpers,
+and so on. The ordering makes no difference to Go, but it makes
+a big difference to readers, who expect to see the most important
+things first.
+Sometimes what’s relevant about a piece of data is not its actual
+contents or validity, but just that it’s very large. For example, to
+test that a function doesn’t blow up when given a string of length
+10,000, we’d like to have such a string defined as a variable.
+
+
+It would be annoying to have to type out such a string, and
+wasteful to store it in the source code, so a better idea is just to
+use some code to generate it on the fly:
+var longInput = strings.Repeat("a", 10_000)
+If generating the data is a little more complicated, perhaps
+involving several steps, we can call a function literal to construct
+it instead:
+var complicatedInput = func() string {
+    ... // lots of steps here
+    return result
+}()
+Note the trailing parentheses (): the value of
+complicatedInput will be the result of this function, not the
+function itself. Tests that use this input data can reference the
+variable directly:
+func TestParseHandlesComplicatedInput(t *testing.T) {
+    got, err := parse.Parse(complicatedInput)
+    ... // check the results
+}
+Because the var statement is executed just once, when the
+program starts, we don’t need to wastefully re-compute that
+complicated input value every time a test needs it.
+A danger lurks here, though. A global variable is a good way to
+share data between tests, when it can safely be shared. On the
+other hand, some types of data are not safe to share.
+For example, maps and slices are reference types: even if you
+create copies of the value, they all refer to the same underlying
+
+
+piece of memory.
+Suppose we need some map of string to int in multiple tests,
+and we define it as a global variable in the test package, like this:
+var ageData = map[string]int {
+        "sam": 18,
+        "ashley": 72,
+        "chandra": 38,
+}
+Even parallel tests can safely use this ageData variable, so long
+as they don’t try to modify it. But if they do, or if the system
+code they’re calling happens to modify its input, that will change
+the data stored in ageData. Now other tests will be using the
+modified data, which can lead to very confusing results.
+Instead, we need to create a new, independent ageData map
+value for every test that wants to use it. We can do this by
+writing a function that returns the map:
+func makeAgeData() map[string]int {
+    return map[string]int{
+        "sam":     18,
+        "ashley":  72,
+        "chandra": 38,
+    }
+}
+It’s worth noting that, unlike in the previous
+
+
+complicatedInput example, we’re not calling the function
+here, merely defining it. That’s because we don’t want to create a
+single map value that will be re-used by every test.
+Instead, we want each test to have a way to create its own
+independent map value, by calling the makeAgeData function:
+func TestTotalReturnsTotalOfSuppliedAges(t *testing.T)
+    t.Parallel()
+    want := 128
+    got := ages.Total(makeAgeData())
+    if want != got {
+        t.Error(cmp.Diff(want, got))
+    }
+}
+The test (and the function) can now do whatever they like with
+the ageData, including modifying it, without worrying about
+corrupting the data used by other tests.
+Use functions to safely construct any kind of test input that
+contains maps and slices, including structs whose fields are maps
+or slices.
+Loading test data from files
+Using a global variable is a good way to move bulky data out of
+the test function itself, but sometimes that data can become very
+large (say, more than a few dozen lines), or there can be many
+pieces of it. In this case, to avoid cluttering the source code, it’s a
+good idea to put the test data in a file instead.
+Conventionally, we put these files in a folder named testdata,
+since the Go tools will ignore any folder with this name when
+
+
+looking for packages. To open and load these files, we can use
+plain ordinary Go code:
+data, err := os.Open("testdata/hugefile.txt")
+if err != nil {
+    t.Fatal(err)
+}
+defer data.Close()
+... // read from 'data'
+Note that if there’s any error opening hugefile.txt, we need
+to stop the test with t.Fatal right away, since we won’t be able
+to use the file as input.
+Once we’ve successfully opened the file, we defer closing it, so
+as not to hold open any unnecessary file handles during the test
+run.
+Since file operations tend to be at least an order of magnitude
+slower than reading the same data from memory, it’s a good idea
+to avoid having tests open files unless it’s really necessary.
+In particular, avoid opening a file just to create an io.Reader,
+if that’s what the function needs to take. Use
+strings.NewReader instead to create a reader from static
+data:
+input := strings.NewReader("hello world")
+// 'input' implements 'io.Reader'
+got, err := parse.ParseReader(input)
+...
+Similarly, don’t create a file just to get an io.Writer value. If
+
+
+the function under test takes a writer, and we don’t care what
+goes into it, we don’t even need a strings.Reader. Instead,
+we can just use the predeclared io.Discard, which is a writer
+to nowhere:
+// writes to 'io.Discard' are ignored
+tps.WriteReportTo(io.Discard)
+On the other hand, if the test needs to look at the writer
+afterwards, to see what the function actually wrote to it, then we
+can use a *bytes.Buffer:
+buf := &bytes.Buffer{}
+tps.WriteReportTo(buf)
+want := "PC Load Letter"
+got := buf.String()
+Readers and writers versus files
+If you find yourself having to create or open a file because the
+function under test expects a *os.File, this might be a smell.
+Does the function really need a file, or does it just need an
+io.Reader or io.Writer?
+It depends. If the function just wants to read bytes from
+somewhere, you can pass it an io.Reader. If it needs to write
+bytes somewhere (for example, printing text), use an
+io.Writer. This is convenient for users, since lots of things
+implement io.Reader/Writer. And it’s handy for testing: a
+*bytes.Buffer implements both interfaces.
+On the other hand, if the function is really about operating on
+files, not just streams of bytes, then we can’t use those interfaces.
+For example, if it needs to call methods on its argument that are
+specific to *os.File, such as Name, or Stat, then we have to
+pass it a file.
+
+
+A good place for such files is the testdata folder, and it’s
+helpful to name them after the kind of input data they represent.
+For example, we might create two input files, valid.txt, and
+invalid.txt.
+The filesystem abstraction
+Another useful interface for functions to accept, especially when
+their job is to deal with trees of files on disk, is fs.FS—usually
+referred to as a filesystem.
+I’ve covered Go filesystems in detail in The Power of Go: Tools,
+though if you haven’t read that book yet, the relevant chapter is
+also available as a blog post titled Walking with Filesystems: Go’s
+new fs.FS interface.
+Suffice it to say, for our purposes, that fs.FS is a standard
+library interface that usually represents a tree of files on disk.
+We use a filesystem when we want to recursively visit each file
+or directory in the tree it represents. For example:
+fsys := os.DirFS("/home/john/go")
+results := find.GoFiles(fsys)
+In this example, fsys represents a real disk filesystem, but
+fs.FS can also be easily implemented by some in-memory
+structure. Since all I/O operations are much, much slower than
+accessing memory, and physical spinning disks are especially
+slow, we’d prefer not to do any unnecessary disk access in our
+tests.
+A convenient in-memory filesystem is provided by
+fstest.MapFS:
+
+
+fsys := fstest.MapFS{
+    "file.go":                {},
+    "subfolder/subfolder.go": {},
+    "subfolder2/another.go":  {},
+    "subfolder2/file.go":     {},
+}
+results := find.GoFiles(fsys)
+The function doesn’t care what’s under the hood of fsys: for all
+it knows, these are real files on disk. But our test is much faster,
+because fsys isn’t having to do any disk I/O: it’s using a Go map
+instead, meaning that all its operations happen in memory.
+Using t.TempDir for test output with cleanup
+When you need to pass a function a pathname to write data to,
+the best choice is usually to call t.TempDir to get the name of a
+per-test temporary directory. As we’ve seen earlier in this book,
+the directory created by TempDir is automatically deleted at the
+end of the test, together with its contents.
+Even though the file will be created in a temporary directory, it’s
+a good idea to name the file itself after the test or subtest that
+creates it. That way, if the file ends up in the wrong place, or
+gets left lying around by mistake, you’ll at least know where it
+came from. For example:
+image.Generate(t.TempDir()+"/test_generate.png")
+A useful method here is t.Name, which returns the name of the
+current test or subtest. You can use this instead of an arbitrary
+name:
+image.Generate(t.TempDir()+"/"+t.Name()+".png")
+Managing golden files
+One common use of files in tests is as golden files. As we saw in
+an earlier chapter, a golden file contains the expected output
+from some process, and we can compare it against the actual
+
+
+output to see whether it’s correct.
+Ideally, we would get this golden data straight from some test
+oracle, such as the legacy system we’re replacing. The test is then
+simply a matter of checking how close this is to the current
+output from the function:
+func TestWriteReportFile_ProducesCorrectOutputFile(t *t
+    t.Parallel()
+    output := t.TempDir() + "/" + t.Name()
+    tps.WriteReportFile(output)
+    want, err := os.ReadFile("testdata/output.golden")
+    if err != nil {
+        t.Fatal(err)
+    }
+    got, err := os.ReadFile(output)
+    if err != nil {
+        t.Fatal(err)
+    }
+    if !cmp.Equal(want, got) {
+        t.Error(cmp.Diff(want, got))
+    }
+}
+(Listing tps/1)
+
+
+This test reads both files into memory for simplicity, but this
+obviously limits the size of the data it can handle. If your
+program generates huge output files, you’ll need to compare them
+in a more efficient way, such as computing their hash sums, or
+comparing them a chunk at a time. For example, you could use
+io.ReadFull to read a chunk of bytes at a time from each
+reader, and then bytes.Equal to compare them.
+You’ll sometimes see advice to implement an -update flag in
+your test package, to automatically update your golden files. The
+effect of this flag is to assume that the current output of the
+function under test is correct, and to use it to overwrite the
+contents of the golden file.
+I don’t think this is a good idea, partly because it adds
+complication and magic to your tests, and you’d really need a
+separate flag for each golden file you use. But the most serious
+objection to an -update flag is that it provides a very easy and
+automated way to render your tests useless.
+Suppose, for example, that you make a minor change to some file
+generation routine that creates megabytes of output data. And
+suppose that you rigorously scrutinise every byte of that output
+to make sure it’s correct, and finally you run go test -update
+to overwrite your golden file. Well, from now on your test will
+always pass, since you’ve defined the required behaviour as
+whatever the function currently does.
+You might be very diligent in checking the output before
+committing an updated golden file, but someone else might not
+be so careful. Sooner or later, someone will make a mistake. And
+from that point on, we’ll be in a very uncomfortable situation,
+because the test will say that everything’s okay when, in fact, the
+system is incorrect.
+Worse, if someone should change the system to have the correct
+behaviour, the test will immediately fail! It takes considerable
+strength of mind to overrule a failing test, and in any case a good
+deal of time will probably be wasted figuring out what’s gone
+wrong.
+
+
+The best golden file, then, is real data, taken from some external
+oracle or system. The next best is hand-rolled data, carefully
+constructed by someone who knows exactly what the output
+should look like. When this format needs to change, change the
+golden file manually.
+The very last resort, and something we should avoid if at all
+possible, is to use the system itself to generate the golden data, for
+the reasons we’ve discussed. If this ever has to be done, the
+results should be checked rigorously, and then manually updated
+as the requirements evolve.
+We don’t want to make it easy to change this critical data, on
+which the correctness of the whole system depends. Rather, we
+want changing the golden data to be a big deal, so while an -
+update flag is a neat idea, I think the risks probably outweigh
+the benefits.
+Dealing with cross-platform line endings
+If you’re managing your source code using Git, as you most likely
+are, there’s another point to watch out for when using golden
+files. Git has a configuration setting named autocrlf, which
+auto-translates linebreak characters to suit the convention of the
+operating system you’re using.
+As you may know, Windows uses a different line-ending
+convention from other operating systems. Consequently, Git tries
+to help you out by auto-translating the line endings to something
+appropriate for your system.
+This means that your golden files, if they contain text, will look
+different on different operating systems. When compared
+directly, they will produce a diff showing a missing \r on each
+line:
+-   "Hello world\r\n",
++   "Hello world\n",
+This can be puzzling if you’re not aware of the line ending issue,
+since the tests will pass on non-Windows systems.
+
+
+One solution to this is to add a .gitattributes file to the root
+directory of your repo, with the following contents:
+* -text
+This tells Git to treat all files (*) in the repo as not text (-text).
+In other words, to treat all files as binary, with no line ending
+translation. This should fix the problem, and users with up-to-
+date versions of Windows and text editors such as Notepad will
+have no problem editing the files if they want to.
+What about the inputs you didn’t think of?
+In this chapter we’ve discussed various ways of picking and
+organising specific input values, chosen in advance for their
+effectiveness at flushing out bugs in the system. And most of the
+tests we write will be like this, but for a sufficiently non-trivial
+problem, there will always be inputs we can’t imagine or just
+don’t happen to think of.
+To supplement our hand-picked test inputs, then, it’s also often
+useful to generate inputs randomly in various ways. We’ll learn
+more about this process in the next chapter.

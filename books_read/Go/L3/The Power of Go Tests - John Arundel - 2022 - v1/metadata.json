@@ -1,4 +1,4 @@
-{
+﻿{
     "📘 title_original": "The Power of Go: Tests",
     "🔤 filename_safe": "The Power of Go Tests - John Arundel - 2022 - v1",
     "📚 book": {
@@ -61,7 +61,7 @@
         "#mocks",
         "#quality"
     ],
-    "📦 workspace": "Books/The_Power_of_Go_Tests_Arundel",
+    "📦 workspace": "books_read/Go/L3/The Power of Go Tests - John Arundel - 2022 - v1",
     "📑 chapters": [
         {
             "chapter": 1,
