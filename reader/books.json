@@ -262,12 +262,12 @@
       "year": 2019,
       "version": 1,
       "pages": 821,
-      "status": "reading",
+      "status": "completed",
       "started_at": "2026-09-07",
-      "completed_at": null,
+      "completed_at": "2026-09-07",
       "filename_safe": "The Go Workshop - Packt Authors - 2019 - v1",
-      "workspace": "Books/The_Go_Workshop_Packt_2019",
-      "telegram_upload": "pending",
+      "workspace": "books_read/Go/L2/The Go Workshop - Packt Authors - 2019 - v1",
+      "telegram_upload": "done",
       "fingerprint": "the go workshop|delio d’anna|2019|1"
     }
   ]
