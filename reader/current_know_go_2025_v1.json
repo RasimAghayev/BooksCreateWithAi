@@ -1,0 +1,75 @@
+{
+  "book_id": "know_go_2025_v1",
+  "pipeline_step": "knowledge_extraction",
+  "chapter_structure": [
+    {
+      "chapter": 1,
+      "title": "Interfaces",
+      "pdf_pages": "15-25",
+      "book_pages": "14-24"
+    },
+    {
+      "chapter": 2,
+      "title": "Type parameters",
+      "pdf_pages": "26-44",
+      "book_pages": "25-43"
+    },
+    {
+      "chapter": 3,
+      "title": "Constraints",
+      "pdf_pages": "45-66",
+      "book_pages": "44-65"
+    },
+    {
+      "chapter": 4,
+      "title": "Operations",
+      "pdf_pages": "67-91",
+      "book_pages": "66-90"
+    },
+    {
+      "chapter": 5,
+      "title": "Types",
+      "pdf_pages": "92-104",
+      "book_pages": "91-103"
+    },
+    {
+      "chapter": 6,
+      "title": "Functions",
+      "pdf_pages": "105-125",
+      "book_pages": "104-124"
+    },
+    {
+      "chapter": 7,
+      "title": "Containers",
+      "pdf_pages": "126-139",
+      "book_pages": "125-138"
+    },
+    {
+      "chapter": 8,
+      "title": "Concurrency",
+      "pdf_pages": "140-156",
+      "book_pages": "139-155"
+    },
+    {
+      "chapter": 9,
+      "title": "Packages",
+      "pdf_pages": "157-177",
+      "book_pages": "156-176"
+    },
+    {
+      "chapter": 10,
+      "title": "Questions",
+      "pdf_pages": "178-192",
+      "book_pages": "177-191"
+    },
+    {
+      "chapter": 11,
+      "title": "Iterators",
+      "pdf_pages": "193-210",
+      "book_pages": "192-209"
+    }
+  ],
+  "page_offset": 1,
+  "current_chapter": 1,
+  "chapters_done": []
+}
