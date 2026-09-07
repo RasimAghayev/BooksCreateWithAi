@@ -55,7 +55,8 @@ sessiya idarəetməsi.
 ### 5. Access Key (API Key)
 - **Nədir:** uzun unikal string — login+parolu ƏVƏZ edir; cihaz/servis
   autentifikasiyası üçün
-- **Müddət + səviyyə limiti:** yaradılanda有效期 və access scope qoyula bilər
+- **Müddət + səviyyə limiti:** yaradılanda etibarlılıq müddəti və
+  access scope qoyula bilər
 - **Açıq şəbəkə üçün imza sxemi:** açar = public (identifikasiya) + secret
   (imza); server nonce/timestamp göndərir → client HMAC/Hash(nonce, secret)
   qaytarır → tam açar ötürülmür + **replay attack** qarşısı
