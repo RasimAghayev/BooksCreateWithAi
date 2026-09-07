@@ -1,0 +1,152 @@
+{
+    "📘 title_original": "For the Love of Go",
+    "🔤 filename_safe": "For the Love of Go - John Arundel - 2022 - v1",
+    "📚 book": {
+        "📖 title": "For the Love of Go",
+        "🧑‍💻 author": "John Arundel",
+        "📅 year": 2022,
+        "📖 version": 1,
+        "📄 pages": 210,
+        "🔢 isbn": "",
+        "🏢 publisher": "Bitfield Consulting",
+        "📚 series": "For the Love of Go"
+    },
+    "page_offset": 1,
+    "🎯 classification": {
+        "💻 primary_language": "Go",
+        "🎯 level": 1,
+        "📛 level_name": "Beginner",
+        "🌟 level_icon": "📗",
+        "🌐 domains": [
+            "Software Testing",
+            "Backend Development",
+            "CLI Development",
+            "Fundamentals"
+        ]
+    },
+    "🛠️ technologies": [
+        "Go",
+        "testing",
+        "go-cmp",
+        "gofmt",
+        "go test",
+        "go build",
+        "sort.Slice",
+        "structs",
+        "slices",
+        "maps",
+        "pointers",
+        "methods",
+        "closures",
+        "defer",
+        "variadic functions",
+        "iota",
+        "GOOS/GOARCH",
+        "cmd pattern"
+    ],
+    "🏷️ tags": [
+        "#go",
+        "#golang",
+        "#beginner",
+        "#testing",
+        "#tdd",
+        "#fundamentals",
+        "#tutorial",
+        "#exercises",
+        "#pointerbasics",
+        "#controlflow"
+    ],
+    "📦 workspace": "Books/For_the_Love_of_Go_Arundel",
+    "📑 chapters": [
+        {
+            "chapter": 1,
+            "title": "Testing times",
+            "start_page": 15,
+            "end_page": 27
+        },
+        {
+            "chapter": 2,
+            "title": "Go forth and multiply",
+            "start_page": 28,
+            "end_page": 39
+        },
+        {
+            "chapter": 3,
+            "title": "Errors and expectations",
+            "start_page": 40,
+            "end_page": 49
+        },
+        {
+            "chapter": 4,
+            "title": "Happy Fun Books",
+            "start_page": 50,
+            "end_page": 60
+        },
+        {
+            "chapter": 5,
+            "title": "Story time",
+            "start_page": 61,
+            "end_page": 72
+        },
+        {
+            "chapter": 6,
+            "title": "Slicing & dicing",
+            "start_page": 73,
+            "end_page": 84
+        },
+        {
+            "chapter": 7,
+            "title": "Map mischief",
+            "start_page": 85,
+            "end_page": 97
+        },
+        {
+            "chapter": 8,
+            "title": "Objects behaving badly",
+            "start_page": 98,
+            "end_page": 108
+        },
+        {
+            "chapter": 9,
+            "title": "Wrapper's delight",
+            "start_page": 109,
+            "end_page": 119
+        },
+        {
+            "chapter": 10,
+            "title": "Very valid values",
+            "start_page": 120,
+            "end_page": 137
+        },
+        {
+            "chapter": 11,
+            "title": "Opening statements",
+            "start_page": 138,
+            "end_page": 149
+        },
+        {
+            "chapter": 12,
+            "title": "Switch which?",
+            "start_page": 150,
+            "end_page": 160
+        },
+        {
+            "chapter": 13,
+            "title": "Fun with functions",
+            "start_page": 161,
+            "end_page": 177
+        },
+        {
+            "chapter": 14,
+            "title": "Building blocks",
+            "start_page": 178,
+            "end_page": 184
+        },
+        {
+            "chapter": 15,
+            "title": "The Tao of Go",
+            "start_page": 185,
+            "end_page": 197
+        }
+    ]
+}
