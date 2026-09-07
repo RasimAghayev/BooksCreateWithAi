@@ -1,0 +1,60 @@
+{
+    "📘 title_original": "The Ultimate Guide To Building Database-Intensive Apps with Go",
+    "🔤 filename_safe": "Ultimate_Guide_Building_Database_Intensive_Apps_Go",
+    "📚 book": {
+        "📖 title": "The Ultimate Guide To Building Database-Intensive Apps with Go",
+        "🧑‍💻 author": "Baron Schwartz",
+        "📅 year": 2019,
+        "📖 version": 1,
+        "📄 pages": 40,
+        "🔢 isbn": "",
+        "🏢 publisher": "VividCortex",
+        "📚 series": ""
+    },
+    "page_offset": 1,
+    "🎯 classification": {
+        "💻 primary_language": "Go",
+        "🎯 level": 3,
+        "📛 level_name": "Intermediate",
+        "🌟 level_icon": "📙",
+        "🌐 domains": [
+            "Backend Development",
+            "Databases",
+            "Systems Programming"
+        ]
+    },
+    "🛠️ technologies": [
+        "Go",
+        "database/sql",
+        "MySQL",
+        "PostgreSQL",
+        "go-sql-driver/mysql",
+        "lib/pq",
+        "prepared statements",
+        "transactions",
+        "connection pooling",
+        "context",
+        "driver.Valuer",
+        "sql.Scanner"
+    ],
+    "🏷️ tags": [
+        "#go",
+        "#golang",
+        "#database",
+        "#sql",
+        "#mysql",
+        "#postgresql",
+        "#intermediate",
+        "#connectionpool",
+        "#transactions"
+    ],
+    "📦 workspace": "books_read/Go/L3/Ultimate_Guide_Building_Database_Intensive_Apps_Go",
+    "📑 chapters": [
+        {
+            "chapter": 1,
+            "title": "database/sql: The Complete Guide",
+            "start_page": 1,
+            "end_page": 39
+        }
+    ]
+}

@@ -1,0 +1,23 @@
+{
+    "book_id": "ultimate_guide_db_apps_go_2019_v1",
+    "title": "The Ultimate Guide To Building Database-Intensive Apps with Go",
+    "author": "Baron Schwartz",
+    "year": 2019,
+    "version": 1,
+    "pages": 40,
+    "filename_safe": "Ultimate_Guide_Building_Database_Intensive_Apps_Go",
+    "completed_at": "2026-09-07T20:15:00Z",
+    "chapters_processed": 1,
+    "info_files": [
+        "summary.az.md",
+        "terminology.az.md",
+        "cheatsheet.az.md",
+        "teacher-notes.az.md"
+    ],
+    "classification": {
+        "primary_language": "Go",
+        "level": 3,
+        "level_name": "Intermediate"
+    },
+    "note": "VividCortex-in database/sql dərin dərsi: pool mexanizmi, connection leak, prepared statements gizli davranışı, tranzaksiyalar, NULL, Valuer/Scanner, db.Stats, 13 pitfall. Bütün mövzular AZ dilində emal edildi."
+}
