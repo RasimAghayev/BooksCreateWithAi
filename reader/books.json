@@ -352,12 +352,12 @@
       "year": 2021,
       "version": 1,
       "pages": 157,
-      "status": "reading",
+      "status": "completed",
       "started_at": "2026-09-07T20:30:00Z",
-      "completed_at": null,
+      "completed_at": "2026-09-07T21:20:00Z",
       "filename_safe": "Everyday_Golang_Alex_Ellis_2021_v1",
-      "workspace": "Books/everyday_golang_the_fast-track",
-      "telegram_upload": "pending",
+      "workspace": "books_read/Go/L2/Everyday_Golang_Alex_Ellis_2021_v1",
+      "telegram_upload": "done",
       "fingerprint": "everyday golang|alex ellis|2021|1"
     }
   ]
