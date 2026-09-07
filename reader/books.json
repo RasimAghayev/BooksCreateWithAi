@@ -314,6 +314,21 @@
       "workspace": "books_read/Go/L3/Know Go - John Arundel - 2025 - v1",
       "telegram_upload": "done",
       "fingerprint": "know go|john arundel|2025|1"
+    },
+    {
+      "book_id": "go_razrabotka_prilozheniy_popova_2026_v1",
+      "title": "Go: разработка приложений в микросервисной архитектуре с нуля",
+      "author": "Попова Ю.Ю.",
+      "year": 2026,
+      "version": 1,
+      "pages": 322,
+      "status": "reading",
+      "started_at": "2026-09-07T18:40:00Z",
+      "completed_at": null,
+      "filename_safe": "Go_razrabotka_prilozheniy_Popova_2026_v1",
+      "workspace": "Books/_media_books_go_razrabotka_prilozhenij_v_mikroservisnoj_arhitekture",
+      "telegram_upload": "pending",
+      "fingerprint": "go: разработка приложений в микросервисной архитектуре с нуля|попова ю.ю.|2026|1"
     }
   ]
 }
