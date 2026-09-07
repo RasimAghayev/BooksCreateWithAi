@@ -307,12 +307,12 @@
       "year": 2025,
       "version": 1,
       "pages": 210,
-      "status": "reading",
+      "status": "completed",
       "started_at": "2026-09-07T10:50:18Z",
-      "completed_at": null,
+      "completed_at": "2026-09-07T18:23:26Z",
       "filename_safe": "Know Go - John Arundel - 2025 - v1",
-      "workspace": "Books/Know_Go_Arundel",
-      "telegram_upload": "pending",
+      "workspace": "books_read/Go/L3/Know Go - John Arundel - 2025 - v1",
+      "telegram_upload": "done",
       "fingerprint": "know go|john arundel|2025|1"
     }
   ]
