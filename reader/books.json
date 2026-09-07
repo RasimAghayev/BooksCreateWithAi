@@ -269,6 +269,21 @@
       "workspace": "books_read/Go/L2/The Go Workshop - Packt Authors - 2019 - v1",
       "telegram_upload": "done",
       "fingerprint": "the go workshop|delio d’anna|2019|1"
+    },
+    {
+      "book_id": "the_power_of_go_tests_2022_v1",
+      "title": "The Power of Go: Tests",
+      "author": "John Arundel",
+      "year": 2022,
+      "version": 1,
+      "pages": 404,
+      "status": "reading",
+      "started_at": "2026-09-07",
+      "completed_at": null,
+      "filename_safe": "The Power of Go Tests - John Arundel - 2022 - v1",
+      "workspace": "Books/The_Power_of_Go_Tests_Arundel",
+      "telegram_upload": "pending",
+      "fingerprint": "the power of go: tests|john arundel|2022|1"
     }
   ]
 }

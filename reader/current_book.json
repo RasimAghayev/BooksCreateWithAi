@@ -1,7 +1,7 @@
 {
-  "book_id": null,
-  "title": null,
-  "status": "none",
-  "started_at": null,
-  "note": "The Go Workshop (the_go_workshop_2019_v1) tamamlandı. 18 kitab completed. ALL_START davam edir."
+  "book_id": "the_power_of_go_tests_2022_v1",
+  "title": "The Power of Go: Tests",
+  "status": "reading",
+  "started_at": "2026-09-07",
+  "note": "ALL_START: The Power of Go Tests emal edilir"
 }
