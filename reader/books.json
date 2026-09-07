@@ -329,6 +329,21 @@
       "workspace": "books_read/Go/L3/Go_razrabotka_prilozheniy_Popova_2026_v1",
       "telegram_upload": "done",
       "fingerprint": "go: разработка приложений в микросервисной архитектуре с нуля|попова ю.ю.|2026|1"
+    },
+    {
+      "book_id": "ultimate_guide_db_apps_go_2019_v1",
+      "title": "The Ultimate Guide To Building Database-Intensive Apps with Go",
+      "author": "Baron Schwartz",
+      "year": 2019,
+      "version": 1,
+      "pages": 40,
+      "status": "completed",
+      "started_at": "2026-09-07T20:00:00Z",
+      "completed_at": "2026-09-07T20:20:00Z",
+      "filename_safe": "Ultimate_Guide_Building_Database_Intensive_Apps_Go",
+      "workspace": "books_read/Go/L3/Ultimate_Guide_Building_Database_Intensive_Apps_Go",
+      "telegram_upload": "done",
+      "fingerprint": "the ultimate guide to building database-intensive apps with go|baron schwartz|2019|1"
     }
   ]
 }
