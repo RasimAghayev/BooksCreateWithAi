@@ -176,7 +176,7 @@ got, ok := s.Pop()   // "b", true — LIFO: son giren çıxır
    unikallıq lazımdırsa → map; hər ikisi Stack-də data []E kimi birləşir.
 3. **Receiver seçimi:** dəyişən metod → pointer receiver (Push/Pop);
    oxuyan metod → value receiver (Len).
-4. **"Boş" hal的处理:** panic YOX — (v, ok) pattern; istifadəçi tərəfdə
+4. **"Boş" halın idarəsi:** panic YOX — (v, ok) pattern; istifadəçi tərəfdə
    müvafiq yoxlama.
 5. **Generics-in əsl qazancı:** mürəkkəb data strukturları (concurrency
    safe, optimallaşdırılmış) BİR DƏFƏ yazılır — növbəti fəsil: concurrency
