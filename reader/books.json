@@ -254,6 +254,21 @@
       "workspace": "books_read/Go/L4/Mastering Go - Mihalis Tsoukalos - 2024 - v4",
       "telegram_upload": "done",
       "fingerprint": "mastering go, fourth edition|mihalis tsoukalos|2024|4"
+    },
+    {
+      "book_id": "the_go_workshop_2019_v1",
+      "title": "The Go Workshop",
+      "author": "Delio D’Anna, Andrew Hayes, Sam Hennessy, Jeremy Leasor, Gobin Sougrakpam, Dániel Szabó",
+      "year": 2019,
+      "version": 1,
+      "pages": 821,
+      "status": "reading",
+      "started_at": "2026-09-07",
+      "completed_at": null,
+      "filename_safe": "The Go Workshop - Packt Authors - 2019 - v1",
+      "workspace": "Books/The_Go_Workshop_Packt_2019",
+      "telegram_upload": "pending",
+      "fingerprint": "the go workshop|delio d’anna|2019|1"
     }
   ]
 }
