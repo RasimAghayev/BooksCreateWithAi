@@ -1,0 +1,76 @@
+{
+    "📘 title_original": "Go: разработка приложений в микросервисной архитектуре с нуля",
+    "🔤 filename_safe": "Go_razrabotka_prilozheniy_Popova_2026_v1",
+    "📚 book": {
+        "📖 title": "Go: разработка приложений в микросервисной архитектуре с нуля",
+        "🧑‍💻 author": "Попова Ю.Ю.",
+        "📅 year": 2026,
+        "📖 version": 1,
+        "📄 pages": 318,
+        "🔢 isbn": "978-5-9775-2120-8",
+        "🏢 publisher": "БХВ-Петербург",
+        "📚 series": "С нуля"
+    },
+    "page_offset": 1,
+    "🎯 classification": {
+        "💻 primary_language": "Go",
+        "🎯 level": 3,
+        "📛 level_name": "Intermediate",
+        "🌟 level_icon": "📙",
+        "🌐 domains": [
+            "Backend Development",
+            "Microservices",
+            "Software Architecture",
+            "DevOps",
+            "Distributed Systems"
+        ]
+    },
+    "🛠️ technologies": [
+        "Go",
+        "Go Modules",
+        "GORM",
+        "goose",
+        "zerolog",
+        "golang-jwt",
+        "bcrypt",
+        "gRPC",
+        "Protobuf",
+        "Kafka",
+        "kafka-go",
+        "Redis",
+        "PostgreSQL",
+        "Docker",
+        "Docker Compose",
+        "Kubernetes",
+        "kompose",
+        "GitHub Actions",
+        "nginx",
+        "Gin",
+        "Swagger",
+        "gomock",
+        "testify"
+    ],
+    "🏷️ tags": [
+        "#go",
+        "#golang",
+        "#micro_services",
+        "#backend",
+        "#docker",
+        "#kubernetes",
+        "#grpc",
+        "#kafka",
+        "#postgresql",
+        "#saga",
+        "#russian"
+    ],
+    "📦 workspace": "books_read/Go/L3/Go_razrabotka_prilozheniy_Popova_2026_v1",
+    "📑 chapters": [
+        {"chapter": 0, "title": "Введение", "start_page": 7, "end_page": 12},
+        {"chapter": 1, "title": "Разработка первого микросервиса (User)", "start_page": 13, "end_page": 86},
+        {"chapter": 2, "title": "Разработка микросервиса авторизации и аутентификации (Auth)", "start_page": 87, "end_page": 110},
+        {"chapter": 3, "title": "Способы взаимодействия между микросервисами", "start_page": 111, "end_page": 156},
+        {"chapter": 4, "title": "Разработка модуля Transaction", "start_page": 157, "end_page": 266},
+        {"chapter": 5, "title": "Развертывание микросервисов", "start_page": 267, "end_page": 310},
+        {"chapter": 6, "title": "Заключение + Приложение", "start_page": 311, "end_page": 317}
+    ]
+}

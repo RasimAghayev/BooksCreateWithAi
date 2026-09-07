@@ -1,0 +1,23 @@
+{
+    "book_id": "go_razrabotka_prilozheniy_popova_2026_v1",
+    "title": "Go: разработка приложений в микросервисной архитектуре с нуля",
+    "author": "Попова Ю.Ю.",
+    "year": 2026,
+    "version": 1,
+    "pages": 318,
+    "filename_safe": "Go_razrabotka_prilozheniy_Popova_2026_v1",
+    "completed_at": "2026-09-07T19:45:00Z",
+    "chapters_processed": 7,
+    "info_files": [
+        "summary.az.md",
+        "terminology.az.md",
+        "cheatsheet.az.md",
+        "teacher-notes.az.md"
+    ],
+    "classification": {
+        "primary_language": "Go",
+        "level": 3,
+        "level_name": "Intermediate"
+    },
+    "note": "Rus dilində Go mikroservis kitabı: User/Auth/Gateway/Transaction servisləri, gRPC+Protobuf kontraktlar, JWT, PostgreSQL normal formaları + tranzaksiyalar, Saga pattern (Kafka), Docker multi-stage, CI/CD (GitHub Actions), Kubernetes. Bütün fəsillər AZ dilində emal edildi."
+}
