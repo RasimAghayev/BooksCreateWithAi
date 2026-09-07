@@ -1,4 +1,4 @@
-{
+﻿{
     "📘 title_original": "For the Love of Go",
     "🔤 filename_safe": "For the Love of Go - John Arundel - 2022 - v1",
     "📚 book": {
@@ -56,7 +56,7 @@
         "#pointerbasics",
         "#controlflow"
     ],
-    "📦 workspace": "Books/For_the_Love_of_Go_Arundel",
+    "📦 workspace": "books_read/Go/L1/For the Love of Go - John Arundel - 2022 - v1",
     "📑 chapters": [
         {
             "chapter": 1,

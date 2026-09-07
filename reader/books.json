@@ -292,12 +292,12 @@
       "year": 2022,
       "version": 1,
       "pages": 210,
-      "status": "reading",
+      "status": "completed",
       "started_at": "2026-09-07T07:52:49Z",
-      "completed_at": null,
+      "completed_at": "2026-09-07T09:49:11Z",
       "filename_safe": "For the Love of Go - John Arundel - 2022 - v1",
-      "workspace": "Books/For_the_Love_of_Go_Arundel",
-      "telegram_upload": "pending",
+      "workspace": "books_read/Go/L1/For the Love of Go - John Arundel - 2022 - v1",
+      "telegram_upload": "completed",
       "fingerprint": "for the love of go|john arundel|2022|1"
     }
   ]
