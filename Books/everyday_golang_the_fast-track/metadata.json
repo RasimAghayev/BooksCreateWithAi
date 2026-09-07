@@ -1,0 +1,79 @@
+{
+    "📘 title_original": "Everyday Golang - The Fast Track",
+    "🔤 filename_safe": "Everyday_Golang_Alex_Ellis_2021_v1",
+    "📚 book": {
+        "📖 title": "Everyday Golang - The Fast Track",
+        "🧑‍💻 author": "Alex Ellis",
+        "📅 year": 2021,
+        "📖 version": 1,
+        "📄 pages": 157,
+        "🔢 isbn": "",
+        "🏢 publisher": "Self-published (OpenFaaS Ltd)",
+        "📚 series": "Everyday Go"
+    },
+    "page_offset": 1,
+    "🎯 classification": {
+        "💻 primary_language": "Go",
+        "🎯 level": 2,
+        "📛 level_name": "Elementary",
+        "🌟 level_icon": "📗",
+        "🌐 domains": [
+            "Backend Development",
+            "CLI Development",
+            "DevOps",
+            "Testing",
+            "Serverless"
+        ]
+    },
+    "🛠️ technologies": [
+        "Go",
+        "Go modules",
+        "vendoring",
+        "flag",
+        "Cobra",
+        "encoding/json",
+        "testing",
+        "httptest",
+        "benchmarking",
+        "goroutines",
+        "WaitGroup",
+        "errgroup",
+        "singleflight",
+        "Mutex/RWMutex",
+        "channels",
+        "context",
+        "database/sql",
+        "lib/pq",
+        "gopkg.in/yaml.v2",
+        "mergo",
+        "ldflags",
+        "embed",
+        "text/template",
+        "gorilla/mux",
+        "Prometheus",
+        "GitHub Actions",
+        "Docker",
+        "buildx",
+        "OpenFaaS"
+    ],
+    "🏷️ tags": [
+        "#go",
+        "#golang",
+        "#practical",
+        "#cli",
+        "#testing",
+        "#concurrency",
+        "#prometheus",
+        "#docker",
+        "#serverless",
+        "#openfaas",
+        "#elementary"
+    ],
+    "📦 workspace": "books_read/Go/L2/Everyday_Golang_Alex_Ellis_2021_v1",
+    "📑 chapters": [
+        {"chapter": 1, "title": "Chapters 1-5: Foundations, JSON, CLI", "start_page": 4, "end_page": 33},
+        {"chapter": 2, "title": "Chapters 6-8: Testing, Concurrency, Database", "start_page": 34, "end_page": 79},
+        {"chapter": 3, "title": "Chapters 9-17: Config, HTTP, Metrics, Release", "start_page": 80, "end_page": 125},
+        {"chapter": 4, "title": "Chapter 18: OpenFaaS and Go", "start_page": 126, "end_page": 157}
+    ]
+}
