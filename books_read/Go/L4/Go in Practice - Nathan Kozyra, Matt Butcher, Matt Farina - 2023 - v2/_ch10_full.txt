@@ -1,0 +1,1159 @@
+10.1
+Serving static content
+./files/readme.txt by using the ServeFile function. ServeFile takes a file or directory
+as its third argument to serve. Like FileServer, ServeFile looks at the If Modified-
+Since HTTP header and responds with a 304 Not Modified response if possible.
+ Of course, you can extend this by adding a path value to the route to enable
+matching multiple files using an endpoint like /readmes/{documentID} and r.Path-
+Value("documentID"). But you’d want to be careful about sanitizing input to prevent
+unnecessary path and file access, so if you went this way, FileServer is still a better
+option than ServeFile.
+ This functionality, along with some of its underpinnings, enables you to serve con-
+tent a few different ways with varying degrees of control. If you have other routes and
+endpoints and want to mix and match with file servers, you can pass a file server as a
+handler to any route, like
+    http.HandleFunc("/comments", routeComments)
+    fileServer := http.FileServer(http.Dir("./static/"))
+    http.Handle("/static/", http.StripPrefix("/static", fileServer))
+This also provides a directory view if you call the /static endpoint directly.
+10.1.1 Serving subdirectories
+A common practice in many frameworks and applications is to serve files from the
+local filesystem where the application resides. This allows other applications to mount
+external filesystems as though they were local or to have them local.
+Problem—You want to serve a directory and its subdirectories from the filesystem
+as part of your web application.
+Solution—Use the built-in file server or the file-serving handlers to serve these
+files from the local filesystem. For more control over error pages, including the
+case of a file not being found, you need to implement your own file server.
+Discussion—An easy way to understand file serving is to look at a simple exam-
+ple. Take the directory example_app/static/ and serve it from the path exam-
+ple.com/static/. This may seem straightforward, and in some cases it is, but if
+you want specific control over the experience, you need to bypass some of the
+built-in file serving to have that control. First, let’s look at the simple example in
+the following listing.
+func main() {
+    dir := http.Dir("./files/")
+    handler := http.StripPrefix("/static/",
+    http.FileServer(dir))
+    http.Handle("/static/", handler)
+Listing 10.3
+Serving a subdirectory
+A directory and its
+subdirectories on the
+filesystem are chosen to serve.
+The /static/ path serves the
+directory and needs to be removed
+before looking up file path.
+
+
+CHAPTER 10
+Sending and receiving data
+    http.HandleFunc("/", homePage)
+    if err := http.ListenAndServe(":8080", nil); err != nil {
+        panic(err)
+    }
+}
+In this example, the built-in web server is serving the ./files/ directory at the path
+/static/ by using the file server from the http package. The directory on the filesys-
+tem could be any directory and doesn’t need to be relative to the source for the appli-
+cation. Strip-Prefix is used to remove any prefix in the URL before passing the path
+to the file server to find. When serving a subpath in your application, you need this to
+find the right files.
+10.1.2 Using a file server with custom error pages
+The built-in file server in the Go standard library generates error pages, including the
+common 404 Not Found error for you. This is presented as the browser dictates, rather
+than a web page, and can’t be changed. What if you want to build custom response
+pages with links to help people find the content they’re looking for when they ended
+up with a Not Found error?
+Problem—How can you specify your own error pages, including a response to a
+file not being found, when your application is serving files?
+Solution—Use a custom file server that allows you to specify handlers for error
+pages. The https://github.com/Masterminds/go-fileserver package provides
+functionality to complement the built-in file server while enabling custom error
+handling.
+Discussion—FileServer and ServeFile both rely on the function ServeCon-
+tent in the http package. That function calls private functions within the pack-
+age that use the functions Error and NotFound to produce these responses.
+Error handling is included at the lowest levels. To alter these, you need to build
+your own file server. This can be something entirely new or a fork of the file
+server from the standard library.
+The package https://github.com/Masterminds/go-fileserver is a fork of the file server
+in the standard library. This fork adds the ability to use custom error handlers, includ-
+ing the common 404 Not Found response. It’s designed to be used alongside the http
+package in the standard library, providing only file-serving elements not already in the
+standard library. The following listing illustrates how this file server works.
+package main
+import (
+     "fmt"
+     fs "github.com/Masterminds/go-fileserver"
+     "net/http"
+)
+Listing 10.4
+Custom file server error pages
+Serves a home page that may include
+files from the static directory
+Imports the
+file server
+package
+
+
+10.1
+Serving static content
+func main() {
+     fs.NotFoundHandler = func(w http.ResponseWriter,
+     req *http.Request)
+            w.Header().Set("Content-Type", "text/plain;
+             charset=utf-8")
+            fmt.Fprintln(w, "The requested page could
+            not be found.")
+     }
+     dir := http.Dir("./files")
+     http.ListenAndServe(":8080", fs.FileServer(dir))
+}
+This example is similar to the file server in the standard library, with a couple of differ-
+ences. First, a handler function is set for the case when no file is found. Any time a file
+isn’t found, this function will write the response. Although it’s not used here, a custom
+function can be set for all error responses as well. The setup to serve a directory of
+files is the same as the file server in the standard library. An http.Dir instance is cre-
+ated for the directory of files to serve. The second difference has to do with serving
+the files. Rather than using http.FileServer, the function fs.FileServer is used.
+This function will make sure that the proper error handlers are called.
+NOTE
+https://github.com/Masterminds/go-fileserver was created for this book.
+Because of the size of the codebase, which would have spanned many pages,
+and the useful nature of the file server, it was released as a package to be used
+in applications.
+10.1.3 Embedding files in a binary
+The question of where to store nonexecutable files can cause some confusion, particu-
+larly when it comes to deploying your application. They can sit alongside your binary,
+but often this demands some associated configuration both for the application to find
+them or for a web server to hide them from direct access. Sometimes, you’ll want to
+include assets right inside the application binary. Then, instead of looking for them
+on the filesystem, they’re included in the application itself. At this point, the binary is
+the only thing needing to be distributed, rather than a collection of files to accom-
+pany it.
+Problem—You want to include static assets, such as images or stylesheets, directly
+inside a Go binary.
+Solution—Starting with Go version 1.16, you can embed a filesystem directly in
+your application and include it directly. You can also assign these files’ values
+directly to a string or byte slice.
+Discussion—The idea is simple. Convert a file to bytes or string, store that and
+the related information in a variable, and use the variable to serve the file via
+ServeContent from the http package. At this point, there’s no need to include
+these files separately
+Sets a function to call
+when no file is found
+Sets a function to call
+when no file is found
+Sets up a
+directory to
+serve files from
+Uses built-in web server
+and custom file server
+
+
+CHAPTER 10
+Sending and receiving data
+The embed package gives you flexibility to keep your entire application self-contained.
+This is great for containerization, where you may want to limit the amount of associ-
+ated resources that need to be managed and built into your final image.
+package main
+import (
+    "embed"
+    "net/http"
+)
+//go:embed files
+var f embed.FS
+func main() {
+    if err := http.ListenAndServe(":8088",
+    http.FileServer(http.FS(f))); err != nil {
+        panic(err)
+    }
+}
+You’ll see that we wrap the resulting go:embed filesystem in http.FS to cast it, enabling it
+as a handler for the http.ListenAndServe method.
+ When you run or build the application, the files are built directly into the execut-
+able. Note that the directive for go:embed cannot exist inside of function directly. This
+is because the directives are similar to traits in Rust or #pragmas in C/C++. They exist
+purely for the compiler and are not part of the language itself.
+ It’s not necessary to build a full filesystem using go:embed. If you need only a sin-
+gle file, such as for an HTML template, you should include only that file. The embed
+package will allow you to grab a string or byte slice from a single file. You can also
+use this to embed any configuration you might want to include but not necessarily
+deploy separately.
+package main
+import (
+    _ "embed"
+    "fmt"
+    "log"
+)
+//go:embed files/example.html
+var myString string
+func main() {
+    log.Println(fmt.Sprintf("embedded value: %s",
+Listing 10.5
+Embedding files in binaries with go:embed
+Listing 10.6
+Templates as embedded files
+Imports the embed
+package from the
+standard library
+The go:embed
+compiler directive
+Assigns the value
+to a variable
+Serves files from
+the go:embed
+filesystem
+Includes the embed package,
+underscored so it can be
+used for its side effects
+Embeds a singular value
+The compiler assigns
+that value to the string.
+
+
+10.1
+Serving static content
+    myString))
+}
+You’re not necessarily limited to text files when using go:embed, but for other file
+types, it may be beneficial to take other approaches such as a content-delivery network
+(CDN), as they can increase the resulting size of your binary.
+ This has less utility for the templating system we saw in chapter 9, but go:embed
+can sometimes make deployment easier by enabling a single binary to contain your
+entire application.
+10.1.4 Serving from an alternative location
+At times, you’ll want to store and serve the files separately from the application. A
+common example is serving a web application’s JavaScript, CSS, and other assets from
+a CDN. This approach can reduce the overall load on your server and allow your
+application to focus on the more dynamic data.
+Problem—Instead of serving files through the same server as your application,
+you want to serve files through an alternative location. The alternative location
+needs to work with multiple environments, such as your production, testing,
+and development environments.
+Solution—Serve the files from alternative locations, such as a CDN in produc-
+tion. For each environment, manage the deployment of files alongside the
+application and pass the location into the application as configuration. Use the
+location within your template files to tell browsers where to get the files.
+Discussion—In each environment, you’ll want to have a copy or a representative
+copy of the application’s assets. Although these files may be served separately
+from the application pages, they shouldn’t be used from a single source for all
+environments. This clean separation, illustrated in figure 10.2 allows any testing
+environments to be full testing environments, allows developers to be creative
+The value is now available to
+the rest of the application.
+Application
+Assets
+Application
+Assets
+Application
+Assets
+User’s browser
+Development
+Testing
+Production
+Figure 10.2
+A browser fetches a different application and asset set in each environment.
+
+
+CHAPTER 10
+Sending and receiving data
+in development environments, and enables safe development and testing whereby
+a slip-up in development or testing doesn’t affect production users.
+When the location of the files is different in each environment, the location needs to
+be passed into the application as configuration. This can happen via a shared configu-
+ration service such as etcd, in configuration files, as arguments passed into the appli-
+cation at startup time, or some other means of passing configuration. The following
+listing passes a location in as a command-line argument, making it dynamic for
+deployments across multiple environments.
+var t *template.Template
+var l = flag.String("location",
+"http://localhost:8080", "A location.")
+var tpl = `<!DOCTYPE HTML>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>A Demo</title>
+    <link rel="stylesheet" href="{{.Location}}/styles.
+    css">
+  </head>
+  <body>
+    <p>A demo.</p>
+  </body>
+</html>`
+func servePage(res http.ResponseWriter,
+req *http.Request) {
+     data := struct{ Location *string }{
+          Location: l,
+     }
+     t.Execute(res, data)
+}
+This simple approach takes a command-line argument for a location and uses it within a
+template. When no value is passed into the application, a default (empty string) is used.
+ This example serves to illustrate the general idea of passing specific configuration
+as an execution-time value. In production software, you might use something more
+complicated:
+Pass the location in as configuration. See chapter 2 for multiple ways you can do
+this, including configuration files, etcd, and command-line arguments.
+If no value is passed in, it should be logged and possibly cause a panic. The lack of a
+configuration value shouldn’t allow production, and testing before that, to serve
+content pointing to an invalid URL. This is a case where defaults are harmful, as
+a lack of value may be technically wrong but still appear to work.
+The location can be attached to a global configuration object and reused across responses
+in the application. This could include storage in a database, distributed memory,
+or other data storage.
+Listing 10.7
+Passing a URL location to a template
+Gets the location of
+the static files from the
+application arguments
+The path to the
+CSS is relative to
+the location.
+An HTTP handler
+passes the location
+into the template.
+
+
+10.2
+Advanced form processing
+If the server handling these files is only serving the files, it should be optimized for
+serving static files. If you’re using an Apache or Nginx web server, for example, you
+can turn off modules you don’t need.
+ HTTP/2 and HTTP/3 provide features that may cause you to consider serving files
+along with application pages. When a browser requests a page, an HTTP/2 or HTTP/3
+server can respond with the page and any associated files for the page. The associated
+files can be sent to the browser even before it requests them, and all the files can be
+sent over the original connection requesting the page. For this to happen, the server
+needs to serve the application and files.
+NOTE
+The HTTP/2 specification is documented in RFC 7540 by the Internet
+Engineering Task Force. You can read it at https://datatracker.ietf.org/doc/
+html/rfc7540. HTTP/3 extends the QUIC protocol and you can see its RFC
+at https://datatracker.ietf.org/doc/html/rfc9114.
+Serving content is only half the process for modern interactive applications. To com-
+plete the cycle, the server needs to handle interaction from users. In the next section,
+we’ll do that by processing some forms with user data.
+10.2
+Advanced form processing
+In chapter 8, we did some rudimentary form processing, grabbing POST parameters
+and extracting their data. Working with HTML forms and POST or PUT requests in gen-
+eral is common in web applications and on websites. Go provides much of what you
+need in the http package within the standard library. Although the functionality is
+available under the hood, it’s not always obvious how you should use it. The following
+patterns highlight methods for working with data, whether it’s a form submission or a
+multipart POST or PUT request.
+10.2.1 Handling form requests
+When a request is made to a server and it contains form data, that request isn’t pro-
+cessed into a usable structure by default. In listing 8.3 in chapter 8, we created a form
+and processed a singular, named form field.
+ As a quick recap, the first step in working with form data is parsing it (see listing
+10.8). Inside a request handler are two methods on the Request object that can parse
+form data into a Go data structure. The ParseForm method parses fields that contain
+text. If you need to work with binary data or files from the form, you need to use
+ParseMultipartForm. As its name suggests, this method works on multipart form data
+(a form containing content with different MIME content types). ParseMultipartForm
+is called by FormValue in the preceding example if parsing hasn’t happened yet.
+func exampleHandler(w http.ResponseWriter, r *http.Request) {
+     err := r.ParseForm()
+Listing 10.8
+Parsing a simple form response
+Parses a simple form containing only text-based fields
+
+
+CHAPTER 10
+Sending and receiving data
+     if err != nil {
+            fmt.Println(err)
+     }
+     name := r.FormValue("name")
+}
+This listing contains the handling for a simple form. This simple example works for
+forms with only text fields. If a file field were present, it wouldn’t be parsed or accessi-
+ble. Also, it works only for form values that have a single response. HTML forms allow
+for multiple responding values. Both of these are covered in the following techniques.
+The form data is parsed into two locations:
+The Form property of the Request value will contain the values from the URL
+query along with the values submitted as a POST or PUT body. Each key on Form
+is an array of values. The FormValue method on Request can be used to get the
+first value for a key. That’s the value sitting in the 0 key of the array on Form.
+When you want the values from the POST or PUT body without those from the
+URL query, you can use the PostForm property on the Request object. Like
+FormValue, the PostFormValue method can retrieve the first value from Post-
+Form for a key.
+10.2.2 Accessing multiple values for a form field
+Form fields can have more than one value for a single name. A common example is
+check boxes on a form. You can have a multiple select list using check boxes that, in
+the HTML, have the same name.
+Problem—FormValue and PostFormValue return the first value for a form field.
+When you have multiple values, how can you access all of them?
+Solution—Instead of using FormValue and PostFormValue to retrieve a field
+value, look up the field on the Form or PostForm properties on the Request
+object; then iterate over all the values.
+Discussion—When a form field has more than one value, you’ll need to do a lit-
+tle more work to access it. The following listing shows how to parse a form and
+retrieve multiple values for a field.
+func exampleHandler(w http.ResponseWriter,
+r *http.Request) {
+     maxMemory := 16 << 20
+     err := r.ParseMultipartForm(maxMemory)
+     if err != nil {
+            fmt.Println(err)
+     }
+     for k, v := range r.PostForm["names"] {
+            fmt.Println(v)
+     }
+}
+Listing 10.9
+Parsing a form with multiple values for a field
+Handles any errors that
+occurred parsing the form
+Gets the first value for the
+name field from the form
+The maximum memory to
+store file parts, where the
+rest is stored to disk
+Parses a multipart form
+Handles any error parsing the form
+Iterates over all the POST
+values of the names form field
+
+
+10.2
+Advanced form processing
+The HTTP handler function opens by defining a number for the maximum amount
+of memory to use when parsing a multipart form. In this case, the number is 16 MB.
+When ParseMultipartForm is called, the maximum amount of memory for storing
+file parts needs to be specified. Parts of files larger than this number will be stored to
+disk. The default number used when FormValue or PostFormValue needs to call
+ParseMultipartForm is 32 MB.
+ Instead of using FormValue or PostFormValue to obtain the first value for a form
+field, all the values of the names form field are iterated over. The names field on the
+PostForm property is used, limiting the values to those submitted in the POST or PUT body.
+TIP
+When presenting forms to users and processing forms, use security ele-
+ments such as a cross-site request forgery (CSRF) token. For more informa-
+tion, see https://owasp.org/www-community/attacks/csrf.
+10.2.3 Working with files and multipart submissions
+After you move from general form handling to file handling and multipart submis-
+sions that contain more than one type of content, the way you handle the processing
+changes. You can see this in its simplest form when you upload a file via an online
+form. The file has a content type, such as an image, and the other text fields on the
+form. That’s at least two types of content that need dedicated handling.
+ In this section, you’ll explore the handling of multipart submissions, often thought
+of as file handling. These submissions can come in via simple and fast file uploads or
+large files that need special handling.
+ This approach differs a bit from the last few sections. Instead of single, self-con-
+tained values, we’re working with incremental pieces of a larger blob of data. Working
+with files is different from working with the input from text fields. Each file is a binary
+blob with surrounding metadata.
+Problem—When a file is uploaded with a form, how do you process and save it?
+How do you deal with large pieces of submitted binary data in a Go web server?
+Solution—When a file is uploaded, process the form as a multipart form by
+using Process-MultipartForm on the Request object. This picks up the file
+parts. Then use the FormFile method on the Request object to access and file
+fields, uploading a single file. For each file, you can access the metadata and a
+file object that’s similar to File objects from the os package.
+Discussion—Handling a file’s data is nearly as straightforward as handling text
+form data. The difference lies in the binary file itself and the metadata that sur-
+rounds it, such as the filename. The following listing presents a simple file-
+upload form.
+<!doctype html>
+<html>
+  <head>
+Listing 10.10
+A form with a single-value file-upload field
+
+
+CHAPTER 10
+Sending and receiving data
+    <title>File Upload</title>
+  </head>
+  <body>
+    <form action="/" method="POST" enctype="multipart/form-data">
+      <label for="file">File:</label>
+      <input type="file" name="file" id="file">
+      <br>
+      <button type="submit" name="submit">Submit</button>
+    </form>
+  </body>
+</html>
+This form has some important parts. The form method is POST, and its encoding is in
+multipart. Being multipart allows the text part of the form to be uploaded and pro-
+cessed as text while the file is included and handled using its own file type. The input
+field is typed for a file, which tells browsers to use a file picker and upload the con-
+tents of the file. This form is served and processed by the handler function for the
+http package in the following listing.
+func fileForm(w http.ResponseWriter, r *http.Request) {
+     if r.Method == "GET" {
+            t, _ := template.ParseFiles("file.html")
+            t.Execute(w, nil)
+     } else {
+            f, h, err := r.FormFile("file")
+            if err != nil {
+                   panic(err)
+            }
+            defer f.Close()
+            filename := "/tmp/" + h.Filename
+            out, err := os.Create(filename)
+            if err != nil {
+                   panic(err)
+            }
+            defer out.Close()
+            io.Copy(out, f)
+            fmt.Fprint(w, "Upload complete")
+     }
+}
+Listing 10.11
+Handling a single file upload
+The form must be
+multipart for file uploads.
+A single-value
+file field with
+the name “file”
+A button is
+needed to submit
+the form.
+http handler to
+display and process
+the form in file.html
+When the path is
+accessed with a GET
+request, displays the
+HTML page and form
+Gets the file
+handler, header
+information, and
+error for the
+form field keyed
+by its name
+Handles any
+errors retrieving
+the form field
+Be sure to close the form
+fields file before leaving
+the function.
+Creates a local location to
+save the file, including the
+file’s name. In this case,
+it’s a temp location, but a
+production application
+would have a file store
+location.
+Creates a local file to
+store the uploaded file
+Be sure to close the local
+file before leaving the
+function.
+Copies the uploaded file
+to the local location
+
+
+10.2
+Advanced form processing
+This handler, meant to be used with the web server in the http package, handles both
+displaying the form via GET and processing the submitted form. It opens by detecting
+the method for the request. When a GET request is submitted, it returns the form from
+listing 10.11. When another HTTP method is used, such as a POST or PUT request, the
+form submission is processed. In practice, it makes sense to restrict this to POST, as
+other verbs don’t necessarily translate to the operation we’re performing, but this
+makes for a good catchall.
+ The first step in processing the file field is retrieving it by using the FormFile
+method on the Request. If the form hasn’t been parsed, FormFile will call Parse-
+MultipartForm. FormFile returns a multipart.File object, a *multipart.File-
+Header object, and an error if there is one. The *multipart.FileHeader object has a
+Filename property that it uses here as part of the location on the local filesystem to
+store the upload. To save the file locally, a new file is created on the filesystem, and the
+contents of the upload are copied into this new file.
+ This solution works well for a field with a single file. HTML forms allow for mul-
+tivalue fields, and this solution will pick up only the first of the files. For multivalue file
+uploads, see the next technique.
+10.2.4 Uploading multiple files
+File fields on forms can optionally have the multiple attribute. When this attribute is
+on the input element, any number of files can be uploaded. In this case, using Form-
+File won’t work to process the form; instead, it assumes that there’s only one file per
+input field and returns only the first file.
+Problem—How do you process the files when multiple files are uploaded to a sin-
+gle file-input field on a form?
+Solution—Instead of using FormFile, which handles single files, parse the form
+and retrieve a slice with the files from the MultipartForm property on the
+Request. Then iterate over the slice of files, handling each individually.
+Discussion—An input field handling multiple files needs to have only the multi-
+ple attribute on it. The difference between the following listing and the single
+file-upload form in listing 10.11, for example, is the multiple attribute.
+<!doctype html>
+<html>
+  <head>
+    <title>File Upload</title>
+  </head>
+  <body>
+    <form action="/" method="POST" enctype="multipart/
+    form-data">
+      <label for="files">File:</label>
+      <input type="file" name="files" id="files"
+      multiple>
+Listing 10.12
+A form with a multiple-value file upload field
+The form must be
+multipart for file
+uploads.
+A multivalue file field
+with the name “files” and
+the multiple attribute
+
+
+CHAPTER 10
+Sending and receiving data
+      <br>
+      <button type="submit" name="submit">Submit</button>
+    </form>
+  </body>
+</html>
+This form, with the multipart encoding, has an input to accept multiple files. The
+multiple attribute turns a single file-input field into one accepting multiple files. The
+following listing processes this form to handle multiple files.
+func fileForm(w http.ResponseWriter, r *http.Request) {
+     if r.Method == "GET" {
+            t, _ :=
+            template.ParseFiles("file_multiple.html")
+            t.Execute(w, nil)
+     } else {
+            err := r.ParseMultipartForm(16 << 20)
+            if err != nil {
+                   fmt.Fprint(w, err)
+                   return
+            }
+            data := r.MultipartForm
+            files := data.File["files"]
+            for _, fh := range files {
+                   f, err := fh.Open()
+                   defer f.Close()
+                   if err != nil {
+                           fmt.Fprint(w, err)
+                           return
+                   }
+                   out, err := os.Create("/tmp/" + fh.
+                   Filename)
+                   defer out.Close()
+                   if err != nil {
+                           fmt.Fprint(w, err)
+                           return
+                   }
+                   _, err = io.Copy(out, f)
+                   if err != nil {
+                           fmt.Fprintln(w, err)
+                           return
+                   }
+            }
+Listing 10.13
+Processing file form field with multiple files
+A button is
+needed to
+submit the
+form.
+http handler to display and process the
+form in file_multiple.html1
+When the path is
+accessed with a GET
+request, displays the
+HTML page and form
+Parses the form
+in the request and
+handles any errors
+Retrieves a slice, keyed by the input name,
+containing the files from the MultipartForm
+Iterates over the files
+uploaded to the files field
+Opens a file handler for one of
+the uploaded files
+Be sure to close and handle any
+errors when opening a file handler.
+Creates a local file to
+store the contents of
+the uploaded file
+Be sure to close and handle any
+errors when creating a local file.
+Copies the uploaded file to the
+location on the filesystem
+Handles any errors copying the
+uploaded file to the local file
+
+
+10.2
+Advanced form processing
+            fmt.Fprint(w, "Upload complete")
+     }
+}
+This listing contains a handler function for the web server in the http package. It opens
+by presenting the form if the request is a GET request rather than one posting a form.
+When a request other than a GET request occurs, it handles the form submission.
+ Before you can work with the form fields, the form needs to be processed. Calling
+ParseMultipartForm on the Request object causes the form to be parsed. This is han-
+dled internally by methods such as FormFile used in previous techniques. The value
+passed in sets the amount of memory to use for holding form data in memory to 16
+MB, and the rest of the files will be written to disk as temporary files.
+ After the form has been parsed, the fields are available on MultipartForm. The
+uploads to the file-input field with the name files are available on the File property of
+MultipartForm as a slice of values. Each value is a *multipart.FileHeader object
+pointer.
+ Iterate over each of the files to process them sequentially. Calling the Open method
+on a *multipart.FileHeader object returns File, a handler for the file. To save the
+file to disk, you need to create a new file somewhere to save the contents. The name of
+the uploaded file is available in the Filename property on the *multipart.File-
+Header. After you have a local location to store the contents, copy the uploaded file to
+the local file by using io.Copy.
+ This solution requires moving a level lower in the package API. In doing so, you
+gain a little more power while needing to handle a little more on your own.
+10.2.5 Verifying that uploaded file is of an allowed type
+When a file is uploaded, it could be of any type. The upload field could be expecting
+an image, a document, or something else. But is that what was uploaded? How would
+you handle an improper file being uploaded?
+ Client-side detection is sometimes seen as an option. Input fields with a type of file
+can be annotated with an accept property with a list of extensions or MIME types, also
+referred to as content types. Unfortunately, the accept property isn’t implemented in
+all browsers. Even in the browsers where it works, the ability to easily alter the value
+makes it unreliable, effectively making it nothing but an ornamental blocker. Type
+checking needs to happen in your application.
+Problem—How can you detect the type of file uploaded to a file field inside your
+application?
+Solution—To get the MIME type for a file, you can take one of several approaches,
+with varying degrees of trust in the resulting value:
+– When a file is uploaded, the request headers will have a Content-Type field
+with either a specific content type, such as image/png, or a general value of
+application/octet-stream.
+
+
+CHAPTER 10
+Sending and receiving data
+– A file extension is associated with a MIME type and can provide insight into
+the type of file being uploaded.
+– You can parse the file and detect its type based on its contents.
+Discussion—The three solutions have varying degrees of trust. The Content-
+Type field is set by the application doing the uploading, and the file extension is
+set by the user uploading the file. These two methods rely on outside parties for
+accuracy and trust. The third solution requires parsing the file and knowing
+what to look for to map to a content type. This is the most difficult method and
+uses the most system resources but is also the most trusted one. To understand
+how to use these methods, you’ll look at each of them.
+When a file is uploaded, as you saw in listing 10.13, a *multipart.FileHeader object
+is available to interact with. This is the second of the responses from FormFile on the
+Request object. The *multipart.FileHeader object has a property named Header
+with all the uploaded header fields including the content type, as in this example:
+file, header, err := r.FormFile("file")
+contentType := header.Header["Content-Type"][0]
+Here, FormFile is called on a field with the name file. Header fields can be multi-
+value. In this case, you’ll need to get the first one even if there’s only one value. The
+content type will be a specific MIME type, such as image/png, or a generic value of
+application/octet-stream when the type is unknown.
+ An alternative to the uploaded header value, the filename’s file extension can pro-
+vide insight into the type of file. The mime package includes the function TypeBy-
+Extension, which attempts to return the MIME type based on the file extension, as in
+this example:
+file, header, err := r.FormFile("file")
+extension := filepath.Ext(header.Filename)
+type := mime.TypeByExtension(extension)
+Determining the type based on the file extension provides only some degree of accu-
+racy. File extensions can be changed. The standard library contains a limited exten-
+sion to MIME type mapping but can reach out to the operating system to retrieve a
+larger list.
+ Another option is to parse the file and determine the type from the file itself. You
+can perform this type of operation in two ways. The http package contains the function
+DetectContentType, which is capable of detecting the type for a limited number of file
+types. These include HTML, text, XML, PDF, PostScript, common image formats, com-
+pressed files (such as RAR, Zip, and GZip), .WAV audio files, and WebM video files. The
+following example showcases the DetectContentType function:
+file, header, err := r.FormFile("file")
+buffer := make([]byte, 512)
+
+
+10.2
+Advanced form processing
+_, err = file.Read(buffer)
+filetype := http.DetectContentType(buffer)
+The buffer is only 512 bytes because DetectContentType looks at only up to the first
+512 bytes when determining the type. When it isn’t able to detect a specific type,
+application/octet-stream is returned.
+ The limited list of content types DetectContentType can detect means you need
+another method if you want to detect other common formats, such as Microsoft Word
+documents or MP4 files. To parse and detect these other formats, the easiest method
+is to integrate with an external MIME sniffing library such as the widely used libmagic.
+At the time of this writing, several Go packages provide bindings to libmagic, making
+it easy to use from within Go.
+NOTE
+A specification to sniff MIME types is available at https://mimesniff
+.spec.whatwg.org.
+10.2.6 Saving a file incrementally
+Imagine that you’re building a system meant to handle a lot of large file uploads. The
+files aren’t stored on your API server but are instead stored in a back-end service
+designed for files. Using ParseMultipartForm is going to put those files into the tem-
+porary files directory on your API server while the uploads are in progress. To support
+large file uploads with ParseMultipartForm handling, your server would need a large
+disk cache for the files and careful handling to make sure it doesn’t get full while par-
+allel uploads are happening.
+ The Go standard library provides both high-level helper functions for common
+file-handling situations and lower-level access that can be used for the less common
+ones or when you want to define your own handling. The handler function for a
+request is executed when a request begins rather than when a request is completed.
+Many requests happen quickly, and the helper functions account for any delay. If you
+work with large files, you have an opportunity to act while uploads are happening.
+ Instead of using the ParseMultipartForm method on the Request object inside an
+http handler function, you can access the raw stream of the request by accessing the
+underlying *multipart.Reader object. This object is accessible by using the Multi-
+part-Reader method on the Request.
+Problem—You want to save the file as it’s being uploaded to a location of your
+choice. That location could be on the server, a shared drive, or another location.
+Solution—Instead of using ParseMultipartForm, read the multipart data from
+the request as it’s being uploaded. This can be accessed with the Multipart-
+Reader method on the Request. As files and other information are coming in,
+chunk by chunk, save and process the parts rather than wait for uploads to
+complete.
+Discussion—Using an API server as a pass-through for data on its way to a final
+destination is a common model. You’ll often see nonfile data being stored in
+a
+
+
+CHAPTER 10
+Sending and receiving data
+database. Handling large files or handling a lot of files concurrently presents a
+problem in local resources in storing that much information as a cache on its
+way to the final location. An easy solution is to pass the problem on to the final
+destination, which should already be able to handle storing large files. Don’t
+cache them locally if you don’t need to.
+The way to access the multipart stream directly, which is what ParseMultipartForm
+does, is to retrieve the reader from the Request with MultipartReader. After you have
+the reader, you can loop over the parts and read each one as it comes in.
+ When you process a multipart form, you’ll often want to process file fields along
+with text fields. The following listing contains a simple form with a text field, file field,
+and Submit button.
+<!doctype html>
+<html>
+  <head>
+    <title>File Upload</title>
+  </head>
+  <body>
+    <form action="/" method="POST" enctype="multipart/form-data">
+      <label for="name">Name:</label>
+      <input type="text" name="name" id="name">
+      <br>
+      <label for="file">File:</label>
+      <input type="file" name="file" id="file">
+      <br>
+      <button type="submit" name="submit">Submit</button>
+    </form>
+  </body>
+</html>
+The next listing contains an http handler function to display and process the form
+and incrementally save the file’s data.
+func fileForm(w http.ResponseWriter, r *http.Request) {
+     if r.Method == "GET" {
+            t, _ :=
+            template.ParseFiles("file_plus.html")
+            t.Execute(w, nil)
+     } else {
+            mr, err := r.MultipartReader()
+            if err != nil {
+                   panic("Failed to read multipart
+                   message")
+            }
+Listing 10.14
+HTML form containing a file and text field
+Listing 10.15
+Saving uploaded files incrementally
+A text input field
+A file input field requiring
+the form to be multipart
+A Submit button
+also available as
+a field
+http handler to display
+and process the form
+in file_plus.html
+When the path is
+accessed with a GET
+request, displays the
+HTML page and form
+Retrieves the multipart
+reader, giving access to
+the uploaded files, and
+handles any errors
+
+
+10.2
+Advanced form processing
+            values := make(map[string][]string)
+            maxValueBytes := int64(10 << 20)
+            for {
+                   part, err := mr.NextPart()
+                   if err == io.EOF {
+                           break
+                   }
+                   name := part.FormName()
+                   if name == "" {
+                           continue
+                   }
+                   filename := part.FileName()
+                   var b bytes.Buffer
+                   if filename == "" {
+                           n, err := io.CopyN(&b, part,
+                           maxValueBytes)
+                           if err != nil && err !=
+                           io.EOF {
+                                  fmt.Fprint(w, "Error
+                                   processing form")
+                                  return
+                           }
+                           maxValueBytes -= n
+                           if maxValueBytes == 0 {
+                                  msg := "multipart
+                                  message too large"
+                                  fmt.Fprint(w, msg)
+                                  return
+                          }
+                          values[name] = append(values
+                          [name],b.String())
+                          continue
+                   }
+                   dst, err := os.Create("/tmp/" +
+                   filename)
+                   defer dst.Close()
+                   if err != nil {
+                          return
+                   }
+                   for { #
+                           buffer := make([]byte, 100000)
+                           cBytes, err :=
+                           part.Read(buffer)
+                           if err == io.EOF {
+                                  break
+                           }
+                           dst.Write(buffer[0:cBytes])
+                   }
+            }
+            fmt.Fprint(w, "Upload complete")
+A map to store form
+field values not
+related to files
+10 MB counter for
+nonfile field size
+Continues looping
+until all the multipart
+message has been read
+Attempts to read the next
+part, breaking the loop if the
+end of the request is reached
+Retrieves the name of the form field,
+continuing the loop if there’s no name
+Retrieves the name of
+the file if one exists
+A buffer to read the
+value of a text field into
+If there’s no filename,
+treats it as a text field
+Copies the contents of
+the part into a buffer
+If there’s an error reading
+the contents of the part,
+handles the error
+Using a byte counter,
+makes sure that the
+total size of text fields
+isn’t too large
+Puts the content for the form
+field in a map for later access
+Creates a location on
+the filesystem to store
+the content of a file
+Closes the file when
+exiting the http handler
+As the file content
+of a part is uploaded,
+writes it to the file
+
+
+CHAPTER 10
+Sending and receiving data
+     }
+}
+This code opens with an http handler function. When it receives a GET HTTP request,
+it responds with an HTML form. When that form is posted, it processes the form.
+ Because the handler function parses the form, instead of relying on Parse-
+MultipartForm, you have a few elements to set up before working with the form itself.
+For access to the data on the form as it comes in, you’ll need access to a reader. The
+MultipartReader method on the Request object returns *mime.Reader, which you
+can use to iterate over the multipart body of the request. This reader consumes input
+as needed. For the form fields not being handled as files, you need a place to store the
+values. Here, a map is created to store the values.
+ When the setup is complete, the handler iterates over the parts of the multipart
+message. The loop starts by attempting to retrieve the next part of the multipart mes-
+sage. If there are no more parts, an io.EOF error is returned, and the function breaks
+out of the parsing loop. EOF stands for end of file.
+ Now the parsing loop can start handling the parts of the message. First, it checks
+for the name of the form field by using the FormName method and continues the loop
+if there’s no name. Files will have a filename in addition to the name of the field. This
+can be retrieved by using the FileName method. The existence of a filename is a way
+to distinguish between file and text-field handling.
+ When there’s no filename, the handler copies the value of the content of the field
+to a buffer and decrements a size counter that starts at 10 MB. If the size counter runs
+down to 0, the parser returns and provides an error. This is put in place as a protec-
+tion against text-field content being too large and consuming too much memory. 10
+MB is quite large and is the default value inside ParseMultipartForm as well. If no
+errors occur, the content of the text form field is stored in the values map created pre-
+viously, and the parsing loop continues on the next part.
+ If the parsing loop has reached this point, the form field is a file. A file on the
+operating system is created to store the contents of the file. At this point, an alterna-
+tive location such as cloud storage could be used to write the file to. Instead of creat-
+ing a file on the operating system, a connection to another storage system could be
+opened. After the destination is opened, the handler loops over the content of the
+part, iteratively reading it as it comes in. Until a notification of the end of the part,
+designated with an io.EOF error, comes in, the bytes are written to the destination as
+they arrive. If you use this to upload a large file, you can watch the data slowly being
+written to the output file while the upload is happening. When the loop completes, all
+the files are available on disk, and the text fields are available on the values map.
+Summary
+Go has simple tooling to accept POST/PUT/PATCH data from forms or other
+methods, enabling backends to easily parse standard form data and/or binary
+uploads from clients.
+
+
+Summary
+Dealing with files from a root or subroot as part of a web server or other appli-
+cations is trivial with Go. Inside web servers, we can create routes or full server
+routers that serve files directly to clients.
+We can use files to serve unique error pages rather than browser defaults.
+Files can be embedded directly inside a Go binary, mitigating deployment prob-
+lems and complexity around distribution and containerization.
+Advanced form processing lets us deal with binary data, multipart uploads, and
+duplicate named form fields.
+Streaming methods in Go allow us to take data incrementally and save it or
+escape partially if we encounter an error.
+
+
+Working with
+external services
+In chapter 10, we explored how to receive data from users in the form of uploads
+via POST including binary data. We also demonstrated how to return different types
+of data to the client. When we are ready to be a client ourselves—a consumer of
+data—we need to know how to deal with different communication protocols and
+conventions.
+ This chapter begins with the basics of REST APIs, a cornerstone of the modern
+internet, and moves to handling cases that don’t go as planned. You’ll look at
+This chapter covers
+Making REST requests
+Detecting request timeouts and resuming
+downloads
+Passing errors over HTTP, with additional
+metadata
+Parsing JSON, including arbitrary JSON structures
+Building a versioning system for maintaining
+different versions of REST APIs
+Using gRPC as an alternative to architectures
+like REST
+
+
+11.1
+Consuming REST APIs as a full-featured client
+detecting timeout failures, resuming file transfers when timeouts happen, and you’ll
+learn how to pass errors between an API endpoint and a requesting client.
+ Many APIs pass information as JSON, and you’ll learn about handling JSON
+responses when you don’t know the structure of the data ahead of time. This is useful
+when you need to work with poorly defined, undefined, or variable JSON data. When
+APIs change, they need to be versioned, and you’ll also explore a couple of approaches
+for versioning your REST APIs.
+ Finally, you’ll look at an alternative to REST that’s had some traction within public
+APIs: gRPC. We’ll see how this protocol allows us to better define our expectations for
+what an API produces, avoiding some of the problems that come with nebulous REST
+APIs. In this chapter, you’ll learn how to move from the basics of API consumption to
+more robust functionality.
+11.1
+Consuming REST APIs as a full-featured client
+The Go standard library includes an HTTP client that’s sufficient for most common use
+cases. When you move beyond these common use cases, you may run into some prob-
+lems for which there isn’t a single built-in approach in the standard library. Before we
+touch on a couple of those, let’s look again at how the HTTP client works in Go.
+11.1.1 Using the HTTP client
+The HTTP client is in the net/http library within the standard library. It has helper
+functions to perform GET, HEAD, and POST requests; can perform virtually any HTTP
+request; and can be heavily customized.
+ The most common helper functions for retrieval are http.Get, http.Head,
+http.Post, and http.PostForm. With the exception of http.PostForm, each function
+is for the HTTP verb its name suggests. http.PostForm, for example, handles POST
+requests when the data being posted should be posted as a form. To illustrate how
+these functions work, the following listing shows a simple use of http.Get. All the
+other HTTP methods exist as similar constants in the package.
+package main
+import (
+    "fmt"
+    "io"
+    "net/http"
+)
+func main() {
+    res, _ := http.Get("https://www.manning.com/")
+    b, err := io.ReadAll(res.Body)
+    if err != nil {
+        panic(err)
+    }
+Listing 11.1
+A simple HTTP GET
+Performs a
+GET request
+Reads the body of
+the response into
+a buffer
+
+
+CHAPTER 11
+Working with external services
+    defer res.Body.Close()
+    fmt.Printf("%s", b)
+}
+All the helper functions are backed by the default HTTP client that’s accessible and
+can perform any HTTP request. The following listing shows how to use the default cli-
+ent to make a DELETE request.
+package main
+import (
+    "fmt"
+    "net/http"
+)
+func main() {
+    req, err := http.NewRequest("DELETE",
+    "http://example.com/foo/bar", nil)
+    if err != nil {
+        panic(err)
+    }
+    res, err := http.DefaultClient.Do(req)
+    if err != nil {
+        panic(err)
+    }
+    fmt.Printf("%s", res.Status)
+}
+In this case. you should receive a 404 (Not Found) or 405 (Method Not Allowed) error,
+but in standard REST architecture, an authenticated client can perform a deletion by
+hitting this endpoint. Making a request consists of two separate steps. The first is the
+request, contained in http.Request instances, which contain metadata about the
+request such as protocol and headers. The second part is the client that performs a
+request. In this example, the default client is used. By separating the request into its
+own object, you provide a separation of concerns. Then both of these instances can be
+customized. Other helper functions, such as http.Get, wrap by creating a request
+instance and executing it with a client in a single step.
+ The DefaultClient has configuration and functionality to handle things like
+HTTP redirects, cookies, and timeouts. It also has a default transport layer that can be
+customized.
+ Clients can be customized to allow you to set up the request any way you need. The
+following listing shows the creation of a simple client with a timeout set to 1 second.
+package main
+import (
+    "fmt"
+Listing 11.2
+DELETE request with default HTTP client
+Listing 11.3
+A simple custom HTTP client
+Prints the body to
+standard output
+Creates a new request
+object set up for a delete
+HTTP method
+Performs the request
+with the default client
+Displays the status code from
+performing the request

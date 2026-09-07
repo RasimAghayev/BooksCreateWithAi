@@ -1,0 +1,1409 @@
+11.1
+Consuming REST APIs as a full-featured client
+    "io"
+    "net/http"
+    "time"
+)
+func main() {
+    cc := &http.Client{Timeout: time.Second}
+    res, err := cc.Get("http://www.manning.com")
+    if err != nil {
+        panic(err)
+    }
+    b, err := io.ReadAll(res.Body)
+    if err != nil {
+        panic(err)
+    }
+    defer res.Body.Close()
+    fmt.Printf("%s", b)
+}
+Custom clients allow numerous elements to be customized, including the transport
+layer, cookie handling, and the way that redirects are followed.
+11.1.2 When faults happen
+The internet was designed with fault tolerance in mind. Things will break or won’t
+work as expected, and you try to route around the problem via retries or ultimately
+logging it, giving an alert system a chance to act against the error. When you’re work-
+ing with HTTP connections, it’s useful to detect problems, report them, and try to fix
+them automatically when possible.
+DETECTING TIMEOUTS
+Connection timeouts are a common problem and useful to detect. If a timeout error
+occurs, especially in the middle of a connection, retrying the operation might be
+worthwhile. On retry, the server you were connected to may be back up, or you could
+be routed to another working instance.
+ To detect timeouts in the net package, the errors returned by it have a Timeout
+method that’s set to true in the case of a timeout. Yet in some cases, a timeout occurs
+and Timeout doesn’t return true, or the error you’re working with comes from
+another package, such as url, and doesn’t have the Timeout method.
+ Timeouts are typically detected by the net package when a timeout is explicitly set,
+as in listing 11.3. When a timeout is set, the request needs to complete in the timeout
+period. Reading the body is included in the timeout window. But a timeout can also
+happen when one isn’t set. In this case, a timeout in the network occurs while the tim-
+eout checking isn’t actively looking for it.
+Problem—How can network timeouts be reliably detected?
+Solution—When timeouts occur, a small variety of errors occurs. Check the error
+for each case to see whether it was a network timeout.
+Creates a custom
+HTTP client with a
+timeout of 1 second
+Performs a GET
+request using the
+custom client
+Handles any
+errors such as
+a client timeout
+
+
+CHAPTER 11
+Working with external services
+Discussion—When an error is returned from a net package operation or a pack-
+age that extends net, such as http, check the error against known cases show-
+ing a timeout error. Some of these will be for the explicit cases where a timeout
+was set and cleanly detected. Others will be for the cases where a timeout wasn’t
+set but a timeout occurred.
+The following listing contains a function that looks at a variety of error situations to
+detect whether the error was caused by a timeout.
+func hasTimedOut(err error) bool {
+     switch err := err.(type) {
+     case *url.Error:
+            if err, ok := err.Err.(net.Error); ok && err.Timeout() {
+                   return true
+            }
+     case net.Error:
+            if err.Timeout() {
+                   return true
+            }
+     case *net.OpError:
+            if err.Timeout() {
+                   return true
+            }
+     }
+     errTxt := "use of closed network connection"
+     if err != nil && strings.Contains(err.Error(),
+     errTxt) {
+            return true
+     }
+     return false
+}
+This provides the capability to detect a variety of discrete timeout situations. The fol-
+lowing snippet is an example of using that function to check whether an error was
+caused by a timeout:
+res, err := http.Get("http://example.com/test.zip")
+if hasTimedOut(err) {
+     panic("request has timed out")
+}
+if err != nil {
+     panic("something else has happened")
+    }
+As you may recall from chapter 4, we also could change this switch to use the
+errors.Is() method, but the idea is the same. Reliably detecting a timeout is useful,
+and the next technique highlights this in practice.
+Listing 11.4
+Detecting a network timeout from error
+A function whose response is true or false
+if a network timeout caused the error
+Uses a type switch to detect
+the type of underlying error
+A url.Error may
+be caused by an
+underlying net
+error that can
+be checked for
+a timeout.
+Looks for timeouts
+detected by the net
+package
+Some errors, without a custom
+type or variable to check against,
+can indicate a timeout.
+
+
+11.1
+Consuming REST APIs as a full-featured client
+TIMING OUT AND RESUMING WITH HTTP
+If a large file is being downloaded and a timeout occurs, starting the download from
+the beginning is wasteful. In some cases, you may be dealing with huge files a gigabyte
+or larger, and it would be ideal to avoid the extra bandwidth use and time to redown-
+load data.
+Problem—You want to resume downloading a file, starting from the end of the
+data already downloaded, after a timeout occurs.
+Solution—Retry the download again, attempting to use the Range HTTP header
+in which a range of bytes to download is specified. This allows you to request a
+file, starting partway through the file where it left off.
+Discussion—Servers such as the one provided in the Go standard library can
+support serving parts of a file. This is a common feature in file servers, and the
+interface for specifying ranges has been a standard since 1999, when HTTP 1.1
+came out.
+This snippet creates a local file location, downloads a remote file to it, displays the
+number of bytes downloaded, and retries up to 100 times when a network timeout
+occurs. The real work is done inside the download function, spelled out in listing 11.5.
+func main() {
+     file, err := os.Create("file.zip")
+     if err != nil {
+            fmt.Println(err)
+            return
+     }
+     defer file.Close()
+     location := https://example.com/file.zip
+     err = download(location, file, 100)
+     if err != nil {
+            fmt.Println(err)
+            return
+     }
+     fi, err := file.Stat()
+     if err != nil {
+            fmt.Println(err)
+            return
+     }
+     fmt.Printf("Got it with %v bytes downloaded",
+     fi.Size())
+}
+func download(location string, file *os.File, retries int64) error {
+     req, err := http.NewRequest("GET", location, nil)
+     if err != nil {
+            return err
+     }
+     fi, err := file.Stat()
+Listing 11.5
+Download with retries
+Creates a local
+file to store the
+download
+Downloads the remote
+file to the local file,
+retrying up to 100
+times on timeout
+Displays the size
+of the file after
+the download is
+complete
+Creates a new
+GET request for
+the file being
+downloaded
+Starts the local file
+to find the current
+file information
+
+
+CHAPTER 11
+Working with external services
+     if err != nil {
+            return err
+     }
+     current := fi.Size()
+     if current > 0 {
+            start := strconv.FormatInt(current, 10)
+            req.Header.Set("Range", "bytes="+start+"-")
+     }
+     cc := &http.Client{Timeout: 5 * time.Minute}
+     res, err := cc.Do(req)
+     if err != nil && hasTimedOut(err) {
+            if retries > 0 {
+                   return download(location, file,
+                   retries-1)
+            }
+            return err
+     } else if err != nil {
+            return err
+     }
+     if res.StatusCode < 200 || res.StatusCode > 300 {
+            errFmt := "Unsuccess HTTP request. Status
+            : %s"
+            return fmt.Errorf(errFmt, res.Status)
+     }
+     if res.Header.Get("Accept-Ranges") != "bytes" {
+            retries = 0
+     }
+     _, err = io.Copy(file, res.Body)
+     if err != nil && hasTimedOut(err) {
+            if retries > 0 {
+                   return download(location, file,
+                   retries-1)
+            }
+            return err
+     } else if err != nil {
+            return err
+     }
+     return nil
+}
+Although the download function can handle timeouts in a straightforward manner, it
+can be customized for your cases. The timeout is set to 5 minutes. This can be tuned
+for your application; a shorter or longer timeout may provide better performance in
+your environment. If you’re downloading files that typically take longer than 5 min-
+utes, a timeout longer than most files take will limit the number of HTTP requests
+needed for a normal download.
+ If a hash of a file is easily available, a check could be put in to make sure that the
+final download matches the hash. This integrity check can improve trust in the final
+download, even if it takes multiple attempts to download the file. Checking for errors
+and attempting to route around the problem can lead to fault-tolerant features in
+applications.
+Retrieves the size of
+the local file
+When the local file already
+has content, sets a header
+requesting where the local
+file left off. Ranges have an
+index of 0, making the
+current length the index for
+the next needed byte.
+An HTTP client
+configured to
+explicitly check
+for timeout
+Performs the request
+for the file or part if
+part of the file is
+already stored locally
+When checking for an
+error, tries the request
+again if the error was
+caused by a timeout
+Handles nonsuccess
+HTTP status codes
+If the server doesn't
+support serving partial
+files, sets retries to 0
+Copies the
+remote response
+to the local file
+If a timeout error
+occurs while copying
+the file, tries retrieving
+the remaining content
+
+
+11.2
+Passing and handling errors over HTTP
+11.2
+Passing and handling errors over HTTP
+Errors are a regular part of passing information over HTTP. Two of the most com-
+mon examples are Not Found and Access Denied errors, which are common enough
+that the HTTP specification includes the capability to pass error information from
+the beginning. The Go standard library provides a rudimentary but generally suffi-
+cient capability to pass errors. The following listing provides simple HTTP generat-
+ing an error.
+package main
+import "net/http"
+func displayError(w http.ResponseWriter, r *http.Request) {
+    http.Error(w, "An Error Occurred",
+    http.StatusForbidden)
+}
+func main() {
+    http.HandleFunc("/", displayError)
+    if err := http.ListenAndServe(":8080", nil); err != nil {
+        panic(err)
+    }
+}
+This simple server always returns the error message An Error Occurred. Along with
+the custom message, served with a type of text/plain, the HTTP status message is set
+to 403, correlating to forbidden access. As we saw in chapter 10, surrounding an
+authentication with middleware via WithContext allows us to wrap logic to authenti-
+cate before possibly passing to our destination handler.
+TIP
+The http package in the standard library has constants for the various
+status codes. You can read more about the codes at https://developer.mozilla
+.org/en-US/docs/Web/HTTP/Status.
+A client can read the codes the server responds with to learn what happened with the
+request. In listing 11.5, when the res.StatusCode is checked, the client is looking for
+a status in the 20x range, which signifies a successful request. The following snippet
+shows a simple example of printing the status:
+res, _ := http.Get("http://example.com")
+fmt.Println(res.Status)
+fmt.Println(res.StatusCode)
+The res.Status is a text message for the status. Example responses look like 200 OK
+and 404 Not Found. If you’re looking for the error code as a number, res.StatusCode
+is the status code as an integer.
+Listing 11.6
+Passing an error over HTTP
+Returns an HTTP
+status 403 with
+a message
+Sets up all paths
+to serve the
+HTTP handler
+displayError
+
+
+CHAPTER 11
+Working with external services
+ Clients to a server like this need to know things like the status code to understand
+when requests can be retried. In a case where we get a status code like 429 Too Many
+Requests or 500 Internal Server Error, an incremental backoff retry strategy might
+be useful:
+func requestUntil(url string, ops retryableRequest) (http.Response, error) {
+    for i := 0; i < ops.maxRetries; i++ {
+        // if succeeds, early return
+    }
+    return nil, nil
+}
+11.2.1 Generating custom errors
+A plaintext error string and an HTTP status code representing an error are often
+insufficient. If you’re displaying web pages, you’ll likely want your error pages to be
+styled like your application or site. If you’re building an API server that responds with
+JSON, you’ll likely want error responses to be in JSON as well.
+ The first part of working with custom error responses is for the server to generate
+them. There isn’t much room for customization when using the Error function within
+the http package. The response type is hardcoded as plaintext, and the X-Content
+-Type-Options header is set to nosniff. This header tells some tools not to attempt to
+detect a content type other than what was set. This leaves little opportunity to provide
+a custom error aside from the content of the plaintext string.
+Problem—How can you provide a custom response body and content type when
+there’s an error?
+Solution—Instead of using the built-in Error function, use custom functions
+that send both the correct HTTP status code and the error text as a more
+appropriate body for your situation.
+Discussion—Providing error responses that are more than a text message is use-
+ful to those consuming an application. Someone viewing a web page might get
+a 404 Not Found error. If this error page is styled like the rest of the site and pro-
+vides information to help users find what they’re looking for, it can guide users
+rather than provide a surprise (what they’re looking for wasn’t found, and they
+can’t easily find it).
+A second example involves REST API error messages. APIs are typically used by soft-
+ware development kits (SDKs) and other client applications. If a call to an API returns
+a 409 Conflict message, more detail could be provided to guide the user. Is there an
+application-specific error code an SDK can use? In addition to the error message, is
+there guidance that can be passed to the user? Should the user retry as is or with new
+request options? Can we provide more context to the consumer of the API?
+ To illustrate how this works, let’s look at an error response in JSON. We’ll
+keep the same response format as for the other REST API responses that provide an
+
+
+11.2
+Passing and handling errors over HTTP
+application-specific error code in addition to the HTTP error. Although this example
+is targeted at API responses, the same style applies to web pages.
+type Error struct {
+     HTTPCode int    `json:"-"`
+     Code     int    `json:"code,omitempty"`
+     Message  string `json:"message"`
+}
+func JSONError(w http.ResponseWriter, e Error) {
+     data := struct {
+            Err Error `json:"error"`
+     }{e}
+     b, err := json.Marshal(data)
+     if err != nil {
+            http.Error(w, "Internal Server Error", 500)
+            return
+     }
+     w.Header().Set("Content-Type", "application/json")
+     w.WriteHeader(e.HTTPCode)
+     fmt.Fprint(w, string(b))
+}
+func displayError(w http.ResponseWriter, r *http.Request) {
+     e := Error{
+            HTTPCode: http.StatusForbidden,
+            Code:     123,
+            Message:  "An Error Occurred",
+     }
+     JSONError(w, e)
+}
+func main() {
+     http.HandleFunc("/", displayError)
+     http.ListenAndServe(":8080", nil)
+}
+This listing is conceptually similar to listing 11.6. The difference is that listing 11.6
+returns a string with the error message, and listing 11.7 returns a JSON response like
+the following:
+{
+     "error": {
+          "code": 123,
+          "message": "An Error Occurred"
+     }
+}
+After errors are passed as JSON, an application reading them can take advantage of
+the data being passed in the same structured format. Using errors passed as JSON can
+be seen in the next technique.
+Listing 11.7
+Custom JSON error response
+A type to hold the information
+about an error, including metadata
+about its JSON structure
+The JSONError function is
+similar to http.Error, but
+the response body is JSON.
+Wraps Error struct in anonymous
+struct with the error property
+Converts error data to
+JSON and handles an
+error if one exists
+Sets the response
+MIME type to
+application/json
+Makes sure that the
+HTTP status code is
+set properly for the
+error
+Writes the JSON
+body as output
+Creates an instance of Error
+to use for the response error
+Returns the error message as JSON
+when the HTTP handler is called
+
+
+CHAPTER 11
+Working with external services
+11.2.2 Reading and using custom errors
+Any client can work with HTTP status codes to detect an error. The following snippet
+detects the various classes of errors:
+res, err := http.Get("https://www.manning.com/")
+switch res.StatusCode {
+case 300 <= res.StatusCode && res.StatusCode < 400:
+     fmt.Println("Redirect message")
+case 400 <= res.StatusCode && res.StatusCode < 500:
+     fmt.Println("Client error")
+case 500 <= res.StatusCode && res.StatusCode < 600:
+     fmt.Println("Server error")
+}
+The 30x range of messages has to do with redirects. You’ll rarely see these in browsers
+because the default setting for the HTTP client is to follow up to 10–20 redirects. The
+400 range represents client errors. Access Denied, Not Found, and other errors are in
+this range. The 500 range of errors is returned when a server error occurs; something
+went wrong on the server.
+ Using the status code can provide insight into what’s going on. If the status code is
+a 401 or 403, you’ll need to authenticate to see the request. A user interface could
+provide an opportunity to log in to try the request again, or an SDK could attempt to
+authenticate or reauthenticate and attempt the request again.
+ If an application responds with custom errors, such as those generated by listing
+11.7, this presents an API response with a different structure from the expected
+response in addition to there being an error.
+Problem—When a custom error with a different structure is returned as an API
+response, how can you detect that and handle it differently?
+Solution—When a response is returned, check the HTTP status code and MIME
+type for a possible error. When one of these returns unexpected values or
+informs of an error, convert it to an error, return the error, and handle the
+error.
+Discussion—Go is known for explicit error handling, and HTTP status codes are
+no different. When an unexpected status is returned from an HTTP request, it
+can be handled like other errors. The first step is to return an error when the
+HTTP request didn’t go as expected, as shown in the next listing.
+type Error struct {
+     HTTPCode int    `json:"-"`
+     Code     int    `json:"code,omitempty"`
+     Message  string `json:"message"`
+}
+Listing 11.8
+Converting HTTP response to an error
+Structure to
+hold data from
+the error
+
+
+11.2
+Passing and handling errors over HTTP
+func (e Error) Error() string {
+     fs := "HTTP: %d, Code: %d, Message: %s"
+     return fmt.Sprintf(fs, e.HTTPCode, e.Code,
+     e.Message)
+}
+func get(u string) (*http.Response, error) {
+     res, err := http.Get(u)
+     if err != nil {
+            return res, err
+     }
+     if res.StatusCode < 200 || res.StatusCode >= 300 {
+            if res.Header.Get("Content-Type") !=
+            "application/json" {
+                   sm := "Unknown error. HTTP status:
+                   %s"
+                   return res, fmt.Errorf(sm,
+                   res.Status)
+            }
+            b, _ := io.ReadAll(res.Body)
+            res.Body.Close()
+            var data struct {
+                   Err Error `json:"error"`
+            }
+            err = json.Unmarshal(b, &data)
+            if err != nil {
+                   sm := "Unable to parse json:
+                   %s. HTTP status: %s"
+                   return res, fmt.Errorf(sm, err,
+                   res.Status)
+            }
+            data.Err.HTTPCode = res.StatusCode
+            return res, data.Err
+     }
+     return res, nil
+}
+This code replaces the http.Get function for making a request to a server with the
+get function, which handles custom errors. The Error struct, which holds the data
+from the error, has the same structure as the error in listing 11.7. This custom error
+handling is designed to work with a server that emits errors in the same way. These two
+techniques could share a common package defining the error.
+ Adding the Error method to the Error type implements the error interface. This
+allows instances of Error to be passed between functions as an error, like any other error.
+ The main function in the following snippet illustrates using the get function
+instead of http.Get. Any custom errors will print the custom error details from the
+JSON and exit the application:
+func main() {
+     res, err := get("http://localhost:8080")
+     if err != nil {
+            fmt.Println(err)
+The Error method
+implements the error
+interface on the Error
+struct.
+The get function
+should be used
+instead of http.Get
+to make requests.
+Uses http.Get to retrieve
+the resource and return
+any http.Get errors
+Checks whether the
+response code was
+outside the 200
+range of successful
+responses
+Checks the response
+content type and returns
+an error if it’s not correct
+Reads the body of the
+response into a buffer
+Parses the JSON
+response, places the
+data into a struct, and
+responds to any errors
+Adds the HTTP status code
+to the Error instance
+Returns the custom error
+and the response
+When there's no error,
+returns the response
+as expected
+
+
+CHAPTER 11
+Working with external services
+            os.Exit(1)
+     }
+     b, _ := io.ReadAll(res.Body)
+     res.Body.Close()
+     fmt.Printf("%s", b)
+}
+Using this technique for getting and passing HTTP errors around applications allows
+these errors to get the benefits of other error handling in Go. Using switch statements
+to test the type of error and reacting appropriately, as listing 11.4 showed, will work for
+the custom errors.
+11.3
+Parsing and mapping JSON
+When communicating over REST APIs, the most common format to transfer informa-
+tion is JSON. Being able to convert JSON strings easily and quickly to native Go data
+structures is useful, and the Go standard library provides that functionality out of the
+box via the encoding/json package. The following listing parses a simple JSON data
+structure into a struct.
+package main
+import (
+     "encoding/json"
+     "fmt"
+)
+type Person struct {
+     Name string `json:"name"`
+}
+var JSON = `{
+  "name": "Miracle Max"
+}`
+func main() {
+     var p Person
+     err := json.Unmarshal([]byte(JSON), &p)
+     if err != nil {
+            fmt.Println(err)
+            return
+     }
+     fmt.Println(p)
+}
+Although the standard library provides everything you need for the foundational
+JSON-parsing use cases, you may run into some known and common situations with-
+out an obvious solution.
+ The structure of JSON is often passed along via documentation, examples, and
+from reading the output response. Although schemas exist for JSON, such as JSON
+Listing 11.9
+A simple custom JSON-parsing example
+A struct that also represents information
+in JSON. The json tag maps the Name
+property to name in the JSON.
+JSON represented
+as a string
+An instance of the Person struct
+to hold the parsed JSON data
+Parses the JSON data into the
+instance of the Person struct
+Handles any
+parsing errors
+Acts on the now populated Person
+object, in this case printing it
+
+
+11.3
+Parsing and mapping JSON
+Schema, they are not widely adopted. Not only is JSON schemaless, but API responses
+may vary the structure, and in some cases, you may not know the structure.
+ When JSON data is parsed in Go, it goes into structs with a structure defined in the
+code. If you don’t know the structure when the structs are being created or the struc-
+ture changes, that presents a problem. It may seem as though it’s difficult to intro-
+spect JSON or operate on documents with a varying structure, but this can be done in
+Go by generalizing the data and inspecting its type.
+Problem—How can you parse a JSON data structure into a Go data structure
+when you don’t know the structure ahead of time?
+Solution—Parse the JSON into an interface{} instead of into a struct. After the
+JSON is in an interface, you can inspect the data and use it.
+Discussion—A little-known feature of the encoding/json package is the capabil-
+ity to parse arbitrary JSON into an interface{}. Working with JSON parsed
+into an interface{} is quite different from working with JSON parsed into a
+known structure because of the Go type system. The following listing contains
+an example of parsing JSON this way.
+package main
+import (
+     "encoding/json"
+     "fmt"
+     "os"
+)
+var ks = []byte(`{
+"firstName": "Jean",
+"lastName": "Bartik",
+"age": 86,
+"education": [
+     {
+            "institution": "Northwest Missouri State
+            Teachers College",
+            "degree": "Bachelor of Science in
+            Mathematics"
+     },
+     {
+            "institution": "University of
+            Pennsylvania",
+            "degree": "Masters in English"
+     }
+],
+"spouse": "William Bartik",
+"children": [
+     "Timothy John Bartik",
+     "Jane Helen Bartik",
+     "Mary Ruth Bartik"
+]
+}`)
+Listing 11.10
+Parsing JSON into an interface
+A JSON document
+to be parsed and
+unmarshaled
+
+
+CHAPTER 11
+Working with external services
+func main() {
+     var f interface{}
+     err := json.Unmarshal(ks, &f)
+     if err != nil {
+            fmt.Println(err)
+            os.Exit(1)
+     }
+     fmt.Println(f)
+}
+The JSON parsed here contains a variety of structure situations. This is important
+because working with the interface{} isn’t the same as working with JSON parsed
+into a struct. You’ll look at working with this data in a moment.
+ When JSON data is parsed into a struct, such as the example in listing 11.9, it’s eas-
+ily accessible. In that case, the name of the person from the parsed JSON is available
+at p.Name. If you tried to access firstName on the interface{} in the same way, you’d
+see an error:
+fmt.Println(f.firstName)
+Accessing firstName like a property would generate an error:
+f.firstName undefined (type interface {} is interface with no methods)
+Before you can work with the data, you need to access it as a type other than
+interface{}. In this case, the JSON represents an object, so you can use the type
+map[string]interface{}. It provides access to the next level of data. Following is a
+way to access firstName:
+m := f.(map[string]interface{})
+fmt.Println(m["firstName"])
+At this point, the top-level keys are all accessible, allowing firstName to be accessible
+by name.
+ To programmatically walk through the resulting data from the JSON, it’s useful to
+know how Go treats the data in the conversion. When the JSON is unmarshaled, the
+values in JSON are converted to the following Go types:
+
+bool for JSON Boolean
+
+float64 for JSON numbers
+
+[]interface{} for JSON arrays
+
+map[string]interface{} for JSON objects
+
+nil for JSON null
+
+string for JSON strings
+Knowing these type conversions, you can walk the data structure and unpack each suc-
+cessive child. The following listing shows a function for recursively walking the parsed
+JSON, printing the key names, types, and values.
+A variable instance of type
+interface{} to hold the JSON data
+Parses the JSON data and puts it
+into the interface{} type variable
+Handles any errors, such as invalid JSON
+Accesses the JSON data
+now on the interface{}
+
+
+11.4
+Versioning REST APIs
+func printJSON(v interface{}) {
+     switch vv := v.(type) {
+     case string:
+            fmt.Println("is string", vv)
+     case float64:
+            fmt.Println("is float64", vv)
+     case []interface{}:
+            fmt.Println("is an array:")
+            for i, u := range vv {
+                   fmt.Print(i, " ")
+                   printJSON(u)
+            }
+     case map[string]interface{}:
+            fmt.Println("is an object:")
+            for i, u := range vv {
+                   fmt.Print(i, " ")
+                   printJSON(u)
+            }
+     default:
+            fmt.Println("Unknown type")
+     }
+}
+If all you’re doing is printing raw data, Go’s string formatter also provides %v as a
+default type-specific verb, but this gives us some display flexibility. Although it’s handy
+to be able to parse and work with JSON when you don’t know the structure, it’s useful
+to have known, documented structures or to handle the version changes when those
+structures change. In the next section, you’ll learn about versioning APIs that includes
+changes to JSON structures.
+11.4
+Versioning REST APIs
+Web services evolve and change, leading to changes in the APIs used to access or man-
+age them. To provide a stable API contract for API consumers, changes to the API
+need to be versioned. Because programs are the users of an API, they need to be
+updated to account for changes, which takes time after an update is released.
+ APIs are typically versioned by major number changes such as v1, v2, and v3. This
+number scheme signifies major, potentially breaking changes to the API. An applica-
+tion designed to work with v2 of an API may not be able to consume the v3 API ver-
+sion because it’s too different.
+ But what about API changes that add functionality to an existing API? Suppose
+that functionality is added to the v1 API. In this case, the API can be incremented with
+a point version; feature additions can increment the API to v1.1. This tells developers
+and applications about the additions. The following two techniques cover a couple of
+ways to expose versioned APIs.
+Listing 11.11
+Walking arbitrary JSON
+Switch based on the
+data type for a value
+For each type of data from the
+JSON, displays information about
+the type and value. On objects and
+arrays from the JSON, recursively
+calls printJSON to display the
+properties inside them.
+
+
+CHAPTER 11
+Working with external services
+11.4.1 API version in the URL
+A change in the API version needs to be easy to see and work with. The easier it is for
+developers to see, understand, and consume, the more likely they are to work with it
+and to fully use services.
+ Versioned APIs that easily work with existing tools are also important. The ability
+to quickly test API calls with cURL or Postman, a popular API extension for Chrome,
+makes it easier for developers to develop and test APIs.
+Problem—What is an easily accessible method to provide versioned APIs?
+Solution—Provide the API version in the REST API URL. Instead of providing
+an API of https://example.com/api/todos, add a version to the path so it
+looks like https://example.com/api/v1/todos.
+Discussion—Figure 11.1 illustrates an incredibly popular method for versioning
+APIs: via the URL. Google, OpenStack, Salesforce, and Facebook are a few
+examples that use APIs versioned this way.
+As the following listing shows, implementing this URL structure is done when the
+mapping between path and handlers occurs.
+package main
+import (
+     "encoding/json"
+     "fmt"
+     "net/http"
+)
+type testMessage struct {
+     Message string `json:"message"`
+}
+func displayTest(w http.ResponseWriter,
+r *http.Request) {
+     data := testMessage{"A test message."}
+     b, err := json.Marshal(data)
+     if err != nil {
+            http.Error(w, "Internal Server Error", 500)
+            return
+     }
+     w.Header().Set("Content-Type", "application/json")
+Listing 11.12
+Registering the API path including a version
+https://example.com/api/v1/todos
+The URL preﬁx
+to the APIs
+API version
+Path to
+speciﬁc API
+Figure 11.1
+REST API version
+in the URL
+An example handler
+function returning a
+JSON response
+
+
+11.4
+Versioning REST APIs
+     fmt.Fprint(w, string(b))
+}
+func main() {
+     http.HandleFunc("/api/v1/test", displayTest)
+     http.ListenAndServe(":8080", nil)
+}
+In this example, the way the handler function is mapped to the path doesn’t allow you
+to easily handle different request methods such as POST, PUT, and DELETE. If an end-
+point represents a resource, a single URL typically handles all these requests. You can
+find techniques for handling multiple HTTP methods being mapped to the same
+URL in chapters 2 and 8.
+ Although this is an easy method for passing an API version, it’s not technically
+semantic versioning. A URL doesn’t represent an object. Instead, it represents access-
+ing an object within a version of an API. The tradeoff is developer ease; specifying an
+API version in the URL makes it easier for developers consuming the API.
+11.4.2 API version in content type
+Although the previous technique focused on a method that was easy for developers,
+the approach didn’t give us semantic versioning. Part of the original theory of REST
+was that a URL represented some thing. That could be an object, list, or something
+else. Based on the details in the request, such as the requested content type or HTTP
+method, the response or action to that object would be different.
+Problem—How can API versions be handled in a semantic manner?
+Solution—Instead of referencing JSON in the request and response, use a cus-
+tom content type that includes the version. Instead of working with applica-
+tion/json, use a custom content type such as application/vnd.mytodo.v1
+.json or application/vnd.mytodo.json; version=1.0. These custom types
+specify the intended schema for the data.
+Discussion—To handle multiple API versions at a single path, as seen in figure 11.2,
+the handling needs to consider the content type in addition to any other
+When the handler
+function is mapped
+to the URL, the API
+version is included.
+https://example.com/api/v1/todos
+https://example.com/todos
+The URL preﬁx
+to the APIs
+An API-speciﬁc path
+with the API version
+in the URL
+A single URL represents a resource
+or group of resources. HTML pages,
+JSON listings, and API calls are all
+available at this URL.
+API version
+The URL preﬁx
+to the APIs
+Path to
+speciﬁc API
+Path to
+speciﬁc API
+Figure 11.2
+Differences between semantic URLs and API version in a URL
+
+
+CHAPTER 11
+Working with external services
+characteristics. Listing 11.13 showcases one method for detecting the content
+type and using that to generate the response.
+func main() {
+     http.HandleFunc("/test", displayTest)
+     http.ListenAndServe(":8080", nil)
+}
+func displayTest(w http.ResponseWriter, r *http.Request) {
+     t := r.Header.Get("Accept")
+     var err error
+     var b []byte
+     var ct string
+     switch t {
+     case "application/vnd.mytodos.json; version=2.0":
+            data := testMessageV2{"Version 2"}
+            b, err = json.Marshal(data)
+            ct = "application/vnd.mytodos.json;
+            version=2.0"
+     case "application/vnd.mytodos.json; version=1.0":
+            fallthrough
+     default:
+            data := testMessageV1{"Version 1"}
+            b, err = json.Marshal(data)
+            ct = "application/vnd.mytodos.json;
+            version=1.0"
+     }
+     if err != nil {
+            http.Error(w, "Internal Server Error", 500)
+            return
+     }
+     w.Header().Set("Content-Type", ct)
+     fmt.Fprint(w, string(b))
+}
+type testMessageV1 struct {
+     Message string `json:"message"`
+}
+type testMessageV2 struct {
+     Info string `json:"info"`
+}
+When a client requests the content, it can specify no content type to get the default
+response. But if it wants to use API version 2, it will need to forgo a simple GET request
+and specify more details. The following snippet requests version 2 and prints out the
+response:
+ct := "application/vnd.mytodos.json; version=2.0"
+req, _ := http.NewRequest("GET", "http://localhost:80
+80/test", nil)
+req.Header.Set("Accept", ct)
+Listing 11.13
+Passing the API version in the content type
+Registers a path that can
+have multiple content types
+Detects the
+content type that
+was requested
+Generates different
+content to return,
+based on different
+content types
+If an error occurs in
+creating the JSON,
+returns it
+Sets the content type
+to the type that was
+generated
+Sends the content
+to the requestor
+The content type with the
+API version to request
+Creates a new GET
+request to the server
+created in listing 11.13
+Adds the requested
+content type to the
+request headers
+
+
+11.5
+Working with gRPC
+res, _ := http.DefaultClient.Do(req)
+if res.Header.Get("Content-Type") != ct {
+     fmt.Println("Unexpected content type returned")
+     return
+}
+b, _ := io.ReadAll(res.Body)
+res.Body.Close()
+fmt.Printf("%s", b)
+Although this method provides the capability to have multiple API versions from a sin-
+gle endpoint, you need to be aware of the following considerations:
+Content types in the vnd. namespace are supposed to be registered with the
+Internet Assigned Numbers Authority (IANA).
+When making a request for a nondefault version, you need to add extra steps to
+specify the content type for the version. This adds more work to applications
+consuming the API.
+11.5
+Working with gRPC
+Although REST is the most common communication protocol on the web for dealing
+with API-level communication, there’s another somewhat common alternative that
+has ebbed and flowed as an alternative. gRPC (a recursive acronym meaning gRPC
+Remote Procedure Calls) leans on the concept of Remote Procedure Calls (RPC), an
+old technique for distributed computing. RPCs were originally a system tantamount to
+breaking up a single application and storing various functions in different places,
+making them callable from a distributed system.
+ Google took to this approach early on in its architecture and in 2015 open sourced
+its concept of RPC designed for microservices and HTTP API communication. With it,
+they developed a system—protocol buffers—that attempts to bring formal, safer serial-
+ization for use across multiple languages. The main advantages are
+The serialization format creates, parses, and transmits faster than JSON, which
+can have a real effect at scale.
+Although Go can enforce strong typing through the unmarshaling process, it’s
+not unusual to have to do so in a json.RawMessage or interface{} followed by
+some reflection when the input or output is unknown or variable.
+Some code generation boilerplate behind the scenes prevents you from having
+to build up the scaffolding to handle messages.
+But it may be overkill for small projects because it has some disadvantages as well:
+By default, you can’t process the input and output of requests as with REST, as
+they’re usually not human readable or easily accessible. There are options that
+enable alternate encodings transcoding options, but out of the box, you get
+binary data.
+It’s harder to test within a browser, which lacks the tooling to process and dis-
+play, although the popular tool Postman does have support for gRPC.
+Performs the request
+Verifies that the
+response used the
+expected content type
+Prints the
+response body
+
+
+CHAPTER 11
+Working with external services
+The gRPC protocol is intended to have guaranteed backward compatibility. You
+can extend it, but changing the contract can result in clients being unable to
+process input.
+It’s more complicated to build out than REST APIs.
+You can look at this list as somewhat metaphorical to strongly typed versus weakly
+typed languages. With a strongly typed language, you get safety and compile time but
+trade that for the flexibility and speed of development. For small projects, it’s hard to
+argue for gRPC as a design choice if not planning for those advantages. But even if
+you don’t choose gRPC for building your own APIs, you’re likely to encounter it at
+some point when communicating with external services, and as a consumer, it’s very
+nice to have a guaranteed communication and types coming from the upstream API’s
+design.
+Problem—We want to use an API that has a precise, type-safe contract which is
+more reliable than RESTful APIs.
+Solution—When an API is available as gRPC, we need to communicate using
+protocol buffers, which give us a general definition for producing as well as
+deserializing well-typed data, which we can use as we might use parameters for
+local functions.
+Discussion—Although you’ll sometimes see protobufs described as a schema, it’s
+not self-encompassing. As a client, you’ll need to understand the data that’s
+coming from the server before attempting to unpack it.
+Although plenty of APIs in the wild use gRPC, they almost always require some sort of
+authentication and possibly payment. So to demonstrate how we’d ingest this, we’ll
+build a gRPC application in Python so we can see how to interact with it in Go using
+the same general framework. Let’s do so using our chat/comments app from previous
+chapters. Using gRPC instead of REST will provide a more robust and reliable service
+and will have better defined data than using JSON messages across server-sent events
+or websockets. These are remote procedures, so there’s some value in sharing gener-
+ated code between different languages.
+ The basis of any server starts with a .proto file, which defines the API and payload,
+including message types and routes. This file is written in a syntax called proto3, the
+third version of the protocol buffer language. Its syntax will look very familiar to a Go
+programmer but can of course be used by any language with gRPC support. See the
+following listing.
+syntax = "proto3";
+package chat;
+import "google/protobuf/timestamp.proto";
+option go_package = "./ch11";
+Listing 11.14
+A basic proto3 file for a chat server
+Defines the protobuf format
+Declares the package, used for namespacing
+Imports an external type
+Declares the Go-specific package
+
+
+11.5
+Working with gRPC
+message CommentRequest {
+    string username = 1;
+    string text = 2;
+    google.protobuf.Timestamp sent = 3;
+}
+message CommentResponse {
+    int32 commentLength = 1;
+    int32 previousCommentCount = 2;
+}
+service ChatService {
+  rpc RouteComments(Comment) returns (CommentMeta) {}
+}
+If that looks a lot like Go code, you can thank the common ancestry at Google. Notice
+the option line. There are various flags and options for each supported language, and
+this tells protoc which Go package the protoc must belong to.
+ First, we need to make sure we have protobuf and the Go plugins installed as
+described at https://grpc.io/docs/languages/go/quickstart. When we have protobuf
+installed, to generate our relevant file, we simply run protoc against our .proto file:
+protoc - --go_out=. --go-grpc-out=._protos/chat.proto
+For a server, we can use gRPC tooling to generate Python classes (or similar structures
+for any other language). This code generation reduces a lot of the boilerplate we’d
+have to write if we were building a server from scratch. When we generate our class,
+we can use it in our Python server. With Python (and other supported languages), you
+can switch or include in the out options, like --python_out=. You may need a Python
+library for support, which can be installed via the primary package manager, pip,
+through python -m pip install grpcio.
+NOTE
+The official gRPC has guides for the code generation for each lan-
+guage; among them, the Python example we worked from can be found at
+https://grpc.io/docs/languages/python/basics.
+There isn’t much to this Python example, and if you don’t know the language well,
+don’t worry about what it’s doing specifically because it’s leaning heavily on the gRPC
+generated code.
+import concurrent.futures as futures
+import grpc
+import chat_pb2_grpc
+import chat_pb2
+class ChatServiceServicer(chat_pb2_grpc.ChatServiceServicer):
+  def __init__(self, *args, **kwargs):
+Listing 11.15
+A gRPC server in Python
+Generalized type
+structures
+Defines a gRPC
+service and methods
+Defines a Python
+implementation of the
+method(s) for the service
+
+
+CHAPTER 11
+Working with external services
+    self.comments = []
+    pass
+  def RouteComments(self, request, context):
+    response = { 'commentLength': len(request.text), 'previousCommentCount':
+len(self.comments) }
+    self.comments.append(request)
+    return chat_pb2.CommentResponse(**response)
+def main():
+  print("starting server")
+  server = grpc.server(futures.ThreadPoolExecutor(max_workers=10))
+  chat_pb2_grpc.add_ChatServiceServicer_to_server
+  (ChatServiceServicer(), server)
+  server.add_insecure_port("localhost:50051")
+  server.start()
+  server.wait_for_termination()
+if __name__ == '__main__':
+  main()
+This will set us up with a gRPC endpoint. Now let’s connect to it with Go to see how we
+might connect and send messages against this channel. We generate our Go code as
+we did with Python for listing 11.15. This will produce some .go files that you can look
+at to see the scaffolding gRPC produces. Obviously, don’t modify these files (as the
+comments within the code will remind you).
+package ch11
+import (
+    "context"
+    "fmt"
+    "log"
+    "time"
+    "google.golang.org/grpc"
+    timestamppb "google.golang.org/protobuf/types/known/timestamppb"
+)
+func ConnectToGRPC() error {
+    conn, err := grpc.Dial("localhost:50051",
+    grpc.WithInsecure())
+    if err != nil {
+        return err
+    }
+    client := NewChatServiceClient(conn)
+    meta, err := client.RouteComments(context.Background(),
+    &CommentRequest{Username: "Nick", Text: "Hello World!",
+    Sent: timestamppb.
+Listing 11.16
+Connecting to and using a gRPC service
+Starts the server
+and adds the
+implementation to it
+Defines a Python
+implementation of the
+method(s) for the service
+Creates the
+connection structure
+Adds a new gRPC
+client with the
+connection
+
+
+Summary
+    New(time.Now())})
+    if err != nil {
+        return err
+    }
+    log.Println(fmt.Sprintf("Message length: %d,
+    previous comments: %d", meta.CommentLength,
+    meta.PreviousCommentCount))
+    defer conn.Close()
+    return nil
+}
+Although this is a simple request/response approach, it’s already adding something
+we don’t get from REST: a connection-level guarantee that the input and output is of
+the proper type or structure. Random JSON coming from a client is prone to failure
+in this regard. This is the same sort of type safety you would get from functions within
+the same application. This fixes a huge concern for microservice architectures using
+myriad languages.
+ But things get even more powerful when you realize that by leaning on HTTP/2,
+gRPC can use persistent connections and thus one-way or bidirectional streaming.
+Creating a service that accepts and/or returns a stream of data can be defined as sim-
+ply as follows:
+rpc GetComments() returns (stream CommentResponse) {}
+Although the application logic is still up to you, the scaffolding for an endpoint that
+conforms to a rigid definition and keeps your application relatively type-safe is pro-
+vided for you. You can think of gRPC as an HTTP framework that handles a lot of the
+requirements for a web service that would typically need to be written from scratch.
+Summary
+When network connections fail, we can lean on a few techniques to detect
+errors like timeouts and recover, and we can retry connections and downloads
+when failures do occur.
+Response errors can be passed in a number of ways, and we’re not limited to
+HTTP status codes. We can complement standard responses with custom mes-
+sages, particularly for REST responses.
+We may encounter services that offer gRPC as an alternative to REST; similarly,
+we might implement gRPC in our own services to strengthen the reliability of
+our own API services.
+Calls the remote procedure,
+sending a typed Comment
+structure as an argument
+Prints the response
+to stdout
+
+
+Part 4
+Go in the cloud,
+microservices,
+and advanced topics
+The final part focuses on rounding out the details, edge cases, and deploy-
+ment of applications built in Go.
+ In chapter 12, we’ll dig into cloud deployment and discoverability, including
+containerizing your application with Docker. We’ll also go deeper into protocol
+buffers and gRPC and offer tips for speeding up intracloud communication.
+ Chapter 13 looks at some advanced Go topics that you may not need on a
+day-to-day basis but are powerful tools in your development toolbox. You’ll learn
+about runtime reflection, interoperability with C, and generating code with
+built-in Go code generation. A deeper look at struct annotations will allow you to
+create more user-friendly structures that can interface with network connec-
+tions, configuration files, and more. We’ll discuss some edge cases with the lan-
+guage, including fine-toothed control of garbage collection.
+
+
+Cloud-ready applications
+and communications
+In previous chapters, we worked toward building fully featured applications using
+Go. With development and testing covered, a natural next step is deployment.
+Although we can still deploy applications in myriad ways, sending an application to
+the cloud in some way is the standard. In this chapter, we’ll start with an introduc-
+tion to cloud computing that explores this question and what cloud computing
+looks like in a practical sense. You’ll see how it relates to the traditional models
+working with hardware servers and virtual machines (VMs).
+This chapter covers
+Following best practices for containerization
+and deployment of Go applications
+Keeping microservices highly available in
+the cloud
+Speeding up communications among
+microservices
+Compiling to various operating systems
+and architectures
+Monitoring the Go runtime in an application
+Approaches to handling back pressure in services
+
+
+CHAPTER 12
+Cloud-ready applications and communications
+ Cloud computing is a space filled with various cloud providers, which are easy to
+get locked into. You’ll learn how to avoid vendor lock-in through generalization while
+architecting code in a manner that’s easier to develop and test locally.
+ When you’re ready to deploy and run your application in the cloud, you’ll find sit-
+uations you need to work with, such as learning about the host your application is run-
+ning on, monitoring the Go runtime inside every application, and cross-compiling to
+various systems before deploying. You’ll explore how to do this while avoiding pitfalls
+that can catch you off guard.
+ This chapter rounds out some key cloud and cloud deployment concepts. After
+you’ve completed this chapter and the previous chapters, you’ll have what you need to
+build and operate cloud-based applications written in Go.
+12.1
+Cloud computing overview
+As a marketing term, cloud is somewhat nebulous, a hand-wavy term that implies to
+corporate or business development folks something modern, cheaper, and easier.
+Given the way the term is thrown around, its meaning can be difficult for someone
+unfamiliar with the space to navigate. In this section, you’ll learn about cloud comput-
+ing in a way that you can apply to software development and operations.
+12.1.1 The types of cloud computing
+In the simplest form of cloud computing, part of a system is managed by another
+entity in an abstracted form. This can be someone else in your company, an outside
+service provider, an automation system, or any combination of these. If an outside ser-
+vice provider is providing part of the stack, what parts are they providing? Figure 12.1
+shows the three forms of cloud computing and how they compare to an environment
+where you own the entire stack.
+With a traditional bare-metal server or rack of servers, you need to manage all the com-
+ponents of the stack. When changes are needed, someone needs to order the hardware
+,
+Application
+Application
+Application
+Application
+Data
+Data
+Data
+Data
+Runtime
+Runtime
+Runtime
+Runtime
+Operating system
+Operating system
+Operating system
+Operating system
+Virtualization
+Virtualization
+Virtualization
+Virtualization
+Servers
+Servers
+Servers
+Servers
+Storage
+Storage
+Storage
+Storage
+Networking
+Networking
+Networking
+Networking
+Traditional
+Server/rack
+IaaS:
+Infrastructure as a Service
+PaaS:
+Platform as a Service
+SaaS:
+Software as a Service
+Managed by you
+Managed by you
+Managed
+by you
+Service managed
+Service managed
+Service managed
+Figure 12.1
+The types of cloud computing
+
+
+12.1
+Cloud computing overview
+wait for it to show up, connect it, and manage it. Cloud computing exists to mitigate a
+bit of the cost of manual server management, although it often comes at a literal cost.
+INFRASTRUCTURE AS A SERVICE
+Accessing Infrastructure as a Service (IaaS) is different from previous forms of work-
+ing with VMs. Services have been providing VMs and co-located servers for years, but
+when IaaS came into being, the change was the way those servers were used and
+accessed. Under an IaaS setup, virtual servers are created and destroyed as needed.
+When you need a server, an abstraction of one is created. Creating and working with
+IaaS resources happens via a programmable API, typically a REST API or command-
+line interface (CLI) app that can be used to manage the resources.
+ IaaS is about more than servers. Storage, networking, and other forms of infra-
+structure are accessible and configurable in the same way. As the name suggests, the
+infrastructure is the configurable part. The operating system, runtime environment,
+application, and data are all managed by cloud consumers and their management
+software. Examples of an IaaS include services provided by Amazon Web Services (AWS),
+Microsoft Azure, and Google Cloud.
+PLATFORM AS A SERVICE
+Platform as a Service (PaaS) differs from IaaS in some important ways. One of the sim-
+plest is how you work with it. To deploy an application to a platform, you use an API to
+deploy your application code and supporting metadata, such as the language the
+application was written in. The platform takes this information and then builds and
+runs the application.
+ In this model, the platform manages the operating system and runtime. You don’t
+need to start VMs, choose their resource sizes, choose an operating system, or install
+system software. Handling those tasks is left up to the platform. You gain back the time
+typically spent managing systems so you can focus on other tasks, such as working on
+your application.
+ Heroku, DigitalOcean, and Engine Yard are three of the most widely known exam-
+ples of a PaaS, although the major cloud providers AWS, Google, and Azure have com-
+petitive offerings in the space.
+12.1.2 Containers and cloud-native applications
+When Docker, the container management software, came into the public eye, using
+containers to run and distribute applications became an extremely popular way to
+spin up relatively lightweight environments without the bloat of traditional VM soft-
+ware. Containers are different from VMs or traditional servers in that they define
+exactly what’s needed to build an application environment from start to finish and are
+deterministic when built and deployed.
+ Figure 12.2 compares VMs to containers. On the left is a system, going all the way
+down to the hardware server, that runs VMs. On the right is a separate system running
+containers. Each is running two applications as workloads, with App A being scaled
+horizontally to have two instances, for a total of three workload instances.

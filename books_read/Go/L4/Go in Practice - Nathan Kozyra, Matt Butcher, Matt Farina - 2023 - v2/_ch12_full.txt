@@ -1,0 +1,1169 @@
+CHAPTER 12
+Cloud-ready applications and communications
+As demonstrated with shell commands, this is similar to and inspired by the UNIX
+philosophy “Do one thing and do it well.”
+ Imagine that you’re building a service that transcodes media from one format to
+another. A user can upload media, the format is transcoded, and later the media in
+the new format is available for download. This could be built as a monolithic applica-
+tion in which all elements are part of the same application, or as microservices with
+different functional parts that are their own applications. Figure 12.3 shows a simple
+transcoding application built using microservices.
+In this application, media is uploaded through the user interface to the API server.
+The API server puts the media in the file store and places a job to transcode the media
+in a message queue. Transcoders pull the job from the message queue, transcode the
+media into a new format, place the new file in file storage, and place a job in the
+queue to notify the user that transcoding is complete. From the user interface, the
+user can retrieve the transcoded file. The user interface communicates with the API
+server to retrieve the file from storage.
+ The following listing shows how a single microservice—in this case, the media
+retrieval job—can be tersely self-contained despite being a part of a much larger appli-
+cation in this architecture. In this toy example, we grab a media job from a Kafka mes-
+sage queue and consume it to perform another operation.
+package main
+import (
+    "context"
+    "log"
+    "os"
+    "time"
+    kafka "https://github.com/segmentio/kafka-go"
+)
+Listing 12.2
+An example microservice
+User
+User
+interface
+API server
+Message queue
+Transcoder
+Notiﬁcations
+File storage
+Each part of a transcoding
+application is a separate
+microservice that
+communicates with
+other parts via APIs.
+Figure 12.3
+A simple transcoding application broken into microservices
+
+
+12.2
+Microservices and high availability
+func main() {
+    topic := "media"
+    kafkaHost := os.Getenv("KAFKA_HOST")
+    if kafkaHost == "" {
+        panic("KAFKA_HOST environment variable not set")
+    }
+    conn, err := kafka.DialLeader
+    (context.Background(), "tcp", kafkaHost, topic, 0)
+    if err != nil {
+        panic(err)
+    }
+    conn.SetReadDeadline(time.Now().Add(30 * time.Second))
+    batch := conn.ReadBatch(10e3, 1e6)
+    message := make([]byte, 10e3) // 10KB max per message
+    for {
+        n, err := batch.Read(message)
+        if err != nil {
+            break
+        }
+    }
+    log.Println(string(message))
+    // get details of media upload, transcode media
+    // or pass to another service
+    batch.Close()
+    conn.Close()
+}
+The last step in that process is something of a design decision. Relying on message
+queues means that sometimes the communication happens exclusively on them. But
+some microservice architectures eschew queues other than as a source of truth for log-
+ging and retries, and sequentially hand off jobs to a next step in a larger process.
+ Each of these microservices can be written in a different programming lan-
+guage, reused on different applications, and even be consumed as a service. File
+storage, for example, could be an object storage designed as its own Software as a
+Service (SaaS).
+ Scaling each of these services depends on the needs of the service. The transcoder
+service, for example, can scale up or down depending on how much media needs to be
+transcoded. The API server and notifications service can scale differently from the
+transcoder, depending on the amount of resources they need. These scaling require-
+ments can change from hour to hour or minute to minute, so logging can go a long way
+toward designing approaches that most efficiently deal with these changes.
+ Users have the expectation that services will never go offline. The days of mainte-
+nance windows during which services aren’t available are in the past. Accidental out-
+ages can reduce user trust and lead to lost income. One advantage of microservices is
+that each service can be made highly available in a method most appropriate for that
+service. Keeping an API server highly available is different from keeping a message
+queue highly available, for example.
+Connects to Kafka
+instance via TCP
+Creates a batch
+for consuming
+messages within
+a window of sizes
+Consumes
+messages
+Performs a next
+step on the task
+
+
+CHAPTER 12
+Cloud-ready applications and communications
+12.3
+Communicating among services
+One of the key parts of a microservice architecture is communication among the
+microservices. If not done well, this can become a bottleneck in the performance of
+an application, as services will connect in a one-to-one or one-to-many system.
+ In the transcoding example in figure 12.3, four microservices are communicat-
+ing with one another when uploading a new piece of media to be transcoded. If
+these used REST to communicate and the communications were over Transport
+Layer Security (TLS), which is typical, a significant amount of time would be spent
+in network communications.
+ The performance of these communications becomes more important when you
+use an increasing number of microservices. Companies such as Google, which are
+known for using microservice architectures, have gone so far as to create new, faster
+ways to communicate among microservices and build their own networking layer that
+outperforms what’s being sold on the market. We saw that with the introduction of
+gRPC in chapter 11.
+ Faster communication is something you can bring to your applications. As you’ll
+see in this chapter, it isn’t that complicated to implement. We’ll expand on previous
+examples to use REST in a more performant way.
+12.3.1 Making REST faster
+REST is the most common form of communication used in web and cloud services.
+Although transferring representational state data over HTTP is common, it’s not
+efficient or as fast as other protocols. Most REST frameworks and approaches aren’t
+optimized out of the box, either. This often makes the communication layer of a
+microservice architecture an easy place to speed up application performance.
+REUSING CONNECTIONS
+It’s not unusual for each HTTP request to be made over its own connection. Negotiat-
+ing each connection takes time, including the time to negotiate TLS for secure com-
+munications. Next, TCP slow-start ramps up as the message is communicated. Slow-
+start is a congestion-control strategy designed to prevent network congestion and to
+better distribute traffic. As a slow-start ramps up, a single message may take multiple
+round-trips between the client and server to communicate.
+Problem—When each request is transmitted over its own connection, a signifi-
+cant amount of time is lost to network communication. How can an application
+mitigate as much of this lost time as possible?
+Solution—Reuse connections. Multiple HTTP requests can be made over a sin-
+gle connection. That connection needs to be negotiated and ramped up for
+slow-start only once. After passing the first message, others pass more quickly over
+the persistent connection instead of requiring a new one.
+Discussion—Whether your application is using HTTP/2 (first available in Go
+1.6) or HTTP/1 and HTTP/1.1 for your communications, you can reuse
+
+
+12.3
+Communicating among services
+connections. Go tries to reuse connections out of the box, and antipatterns
+in the application are most likely to bypass this efficiency.
+When connections are reused, as shown in figure 12.4, the time spent opening and
+closing connections is reduced. Because TCP slow-start has already happened, the
+time to communicate future messages is faster as well. This is why the second, third,
+and fourth messages take less time when the connection is reused.
+The server included in the net/http package provides HTTP keep-alive support. Most
+systems support TCP keep-alive needed to reuse connections out of the box. As of
+Go 1.6, the net/http package includes transparent support for HTTP/2, which has
+other communication advantages that can make communication even faster.
+NOTE
+HTTP keep-alive and TCP keep-alive are different. HTTP keep-alive is
+a feature of the HTTP protocol a web server needs to specifically implement.
+The web server needs to periodically check the connection for incoming
+HTTP requests within the keep-alive time span. When no HTTP request is
+received within that time span, it closes the connection. Alternatively, TCP
+keep-alive is handled by the operating system in TCP communications. Dis-
+abling keep-alive with DisableKeepAlives in Go disables both forms.
+Most of the problems preventing connection reuse happen in the clients used to com-
+municate with HTTP servers. The first and possibly most widespread problem occurs
+when custom transport instances are used and keep-alive is turned off.
+ When the basic functions in the net/http package are used, such as http.Get() or
+http.Post(), they use http.DefaultClient, which is configured with keep-alive enabled
+and set up for a default of 30 seconds. When an application creates a custom client but
+doesn’t specify a transport, http.DefaultTransport is used. http.DefaultTransport is
+used by http.DefaultClient and instantiated with keep-alive enabled.
+Open
+Open
+Open
+Open
+Open
+Close
+Close
+Close
+Close
+Close
+Each request using a
+different connection
+All requests sharing
+the same connection
+Time
+Server
+Server
+Client
+Client
+Figure 12.4
+Messages being passed with and without connection reuse
+
+
+CHAPTER 12
+Cloud-ready applications and communications
+ Transporting without keep-alive can be seen in open source applications, examples
+online, and even the Go documentation. The Go documentation has an example that
+reads as follows:
+tr := &http.Transport{
+     TLSClientConfig:    &tls.Config{RootCAs: pool},
+     DisableCompression: true,
+}
+client := &http.Client{Transport: tr}
+resp, err := client.Get("https://example.com")
+In this example, a custom Transport instance is used with altered certificate authori-
+ties and compression disabled. In this case, keep-alive isn’t enabled. There are myriad
+reasons someone might choose to disable keep-alive: to constrain resources, yield to a
+load balancer, or to mitigate denial-of-service attacks, to name a few. The following
+listing provides a similar example, the difference being that keep-alive is enabled.
+tr := &http.Transport{
+     TLSClientConfig:    &tls.Config{RootCAs: pool},
+     DisableCompression: true,
+     Dial: (&net.Dialer{
+            Timeout:   30 * time.Second,
+            KeepAlive: 30 * time.Second,
+     }).Dial,
+}
+client := &http.Client{Transport: tr}
+resp, err := client.Get("https://example.com")
+One part of working with http.Transport in this way can be confusing. Setting its
+DisableKeepAlives property to true disables connection reuse. Setting DisableKeep-
+Alives to false doesn’t mean that connections are explicitly reused. It means you
+can opt in to either HTTP or TCP keep-alive independently.
+ Unless you have a reason to disable keep-alive, like the ones noted above, we sug-
+gest you use it. When making many HTTP requests to the same endpoint, it generally
+provides for faster performance.
+ The other behavior that can prevent connection reuse occurs when the body of a
+response isn’t closed. Prior to HTTP/2, pipelining was almost never implemented or
+used. Pipelining allows multiple requests and their responses to be communicated in
+parallel rather than in serial, as you can see in figure 12.5. Prior to HTTP/2, one
+request and response needed to be completed before the next could be used. The
+body of the response would need to be closed before another HTTP request and
+response could use the connection.
+ The following listing illustrates a common case of one response body not being
+closed before another HTTP request is made.
+Listing 12.3
+Custom transport with connection reuse
+The Dial function is configured
+with a keep-alive and timeout.
+This is the same configuration
+as the http.DefaultTransport.
+
+
+12.3
+Communicating among services
+func main() {
+     r, err := http.Get("http://example.com")
+     if err != nil {
+            …
+     }
+     defer r.Body.Close()
+     o, err := ioutil.ReadAll(r.Body)
+     if err != nil {
+            …
+     }
+     // Use the body content
+     r2, err := http.Get("http://example.com/foo")
+     if err != nil {
+            …
+     }
+     defer r2.Body.Close()
+     o, err = ioutil.ReadAll(r2.Body)
+     if err != nil {
+            …
+     }
+…
+}
+In this case, using defer isn’t optimal. Instead, the body should be closed when it’s no
+longer needed. The following listing illustrates the same example, with the connec-
+tion being shared because the body is closed.
+func main() {
+     r, err := http.Get("http://example.com")
+     if err != nil {
+            …
+     }
+Listing 12.4
+Failing to close an HTTP response body
+Listing 12.5
+Using and closing the HTTP response quickly
+Open
+Close
+Open
+Close
+In pipelining,
+requests are concurrent.
+Requests in serial,
+one after another
+Server
+Client
+Server
+Client
+Time
+Figure 12.5
+HTTP Pipelining compared to serial requests
+Makes an HTTP
+request and gets
+a response
+Defers closing the
+body until the main()
+function exits
+Makes a second HTTP
+request. Because the body
+isn’t yet closed on the
+first, a new connection
+needs to be made.
+Makes an HTTP
+request and gets
+a response
+
+
+CHAPTER 12
+Cloud-ready applications and communications
+     o, err := ioutil.ReadAll(r.Body)
+     if err != nil {
+                 …
+     }
+     r.Body.Close()
+     // Use the body content
+     r2, err := http.Get("http://example.com/foo")
+     if err != nil {
+            …
+     }
+     o, err = ioutil.ReadAll(r2.Body)
+     if err != nil {
+                 …
+     }
+     r2.Body.Close()
+     …
+}
+This subtle change to the application can affect how network connections behind the
+scenes are happening and can improve the overall performance of an application,
+especially as it scales.
+FASTER JSON MARSHAL AND UNMARSHAL
+In general, most of the communication over contemporary REST involves passing
+data as JSON. The JSON marshaling and unmarshaling provided by the encoding/
+json package uses reflection to figure out values and types each time. Reflection, pro-
+vided by the reflect package, takes time to discern types and values each time a mes-
+sage is acted on. If you’re repeatedly acting on the same structures, quite a bit of time
+will be spent reflecting. We’ve touched on reflection a bit, and it’s covered in more
+detail in chapter 13.
+Problem—Rather than figuring out the types of data whenever JSON is mar-
+shaled or unmarshaled, how can the type be figured out once and skipped on
+future passes?
+Solution—Use a package able to generate code that can marshal and unmarshal
+the JSON. The generated code skips reflection and provides a faster execution
+path with a smaller memory footprint.
+Discussion—Reflection in Go is fairly fast. It does allocate memory that needs to
+be garbage-collected, and there’s a small computational cost. When using opti-
+mized generated code, those costs can be reduced, and you can see a perfor-
+mance improvement.
+Several packages are designed to do this. The following listing looks at the package
+github.com/ugorji/go/codec, which is designed to work with Binc, MessagePack,
+and Concise Binary Object Representation (CBOR) in addition to JSON. Binc,
+MessagePack, and CBOR are alternative data exchange formats, though none is as
+popular as JSON.
+Copies the response body to
+another instance and closes
+the body when done with it
+Makes another HTTP
+request. This request
+reuses the connection
+made during the
+previous request.
+
+
+12.3
+Communicating among services
+//go:generate codecgen -o user_generated.go user.go
+package user
+type User struct {
+     Name  string `codec:"name"`
+     Email string `codec:",omitempty"`
+}
+A struct marked up for the codec package is almost the same as for the json package.
+The difference is in the name codec. To generate code, the codecgen command needs
+to be installed. This can be done as follows:
+$ go get -u github.com/ugorji/go/codec/codecgen
+After codecgen is installed, you can use it to generate code on this file, named
+user.go, by executing the following command:
+$ codecgen -o user_generated.go user.go
+The output file is named user_generated.go. In the generated file, you’ll notice that
+two public methods have been added to the User type: CodecEncodeSelf and Codec-
+DecodeSelf. When these are present, the codec package uses them to encode or decode
+the type. When they’re absent, the codec package falls back to doing these at runtime.
+ When the codecgen command is installed, it can be used with go generate. go
+generate will see the first comment line of the file, which is specially formatted for it,
+and execute codecgen. To use go generate, run the following command:
+$ go generate ./...
+NOTE
+Chapter 13 covers generators and reflection in more depth.
+After the User type is ready for use, the encoding and decoding can be incorporated
+into the rest of the application, as shown in the next listing.
+jh := new(codec.JsonHandle)
+u := &user.User{
+     Name:  "Inigo Montoya",
+     Email: "inigo@montoya.example.com",
+}
+Listing 12.6
+A struct annotated for codec
+Listing 12.7
+Encoding an instance to JSON with codec
+A code comment for the go
+generate command to know how
+to generate code from this file
+codec can’t generate
+code for main
+packages. Here, the
+user functionality is
+in the user package.
+The User struct is annotated
+for codec instead of for JSON.
+The Name property will be found
+as “name” in the JSON file. The
+difference is the case of the name.
+The codec annotation will omit Email
+when it generates JSON output and the
+Email value is empty.
+Creates a new JSON handler for the encoder. The codec
+package has handlers for each type it works with.
+Creates an instance of
+User populated with data
+
+
+CHAPTER 12
+Cloud-ready applications and communications
+var out []byte
+err := codec.NewEncoderBytes(&out, jh).Encode(&u)
+if err != nil {
+     …
+}
+fmt.Println(string(out))
+Here’s the output of this code:
+{"name":"Inigo Montoya","Email":"inigo@montoya.example.com"}
+Notice that the name key is lowercase, whereas the Email key has an uppercase first
+letter. The User type, defined in listing 12.6, has uppercase property names leading to
+key names that directly reflect that. But the Name property has a custom key of name
+used here.
+ The byte slice with the JSON that was created in listing 12.7 can be decoded into
+an instance of User, as shown in the following listing.
+var u2 user.User
+err = codec.NewDecoderBytes(out, jh).Decode(&u2)
+if err != nil {
+     …
+}
+fmt.Println(u2)
+Although the API to github.com/ugorji/go/codec is different from the encoding/json
+package in the standard library, it’s simple enough to be easily used.
+ Code generation is a somewhat common approach to solving this problem, but
+you can see it adds more steps to your process. For something a little closer to optimiz-
+ing the intent of the standard library, we can look to Sonic, from Bytedance, perhaps
+most known as the developer of TikTok. They noticed enormous amounts of time
+being lost to JSON processing and saw abnormalities in processing depending on
+input size(s). In short, their approach is a just-in-time (JIT) compiler that works as a
+drop-in replacement and can be a big boost when you need to handle the volume of
+JSON data that could create bottlenecks. Because no application is required to imple-
+ment this, you can just add the package as normal:
+$ go get github.com/bytedance/sonic
+Listing 12.8
+Decoding JSON into an instance of a type
+Creates a byte slice
+to store the output
+in. This will be the
+generated JSON from
+the instance of User.
+Encodes the instance of
+User into the output using
+the JSON handle. The
+codec package does this
+in two steps that can be
+done together.
+Converts the byte
+slice to a string
+and prints it
+Creates a variable to
+hold the decoded JSON
+Decodes the JSON by using
+the JSON handler, both created
+in listing 12.6, into the new
+instance of the User type. The
+decoder uses two steps that can
+be used together. The decoder
+can reuse the JSON handler.
+Prints the populated
+instance of User
+
+
+12.4
+Running on cloud servers
+From there, the implementation is somewhat close to what you would expect. The
+next listing shows how we might process the JSON from listings 12.7 and 12.8.
+package main
+import (
+    "log"
+    "strings"
+    "github.com/bytedance/sonic"
+)
+func main() {
+    var receiver = []map[string]interface{}{}
+    jsonData := strings.NewReader(`
+        [
+            { "email": "inigo@montoya.example.com", "name":
+            "Inigo Montoya" },
+            { "email": "fezzik@example.com", "name": "Fezzik" },
+        ]
+    `)
+    decoder := sonic.ConfigDefault.NewDecoder(jsonData)
+    decoder.Decode(&receiver)
+    for k := range receiver {
+        log.Println(receiver[k])
+    }
+}
+There are some minor caveats to using a package like this. Build support is limited
+to certain processors, so building outside them, as with Apple’s M-series chips, will
+be slower.
+12.4
+Running on cloud servers
+When an application is being built to run in the cloud, at times you may know all the
+details of the environment, but at other times information will be limited due to the way
+the cloud provider implements virtualization. Building applications that are tolerant to
+unknown environments will aid in the detection and handling of problems that can arise.
+ At the same time, you may develop applications on one operating system and
+architecture but need to operate them on another. It’s quite likely that you will
+develop an application on Windows or macOS and operate it on Linux in production.
+In this section, you’ll explore how to avoid pitfalls that can come from assuming too
+much about an environment.
+12.4.1 Performing runtime detection
+It’s usually a good idea to detect the environment at runtime rather than to assume
+characteristics of it in your code. Because Go applications communicate with the kernel
+,
+Listing 12.9
+JSON decoding with Sonic
+Imports the
+Sonic package
+Creates a receiver similar
+to a struct we might use
+for standard encoding
+Creates a
+decoder with
+our JSON data
+Decodes into
+the structure
+Iterates through the structure and
+prints the value to standard out
+
+
+CHAPTER 12
+Cloud-ready applications and communications
+one thing you need to know is that if you’re on Linux, Windows, or another system,
+details beyond the kernel that Go was compiled for can be detected at runtime. This
+allows a Go application to run on Red Hat Linux, Ubuntu, or any other supported OS.
+Or a Go application can tell you whether a dependency is missing, which makes trou-
+bleshooting much easier.
+GATHERING INFORMATION ON THE HOST
+Cloud applications can run in multiple environments, such as development, testing,
+and production environments. They can scale horizontally, with the potential to have
+many instances dynamically scheduled. They can run in multiple data centers at the
+same time. Being run in this manner makes it difficult to assume information about
+the environment or pass in all the details with application configuration. Instead of
+knowing through configuration or assuming host environment details, it’s possible to
+detect information about the environment at the application level.
+Problem—How can information about a host be detected within a Go application?
+Solution—The os package enables you to get information about the underlying sys-
+tem. Information from the os package can be combined with information detected
+through other packages, such as net, or from calls to external applications.
+Discussion—The os package has the capability to detect a wide range of details
+about the environment. The following list highlights several examples:
+–
+os.Hostname() returns the kernel’s value for the hostname.
+– The process ID for the application can be retrieved with os.Getpid().
+– Operating systems can and do have different path and path list separators.
+Using os.PathSeparator or os.PathListSeparator instead of hardcoded
+characters allows applications to work with the system they’re running on.
+– To find the current working directory, use os.Getwd().
+Information from the os package can be used in combination with other information
+to know more about a host. If you try to look up the IP addresses for the machine an
+application is running on by looking at all the addresses associated with all the inter-
+faces to the machine, you can end up with a long list. That list would include the local-
+host loop-back and IPv4 and IPv6 addresses, even when one case may not be routable
+to the machine. To find the IP address to use, an application can look up the host-
+name, known by the system, and find the associated IP address. The following listing
+shows this method in action.
+func main() {
+     name, err := os.Hostname()
+     if err != nil {
+            fmt.Println(err)
+            return
+     }
+Listing 12.10
+Looking up the host’s IP addresses via the hostname
+Retrieves the
+hostname per
+the kernel
+
+
+12.4
+Running on cloud servers
+     addrs, err := net.LookupHost(name)
+     if err != nil {
+            fmt.Println(err)
+            return
+     }
+     for _, a := range addrs {
+            fmt.Println(a)
+     }
+The system knows its own hostname, and looking up the address for that hostname
+will return the local one. This is useful for an application that can be run in a variety
+of environments or scaled horizontally. The hostname and address information could
+change or have a high rate of variability.
+ Go applications can be compiled for a variety of operating systems and run in
+various environments. When applications can detect information about their envi-
+ronment rather that assuming it, it removes the opportunity for bugs or other unex-
+pected situations.
+DETECTING DEPENDENCIES
+In addition to communicating with the kernel or base operating system, Go applica-
+tions can call other applications on the system. This is typically accomplished with the
+os/exec package from the standard library. But what happens if the application being
+called isn’t installed? We can sometimes get nebulous errors from the operating sys-
+tem. Assuming that a dependency is present can lead to unexpected behavior, and a
+failure to detect any problems in a reportable way makes detecting the problem in
+your application more difficult.
+Problem—How can you better predict success calling another application before
+doing so?
+Solution—Prior to calling a dependent application for the first time, check
+whether the application is installed and available for you to use. If the applica-
+tion isn’t present, log an error to help with troubleshooting.
+Discussion—We’ve already talked about how Go applications can run on a vari-
+ety of operating systems. If an application is compiled for Linux, it could be
+running on a variety of distributions with different applications installed. If
+your application relies on another application, it may or may not be installed.
+This becomes more complicated with the number of distributions available and
+used in the cloud. Some specialized Linux distributions for the cloud are small,
+with limited or virtually no commands installed.
+Any time a cloud application relies on another application being installed, it should
+validate that dependency and log the absence of the missing component. This is rela-
+tively straightforward to do with the os/exec package. The following listing provides a
+function to perform detection.
+Looks up the IP
+addresses associated
+with the hostname
+Prints each of the IP addresses
+
+
+CHAPTER 12
+Cloud-ready applications and communications
+func checkDep(name string) error {
+     if _, err := exec.LookPath(name); err != nil {
+            es := "Could not find '%s' in PATH: %s"
+            return fmt.Errorf(es, name, err)
+     }
+     return nil
+}
+This function can be used within the flow of an application to check whether a depen-
+dency exists. The following snippet shows an example of checking and acting on an error:
+err := checkDep("fortune")
+if err != nil {
+     log.Fatalln(err)
+}
+fmt.Println("Time to get your fortune")
+In this example, the error is logged when a dependency isn’t installed. Logging isn’t
+always the action to take. There may be a fallback method to retrieve the missing
+dependency or an alternative dependency to use. Sometimes, a missing dependency
+may be fatal to an application, and other times, it can skip an action when a depen-
+dency isn’t installed. When you know something is missing, you can handle the situa-
+tion appropriately.
+ Some of this can be mitigated in the containerization process as well. As part of a
+Docker build, we should attempt to gather and install all the needed dependencies.
+But this on its own won’t ensure the build is functional, which is why building these
+types of checks directly into a cloud-ready application will give your application a
+stronger safety net.
+12.4.2 Building for the cloud
+There’s no one hardware architecture or operating system for the cloud. You may
+write an application for the AMD64 architecture running on Windows and later find
+you need to run it on ARM8 and a Linux distribution. Building for the cloud requires
+designing to support multiple environments, which is easier handled up front in
+development and is something the standard library can help you with.
+ In addition to the variety of environments in cloud computing, it’s not unusual to
+develop a Go application on Microsoft Windows or Apple’s macOS and want to oper-
+ate it on a Linux distribution in production, or to distribute an application via the
+cloud with versions for Windows, macOS, and Linux. Frequently, an application is
+developed in one operating system but needs to run in a different one.
+Problem—How can you compile for architectures and operating systems other
+than the one you’re currently on?
+Listing 12.11
+Function to check whether the application is available
+Checks whether the
+passed-in dependency is
+in one of the executable
+PATHs. If not present, an
+error is generated.
+Returns an error if the
+dependency isn’t found
+Returns nil if there
+was no error
+
+
+12.4
+Running on cloud servers
+Solution—The go toolchain provides the ability to cross-compile to other archi-
+tectures and operating systems. In addition to the go toolchain, the third-party
+tool gox allows you to cross-compile multiple binaries in parallel. You also can
+use packages such as filepath to handle differences between operating systems
+instead of hardcoding values, such as the POSIX path separator /.
+Discussion—The compiler installed with the go toolchain can cross-compile out
+of the box. This is done by setting the GOARCH and GOOS environment variables
+to specify the architecture and operating system. GOARCH specifies the hardware
+architecture such as amd64, 386, or arm, whereas GOOS specifies the operating
+system such as windows, linux, darwin, or freebsd.
+The following example provides a quick illustration:
+$ GOOS=windows GOARCH=386 go build
+This tells go to build a Windows binary for the 386 architecture. Specifically, the
+resulting executable will be of the type PE32 executable for MS Windows (console)
+Intel 80386 32-bit.
+WARNING
+If your application is using cgo to interact with C libraries, complica-
+tions can arise. Be sure to test the applications on all cross-compiled platforms.
+If you want to compile to multiple operating systems and architectures, one option is
+the aforementioned gox, which enables building multiple binaries concurrently, as
+shown in figure 12.6.
+You can install gox as follows:
+$ go get -u github.com/mitchellh/gox
+gox
+linux amd64 build
+linux 386 build
+windows amd64 build
+darwin amd64 build
+...
+The operating system and architecture
+combinations to build are passed into gox.
+The binaries are built concurrently.
+Figure 12.6
+gox builds binaries for different operating systems and architectures concurrently.
+
+
+CHAPTER 12
+Cloud-ready applications and communications
+When gox is installed, you can create binaries in parallel by using the gox command,
+similar to go build. What gox brings to the table is the parallelized builds. If you don’t
+need this, the go toolchain will work out of the box. The following listing provides an
+example of building an application for macOS, Windows, and Linux on both the
+AMD64 and 386 architectures.
+$ gox \
+  -os="linux darwin windows " \
+  -arch="amd64 386" \
+  -output="dist/{{.OS}}-{{.Arch}}/{{.Dir}}" .
+When building binaries in other operating systems—especially when operating them
+in the cloud—it’s a best practice to test the result before deploying. This way, any envi-
+ronment bugs can be detected before deploying to that environment. You can do this
+with multiple Dockerfile implementations, but compiling locally is definitely a faster
+and more lightweight approach.
+ Besides compiling for different environments, differences between operating systems
+need to be handled within an application. Go has two useful parts to help with that.
+ First, packages provide a single interface that handles differences behind the
+scenes. One of the most well-known is the difference between path and path list sep-
+arators. On Linux and other POSIX-based systems, these are / and :, respectively.
+On Windows, they’re \ and ;. Instead of assuming these, use the path/filepath
+package to make sure any paths are handled safely. This package provides features
+such as the following:
+
+filepath.Separator and filepath.ListSeparator—Represent the appropri-
+ate path and list separator values on any operating system the application is
+compiled to. You can use these when you need direct access to the separators.
+
+filepath.ToSlash—Takes a string representing a path and converts the separa-
+tors to the correct value.
+
+filepath.Split and filepath.SplitList—Split a path into its parts or split a
+list of paths into individual paths. Again, the correct separators will be used.
+
+filepath.Join—Joins a list of parts into a path, using the correct separator for
+the operating system.
+The go toolchain also has build tags that allow code files to be filtered, based on
+details such as operating system and architecture when being compiled. A build tag is
+at the start of a file and looks like this:
+// +build !windows
+Listing 12.12
+Cross-compiling an application with gox
+Uses the os flag to specify
+multiple operating systems
+The arch flag is used to specify
+one or more architectures.
+A template is used to specify the
+output location. This way, binaries
+with the same name end up in
+different identifying directories.
+
+
+12.5
+Performing runtime monitoring
+This special comment tells the compiler to skip this file on Windows. Build tags (or
+build constants) can have multiple values. The following example skips building a file
+on Linux or macOS.
+// +build !linux,!darwin
+followed by a newline. These values are linked to GOOS and GOARCH options.
+ Go also provides the ability to name files in such a way that they’re picked up for
+the different environments. foo_windows.go would be compiled and used for a Win-
+dows build, and foo_386.go would be used when compiling for the 386 (sometimes
+called x86) hardware architecture. These features enable applications to be written
+for multiple platforms while working around their differences and tapping into what
+makes them unique.
+12.5
+Performing runtime monitoring
+Monitoring is a critical part of operating applications in production. It’s typical to
+monitor running systems to find problems, to detect when the load has reached levels
+that require scaling up or down, or to understand what’s going on within an applica-
+tion to speed it up.
+ The easiest way to monitor an application is to write errors, problems, and other
+details to a log. The log subsystem can write to disk and another application can read
+it or the log subsystem can push it out to a monitoring application.
+ Go applications include more than application code or code from libraries. The
+Go runtime sits in the background, handling the concurrency, garbage collection,
+threads, and other aspects of the application.
+ The runtime has access to a wealth of information. That includes the number of
+processors seen by the application, current number of goroutines, details on memory
+allocation and use, details on garbage collection, and more. This information can be
+useful for identifying problems within the application or triggering events such as hor-
+izontal scaling. As we did with file access, we could also generalize our logging process
+to store logs directly in the respective cloud provider’s logging service.
+Problem—How can your application log or otherwise monitor the Go runtime?
+Solution—The runtime and runtime/debug packages provide access to the infor-
+mation within the runtime. Retrieve information from the runtime by using these
+packages and write it to the logs or other monitoring service at regular intervals.
+Discussion—Imagine that an imported library update includes a serious bug
+that causes the goroutines it created to stop going away. The goroutines slowly
+accumulate so that millions of them are being handled by the runtime when it
+should have been hundreds. Monitoring the runtime enables you to see when
+something like this happens.
+When an application starts up, it can start a sidecar goroutine to monitor the runtime
+and write details of resource use to a log. Running in a goroutine allows you to run the
+
+
+CHAPTER 12
+Cloud-ready applications and communications
+monitoring and write to the logs concurrently, alongside the rest of the application, as
+the following listing shows.
+func monitorRuntime() {
+     log.Println("Number of CPUs:", runtime.NumCPU())
+     m := &runtime.MemStats{}
+     for {
+            r := runtime.NumGoroutine()
+            log.Println("Number of goroutines", r)
+            runtime.ReadMemStats(m)
+            log.Println("Allocated memory", m.Alloc)
+            time.Sleep(10 * time.Second)
+     }
+}
+func main() {
+     go monitorRuntime()
+     i := 0
+     for i < 40 {
+            go func() {
+                   time.Sleep(15 * time.Second)
+            }()
+            i = i + 1
+            time.Sleep(1 * time.Second)
+     }
+}
+It’s important to know that calls to runtime.ReadMemStats momentarily halt the Go
+runtime, which can have a performance effect on your application. You don’t want to
+do this often, and you may want to perform operations that halt the Go runtime only
+when in a debug mode.
+ Organizing your runtime monitoring this way allows you to replace writing to the log
+with interaction with an outside monitoring service. If you were using one of the services
+from a third-party monitoring service, you would send the runtime data to their API or
+invoke a library to do this. The runtime package has access to a wealth of information:
+Information on garbage collection, including when the last pass was, the heap
+size that will cause the next to trigger, how long the last garbage collection pass
+took, and more
+Heap statistics, such as the number of objects it includes, the heap size, how
+much of the heap is in use, and so on
+The number of goroutines, processors, and cgo calls
+We’ve found that monitoring the runtime can provide unexpected knowledge and
+highlight bugs. It can help you find goroutine problems, memory leaks, or other
+Listing 12.13
+Monitoring an application’s runtime
+A function to
+monitor the
+runtime
+When monitoring starts,
+reports the number of
+processors available
+Loops continuously,
+pausing for 10
+seconds between
+iterations
+Logs the number of
+goroutines and amount
+of allocated memory
+Loops continuously,
+pausing for 10 seconds
+between iterations
+When the application
+starts, begins monitoring
+the application
+Creates example goroutines
+and memory use while the
+application runs for 40
+seconds
+
+
+Summary
+problems. In the next chapter, you’ll explore communicating between cloud services
+by using techniques other than REST APIs.
+Summary
+We can work with various cloud providers while avoiding vendor lock-in.
+Go applications can be containerized with separated build and run steps.
+We can gather information about the host rather than assuming it.
+We can compile applications for varying operating systems and avoid operating
+system lock-in.
+We can reuse connections to improve performance by avoiding repeated TCP
+slow-start, congestion-control ramp-ups, and connection negotiations.
+If and when JSON marshaling and unmarshaling becomes a bottleneck, we have
+options in the form of third-party libraries to enable faster JSON processing.
+Monitoring the Go runtime detects problems and details about a running
+application.
+
+
+Reflection,
+code generation,
+and advanced Go
+In chapter 12, we explored using Go in the context of tooling around deploy-
+ment, looking at service communication and discovery. In this chapter, we turn
+our attention to some of Go’s most interesting advanced features. We’ll begin
+with Go’s reflection system, which refers to a program’s runtime ability to exam-
+ine its own structure. Although Go’s reflection subsystem isn’t as versatile as Java’s,
+it’s still powerful.
+ Another feature that has enjoyed novel use is the annotation of structs. You’ll
+see in the second part of the chapter how to write custom tags for struct fields. As
+useful as Go’s reflection system is, though, it’s sometimes cleaner to avoid complex
+and expensive runtime reflection and instead write code that itself writes code; this
+will be the third focus of the chapter. Finally, although Go now has generics, code
+This chapter covers
+Using values, kinds, and types from Go’s
+type reflection system
+Parsing custom struct annotations
+Working with other languages via C/C++
+interoperability
+Writing code generators for use with the
+go generate tool
+
+
+13.1
+Three features of reflection
+generation has a niche role in developing in Go, and we will look at that in compari-
+son with generics.
+13.1
+Three features of reflection
+Software developers use reflection to examine objects during runtime. In a strongly
+typed language like Go, you may want to find out whether a particular object satis-
+fies an interface, discover what its underlying kind is, or walk over its fields and
+modify the data—any task that might require more in-depth exploration of a type
+and its capabilities.
+ Go’s reflection tools are located inside the reflect package. We’ve encountered
+them a few times earlier in this book. To understand those tools, we need to define a
+few terms. You need to understand three critical features when working with Go’s
+reflection mechanism: values, types, and kinds.
+ You might approach the first term, value, by thinking of a variable and its underly-
+ing data. A variable is a name that points to a piece of data, as illustrated in figure 13.1.
+(The figure labels this “Variable name.”) Depending on the type, the value may be
+nil; it may be a pointer, which in turn references a value somewhere else; or it may be
+a nonempty piece of data. With x := 5, for example, the value of x is 5. For var b
+bytes.Buffer, the value of b is an empty buffer. With myFunc := strings.Split, the
+value of myFunc is a function. In the reflect package, the type reflect.Value rep-
+resents any of these values.
+As Go is a typed language, each value in Go has a single, specific type associated with
+it. With var b bytes.Buffer, that type is bytes.Buffer. For any possible reflect
+.Value in Go, you can discover its type. Type information is accessible through the
+reflect.Type interface.
+ Finally, Go defines numerous primitive kinds, such as struct, ptr (pointer), int,
+float64, string, slice, func (function), and so on. The reflect package enumerates all
+the possible kinds with the type reflect.Kind. (Note that in figure 13.1, the value of
+type string also has the kind string.)
+ The typical tasks you perform when working with reflection use these three con-
+cepts. Usually, reflection begins by taking a value and then inspecting it to learn about
+its contents, its type, and its kind. You can consider a broader description of what a
+type is comprised.
+ﬁrstName := "Inigo"
+var
+= "Montoya"
+lastName string
+Variable name
+Type
+Value
+Figure 13.1
+Variable and value
+declarations
+
+
+CHAPTER 13
+Reflection, code generation, and advanced Go
+13.1.1 Switching based on type and kind
+One of the most frequent uses of Go’s reflection system is identifying either the type
+or kind of a value. Go has various tools for learning about the type and kind of a par-
+ticular value.
+Problem—You want to write a function that takes generic values (interface{}s)
+and then does something useful with them based on underlying types.
+Solution—Go provides various methods for learning this information, ranging
+from the type switch to the reflect.Type and reflect.Kind types. Each has
+subtle strengths. Here, you’ll look at type switches and then employ the reflect
+package to build a kind switch.
+Discussion—Suppose that you want to write a function with the signature sum(…
+interface{}) float64. You want this function to take a variadic argument of
+arbitrary types. You want it to convert the values to float64 and then sum them.
+The most convenient tool that Go provides for doing this is the type switch.
+With this special case of the switch control structure, you can perform opera-
+tions based on the type of a value, instead of the data contained in a value. As
+you read through common Go libraries, you’ll frequently encounter type
+switches (though using kinds and switches, which you’ll see later in this sec-
+tion, is rare). These also come up somewhat often inside generic functions,
+for obvious reasons. Let’s start with a simple (though incomplete) example in
+the next listing.
+package main
+import (
+     "fmt"
+     "strconv"
+)
+func main() {
+     var a uint8 = 2
+     var b int = 37
+     var c string = "3.2"
+     res := sum(a, b, c)
+     fmt.Printf("Result: %f\n", res)
+}
+func sum(v ...interface{}) float64 {
+     var res float64 = 0.0
+     for _, val := range v {
+            switch val.(type) {
+            case int:
+                   res += float64(val.(int))
+            case int64:
+                   res += float64(val.(int64))
+            case uint8:
+                   res += float64(val.(uint8))
+Listing 13.1
+Sum with type switch
+Sums a uint8,
+an int, and a
+string
+Loops through all the values given and
+switches over them based on type
+For each type that you
+support (int, int64, uint8,
+string), converts to float64
+and sum
+
+
+13.1
+Three features of reflection
+            case string:
+                   a, err := strconv.ParseFloat
+                   (val.(string), 64)
+                   if err != nil {
+                          panic(err)
+                   }
+                   res += a
+            default:
+                   fmt.Printf("Unsupported type %T.
+                   Ignoring.\n", val)
+            }
+     }
+     return res
+}
+If you were to run this code, you’d get Result: 42.200000. This code illustrates the
+basic use of a type switch, as well as one of its limitations compared to regular switches.
+If you had more non-numeric types, you might add some generic sugar, giving meth-
+ods to various types:
+type myString string
+func (s myString) ToFloat() (float64, error) {
+    fl, err := strconv.ParseFloat(string(s), 64)
+    if err != nil {
+        panic(err)
+    }
+    return fl, nil
+}
+In a standard switch statement, you might combine multiple values on a single case
+line: case 1, 2, 3: println("Less than four"). Combining types in a case statement
+introduces complications when assigning values, so typically a type switch has one type
+per line. If you were to support all of the integer types (int, int8, int16, int32, int64,
+uint, uint8, uint16, uint32, and uint64), you’d need 10 separate case clauses. Although
+writing similar logic for 10 kinds may feel like an inconvenience, it isn’t a problem.
+But it’s important to remember that type switches operate on types (not kinds). Let’s
+add a new type to the preceding example, as shown in the following listing.
+package main
+import (
+     "fmt"
+     "strconv"
+)
+type MyInt int64
+func main() {
+//…
+     var d MyInt = 1
+Listing 13.2
+Type switch with extra type
+For a string, you use
+the strconv library to
+convert the string to
+a float64.
+If the type isn’t one
+of the four you
+support, prints an
+error and ignores
+MyInt is an int64.
+Creates a new
+MyInt and gives
+it the value 1
+
+
+CHAPTER 13
+Reflection, code generation, and advanced Go
+     res := sum(a, b, c, d)
+     fmt.Printf("Result: %f\n", res)
+}
+func sum(v ...interface{}) float64 {
+     var res float64 = 0
+     for _, val := range v {
+            switch val.(type) {
+            case int:
+                   res += float64(val.(int))
+            case int64:
+                   res += float64(val.(int64))
+            case uint8:
+                   res += float64(val.(uint8))
+            case string:
+                   a, err := strconv.ParseFloat(val.(string), 64)
+                   if err != nil {
+                          panic(err)
+                   }
+                   res += a
+            default:
+                   fmt.Printf("Unsupported type %T. Ignoring.\n", val)
+            }
+     }
+     return res
+}
+Running this program generates the following output:
+$ go run typekind.go
+Unsupported type main.MyInt. Ignoring.
+Result: 42.200000
+The type of var d MyInt isn’t int64; it’s MyInt, which shadows int64. In the type switch,
+it matches the default clause instead of the int64 case. At times, this is precisely the
+behavior you’d desire. You want Go to assume that int64 might needed to be treated
+differently from MyInt. But for this case, it’d be better if sum() could tell what the
+underlying kind was and work from that instead.
+ The solution to this problem is to use the reflect package and work based on the
+broader kind instead of type. The first part of our example will be the same, but the
+sum() function is different, as shown in the next listing.
+package main
+import (
+     "fmt"
+     "reflect"
+     "strconv"
+)
+type MyInt int64
+Listing 13.3
+A kind switch
+This will not match
+for a MyInt.
+This will catch
+the MyInt value.

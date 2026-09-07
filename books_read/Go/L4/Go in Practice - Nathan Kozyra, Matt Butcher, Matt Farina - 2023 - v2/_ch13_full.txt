@@ -1,0 +1,1575 @@
+13.1
+Three features of reflection
+func main() {
+     var a uint8 = 2
+     var b int = 37
+     var c string = "3.2"
+     var d MyInt = 1
+     res := sum(a, b, c, d)
+     fmt.Printf("Result: %f\n", res)
+}
+func sum(v ...interface{}) float64 {
+     var res float64 = 0
+     for _, val := range v {
+            ref := reflect.ValueOf(val)
+            switch ref.Kind() {
+            case reflect.Int, reflect.Int64:
+                   res += float64(ref.Int())
+            case reflect.Uint8:
+                   res += float64(ref.Uint())
+            case reflect.String:
+                   a, err := strconv.ParseFloat
+                   (ref.String(), 64)
+                   if err != nil {
+                          panic(err)
+                   }
+                   res += a
+            default:
+                   fmt.Printf("Unsupported type %T. Ignoring.\n", val)
+            }
+     }
+     return res
+}
+In this revised version, you replace the type switch with a regular value-based switch,
+and you use the reflect package to take each val interface{} and get a reflect
+.Value describing it. One of the pieces of information you can learn from a reflect
+.Value is its underlying kind.
+ Another thing that the reflect.Value type gives you is a group of functions capa-
+ble of converting related types to their largest representation. A reflect.Value with a
+uint8 or uint16 can be easily converted to the biggest unsigned integer type by using
+the reflect.Value’s Uint() method.
+ With these features, you can collapse an otherwise verbose type switch to a more
+concise kind-based switch. Instead of needing 10 cases for the integer types, you could
+accomplish the same feature with only 2 cases (1 for all the signed integers and 1 for
+the unsigned integers).
+ But types and kinds are distinct things. Here, you’ve produced two cases that per-
+form approximately the same task. Summing numeric values can be more easily done
+by determining kinds. But sometimes, you’re more concerned with specifics. As
+you’ve seen elsewhere in the book, type switches are excellent companions for error
+handling. You can use them to sort out different error types in much the same way
+that other languages use multiple catch statements in a try/catch block.
+Gets the reflect.Value
+of the variable
+From the value, you can
+switch on the Kind().
+reflect.Kind is a normal
+type, so you can switch
+on multiple values.
+The reflect.Value type
+provides convenience
+functions for converting
+related subkinds to their
+biggest version (e.g., int,
+int8, int16…to int64).
+
+
+CHAPTER 13
+Reflection, code generation, and advanced Go
+ Later in this chapter, we return to examining types. In that case, you’ll use the
+reflect.Type type to discover information about a struct. But before we get to that
+case, let’s look at another common reflection task: determining whether a particular
+type implements an interface.
+13.1.2 Discovering whether a value implements an interface
+Go’s type system is different from the inheritance-based methods of traditional object-
+oriented languages. Go uses composition instead of inheritance. A Go interface
+defines a pattern of methods that another type must have before it can be considered
+to implement that interface. A concrete and simple example might help here. The
+fmt package defines an interface called Stringer that describes a thing capable of rep-
+resenting itself as a string:
+type Stringer interface {
+        String() string
+}
+Any type that provides a String() method which takes no arguments and returns a
+string is ipso facto a fmt.Stringer.
+Problem—Given a particular type, you want to find out whether that type imple-
+ments a defined interface.
+Solution—There are two ways to accomplish this. One is with a type assertion, and
+the other uses the reflect package. Use the one that best meets your needs.
+Discussion—Go’s view of interfaces differs from that of object-oriented lan-
+guages like Java. In Go, a thing isn’t declared to fulfill an interface. Instead, an
+interface is a description against which a type can be compared. Interfaces are
+themselves types. That is why when you write types in Go, you don’t declare
+which interfaces they satisfy. As you saw in chapter 4, it’s common to write inter-
+faces to match existing code.
+In Go, types express commonality, not inheritance. Go makes it easy to deter-
+mine whether a given interface matches another interface type. Answering this
+question can be done at the same time as converting that type, as shown in the
+next listing.
+package main
+import (
+     "bytes"
+     "fmt"
+)
+func main() {
+     b := bytes.NewBuffer([]byte("Hello"))
+Listing 13.4
+Checking and converting a type
+
+
+13.1
+Three features of reflection
+     if isStringer(b) {
+            fmt.Printf("%T is a stringer\n", b)
+     }
+     i := 123
+     if isStringer(i) {
+            fmt.Printf("%T is a stringer\n", i)
+     }
+}
+func isStringer(v interface{}) bool {
+     _, ok := v.(fmt.Stringer)
+     return ok
+}
+Type assertions are one way of testing whether a given value implements an interface.
+But what if you want to test whether a type implements an interface but determine
+which interface at runtime? To accomplish this, you need to use the reflect package
+and little bit of trickery.
+ Earlier in the chapter, you looked at the basic types in the reflect package. An
+astute reader might have noticed something missing. Go’s reflection package has no
+reflect.Interface type. Instead, reflect.Type (which is itself an interface) provides
+tools for querying whether a given type implements a given interface type. To reflect on
+an interface type at runtime, you can use reflect.Type, as in the following listing.
+package main
+import (
+     "fmt"
+     "io"
+     "reflect"
+)
+type Name struct {
+     First, Last string
+}
+func (n *Name) String() string {
+     return n.First + " " + n.Last
+}
+func main() {
+     n := &Name{First: "Inigo", Last: "Montoya"}
+     stringer := (*fmt.Stringer)(nil)
+     implements(n, stringer)
+     writer := (*io.Writer)(nil)
+     implements(n, writer)
+}
+func implements(concrete interface{}, target interface{}) bool {
+     iface := reflect.TypeOf(target).Elem()
+Listing 13.5
+Determining whether a type implements an interface
+Tests whether a *bytes.Buffer
+is a fmt.Stringer. It is.
+Tests whether an integer is
+a fmt.Stringer. It’s not.
+Takes an interface{} value and runs a
+type assertion to the desired interface
+Creates a Name type and
+gives it a String() method,
+then instantiates one
+Creates a nil pointer
+of type fmt.Stringer
+Tests whether n is a
+fmt.Stringer (has a
+String() method)
+Creates a nil pointer
+of type io.Writer
+Tests whether n is
+an io.Writer (has a
+Write() method)
+Gets a reflect.Type
+that describes the
+target of the
+pointer
+
+
+CHAPTER 13
+Reflection, code generation, and advanced Go
+     v := reflect.ValueOf(concrete)
+     t := v.Type()
+     if t.Implements(iface) {
+            fmt.Printf("%T is a %s\n", concrete, iface.Name())
+            return true
+     }
+     fmt.Printf("%T is not a %s\n", concrete, iface.Name())
+     return false
+}
+This example takes what may appear to be a roundabout method. The implements()
+function takes two values. It tests whether the first value (concrete) implements the inter-
+face of the second (target). If you were to run this code, you’d get the following output:
+$ go run implements.go
+*main.Name is a Stringer
+*main.Name is not a Writer
+Our Name type implements fmt.Stringer because it has a String() string method.
+But it doesn’t implement io.Writer because it doesn’t have a Write([]bytes) (int,
+error) method.
+ The implements() function does assume that the target is a pointer to a value
+whose dynamic type is an interface of some kind. With a few dozen lines, you could
+check that by reflecting on the value and checking that it’s a pointer. As it stands now,
+it’d be possible to cause implements() to panic by passing a target that doesn’t match
+that description.
+ To get to the point where you can test whether concrete implements the target
+interface, you need to get the reflect.Type of both the concrete and the target.
+There are two ways of doing this. The first uses reflect.TypeOf() to get a reflect
+.Type and a call to Type.Elem() to get the type that the target pointer points to:
+iface := reflect.TypeOf(target).Elem()
+The second gets the value of concrete and then gets the reflect.Type of that value.
+From there, you can test whether a thing of one type implements an interface type
+using the Type.Interface() method:
+v := reflect.ValueOf(concrete)
+t := v.Type()
+The trickier part of this test, though, is getting a reference to an interface. There’s no
+way to directly reflect on an interface type. Interfaces don’t work that way; you can’t
+just instantiate one or reference it directly. Instead, you need to find a way to create a
+placeholder that implements an interface. The simplest way is to do something we
+usually recommend studiously avoiding: intentionally create a nil pointer. In the pre-
+ceding code, you create two nil pointers, and you do so like this: stringer :=
+(*fmt. Stringer)( nil). In essence, you do this to create a thing whose only
+useful
+Gets the reflect.Type of the concrete type passed in
+Tests whether
+the concrete
+instance fulfills
+the interface
+of the target
+
+
+13.1
+Three features of reflection
+information is its type. When you pass these into the implements() function, it’ll be
+able to reflect on the nil pointers and determine the type. You need the Elem() call to
+get the type of the nil.
+ The code in listing 13.5 illustrates how working with Go’s reflection system can
+require thinking creatively about how to set up various reflection operations. Tasks
+that might seem superficially simple may require some thoughtful manipulation of
+the type system.
+13.1.3 Accessing fields on a struct
+Go structs are the most commonly used tool for describing structured data in Go.
+Because Go can glean all the important information about a struct’s contents during
+compilation, structs are efficient. At runtime, you may want to find out information
+about a struct, including what its fields are and whether particular values of a struct
+have been set.
+Problem—You want to learn about a struct at runtime, discovering its fields.
+Solution—Reflect the struct and use a combination of reflect.Value and
+reflect.Type to find out information about the struct.
+Discussion—In the previous techniques, you’ve seen how to start with a value
+and reflect on it to get information about its value, its kind, and its type. Now
+you’re going to combine these techniques to walk a struct and learn about it.
+The tool you’ll create is a simple program that can read a value and print information
+about it to the console. The principles will come in handy, though, in the next section,
+where you’ll use some similar techniques to work with Go’s annotation system. Let’s
+start with a few initial types to examine in the following listing.
+package main
+import (
+     "fmt"
+     "reflect"
+     "strings"
+)
+type MyInt int
+type Person struct {
+     Name    *Name
+     Address *Address
+}
+type Name struct {
+     Title, First, Last string
+}
+type Address struct {
+     Street, Region string
+}
+Listing 13.6
+Types to examine
+
+
+CHAPTER 13
+Reflection, code generation, and advanced Go
+Now you have an integer-based type and a few structs. The next thing to do is add
+some code to inspect these types, as shown in the next listing.
+func main() {
+     fmt.Println("Walking a simple integer")
+     var one MyInt = 1
+     walk(one, 0)
+     fmt.Println("Walking a simple struct")
+     two := struct{ Name string }{"foo"}
+     walk(two, 0)
+fmt.Println("Walking a struct with struct fields")
+     p := &Person{
+            Name:    &Name{"Count", "Tyrone", "Rugen"
+            },
+            Address: &Address{"Humperdink Castle",
+            "Florian"},
+     }
+     walk(p, 0)
+}
+type MyInt int
+type Person struct {
+     Name    *Name
+     Address *Address
+}
+type Name struct {
+     Title, First, Last string
+}
+type Address struct {
+     Street, Region string
+}
+func walk(u interface{}, depth int) {
+     val := reflect.Indirect(reflect.ValueOf(u))
+     t := val.Type()
+     tabs := strings.Repeat("\t", depth+1)
+     fmt.Printf("%sValue is type %q (%s)\n", tabs, t, val.Kind())
+     if val.Kind() == reflect.Struct {
+            for i := 0; i < t.NumField(); i++ {
+                   field := t.Field(i)
+                   fieldVal := reflect.Indirect
+                   (val.Field(i))
+                   tabs := strings.Repeat("\t", depth+2)
+                   fmt.Printf("%sField %q is type %q (%s)\n",
+                          tabs, field.Name, field.Type, fieldVal.Kind())
+                   if fieldVal.Kind() ==
+                   reflect.Struct {
+                          walk(fieldVal.Interface(), depth+1)
+                   }
+            }
+     }
+}
+Listing 13.7
+Recursively examining a value
+Shows details for
+a simple type
+Shows details for
+a simple struct
+Shows details
+for a struct with
+struct fields
+The walk() function takes
+any value and a depth
+(for formatting).
+For your unknown value u,
+you get the reflect.Value.
+If it’s a pointer, you
+dereference the pointer.
+Gets the type of this value
+Depth helps you do
+some tab indenting
+for prettier output.
+If the kind is
+a struct, you
+examine its
+fields.
+For each field,
+you need both the
+reflect.StructField
+and the reflect.Value.
+If the field is also a struct, you
+can recursively call walk().
+
+
+13.1
+Three features of reflection
+The preceding example combines just about everything you’ve learned about reflec-
+tion. The depth in this case is just visual sugar for showing hierarchy. Types, values,
+and kinds all come into play as you walk through a value and examine its reflection
+data. If you run this little program, the output looks like this:
+$ go run structwalker.go
+Walking a simple integer looks like this:
+     Value is type "main.MyInt" (int)
+Walking a simple struct looks like this:
+     Value is type "struct { Name string }" (struct)
+            Field "Name" is type "string" (string)
+Walking a struct with struct fields looks like this:
+     Value is type "main.Person" (struct)
+            Field "Name" is type "*main.Name" (struct)
+            Value is type "main.Name" (struct)
+                   Field "Title" is type "string" (string)
+                   Field "First" is type "string" (string)
+                   Field "Last" is type "string" (string)
+            Field "Address" is type "*main.Address" (struct)
+            Value is type "main.Address" (struct)
+                   Field "Street" is type "string" (string)
+                   Field "Region" is type "string" (string)
+In this output, you can see the program examine each of the values you’ve given it.
+First, it checks a MyInt value (of kind int). Then it walks the simple struct. Finally, it
+walks the more complex struct and recurses down through the struct until it hits only
+nonstruct kinds.
+ The walk() function does all the interesting work for type/kind detection and out-
+put in this program. It begins with an unknown value, u, and inspects it. While you’re
+walking through an unknown value, you want to make sure that you follow pointers. If
+reflect.ValueOf() is called on a pointer, it will return a reflect.Value describing a
+pointer. That isn’t interesting in this case, although you might want to annotate that in
+some way in a real=world application. Instead, what you want is the value at the other
+end of that pointer, so you use reflect.Indirect() to get the reflect.Value
+describing the value pointed to. The reflect.Indirect() method is useful in that if
+it’s called on a value that’s not a pointer, it will return the given reflect.Value, so you
+can safely call it on all values:
+val := reflect.Indirect(reflect.ValueOf(u))
+Along with the value of u, you need some type and kind information. In this example,
+you get each of the three reflection types:
+
+
+CHAPTER 13
+Reflection, code generation, and advanced Go
+The value (in this case, if you get a pointer for a value, you follow the pointer)
+The type
+The kind
+Kinds are particularly interesting in this case. Some kinds—notably slices, arrays,
+maps, and structs—may have members. In this case, you’re interested mainly in learn-
+ing about the structure of your given value (u). Although you wouldn’t need to enu-
+merate the values in maps, slices, or arrays as they’re just fundamentally basic type
+values, you’d like to examine structs. If the kind is reflect.Struct, you take a look at
+that struct’s fields.
+ The easiest way to enumerate the fields of a struct is to get the type of that struct
+and then loop through the fields of that type by using a combination of Type.Num-
+Field() (which gives you the count of fields in the struct) and Type.Field(). The
+Type.Field() method returns a reflect.StructField object describing the field.
+From there, you can learn about the field’s data type and its name.
+ When it comes to getting the value of a struct field, you can’t get this from either the
+reflect.Type (which describes the data type) or the reflect.StructField (which
+describes the field on a struct type). Instead, you need to get the value from the
+reflect.Value, which describes that struct’s value. Fortunately, you can combine your
+knowledge of the type and the value to know that the numeric index of the type field
+will match the numeric index of the value’s struct field. You can use Value.Field() with
+the same field number as Type.Field() and get the associated value for that field.
+Again, if the field is a pointer, you’d rather have a handle to the value at the other end
+of the pointer, so you would call reflect.Indirect() on that field’s pointer value. If
+you take a look at the output of the preceding program, you’ll see this in action:
+Field "Name" is type "*main.Name" (struct)
+Value is type "main.Name" (struct)
+The field Name is of type *main.Name. But when you follow the pointer, you get a value
+of type main.Name. This little program is dense, so to summarize what’s happening:
+From interface{}, you can use reflect.ValueOf() to get reflect.Value.
+In cases where the value might be a pointer, to get the reflect.Value of the
+object pointed to, you call reflect.Indirect().
+From reflect.Value, you can conveniently get the type and kind.
+For structs (of the kind reflect.Struct), you can get the number of fields on
+that struct by using Type.NumField(), and you can get a description of each
+field (reflect.StructField) by using Type.Field().
+Likewise, with reflect.Value objects, you can access struct field values by using
+Value.Field().
+The reflect package also contains tools for learning about the methods on a struct,
+the elements in maps, lists, and arrays, and even information about what a channel
+can send or receive. A few of the most interesting tools include
+
+
+13.2
+Structs, tags, and annotations
+
+MethodByName(name string)—Returns a method and a Boolean indicating
+whether the method was found for a type
+
+AssignableTo(theType Type)—Returns whether a type can be assigned to
+another without type coercion
+
+Comparable()—Returns whether or not the type’s values are comparable
+For all of Go’s elegance, though, the package can be difficult to learn and unforgiving
+to use: many of the functions and methods in that package will panic rather than
+return errors. In this case, it’s best to lean on the panic recovery methods we looked at
+in chapter 4.
+ The example you’ve looked at here sets the stage for using one of our favorite Go
+features. Next, you’ll look at Go’s annotation system, which we briefly looked at in
+chapter 10 while discussing embedding files in a binary. Although there are many uses
+for tags in and outside the standard library, you’ll see how to build and access your
+own struct tags.
+13.2
+Structs, tags, and annotations
+Go has no macros, and unlike languages such as Java and Python, Go has only spartan
+support for annotations. But structs are one of the areas where tags are most fre-
+quently used. You’ve already seen this practice for providing JSON processing infor-
+mation, particularly in chapter 3. In this section, we’ll look at more tag annotations
+for data validation.
+13.2.1 Annotating structs
+In previous chapters, you saw examples of using struct annotations with things like the
+JSON encoder, which are used to append final JSON tags to the output. You can begin
+with the struct from listing 13.5 and annotate it for the JSON encoder, as shown in the
+following listing.
+package main
+import (
+     "encoding/json"
+     "fmt"
+)
+type Name struct {
+     First string `json:"firstName"`
+     Last  string `json:"lastName "`
+}
+func main() {
+     n := &Name{"Inigo", "Montoya"}
+     data, _ := json.Marshal(n)
+     fmt.Printf("%s\n", data)B
+}
+Listing 13.8
+Simple JSON struct
+Annotates struct fields for
+JSON encoding and decoding
+Marshals n to JSON
+and prints it
+
+
+CHAPTER 13
+Reflection, code generation, and advanced Go
+This code declares a single struct, Name, that’s annotated for JSON encoding. Roughly
+speaking, it maps the struct member First to the JSON field firstName and the struct
+field Last to lastName. This is a very common usage because by convention JSON tags
+rarely include uppercase characters, but Go needs titleCase for public/private visibil-
+ity of fields. If you were to run this code, the output would look like this:
+$ go run json.go
+{"firstName":"Inigo","lastName":"Montoya"}
+The struct annotations make it possible to control how your JSON looks. Struct tags
+provide a convenient way to provide small bits of processing data to fields on a struct.
+Practically speaking, annotations are a freeform string enclosed in back quotes that
+follows the type declaration of a struct field.
+ Annotations play no direct functional role during compilation but can be accessed
+at runtime by using reflection. It’s up to the annotation parsers to figure out whether
+any given annotation has information that the parser can use. You could modify the
+preceding code to include different annotations, as shown in the next listing.
+type Name struct {
+     First string `json:"firstName" xml:"FirstName"`
+     Last  string `json:"lastName,omitempty"`
+     Other string `not,even.a=tag`
+}
+All these annotations are legal in the sense that the Go parser will handle them cor-
+rectly, and the JSON encoder will be able to pick out which of those applies to it. It will
+ignore the xml tag as well as the oddly formatted annotation on the Other field.
+ As you can see from the tags in listing 13.9, an annotation has no fixed format. Just
+about any string can be used. But a certain annotation format has emerged in the Go
+community and is now a de facto standard. Go developers call these annotations tags.
+13.2.2 Using tag annotations
+The sample JSON struct you looked at earlier contained annotations of the form
+`json: "NAME,DATA"`, where NAME is the name of the field (in JSON documents) and
+DATA is a list of optional information about the field (omitempty or kind data). Fig-
+ure 13.2 shows an example of a struct annotated for both JSON and XML.
+Listing 13.9
+A variety of annotations
+Annotations for validation
+One of the most interesting uses for annotations that we’ve seen is for validating
+field data on a struct. By adding regular expressions in tags (`validate:"^[a-z]+
+$"`) and then writing code to run those regular expressions over struct data, you can
+write validation code easily and concisely. This could allow you to create very specific
+checks against what data can go into a struct.
+
+
+13.2
+Structs, tags, and annotations
+As with the encoding/json package, if you look at the encoding/xml package, you’ll
+see a pattern similar to annotations for converting structs to and from XML. Tags for
+XML look like this: `xml:"body"` and `xml:"href,attr"`. Again, the pattern is simi-
+lar to the JSON tag pattern `xml:"NAME,DATA"`, where NAME is the field name and
+DATA contains a list of information about the field (though XML annotations are more
+sophisticated than JSON annotations).
+ This format isn’t enshrined in the definition of a struct annotation, though. You
+can use these tags any way you see fit in your own code. It’s just a convention that has
+proved useful and thus enjoys widespread adoption. Go’s reflection package even
+makes it easy to work with tags, as you’ll see shortly.
+13.2.3 Processing tags on a struct
+Annotations can be useful in a wide variety of situations. The preceding examples show
+how they can be used by data encoders. Annotations can just as readily be used to
+describe how database field types map to structs or how to format data for display. We’ve
+even seen cases in which annotations were used to tell Go to pass struct values through
+other filtering functions. Because the annotation format is not rigidly defined, to build
+your annotations, you need only decide on a format and then write an implementation.
+Problem—You want to create your own annotations and then programmatically
+access the annotation data of a struct at runtime.
+Solution—Define your annotation format (preferably using the taglike syntax
+described previously). Then use the reflect package to write a tool that extracts
+the annotation information from a struct.
+Discussion—Suppose that you want to write an encoder for a simple file syntax
+for name-value pairs. This format is similar to the old INI format. An example
+of this file format looks like this:
+total=247
+running=2
+sleeping=245
+type Person struct {
+FirstName string `json:"first" xml:"firstName,attr"`
+LastName string `json:"last" xml:"lastName"`
+}
+{
+"first": "Inigo",
+"last": "Montoya"
+}
+<Person firstName="Inigo">
+<LastName>Montoya</LastName>
+</Person>
+Figure 13.2
+A struct marshaled to JSON and to XML
+
+
+CHAPTER 13
+Reflection, code generation, and advanced Go
+threads=1189
+load=70.87
+Here, the names are on the left side of the equal sign, and the values are on the
+right. Now imagine that you want to create a struct to represent this data. It
+looks like the following listing.
+type Processes struct {
+     Total    int
+     Running  int
+     Sleeping int
+     Threads  int
+     Load     float32
+}
+To convert the plain file format into a struct like this, you can create a tag that fits your
+needs and then mark up your struct with them (see the following listing).
+type Processes struct {
+     Total    int     `ini:"total"`
+     Running  int     `ini:"running"`
+     Sleeping int     `ini:"sleeping"`
+     Threads  int     `ini:"threads"`
+     Load     float32 `ini:"load"`
+}
+This tag structure follows the same convention as the JSON and XML tags you saw ear-
+lier. But there’s no automatic facility in Go to handle parsing the file format and learn-
+ing from the struct annotations how to populate a Processes struct. You’ll do that
+work yourself.
+ As you design this, you can once again rely on existing conventions. Encoders and
+decoders in Go tend to provide Marshal() and Unmarshal() methods with a fairly
+predictable set of parameters and return values, so your INI file decoder will imple-
+ment the same pattern, as shown in the following listing.
+func Marshal(v interface{}) ([]byte, error) {}
+func Unmarshal(data []byte, v interface{}) error {}
+The bulk of both of these functions involves reflecting over the interface{} values and
+learning how to extract data from or populate data into those values. To keep the code
+concise, the following example deals only with marshaling and unmarshaling structs.
+Listing 13.10
+A bare Processes struct
+Listing 13.11
+The Processes struct with annotations
+Listing 13.12
+The Marshal and Unmarshal patterns
+
+
+13.2
+Structs, tags, and annotations
+ Reflection tends to be a little verbose, so you’ll split the code for your program
+into smaller chunks, starting with a struct for your INI file and the main() function. In
+the first part, you’ll create a new type (Processes) and then in the main() function a
+Processes struct, marshal it to your INI format, and then unmarshal it into a new
+Processes struct. See the next listing.
+package main
+import (
+     "bufio"
+     "bytes"
+     "errors"
+     "fmt"
+     "reflect"
+     "strconv"
+     "strings"
+)
+type Processes struct {
+     Total    int     `ini:"total"`
+     Running  int     `ini:"running"`
+     Sleeping int     `ini:"sleeping"`
+     Threads  int     `ini:"threads"`
+     Load     float64 `ini:"load"`
+}
+func main() {
+     fmt.Println("Write a struct to output:")
+     proc := &Processes{
+            Total:    23,
+            Running:  3,
+            Sleeping: 20,
+            Threads:  34,
+            Load:     1.8,
+     }
+     data, err := Marshal(proc)
+     if err != nil {
+            panic(err)
+     }
+     fmt.Println(string(data))
+     fmt.Println("Read the data back into a struct")
+     proc2 := &Processes{}
+     if err := Unmarshal(data, proc2); err != nil {
+            panic(err)
+     }
+     fmt.Printf("Struct: %#v", proc2)
+}
+The top-level code is straightforward. You begin with an instance of your Processes
+struct and then marshal it into a byte array. When you print the results, they’ll be in
+Listing 13.13
+Processes and main
+Most of these imports
+are used later.
+You saw this
+struct in
+listing 13.11.
+Creates an
+instance of the
+Processes struct
+Marshals the struct
+into a byte slice
+Prints the result
+Creates a new Processes
+struct and unmarshals
+the data into it
+Prints out the struct
+
+
+CHAPTER 13
+Reflection, code generation, and advanced Go
+your INI file format. Then you take that same data and run it back through the other
+direction, expanding the INI data into a new Processes struct. Running the program
+produces output like this:
+$ go run load.go
+Write a struct to output:
+total=23
+running=3
+sleeping=20
+threads=34
+load=1.8
+Read the data back into a struct
+Struct: &main.Processes{Total:23, Running:3, Sleeping:20, Threads:34, Load
+:1.8}
+The first section of output shows your marshaled data, and the second shows your
+unmarshaled struct. Next, you can look at the Marshal() function, which brings much
+of your reflection knowledge back to the forefront. See the following listing.
+func fieldName(field reflect.StructField) string {
+     if t := field.Tag.Get("ini"); t != "" {
+            return t
+     }
+     return field.Name
+}
+func Marshal(v interface{}) ([]byte, error) {
+     var b bytes.Buffer
+     val := reflect.Indirect(reflect.ValueOf(v))
+     if val.Kind() != reflect.Struct {
+            return []byte{}, errors.New("unmarshal can only take structs")
+     }
+     t := val.Type()
+     for i := 0; i < t.NumField(); i++ {
+            f := t.Field(i)
+            name := fieldName(f)
+            raw := val.Field(i).Interface()
+            fmt.Fprintf(&b, "%s=%v\n", name, raw)
+     }
+     return b.Bytes(), nil
+}
+This Marshal() function takes the given v interface{} and reads through its fields. By
+examining the type, it can iterate through all the fields on the struct, and for each
+field, it can access the annotation (via StructField. Tag()). As it loops through
+the
+Listing 13.14
+The Marshal function
+Simple utility function to
+read tags from struct fields
+Gets the tag off the struct field
+If there is no tag, falls
+back to the field name
+Gets a reflect.Value of
+the current interface and
+dereferences pointers
+For this program, you
+handle only structs.
+Loops through all the
+fields on the struct
+Gets the name
+from tagName
+Relies on the print
+formatter to print the
+raw data into the buffer
+Returns the contents
+of the buffer
+
+
+13.2
+Structs, tags, and annotations
+struct fields, it can also fetch the relevant values for each struct field. Rather than man-
+ually convert these values from their native type to a string, you rely on fmt.Fprintf()
+to do that work for you.
+ Of note, the fieldName() function uses Go’s automatic tag parsing. Although
+you can (if you desire) store any string data in an annotation, Go can parse tags for
+you. For any annotation tag that follows the format NAME:"VALUE", you can access
+the value by using StructField.Tag.Get(). It returns the value unprocessed. It’s a
+common idiom for tag values to contain a comma-separated list of params (json:
+”myField,omitempty"). For our simple tags, though, you allow only a single field in
+the VALUE space. Finally, if you don’t get any tag data for the field, you return the
+struct field’s name.
+This Marshal() function isn’t particularly robust. It will read only structs as it is. Maps,
+which could just as easily be converted to INI fields, aren’t supported. Likewise, your
+Marshal() function is going to work well only on certain data types. It won’t, for exam-
+ple, produce useful results for fields whose values are structs, channels, maps, slices, or
+arrays. Although those operations require lots switch code or generics, there’s nothing
+particularly daunting about extending this Marshal() function to support a broader
+array of types.
+ In the next listing, you look at the process of taking an existing bit of INI data and
+turning it into a struct. Again, this uses annotations and the reflection subsystem.
+func Unmarshal(data []byte, v interface{}) error {
+     val := reflect.Indirect(reflect.ValueOf(v))
+     t := val.Type()
+     b := bytes.NewBuffer(data)
+     scanner := bufio.NewScanner(b)
+     for scanner.Scan() {
+            line := scanner.Text()
+            pair := strings.SplitN(line, "=", 2)
+            if len(pair) < 2 {
+                   // Skip any malformed lines.
+                   continue
+            }
+            setField(pair[0], pair[1], t, val)
+     }
+     return nil
+}
+Ignoring struct fields with annotations
+Sometimes, you want to tell encoders to ignore fields on a struct. The common idiom
+for doing this is to use a dash (-) in the name field of the annotation (json:"-").
+Although we don’t support this in the preceding code, you could extend the example
+to ignore fields whose name is -.
+Listing 13.15
+The Unmarshal function
+Again, you begin with a
+(dereferenced) reflect.Value.
+From data, you use a scanner to
+read one line of INI data at a time.
+Splits a line at
+the equal sign
+Passes the task of
+setting the value
+to setField()
+
+
+CHAPTER 13
+Reflection, code generation, and advanced Go
+The Unmarshal() function reads []byte and tries to convert the fields it finds there
+into matching fields on the supplied v interface{}. This INI parser is trivially simple:
+it iterates through the lines of the file and splits name-value pairs. But when it comes
+time to populate the given struct with the newly loaded values, you still have to do a
+fair amount of work.
+ The unmarshal() function relies heavily on the setField() helper, which uses
+most of the reflection strategies you’ve seen in this chapter. Again, you’re going to
+switch on kinds, which makes for verbose code. See the next listing.
+func setField(name, value string, t reflect.Type,
+v reflect.Value) {
+     for i := 0; i < t.NumField(); i++ {
+            field := t.Field(i)
+            if name == fieldName(field) {
+                   var dest reflect.Value
+                   switch field.Type.Kind() {
+                   default:
+                           fmt.Printf("Kind %s not supported.\n",
+field.Type.Kind())
+                           continue
+                   case reflect.Int:
+                           ival, err := strconv.Atoi(value)
+                           if err != nil {
+                                   fmt.Printf(
+                                   "Could not convert %q to int: %s\n",
+                                   value, err)
+                                   continue
+                           }
+                           dest = reflect.ValueOf(ival)
+                   case reflect.Float64:
+                           fval, err := strconv.ParseFloat(value, 64)
+                           if err != nil {
+                                   fmt.Printf(
+                                   "Could not convert %q to float64: %s\n",
+                                   value, err)
+                                   continue
+                           }
+                           dest = reflect.ValueOf(fval)
+                   case reflect.String:
+                           dest = reflect.ValueOf(value)
+                   case reflect.Bool:
+                           bval, err := strconv.ParseBool(value)
+                           if err != nil {
+                                   fmt.Printf(
+Listing 13.16
+The setField helper function
+setField takes the name and value from the INI data,
+and also the type and value of the struct itself.
+Iterates through each field on the struct, looking
+for one whose name matches the INI field’s name
+Uses a kind switch
+to figure out how to
+take your value string
+and convert it to the
+right type
+If you don’t know
+about the kind, just
+skip the field, as this
+isn’t an error.
+This version
+supports
+only a few
+kinds of values.
+Supporting
+other types is
+usually easy,
+but requires
+highly
+repetitive
+code blocks.
+Once a raw value is converted
+to its type, wraps it in a value
+
+
+13.3
+Generating Go code with Go code
+                                   "Could not convert %q to bool: %s\n",
+                                   value, err)
+                                   continue
+                           }
+                           dest = reflect.ValueOf(bval)
+                   }
+                   v.Field(i).Set(dest)
+            }
+     }
+}
+The setField() function takes the raw name-value pair, as well as the reflect.Value
+and reflect.Type of the struct, and attempts to match the pair to its appropriate field
+on the struct. (Again, you restrict the tool to working only with structs, though you could
+extend it to work with map types.) Finding the matching field name is relatively easy
+because you can reuse the fieldName() function defined in listing 13.14. But when it
+comes to the value, you need to convert the data from the string form you were given to
+whatever the data type of the struct field is. For the sake of space, the code in listing 13.14
+handles only a few data types (int, float64, string, and bool). And you didn’t explore types
+that extend from your base kinds. But the pattern illustrated here could be extended to
+handle other types. Finally, you store the newly converted value on the struct by first
+wrapping it in reflect.Value() and then setting the appropriate struct field.
+ One thing becomes clear while examining the code written for this technique:
+because of Go’s strong type system, converting between types often takes a lot of boiler-
+plate code. Sometimes, you can take advantage of built-in tools (such as fmt.Fprintf()).
+Other times, you must write tedious code. Instead of writing reflection code, you might
+find it useful to use Go’s generator tool to generate source code for you. In the next sec-
+tion, you’ll look at one example of writing a generator to do work that would otherwise
+require runtime type checking and detailed reflection code.
+13.3
+Generating Go code with Go code
+Prior to generics, creating methods for types was arduous and required a lot of code
+duplication or reliance on reflection and type switching, which we just explored. It’s
+worth mentioning that the runtime cost of reflection is high, adding up to real latency
+and overhead if you use it a lot in your programs. Generics should be used when nec-
+essary, but there exists a more performant way of creating code. As mentioned before,
+Go doesn’t support macros, and annotations have only limited capabilities. Is there
+another way to transform code? How do you metaprogram in Go? Along with reflec-
+tion and code duplication, there’s another common approach to generating code in
+instances where generics aren’t applicable.
+ An often-overlooked feature of Go is its capability to generate code. Go ships with
+a tool, go generate, designed exactly for this purpose. In fact, metaprogramming with
+generators is a powerful answer to the preceding questions. Generated code (which is
+then compiled) is much faster at runtime than reflection-based code. It’s also usually
+much simpler. For generating a large number of repetitive but type-safe objects,
+Sets the value
+for the relevant
+struct field
+
+
+CHAPTER 13
+Reflection, code generation, and advanced Go
+generators can ease your development lifecycle. Although many programmers turn a
+jaundiced eye toward metaprogramming, the fact of the matter is that we use code
+generators frequently. As you saw in chapter 12, Protobuf, gRPC, and Thrift use gener-
+ators. Many SQL libraries are generators. Some languages even use generators behind
+the scenes for macros, generics, and collections. In fact, prior to generics support in
+Go, generation was often the prescribed approach. The nice thing about Go is that it
+provides powerful generator tools right out of the box.
+ At the root of Go’s embracing of code generation is a simple tool called go generate.
+Like other Go tools, go generate is aware of the Go environment, and can be run on
+files and packages. Conceptually speaking, it’s shockingly simple.
+ The tool walks through the files you’ve specified, and looks at the first line of
+each file. If it finds a particular pattern, it executes a program. The pattern looks
+like this:
+//go:generate COMMAND [ARGUMENT...]
+The generator looks for this comment right at the top of each Go file that you tell it to
+search. If it doesn’t find a header, it skips the file. If it does find the header, it executes
+the COMMAND. The COMMAND can be any command-line tool that the generator can find
+and run. You can pass any number of arguments to the command. Let’s build a trivi-
+ally simple example in the next listing.
+//go:generate echo hello
+package main
+func main() {
+     println("Goodbyte")
+}
+This is obviously valid Go code, but with generation it operates a little differently than
+with a run or build command. If you compiled and ran it, it would print Goodbyte to
+the console. But it has a generator on the first line. The generator’s command is echo,
+which is a UNIX command that prints a string back to standard out. It has one argu-
+ment, the string hello. Let’s run the generator and see what it does:
+$ go generate simple.go
+hello
+All the generator does is execute the command, which prints hello to the console.
+Although this implementation is nearly the simplest you can think of, the idea is that
+you can add commands that generate code for you. You’ll see this in action in the next
+technique.
+ Writing custom type-safe collections, generating structs from database tables, trans-
+forming JSON schemata into code, and generating many similar objects are some of
+Listing 13.17
+A trivial generator
+
+
+13.3
+Generating Go code with Go code
+the things we’ve seen developers use Go generators for. Sometimes, Go developers use
+the Abstract Syntax Tree (AST) package or yacc tool to generate Go code. Go itself
+comes with parser and text/scanner packages in the standard library. But we’ve found
+that one fun and easy way to build code is to write Go templates that generate Go code.
+Problem—You want to be able to create type-specific collections, such as a queue,
+for an arbitrary number of types. You’d like to do it without the runtime safety
+problems and performance hit associated with type assertions. If you have a lot
+of types you want to capture, using code generation reduces a lot of boilerplate,
+even if you use generics.
+Solution—Build a generator that can create queues for you and then use gener-
+ation headers to generate the queues as you need them.
+Discussion—A queue is a simple data structure; you push data onto the front
+and dequeue data off the back. The first value into the queue is the first value
+out (first in, first out, or FIFO). Usually, queues have two methods: insert (or
+enqueue) to push data onto the back of the queue, and remove (or dequeue)
+to get the value at the front of the queue.
+If you recall our implementations of generics in chapter 3, you may have
+noted the amount of manual code duplication this sometimes requires. This
+can be optimized in some cases by using code generation.
+You want to be able to automatically generate queues that are specific to the types you
+want to store in the queues. You want queues that follow a pattern like the next listing.
+package main
+type MyTypeQueue struct {
+     q []MyType
+}
+func NewMyTypeQueue() *MyTypeQueue {
+     return &MyTypeQueue{
+            q: []MyType{},
+     }
+}
+func (o *MyTypeQueue) Insert(v MyType) {
+     o.q = append(o.q, v)
+}
+func (o *MyTypeQueue) Remove() MyType {
+     if len(o.q) == 0 {
+       panic("Oops.")
+     }
+     first := o.q[0]
+     o.q = o.q[1:]
+     return first
+}
+Listing 13.18
+Simple queue
+A simple queue backed
+by a typed slice
+Adds an item
+to the back of
+the queue
+Removes an item from
+the front of the queue
+In production code, you’d
+replace the panic with an error.
+We simplify here to keep the
+generator code smaller.
+
+
+CHAPTER 13
+Reflection, code generation, and advanced Go
+This code is a good representation of what you want to have generated for you but for a
+single type. There are certain bits of information that you want to be filled in at genera-
+tion time. The obvious example is the type. But you also want the package name to be
+filled out automatically. Your next step, then, is to translate the preceding code into a
+Go template. The next listing shows the beginning of your queue generator tool.
+package main
+import (
+     "fmt"
+     "os"
+     "strings"
+     "text/template"
+)
+var tpl = `package {{.Package}}
+type {{.MyType}}Queue struct {
+     q []{{.MyType}}
+}
+func New{{.MyType}}Queue() *{{.MyType}}Queue {
+     return &{{.MyType}}Queue{
+            q: []{{.MyType}}{},
+     }
+}
+func (o *{{.MyType}}Queue) Insert(v {{.MyType}}) {
+     o.q = append(o.q, v)
+}
+func (o *{{.MyType}}Queue) Remove() {{.MyType}} {
+     if len(o.q) == 0 {
+            panic("Oops.")
+     }
+     first := o.q[0]
+     o.q = o.q[1:]
+     return first
+}
+Your template is almost the same as the target code you wrote previously but with the
+package name replaced with {{.Package}} and the MyType prefix replaced with a
+{{.MyType}} variable. From here, you need to write the code that performs the gen-
+eration. This is a command-line tool designed to fit the //go:generate COMMAND
+ARGUMENT… pattern. Ideally, what you’d like is to be able to write something like this:
+//go:generate queue MyInt
+As a result, the generator would generate a MyIntQueue implementation. It’d be even
+nicer if you could generate queues for multiple types at once:
+//go:generate queue MyInt MyFloat64
+Listing 13.19
+The queue template
+.Package is
+your package
+placeholder
+.MyType is your
+type placeholder
+
+
+13.3
+Generating Go code with Go code
+You should be able to easily accommodate that, too, as shown in the next listing.
+func main() {
+     tt := template.Must(template.New("queue").Parse(tpl))
+     for i := 1; i < len(os.Args); i++ {
+            dest := strings.ToLower(os.Args[i]) +
+            "_queue.go"
+            file, err := os.Create(dest)
+            if err != nil {
+                   fmt.Printf("Could not create %s: %s (skip)\n",
+                   dest, err)
+                   continue
+            }
+            vals := map[string]string{
+                   "MyType":  os.Args[i],
+                   "Package": os.Getenv("GOPACKAGE"),
+            }
+            tt.Execute(file, vals)
+            file.Close()
+     }
+}
+Because you want to accept multiple types at the command line, you start out by loop-
+ing through os.Args. For each one, you automatically generate an output file with the
+name TYPE_queue.go, though to be consistent with the Go file-naming conventions,
+you should lowercase the type name.
+ Your template had only two variables. One is the Go type that you want to handle.
+But the other is the package. One nice thing that the go generate command does for
+you is populate a few environment variables with useful information about the loca-
+tion of the generator file. The $GOPACKAGE environment variable is set to the name of
+the package where the go:generate header was found.
+ When the template is executed, the vals map is used to populate the template,
+and a complete Go file is generated. To run this, you need to place the go:generate
+header in an appropriate file, as shown in the next listing.
+//go:generate ./queue MyInt
+package main
+import "fmt"
+type MyInt int
+func main() {
+     var one, two, three MyInt = 1, 2, 3
+Listing 13.20
+The main queue generator
+Listing 13.21
+Using the generator
+Compiles the
+generator template
+Loops through the args,
+making a file named
+TYPE_queue.go for each
+Sets .MyType to the type specified
+in the passed-in argument
+Sets .Package to the
+value of the environment
+variable $GOPACKAGE
+Executes the template,
+sending the results to the file
+Allocates go:generate
+header, creating a queue
+for type MyInt
+Defines the
+MyInt type
+
+
+CHAPTER 13
+Reflection, code generation, and advanced Go
+     q := NewMyIntQueue()
+     q.Insert(one)
+     q.Insert(two)
+     q.Insert(three)
+     fmt.Printf("First value: %d\n", q.Remove())
+}
+This is a good example of typical use of a Go generator. In this one file, you declare a
+generator, declare your type, and even use the generator. Clearly, this code will not
+compile until you’ve run the generator. But because the generator doesn’t depend on
+your code compiling, you can (and should) run it before building your package.
+ That raises an important point about generators: they’re intended to be used as devel-
+opment tools. The Go authors intended that generation was part of the development life
+cycle, not the build or runtime cycle. In many cases, you’ll want to generate your code
+and then check the generated code into your VCS. You shouldn’t require your users
+to run a generator (even if your users are other developers) except in cases where you
+want to expose the intervals of the generated code to end developers.
+ To run the preceding generator, you need to do a few things. First, compile the
+generator tool from listings 13.18 and 13.19. For the generator line to work, you need
+to have it in the local directory (because you called it as ./queue). Alternatively, you
+could store the queue program anywhere on your path ($PATH), often including
+$GOPATH/bin, and call it //go:generate queue.
+ With queue compiled and located where go generate can find it, you need to
+run your go generate tool, and then you can run the main program using the gen-
+erated code:
+$ ls
+myint.go
+$ go generate
+$ ls
+myint.go
+myint_queue.go
+$ go run myint.go myint_queue.go
+First value: 1
+After the generator has created your extra queue code, you can run the program
+shown in listing 13.21. Everything it needs has been generated.
+ The code you’re using for this generator is basic. Instead of adding error handling,
+you let the queue panic. You don’t handle the case where you’d want to queue point-
+ers. But these problems are easily corrected by using the normal strategies. Adding
+pointers, for example, is just a matter of adding another template parameter that adds
+an asterisk where appropriate.
+ Again, Go templates aren’t the only way to generate code. Using the go/ast pack-
+age, you can generate code by programming the abstract syntax tree. For that matter,
+you could just as easily write Python, C, or Erlang code that generated Go. You’re
+not
+Uses the
+MyIntQueue
+
+
+13.4
+Working with other languages
+even limited to outputting Go. Imagine generating SQL CREATE statements by using a
+generator that reads structs. One of the things that make go generate so elegant is the
+versatility within its simplicity, and generating SQL from types with struct annotations
+is a relatively common use for generation.
+ Taking a higher-level view, generators can be a useful way of writing repetitive code
+that would otherwise use reflection. Go’s reflection mechanism is useful, but it’s
+tedious to write and limited in capabilities, and the performance of your application
+will suffer. That’s not to say that reflection is bad. Rather, it’s a tool designed to solve a
+specific set of problems.
+ On the other hand, generating code isn’t always the best solution either. Metapro-
+gramming can make debugging hard. It also adds steps to the development process.
+Just like reflection, generation should be used when the situation calls for it. But it’s
+not a panacea or a workaround for Go’s strong typing.
+13.4
+Working with other languages
+One final area we’d like to touch on is one that’s become very common with modern
+languages: the ability to work with other languages, namely C. In recent years, Rust,
+Zig, Kotlin, and a few others have been released with this capability built in.
+ This isn’t something you should need to do often (or ever), but the most common
+case is a C library you’d like to implement without rewriting. If resources are not lim-
+ited, rewriting small libraries will almost always be a better approach, but for quicker
+prototyping or when rewrites would be prohibitively expensive, Go provides a lan-
+guage construct that allows you to “import” C code and use methods and variables
+between the two languages.
+ Ultimately, this is a lot closer to working directly in C than passing serialized data
+back and forth as we have with things like os.Exec.
+ As Rob Pike says, “cgo is not Go.” In Pike’s opinion, you won’t be writing Go code
+when interfacing with C applications, even though it will look like it. In his Gopher-
+con talk “Go Proverbs,” he walks through some potential pitfalls and caveats with
+using cgo; see https://www.youtube.com/watch?v=PAAkCSZUG1c&t=757s.
+ To demonstrate how this works at a very basic level, let’s pass some data from a Go
+application to C, as shown in the next listing.
+package main
+// #include <stdio.h>
+// void delimiter(int num, int limit) {
+//    if (num < limit) {
+//        printf(", ");
+//        return;
+//    }
+//     printf("\n");
+// }
+Listing 13.22
+From Go to C
+Standard C import
+via #include
+A function that prints one of
+two possible delimiters based
+on iteration number
+
+
+CHAPTER 13
+Reflection, code generation, and advanced Go
+// void fizz_buzz(int limit) {
+// for (int i = 0; i <= limit; i++) {
+//     if (i % 3 == 0 || i % 5 == 0) {
+//         printf("FizzBuzz");
+//     }
+//     else if (i % 3 == 0) {
+//         printf("Fizz");
+//     }
+//     else if (i % 5 == 0) {
+//         printf("Buzz");
+//     } else {
+//         printf("%d", i);
+// }
+//     delimiter(i, limit);
+// }
+// }
+import "C"
+func main() {
+    if _, err := C.fizz_buzz(15); err != nil {
+        panic(err)
+    }
+}
+Here, we’re calling a fizz_buzz function from C embedded in our Go file. We can
+also reference C header files from this Go file as well. In this case, all our cgo refer-
+ences need to be in comments specified above any packages being called, including
+"C". Although obviously we could (and should) build fizz_buzz in Go, this gives a
+simple example of how the two languages can work together when you need.
+ Working with cgo is very much an edge case, but if you encounter C libraries that
+have no native Go counterpart which would be hard to integrate, and you don’t
+plan to use the interoperability frequently, this can be a quick way to work with C
+libraries.
+ In advanced cases of interoperating with C, you may want to explore some of
+the runtime options around garbage collection. Go provides flexibility around the
+memory footprint of garbage collection by setting GOMEMLIMIT and the target per-
+centage of garbage collection using the GOGC environment variable. In the latter,
+garbage collection can be disabled by setting GOGC to off. You won’t need this often,
+if at all, so its use should be reserved for cases where garbage collection has become
+a bottleneck.
+Summary
+Reflection in Go allows us to examine our data and its types and kinds. We can
+use this to determine at runtime whether a type implements an interface, is
+comparable or castable, and more.
+We can examine annotations in structs and parse tags to better extend function-
+ality like runtime checks against data validity.
+A Fizz Buzz function
+declaration in C
+The main logic loop
+The C import in Go
+Execution of the C
+function, capturing
+a possible error
+
+
+Summary
+Using reflection, we can create our own Marshal and Unmarshal methods to
+encode data in a way similar to built-in Go data encoders.
+Using go generate, we can avoid boilerplate code that would require a lot of
+repetitive declarations, especially when working with vast generics.
+We can work with C directly in our Go code to bring in various libraries that
+may not be natively available in Go.
+
+
+index
+Numerics
+12-factor app paradigm 176
+A
+AES (Advanced Encryption
+Standard) 10
+annotations 329–337
+annotating structs 329
+for validation 330
+ignoring struct fields with 335
+processing tags on
+structs 331–337
+tag annotations 330
+any type 63, 76
+APIs (application programming
+interfaces), parsing and
+mapping JSON 278–281
+approximations, using with
+generics 81
+args array 90
+arrays, slices, arrays, and
+maps 35
+artificial intelligence tools with
+Go 26
+AST (Abstract Syntax Tree) 339
+authentication, basic 217
+B
+benchmarking 166–168
+binaries, embedding files
+in 249–251
+block directive 235
+BSD (Berkeley Software
+Distribution) 30
+buffered channels, locking
+with 135–137
+bufio package 173
+C
+CDN (content-delivery
+network) 251
+channels 10–14, 116, 127–137
+closing 130–134
+locking with buffered
+channels 135–137
+locking with mutexes
+122–127
+using 127–130
+CI/CD (continuous integra-
+tion/continuous
+development) 46
+clear function 173
+CLI (command-line
+interface) 226, 295
+building applications 29–30
+congiguration 41–47
+enums 33
+flags 30
+frameworks 35–36, 39
+slices, arrays, and maps 35
+web servers 48–60
+cli.NewExitError function 38
+close function 132
+closure function 103
+cloud computing 294
+cloud-ready applications, and
+communications 293
+cloud servers 307–313
+communicating between
+services 300–307
+containers and cloud-native
+applications 295–297
+microservices 297–299
+runtime monitoring 313–315
+types of 294–295
+code, keeping clean 139–145
+go vet tool 142–144
+keeping code well
+formatted 139–141
+keeping dependencies
+updated 145
+codecgen command 305
+code coverage 18
+codec package 305
+code generation 337–343
+concurrency 115–116
+goroutines 117–127
+mutexes 122–127
+sync.Locker interface 122
+sync.Mutex 122
+sync package 135
+configuration 41–47
+configuration files 42–46
+environment variables 46
+connections, reusing 300–304
+constraints, using with
+generics 81
+containers 295–297
+
+
+INDEX
+348
+content, matching paths to
+52–54
+coverprofile option 165
+C programming language 20
+Create function 174
+CRUD (Create Read Update
+Delete) 197
+cryptography 10
+crypto package 27, 95
+CSP (Communicating Sequen-
+tial Processes) 116
+CSRF (cross-site request
+forgery) 255
+CSS (Cascading Style
+Sheets) 244
+custom error pages 248
+D
+data
+form processing 253–264
+sending and receiving, serving
+static content 245–253
+database/sql package 205
+data encoding 10
+DefaultClient 268
+default statement 129
+default switch case 34
+default value 130
+defer, capturing panics with 102
+define directive 235
+dependencies, keeping
+updated 145
+DES (Data Encryption
+Standard) 10
+DetectContentType
+function 260
+Dial function 8
+directives 222
+DisableKeepAlives property 302
+done channel 130, 134
+duck typing 72
+E
+Elem() function 325
+email template patterns
+standard library HTML pack-
+age overview 221
+templates 241–243
+when template execution
+breaks 230
+embedding files in binaries
+249–251
+embed package 250
+empty interface 76
+encoding/json
+data 68
+functions 69
+package 278–279, 304, 331
+encoding/xml package 331
+enums 33
+environment variables 26, 46
+EOF (end of file) 170
+Error function 54, 93–94, 248,
+274
+error handling 88–96
+custom error types 93
+differentiating panics from 98
+Error method 277
+errors.Is() method 270
+errors.New function 91, 103
+errors package 91
+Error struct 277
+errors.Unwrap method 97
+Error type 277
+error variables 94–96
+ErrRejected error 95–96
+ErrTimeout error 95–96
+ErrUnexpectedEOF 170
+generating 217
+handling panics on
+goroutines 106
+nil best practices 90–93
+over HTTP 273–278
+panic system 98
+wrapping 96
+error pages, custom 248
+errors 87
+EventSource connections 191
+extends keyword 73
+external services
+errors over HTTP 273–278
+gRPC 285–289
+parsing and mapping
+JSON 278–281
+REST APIs 267–272
+versioning REST APIs
+281–285
+F
+fieldName() function 335, 337
+FIFO (first in, first out) 339
+files 170–175, 255–257
+file access, networking
+175–181
+FileName method 264
+Filename property 257, 259
+File objects 255
+filepath package 311
+File property 259
+FileServer handler 246
+File struct 45
+file variable 106
+reading 170–174
+saving incrementally 261–264
+uploading multiple 257–259
+verifying uploaded 259–261
+writing 174
+filter function 80
+flags 29
+flag.Args() function 33
+flag.BoolVar function 32
+flag.IntVar function 32
+flag package 30, 32, 35–36
+flag.Parse() function 32
+flag.String() function 31
+flag.StringVar function 32
+fmt tool 139
+for loop 130
+formatting 19, 138
+FormFile method 255, 257
+FormName method 264
+form processing 253–264
+accessing multiple values for
+form field 254
+files 255–257
+handling form requests 253
+multipart submissions 255–
+257
+saving files
+incrementally 261–264
+uploading multiple files
+257–259
+verifying uploaded files
+259–261
+Form property 254
+FormValue method 254
+for/select loop 130
+Fprintf 214
+fs.FileServer function 249
+fsnotify package 188
+funcMap function 228
+functional programming, con-
+trasts with structs 69–74

@@ -224,6 +224,21 @@
       "workspace": "books_read/Go/L3/Learning Go - Jon Bodner - 2024 - v2",
       "telegram_upload": "done",
       "fingerprint": "learning go, second edition|jon bodner|2024|2"
+    },
+    {
+      "book_id": "go_in_practice_2e_2023_v2",
+      "title": "Go in Practice, Second Edition",
+      "author": "Nathan Kozyra, Matt Butcher, Matt Farina",
+      "year": 2023,
+      "version": 2,
+      "pages": 368,
+      "status": "completed",
+      "started_at": "2026-09-07",
+      "completed_at": "2026-09-07",
+      "filename_safe": "Go in Practice - Nathan Kozyra, Matt Butcher, Matt Farina - 2023 - v2",
+      "workspace": "books_read/Go/L4/Go in Practice - Nathan Kozyra, Matt Butcher, Matt Farina - 2023 - v2",
+      "telegram_upload": "done",
+      "fingerprint": "go in practice, second edition|nathan kozyra, matt butcher, matt farina|2023|2"
     }
   ]
 }

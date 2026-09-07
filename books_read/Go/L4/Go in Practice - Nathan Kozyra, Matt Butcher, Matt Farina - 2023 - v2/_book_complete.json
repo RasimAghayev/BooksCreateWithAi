@@ -1,0 +1,16 @@
+{
+  "book_id": "go_in_practice_2e_2023_v2",
+  "title": "Go in Practice, Second Edition",
+  "author": "Nathan Kozyra, Matt Butcher, Matt Farina",
+  "year": 2023,
+  "version": 2,
+  "pages": 368,
+  "chapters_processed": 13,
+  "knowledge_language": "az",
+  "completed_at": "2026-09-07",
+  "structure": {
+    "toc": true,
+    "chapters": 13,
+    "info_files": ["summary.az.md", "terminology.az.md", "teacher-notes.az.md", "cheatsheet.az.md"]
+  }
+}
