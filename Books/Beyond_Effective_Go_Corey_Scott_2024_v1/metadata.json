@@ -1,0 +1,32 @@
+{
+  "📘 title_original": "Beyond Effective Go - Part 2 - Striving for High-Quality Code",
+  "🔤 filename_safe": "Beyond_Effective_Go_Corey_Scott_2024_v1",
+  "📚 book": {
+    "📖 title": "Beyond Effective Go - Part 2 - Striving for High-Quality Code",
+    "🧑‍💻 author": "Corey Scott",
+    "📅 year": 2024,
+    "📖 version": 1,
+    "📄 pages": 357,
+    "🔢 isbn": "978-0-6455820-8-6",
+    "🏢 publisher": "Self-published (coreyscott.dev)",
+    "📚 series": "Beyond Effective Go"
+  },
+  "🎯 classification": {
+    "💻 primary_language": "Go",
+    "🎯 level": 4,
+    "📛 level_name": "Advanced",
+    "🌟 level_icon": "📕",
+    "🌐 domains": ["Software Engineering", "Code Quality", "Testing", "Software Design Patterns"]
+  },
+  "🛠️ technologies": ["Go", "testing", "table-driven tests", "mockery", "code generation", "generics", "closures", "functional programming", "go doc", "linting"],
+  "🏷️ tags": ["#go", "#golang", "#advanced", "#code_quality", "#design_patterns", "#unit_testing", "#metaprogramming", "#best_practices"],
+  "📦 workspace": "books_read/Go/L4/Beyond_Effective_Go_Corey_Scott_2024_v1",
+  "📑 chapters": [
+    {"chapter": 4, "title": "Exploring Software Design Principles", "start_page": 18, "end_page": 68},
+    {"chapter": 5, "title": "Optimizing for Code UX", "start_page": 69, "end_page": 147},
+    {"chapter": 6, "title": "Advanced Unit Testing Techniques", "start_page": 148, "end_page": 236},
+    {"chapter": 7, "title": "Improving your Development Productivity", "start_page": 237, "end_page": 276},
+    {"chapter": 8, "title": "Examining Unusual Patterns for Go", "start_page": 277, "end_page": 316},
+    {"chapter": 9, "title": "Metaprogramming with Go", "start_page": 317, "end_page": 357}
+  ]
+}

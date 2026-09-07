@@ -1,0 +1,12 @@
+{
+  "chapters": [
+    {"chapter": 4, "title": "Exploring Software Design Principles", "start_page": 18, "end_page": 68},
+    {"chapter": 5, "title": "Optimizing for Code UX", "start_page": 69, "end_page": 147},
+    {"chapter": 6, "title": "Advanced Unit Testing Techniques", "start_page": 148, "end_page": 236},
+    {"chapter": 7, "title": "Improving your Development Productivity", "start_page": 237, "end_page": 276},
+    {"chapter": 8, "title": "Examining Unusual Patterns for Go", "start_page": 277, "end_page": 316},
+    {"chapter": 9, "title": "Metaprogramming with Go", "start_page": 317, "end_page": 357}
+  ],
+  "frontmatter": {"preface": [15, 17], "contents": [9, 14]},
+  "project_continuity": false
+}
