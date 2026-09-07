@@ -1,0 +1,178 @@
+{
+    "📘 title_original": "The Go Workshop",
+    "🔤 filename_safe": "The Go Workshop - Packt Authors - 2019 - v1",
+    "📚 book": {
+        "📖 title": "The Go Workshop",
+        "🧑‍💻 author": "Delio D'Anna, Andrew Hayes, Sam Hennessy, Jeremy Leasor, Gobin Sougrakpam, Dániel Szabó",
+        "📅 year": 2019,
+        "📖 version": 1,
+        "📄 pages": 821,
+        "🔢 isbn": "978-1838646642",
+        "🏢 publisher": "Packt Publishing",
+        "📚 series": "Workshop"
+    },
+    "page_offset": 33,
+    "🎯 classification": {
+        "💻 primary_language": "Go",
+        "🎯 level": 2,
+        "📛 level_name": "Elementary",
+        "🌟 level_icon": "📗",
+        "🌐 domains": [
+            "Fundamentals",
+            "Web Development",
+            "Databases",
+            "Concurrency",
+            "Security",
+            "Tooling"
+        ]
+    },
+    "🛠️ technologies": [
+        "Go",
+        "net/http",
+        "encoding/json",
+        "encoding/csv",
+        "database/sql",
+        "PostgreSQL",
+        "gorilla/mux",
+        "sync",
+        "channels",
+        "goroutines",
+        "context",
+        "crypto",
+        "TLS",
+        "gofmt",
+        "goimports",
+        "go vet",
+        "reflection",
+        "cgo"
+    ],
+    "🏷️ tags": [
+        "#go",
+        "#golang",
+        "#beginner",
+        "#workshop",
+        "#web",
+        "#json",
+        "#sql",
+        "#concurrency",
+        "#security",
+        "#tools"
+    ],
+    "📦 workspace": "Books/The_Go_Workshop_Packt_2019",
+    "📑 chapters": [
+        {
+            "chapter": 1,
+            "title": "Variables and Operators",
+            "start_page": 1,
+            "end_page": 53
+        },
+        {
+            "chapter": 2,
+            "title": "Logic and Loops",
+            "start_page": 55,
+            "end_page": 81
+        },
+        {
+            "chapter": 3,
+            "title": "Core Types",
+            "start_page": 83,
+            "end_page": 107
+        },
+        {
+            "chapter": 4,
+            "title": "Complex Types",
+            "start_page": 109,
+            "end_page": 167
+        },
+        {
+            "chapter": 5,
+            "title": "Functions",
+            "start_page": 169,
+            "end_page": 214
+        },
+        {
+            "chapter": 6,
+            "title": "Errors",
+            "start_page": 217,
+            "end_page": 249
+        },
+        {
+            "chapter": 7,
+            "title": "Interfaces",
+            "start_page": 251,
+            "end_page": 288
+        },
+        {
+            "chapter": 8,
+            "title": "Packages",
+            "start_page": 291,
+            "end_page": 320
+        },
+        {
+            "chapter": 9,
+            "title": "Basic Debugging",
+            "start_page": 323,
+            "end_page": 350
+        },
+        {
+            "chapter": 10,
+            "title": "About Time",
+            "start_page": 353,
+            "end_page": 373
+        },
+        {
+            "chapter": 11,
+            "title": "Encoding and Decoding (JSON)",
+            "start_page": 375,
+            "end_page": 418
+        },
+        {
+            "chapter": 12,
+            "title": "Files and Systems",
+            "start_page": 421,
+            "end_page": 462
+        },
+        {
+            "chapter": 13,
+            "title": "SQL and Databases",
+            "start_page": 465,
+            "end_page": 491
+        },
+        {
+            "chapter": 14,
+            "title": "Using the Go HTTP Client",
+            "start_page": 493,
+            "end_page": 513
+        },
+        {
+            "chapter": 15,
+            "title": "HTTP Servers",
+            "start_page": 515,
+            "end_page": 557
+        },
+        {
+            "chapter": 16,
+            "title": "Concurrent Work",
+            "start_page": 559,
+            "end_page": 602
+        },
+        {
+            "chapter": 17,
+            "title": "Using Go Tools",
+            "start_page": 605,
+            "end_page": 623
+        },
+        {
+            "chapter": 18,
+            "title": "Security",
+            "start_page": 625,
+            "end_page": 659
+        },
+        {
+            "chapter": 19,
+            "title": "Special Features",
+            "start_page": 661,
+            "end_page": 680
+        }
+    ]
+}

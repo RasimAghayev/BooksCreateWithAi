@@ -1,0 +1,16 @@
+{
+  "book_id": "the_go_workshop_2019_v1",
+  "title": "The Go Workshop",
+  "author": "Delio D'Anna, Andrew Hayes, Sam Hennessy, Jeremy Leasor, Gobin Sougrakpam, Dániel Szabó",
+  "year": 2019,
+  "version": 1,
+  "pages": 821,
+  "chapters_processed": 19,
+  "knowledge_language": "az",
+  "completed_at": "2026-09-07",
+  "structure": {
+    "toc": true,
+    "chapters": 19,
+    "info_files": ["summary.az.md", "terminology.az.md", "teacher-notes.az.md", "cheatsheet.az.md"]
+  }
+}
