@@ -284,6 +284,21 @@
       "workspace": "books_read/Go/L3/The Power of Go Tests - John Arundel - 2022 - v1",
       "telegram_upload": "completed",
       "fingerprint": "the power of go: tests|john arundel|2022|1"
+    },
+    {
+      "book_id": "for_the_love_of_go_2022_v1",
+      "title": "For the Love of Go",
+      "author": "John Arundel",
+      "year": 2022,
+      "version": 1,
+      "pages": 210,
+      "status": "reading",
+      "started_at": "2026-09-07T07:52:49Z",
+      "completed_at": null,
+      "filename_safe": "For the Love of Go - John Arundel - 2022 - v1",
+      "workspace": "Books/For_the_Love_of_Go_Arundel",
+      "telegram_upload": "pending",
+      "fingerprint": "for the love of go|john arundel|2022|1"
     }
   ]
 }
