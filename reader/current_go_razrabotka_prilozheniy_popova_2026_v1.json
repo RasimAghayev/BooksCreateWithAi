@@ -2,20 +2,17 @@
   "book_id": "go_razrabotka_prilozheniy_popova_2026_v1",
   "filename_safe": "Go_razrabotka_prilozheniy_Popova_2026_v1",
   "fingerprint": "go: разработка приложений в микросервисной архитектуре с нуля|попова ю.ю.|2026|1",
-  "pipeline_step": "knowledge_extraction",
-  "page_offset": 1,
-  "current_chapter": 1,
-  "chapters_done": [],
-  "chapter_structure": [
-    {"chapter": 0, "title": "Введение", "start_page": 7, "end_page": 12},
-    {"chapter": 1, "title": "Разработка первого микросервиса (User)", "start_page": 13, "end_page": 86},
-    {"chapter": 2, "title": "Разработка микросервиса авторизации и аутентификации (Auth)", "start_page": 87, "end_page": 110},
-    {"chapter": 3, "title": "Способы взаимодействия между микросервисами", "start_page": 111, "end_page": 156},
-    {"chapter": 4, "title": "Разработка модуля Transaction", "start_page": 157, "end_page": 266},
-    {"chapter": 5, "title": "Развертывание микросервисов", "start_page": 267, "end_page": 310},
-    {"chapter": 6, "title": "Заключение + Приложение + Указатель", "start_page": 311, "end_page": 317}
-  ],
-  "source_pdf": "Books/_media_books_go_razrabotka_prilozhenij_v_mikroservisnoj_arhitekture.pdf",
-  "raw_dir": "Books/_media_books_go_razrabotka_prilozhenij_v_mikroservisnoj_arhitekture/raw",
-  "last_updated": "2026-09-07T18:40:00Z"
+  "pipeline_step": "finalization",
+  "current_page": 318,
+  "chapter": 6,
+  "git_committed_through_chapter": 6,
+  "telegram_upload_status": {"RA_GO": "success", "RA_ALL": "success"},
+  "finalization": {
+    "upload": "done",
+    "move": "done",
+    "git_commit": "pending",
+    "delete_original": "pending",
+    "delete_state": "pending"
+  },
+  "last_updated": "2026-09-07T19:50:00Z"
 }

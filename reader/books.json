@@ -322,12 +322,12 @@
       "year": 2026,
       "version": 1,
       "pages": 322,
-      "status": "reading",
+      "status": "completed",
       "started_at": "2026-09-07T18:40:00Z",
-      "completed_at": null,
+      "completed_at": "2026-09-07T19:50:00Z",
       "filename_safe": "Go_razrabotka_prilozheniy_Popova_2026_v1",
-      "workspace": "Books/_media_books_go_razrabotka_prilozhenij_v_mikroservisnoj_arhitekture",
-      "telegram_upload": "pending",
+      "workspace": "books_read/Go/L3/Go_razrabotka_prilozheniy_Popova_2026_v1",
+      "telegram_upload": "done",
       "fingerprint": "go: разработка приложений в микросервисной архитектуре с нуля|попова ю.ю.|2026|1"
     }
   ]
