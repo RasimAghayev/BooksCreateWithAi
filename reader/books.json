@@ -344,6 +344,21 @@
       "workspace": "books_read/Go/L3/Ultimate_Guide_Building_Database_Intensive_Apps_Go",
       "telegram_upload": "done",
       "fingerprint": "the ultimate guide to building database-intensive apps with go|baron schwartz|2019|1"
+    },
+    {
+      "book_id": "everyday_golang_2021_v1",
+      "title": "Everyday Golang",
+      "author": "Alex Ellis",
+      "year": 2021,
+      "version": 1,
+      "pages": 157,
+      "status": "reading",
+      "started_at": "2026-09-07T20:30:00Z",
+      "completed_at": null,
+      "filename_safe": "Everyday_Golang_Alex_Ellis_2021_v1",
+      "workspace": "Books/everyday_golang_the_fast-track",
+      "telegram_upload": "pending",
+      "fingerprint": "everyday golang|alex ellis|2021|1"
     }
   ]
 }
