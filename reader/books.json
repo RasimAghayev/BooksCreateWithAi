@@ -402,19 +402,6 @@
       "filename_safe": "Learn_Go_Pocket_Sized_Projects_2025_v1",
       "workspace": "Books/Learn_Go_Pocket_Sized_Projects_2025_v1",
       "fingerprint": "learn go with pocket-sized projects|latour chaiehloudj bertrand|2025|1"
-    },
-    {
-      "book_id": "learn_go_pocket_sized_projects_2023_v1",
-      "title": "Learn Go with Pocket-Sized Projects",
-      "author": "Aliénor Latour, Donia Chaiehloudj, Pascal Bertrand",
-      "year": 2023,
-      "version": 1,
-      "pages": 782,
-      "status": "reading",
-      "started_at": "2026-09-08",
-      "filename_safe": "Learn_Go_with_Pocket_Sized_Projects_2023_v1",
-      "workspace": "Books/Learn_Go_with_Pocket_Sized_Projects_2023_v1",
-      "fingerprint": "learn go with pocket-sized projects|alienor latour|2023|1"
     }
   ]
 }
