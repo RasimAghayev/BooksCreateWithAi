@@ -1,0 +1,38 @@
+{
+  "📘 title_original": "Learn Go with Pocket-Sized Projects",
+  "🔤 filename_safe": "Learn_Go_with_Pocket_Sized_Projects_2023_v1",
+  "📚 book": {
+    "📖 title": "Learn Go with Pocket-Sized Projects",
+    "🧑‍💻 author": "Aliénor Latour, Donia Chaiehloudj, Pascal Bertrand",
+    "📅 year": 2023,
+    "📖 version": 1,
+    "📄 pages": 782,
+    "🔢 isbn": "978-1633436795",
+    "🏢 publisher": "Manning",
+    "📚 series": ""
+  },
+  "🎯 classification": {
+    "💻 primary_language": "Go",
+    "🎯 level": 2,
+    "📛 level_name": "Elementary",
+    "🌟 level_icon": "📗",
+    "🌐 domains": ["Backend Development", "CLI Development", "Web Development", "Distributed Systems", "Testing"]
+  },
+  "🛠️ technologies": ["Go", "testing", "table-driven tests", "JSON", "flag", "maps", "generics", "goroutines", "channels", "mutex", "net/http", "gRPC", "protobuf", "html/template", "Wasm", "TinyGo"],
+  "🏷️ tags": ["#go", "#golang", "#projects", "#beginner_friendly", "#grpc", "#concurrency", "#cli", "#manning"],
+  "📦 workspace": "books_read/Go/L2/Learn_Go_with_Pocket_Sized_Projects_2023_v1",
+  "📑 chapters": [
+    {"chapter": 1, "title": "Meet Go", "start_page": 33, "end_page": 45},
+    {"chapter": 2, "title": "Hello, earth! Extend your hello, world", "start_page": 46, "end_page": 78},
+    {"chapter": 3, "title": "A bookworm's digest: Playing with loops and maps", "start_page": 79, "end_page": 121},
+    {"chapter": 4, "title": "A log story: Creating a library", "start_page": 122, "end_page": 153},
+    {"chapter": 5, "title": "Gordle: Play a word game in your terminal", "start_page": 154, "end_page": 202},
+    {"chapter": 6, "title": "Money converter: CLI around an HTTP call", "start_page": 203, "end_page": 281},
+    {"chapter": 7, "title": "Caching with generics", "start_page": 282, "end_page": 327},
+    {"chapter": 8, "title": "Gordle as a service", "start_page": 328, "end_page": 392},
+    {"chapter": 9, "title": "Concurrent maze solver", "start_page": 393, "end_page": 451},
+    {"chapter": 10, "title": "Habits tracker using gRPC", "start_page": 452, "end_page": 518},
+    {"chapter": 11, "title": "HTML templating with a gRPC client", "start_page": 519, "end_page": 580},
+    {"chapter": 12, "title": "Go for other architectures", "start_page": 581, "end_page": 639}
+  ]
+}
