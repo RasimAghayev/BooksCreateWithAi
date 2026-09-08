@@ -1,0 +1,26 @@
+{
+    "book_id": "data_structures_algorithms_go_2024_v1",
+    "title": "Data Structures and Algorithms with Go",
+    "title_original": "Data Structures and Algorithms with Go: Create efficient solutions and optimize your Go coding skills",
+    "author": "Dušan Stojanović",
+    "year": 2024,
+    "version": 1,
+    "pages": 487,
+    "isbn": "978-93-55518-897",
+    "publisher": "BPB Publications",
+    "filename_safe": "Data_Structures_and_Algorithms_with_Go_Dusan_Stojanovic_2024_v1",
+    "completed_at": "2026-09-08T19:10:00Z",
+    "chapters_processed": 7,
+    "info_files": [
+        "summary.az.md",
+        "terminology.az.md",
+        "cheatsheet.az.md",
+        "teacher-notes.az.md"
+    ],
+    "classification": {
+        "primary_language": "Go",
+        "level": 2,
+        "level_name": "Intermediate"
+    },
+    "note": "DS&A fundamentals through advanced graph algorithms, all with full Go implementations: arrays/slices/sorting, lists, stack/queue/priority queue, hashing/maps, binary trees + traversals, graphs (BFS/DFS, MST, shortest paths, max flow, topological sort, critical path)."
+}

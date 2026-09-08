@@ -53,12 +53,12 @@
       "chapter": 9,
       "title": "Тестирование Go-кода",
       "start_page": 297,
-      "end_page": 330
+      "end_page": 323
     },
     {
       "chapter": 10,
       "title": "Параллелизм и конкурентность",
-      "start_page": 331,
+      "start_page": 324,
       "end_page": 360
     },
     {
