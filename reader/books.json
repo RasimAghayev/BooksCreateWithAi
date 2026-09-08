@@ -412,11 +412,13 @@
       "year": 2024,
       "version": 2,
       "pages": 385,
-      "status": "reading",
+      "status": "completed",
       "started_at": "2026-09-08",
       "filename_safe": "100_Go_Mistakes_Teiva_Harsanyi_2024_v2",
-      "workspace": "Books/100_Go_Mistakes_Teiva_Harsanyi_2024_v2",
-      "fingerprint": "100 go mistakes and how to avoid them|teiva harsanyi|2024|2"
+      "workspace": "books_read/Go/L4/100_Go_Mistakes_Teiva_Harsanyi_2024_v2",
+      "fingerprint": "100 go mistakes and how to avoid them|teiva harsanyi|2024|2",
+      "completed_at": "2026-09-08",
+      "telegram_upload": "done"
     },
     {
       "book_id": "event_driven_architecture_golang_2022_v1",
