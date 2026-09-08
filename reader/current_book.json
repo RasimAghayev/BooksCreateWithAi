@@ -1,6 +1,5 @@
 ﻿{
-  "current_book": null,
-  "status": "none",
-  "started_at": null,
-  "note": "Beyond Effective Go Part 2 (beyond_effective_go_p2_2024_v1) tamamlandı. 25 kitab completed. ALL_START davam edir."
+  "current_book": "explore_go_cryptography_2026_v1",
+  "status": "reading",
+  "started_at": "2026-09-08T01:40:00Z"
 }

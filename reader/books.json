@@ -374,6 +374,21 @@
       "workspace": "books_read/Go/L4/Beyond_Effective_Go_Corey_Scott_2024_v1",
       "telegram_upload": "done",
       "fingerprint": "beyond effective go: part 2 - striving for high-quality code|corey scott|2024|1"
+    },
+    {
+      "book_id": "explore_go_cryptography_2026_v1",
+      "title": "Explore Go: Cryptography",
+      "author": "John Arundel",
+      "year": 2026,
+      "version": 1,
+      "pages": 329,
+      "status": "reading",
+      "started_at": "2026-09-08T01:40:00Z",
+      "completed_at": null,
+      "filename_safe": "Explore_Go_Cryptography_John_Arundel_2026_v1",
+      "workspace": "Books/explore_go_cryptography",
+      "telegram_upload": "pending",
+      "fingerprint": "explore go: cryptography|john arundel|2026|1"
     }
   ]
 }
