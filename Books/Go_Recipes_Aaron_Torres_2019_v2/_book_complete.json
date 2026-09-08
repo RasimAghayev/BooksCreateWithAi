@@ -1,0 +1,16 @@
+{
+  "book_id": "go_recipes_torres_2019_v2",
+  "filename_safe": "Go_Recipes_Aaron_Torres_2019_v2",
+  "title": "Go. Рецепты программирования (2nd ed)",
+  "author": "Аарон Торрес (Aaron Torres)",
+  "year": 2019,
+  "chapters_processed": 14,
+  "pages_processed": 464,
+  "status": "completed",
+  "completed_at": "2026-09-08",
+  "outputs": {
+    "chapters": 14,
+    "info_files": ["summary.az.md", "terminology.az.md", "teacher-notes.az.md", "cheatsheet.az.md"],
+    "knowledge_language": "Azerbaijani"
+  }
+}
