@@ -1,0 +1,11 @@
+{
+  "book_id": "build_systems_with_go_2021_v1",
+  "title": "Build systems with Go: Everything a Gopher must know",
+  "author": "Juan M. Tirado",
+  "year": 2021,
+  "version": "v0.1.0",
+  "chapters_total": 19,
+  "chapters_processed": 19,
+  "info_files": ["summary.az.md", "terminology.az.md", "teacher-notes.az.md", "cheatsheet.az.md"],
+  "completed_at": "2026-09-08"
+}
