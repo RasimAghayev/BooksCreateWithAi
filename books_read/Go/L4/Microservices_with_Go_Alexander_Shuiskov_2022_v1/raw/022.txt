@@ -1,9 +1,0 @@
-Part 1: 
-Introduction
-This part provides an overview of the microservice architecture model. It covers the key benefits 
-and common issues of microservices, helping the readers to understand which problems the 
-microservice architecture helps to solve and which issues it usually introduces. The single chapter 
-in this part focuses on the role of the Go programming language in microservice development 
-and lays down the foundation for the rest of the book.
-This part contains the following chapter:
-•	 Chapter 1, Introduction to Microservices

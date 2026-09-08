@@ -1,9 +1,0 @@
-{
-  "status": "completed",
-  "book_id": "microservices_with_go_2022_v1",
-  "title": "Microservices with Go",
-  "total_chapters": 13,
-  "chapters_processed": 13,
-  "completed_at": "2026-09-08",
-  "info_files": ["cheatsheet.az.md", "summary.az.md", "teacher-notes.az.md", "terminology.az.md"]
-}

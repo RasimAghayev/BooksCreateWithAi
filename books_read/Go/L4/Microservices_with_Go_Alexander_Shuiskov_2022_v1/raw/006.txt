@@ -1,5 +1,0 @@
-About the reviewer
-Sadman Khan is currently a senior engineer at Uber in the observability department. He co-authored 
-the alerting engine that has been critical to keeping Uber reliable. He graduated from the University 
-of Waterloo, Canada, with a bachelor’s degree in computer engineering. He has previously worked 
-at Coinbase and LinkedIn.

@@ -1,7 +1,0 @@
-Storing Service Data
-146
-Further reading
-To learn more about the topics that were covered in this chapter, take a look at the following resources:
-•	 Types of databases: https://www.prisma.io/dataguide/intro/comparing-
-database-types
-•	 DB engines ranking: https://db-engines.com/en/ranking

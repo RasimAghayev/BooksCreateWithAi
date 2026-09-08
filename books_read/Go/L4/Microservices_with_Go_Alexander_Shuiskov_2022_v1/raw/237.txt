@@ -1,7 +1,0 @@
-Reliability Overview
-214
-•	 Incident postmortems: https://www.pagerduty.com/resources/learn/incident-
-postmortem/
-•	 Google Site Reliability Engineering (SRE) website: https://sre.google/
-•	 Google Site Reliability Engineering (SRE)  book: https://sre.google/sre-book/
-table-of-contents
