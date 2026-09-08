@@ -1,0 +1,23 @@
+{
+    "book_id": "beyond_effective_go_p2_2024_v1",
+    "title": "Beyond Effective Go: Part 2 - Striving for High-Quality Code",
+    "author": "Corey Scott",
+    "year": 2024,
+    "version": 1,
+    "pages": 357,
+    "filename_safe": "Beyond_Effective_Go_Corey_Scott_2024_v1",
+    "completed_at": "2026-09-08T01:30:00Z",
+    "chapters_processed": 6,
+    "info_files": [
+        "summary.az.md",
+        "terminology.az.md",
+        "cheatsheet.az.md",
+        "teacher-notes.az.md"
+    ],
+    "classification": {
+        "primary_language": "Go",
+        "level": 4,
+        "level_name": "Advanced"
+    },
+    "note": "Beyond Effective Go seriyasının 2-ci hissəsi (Ch4-9): design prinsipləri, Code UX, advanced unit-testing (TDT/recorder), productivlik (gopls/dlv/staticcheck), FP və function-based pattern-lər, metaproqramlaşdırma (API/exec/AST codegen). Bütün fəsillər AZ dilində emal edildi."
+}
