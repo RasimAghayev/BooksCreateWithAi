@@ -1,0 +1,18 @@
+{
+  "chapters": [
+    {"chapter": 1, "title": "Go: Simple to learn but hard to master", "start_page": 22, "end_page": 27},
+    {"chapter": 2, "title": "Code and project organization (#1-#27)", "start_page": 28, "end_page": 77},
+    {"chapter": 3, "title": "Data types (#28-#29)", "start_page": 78, "end_page": 115},
+    {"chapter": 4, "title": "Control structures (#30-#38)", "start_page": 116, "end_page": 133},
+    {"chapter": 5, "title": "Strings (#39-#43)", "start_page": 134, "end_page": 147},
+    {"chapter": 6, "title": "Functions and methods (#44-#47)", "start_page": 148, "end_page": 163},
+    {"chapter": 7, "title": "Error management (#48-#54)", "start_page": 164, "end_page": 183},
+    {"chapter": 8, "title": "Concurrency: Foundations (#55-#60)", "start_page": 184, "end_page": 213},
+    {"chapter": 9, "title": "Concurrency: Practice (#61-#74)", "start_page": 214, "end_page": 255},
+    {"chapter": 10, "title": "The standard library (#75-#82)", "start_page": 256, "end_page": 283},
+    {"chapter": 11, "title": "Testing (#83-#90)", "start_page": 284, "end_page": 319},
+    {"chapter": 12, "title": "Optimizations (#91-#100)", "start_page": 320, "end_page": 385}
+  ],
+  "mistakes_range": "#1-#100",
+  "project_continuity": false
+}
