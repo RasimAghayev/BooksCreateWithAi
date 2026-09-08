@@ -1,145 +1,165 @@
-# Chapter 5 — Gordle: Play a Word Game in Your Terminal (səh. 154-202)
+# Chapter 5 — Gordle: Play a word game in your terminal (səh. 154-202)
 
-## Bu fəsil nədən bəhs edir?
+## Bu chapter nədən bəhs edir?
 
-Terminal Wordle oyunu: input oxu (bufio.Reader), runes vs baytlar, xəta
-wrap (%w) və sentinel error, fmt.Stringer (emoji feedback), strings.Builder,
-feedback alqoritmi, korpus faylı, random söz seçimi, multi-attempt loop.
+Wordle-in terminal versiyası (Gordle): rune-larla işləmə, pointer receiver,
+`io.Reader` asılılığı, xəta sarma (%w), feedback hesablama alqoritmi (absent /
+wrong position / correct), `Stringer` interfeysi, corpus oxuma, sentinel xətalar
+və `crypto/rand` ilə təsadüfi söz seçmə.
 
 ## Əsas fikirlər
 
-### 1. Game strukturu + pointer receiver
+### 1. Oyun strukturu və pointer receiver
 ```go
 type Game struct {
-    solution    []rune
+    reader      io.Reader // asılılıq — testdə strings.Reader
+    solution    []rune    // gizli söz
     maxAttempts int
-    reader      *bufio.Reader
 }
 
 func New(reader io.Reader, corpus []string, maxAttempts int) (*Game, error) {
     if len(corpus) == 0 {
         return nil, ErrCorpusIsEmpty
     }
-    return &Game{
-        reader:      bufio.NewReader(reader),
-        solution:    []rune(strings.ToUpper(pickWord(corpus))),
-        maxAttempts: maxAttempts,
-    }, nil
+    return &Game{reader: reader, solution: pickWord(corpus), maxAttempts: maxAttempts}, nil
 }
 ```
-- Pointer receiver-lər — state dəyişən bütün metodlarda; bir tipdə pointer +
-  value receiver QARIŞDIRMA (konsistensiya qaydası)
+**Sub-kod izahı:**
+- `New` məcburi parametrləri (reader, corpus) qəbul edir — konstruktorda
+  validasiya: boş corpus → sentinel xəta
+- Pointer receiver istifadə olunur: (1) metodlar Game state-ni dəyişir, (2)
+  metod dəstində tənzimləmək asan olur
 
-### 2. Runes vs baytlar (Unicode!)
+### 2. Rune-larla input oxuma
 ```go
-guess := []rune(string(playerInput))
-if len(guess) != solutionLength { ... }  // RUNE sayı — bayt yox
+func (g *Game) ask() []rune {
+    fmt.Printf("Enter a %d-character guess: ", solutionLength)
+    scanner := bufio.NewScanner(g.reader) // testdən gələn reader
+    if !scanner.Scan() {
+        return ask() // retry loop
+    }
+    guess := []rune(strings.ToUpper(scanner.Text()))
+    if len(guess) != solutionLength {
+        // ... → yenidən soruş
+    }
+    return guess
+}
 ```
-- `len("həllo")` = BAYT sayı; `len([]rune("həllo"))` = simvol sayı
-- Ərəb/Yunan dəstəyi üçün bütün müqayisələr rune səviyysində
+**Sub-kod izahı:**
+- `[]rune(string)` → simvollar (code point-lər), baytlar DEYİL — "ПРИВЕТ" 6
+  rune-dur, amma bayt sayı çoxdur
+- `strings.ToUpper` → müqayisə uniform olsun
+- `len(guess)` = rune sayı (çünki []rune)
 
-### 3. Xəta idarəetməsi
+### 3. Xəta wrapping + sentinel
 ```go
-// sentinel error — öz tipi ilə:
+var ErrCorpusIsEmpty = corpusError("corpus is empty") // typed sentinel
+
 type corpusError string
 func (e corpusError) Error() string { return string(e) }
-const ErrCorpusIsEmpty = corpusError("corpus is empty")
 
-// wrap:
-return nil, fmt.Errorf("unable to open %q for reading: %w", path, err)
+err = g.validateGuess(guess)
+if err != nil {
+    _, _ = fmt.Fprintf(os.Stderr, "...invalid: %s.\n", err)
+}
 ```
-- `errors.Is(err, ErrCorpusIsEmpty)` — sentinel yoxlaması
-- `%w` — xəta zənciri qorunur
+- `%w` (`fmt.Errorf`) → xəta zənciri; `errors.Is` ilə müqayisə
+- Typed sentinel (`corpusError`) → `errors.Is` üçün sabit, müqayisə edilə bilən
+  xəta dəyəri
 
-### 4. Feedback — Stringer + emoji
+### 4. Feedback status enum + Stringer
 ```go
-type hint int
-
+type hint rune
 const (
-    absentCharacter   hint = iota
-    wrongPosition
-    correctPosition
+    absentCharacter hint = '_' // yoxdur
+    wrongPosition  hint = 'C' // yanlış yer
+    correctPosition hint = 'G' // düz yer
 )
 
-func (h hint) String() string {  // fmt.Stringer — çapda avtomatik
+func (h hint) String() string { // fmt.Stringer implementasiyası
     switch h {
-    case absentCharacter:   return "🩶"
-    case wrongPosition:     return "🟡"
-    case correctPosition:   return "💚"
+    case absentCharacter: return "⬜"
+    case wrongPosition:  return "🟨"
+    case correctPosition: return "🟩"
     }
-    return "💔"
+    return " "
 }
 ```
+`String() string` metodlu hər tip `fmt.Stringer`-i **örtülü** realləşdirir —
+`fmt.Println` avtomatik çağırır. `strings.Builder` ilə səmərəli birləşdirmə
+(hər append-da yeni yaddaş ayrılmır).
 
-### 5. strings.Builder vs +=
-```go
-var sb strings.Builder
-for _, h := range fb { sb.WriteString(h.String()) }
-return sb.String()
-```
-- Benchmark ilə sübut: += hər addımda yeni string allokasiyası; Builder —
-  amortizə olunmuş
-
-### 6. computeFeedback — alqoritm
+### 5. computeFeedback alqoritmi
+İki mərhələli pseudo-code (karton üzərində düşüncə):
 ```go
 func computeFeedback(guess, solution []rune) feedback {
-    result := make(feedback, len(guess))
-    used := make([]bool, len(solution))
-    // 1) hamısı absent başlayır
-    // 2) eyni mövqe = correctPosition; used[i]=true
-    // 3) qalan hərflər üçün yalnız İSTİFADƏSİZ mövqelərdə wrongPosition
-    return result
-}
-```
-- "double character" halları: təkrar hərf yalnız bir dəfə "wrong" işarələnir —
-  pseudo-kod + kağız üzərində dizayn TƏLKİM OLUNUR
-
-### 7. Korpus oxunuşu
-```go
-func ReadCorpus(path string) ([]string, error) {
-    data, err := os.ReadFile(path)  // tam fayl — []bayt
-    if err != nil {
-        return nil, fmt.Errorf("unable to open %q for reading: %w", path, err)
+    fb := make(feedback, len(guess))
+    for i := range fb {
+        fb[i] = absentCharacter      // 1. hamısı absent kimi işarələ
     }
-    words := strings.Fields(string(data))
-    if len(words) == 0 { return nil, ErrCorpusIsEmpty }
-    return words, nil
-}
-```
-
-### 8. Play loop
-```go
-func (g *Game) Play() {
-    fmt.Println("Welcome to Gordle!")
-    for currentAttempt := 1; currentAttempt <= g.maxAttempts; currentAttempt++ {
-        guess := g.ask()
-        fb := computeFeedback(guess, g.solution)
-        fmt.Println(fb.String())
-        if slices.Equal(guess, g.solution) {
-            fmt.Printf(" 🎉 You won! The word was: %s.\n", string(g.solution))
-            return
+    for i, char := range guess {
+        if solution[i] == char {
+            fb[i] = correctPosition // 2a. düz mövqe
+        } else {
+            for j, target := range solution {
+                if char == target && fb[j] != correctPosition {
+                    fb[i] = wrongPosition // 2b. sözdə var, yeri yanlış
+                    break
+                }
+            }
         }
     }
-    fmt.Printf(" 😞 You've lost! The solution was %q.\n", string(g.solution))
+    return fb
 }
 ```
+**VACİB edge case:** təkrarlanan hərflər — bir hərf iki dəfə `correct` işarə
+ala bilməz; pseudo-code + kağız üzərində analiz əvvəlcədən bunu ortaya çıxarır.
+
+### 6. Corpus oxuma + pickWord
+```go
+func ReadCorpus(path string) ([]string, error) {
+    data, err := os.ReadFile(path) // fayl = baytlar
+    if err != nil {
+        return nil, fmt.Errorf("unable to read corpus: %w", err)
+    }
+    words := strings.Fields(string(data)) // whitespace-ə görə böl
+    if len(words) == 0 {
+        return nil, ErrCorpusIsEmpty
+    }
+    return words, nil
+}
+
+func pickWord(corpus []string) []rune {
+    index := rand.Intn(len(corpus)) // math/rand — seed məcburi
+    return []rune(strings.ToUpper(corpus[index]))
+}
+```
+`math/rand` deterministikdir (seed-lə); `crypto/rand` təhlükəsizdir amma
+əsassız burada. Testdə `pickWord`-ün çıxışının corpus-da olmasını yoxlamaq
+kifayətdir (random-luğu test etmək olmaz).
+
+### 7. Unicode mürəkkəbliyi
+Bəzi dillərdə hərf = çoxlu code point (inkişaf etmiş formalar). `golang.org/x/text`
+paketindəki `unicode/norm.Iter` normalizasiya üçün — `golang.org/x` Go-nun
+genişləndirilmiş (dilin xaricində) ekosistemdir.
 
 ## Əsas terminlər
 
-- Pointer Receiver
-- Rune (Unicode kod nöqtəsi)
-- Sentinel Error
-- fmt.Stringer
+- Rune (simvol kodu)
+- Pointer Receiver (işarəçi alıcısı)
+- io.Reader asılılığı
+- Sentinel Error (möhür xətası)
+- Error Wrapping (%w)
+- Stringer (fmt.Stringer)
+- Corpus (söz toplusu)
 - strings.Builder
-- Corpus (sözlük korpusu)
-- slices.Equal (slice müqayisəsi)
 
 ## Praktik nəticə
 
-- İstənilən mətn emalı üçün []rune əsaslı düşün
-- Kiçik alqoritmləri pseudo-kodla kağızda QUR, sonra kodlaşdır
-- Çap formatını Stringer-ə həvalə et — test və UX bir yerdə
-- `strings.Fields` — boşluqlarla ayırma (Split-in yumşaq forması)
+- Simvol sayma = `[]rune` çevirib `len`
+- Test olunması üçün bütün I/O asılılıqlarını (reader) parametr kimi ötür
+- Feedback tipli tapşırıqlarda pseudo-code + edge case analizi əvvəlcədən
+- Statunu dəyişən metodlar → pointer receiver
 
 ## Mənbə
 
