@@ -561,11 +561,13 @@
       "year": 2024,
       "version": 1,
       "pages": 680,
-      "status": "reading",
+      "status": "completed",
       "started_at": "2026-09-08",
       "filename_safe": "Go_Programming_Beginner_to_Professional_Samantha_Coyle_2024_v1",
-      "workspace": "Books/Go_Programming_Beginner_to_Professional_Samantha_Coyle_2024_v1",
-      "fingerprint": "go programming - from beginner to professional|samantha coyle|2024|1"
+      "workspace": "books_read/Go/L1/Go_Programming_Beginner_to_Professional_Samantha_Coyle_2024_v1",
+      "fingerprint": "go programming - from beginner to professional|samantha coyle|2024|1",
+      "completed_at": "2026-09-08",
+      "telegram_upload": "done"
     }
   ]
 }
