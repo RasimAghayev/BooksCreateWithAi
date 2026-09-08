@@ -1,0 +1,125 @@
+{
+  "book": "System Programming Essentials with Go: System calls, networking, efficiency, and security practices with practical projects in Golang",
+  "page_offset": 21,
+  "chapters": [
+    {
+      "chapter": 0,
+      "title": "Front matter / Preface",
+      "book_pages": "xiii-xx",
+      "start_pdf_page": 2,
+      "end_pdf_page": 21
+    },
+    {
+      "chapter": 1,
+      "title": "Why Go?",
+      "book_pages": "3-12",
+      "start_pdf_page": 24,
+      "end_pdf_page": 33
+    },
+    {
+      "chapter": 2,
+      "title": "Refreshing Concurrency and Parallelism",
+      "book_pages": "13-36",
+      "start_pdf_page": 34,
+      "end_pdf_page": 57
+    },
+    {
+      "chapter": 3,
+      "title": "Understanding System Calls",
+      "book_pages": "39-59",
+      "start_pdf_page": 60,
+      "end_pdf_page": 81
+    },
+    {
+      "chapter": 4,
+      "title": "File and Directory Operations",
+      "book_pages": "61-81",
+      "start_pdf_page": 82,
+      "end_pdf_page": 103
+    },
+    {
+      "chapter": 5,
+      "title": "Working with System Events",
+      "book_pages": "83-103",
+      "start_pdf_page": 104,
+      "end_pdf_page": 125
+    },
+    {
+      "chapter": 6,
+      "title": "Understanding Pipes in Inter-Process Communication",
+      "book_pages": "105-122",
+      "start_pdf_page": 126,
+      "end_pdf_page": 143
+    },
+    {
+      "chapter": 7,
+      "title": "Unix Sockets",
+      "book_pages": "123-144",
+      "start_pdf_page": 144,
+      "end_pdf_page": 165
+    },
+    {
+      "chapter": 8,
+      "title": "Memory Management",
+      "book_pages": "147-159",
+      "start_pdf_page": 168,
+      "end_pdf_page": 181
+    },
+    {
+      "chapter": 9,
+      "title": "Analyzing Performance",
+      "book_pages": "161-188",
+      "start_pdf_page": 182,
+      "end_pdf_page": 209
+    },
+    {
+      "chapter": 10,
+      "title": "Networking",
+      "book_pages": "191-219",
+      "start_pdf_page": 212,
+      "end_pdf_page": 241
+    },
+    {
+      "chapter": 11,
+      "title": "Telemetry",
+      "book_pages": "221-245",
+      "start_pdf_page": 242,
+      "end_pdf_page": 266
+    },
+    {
+      "chapter": 12,
+      "title": "Distributing Your Apps",
+      "book_pages": "247-263",
+      "start_pdf_page": 268,
+      "end_pdf_page": 285
+    },
+    {
+      "chapter": 13,
+      "title": "Capstone Project – Distributed Cache",
+      "book_pages": "267-303",
+      "start_pdf_page": 288,
+      "end_pdf_page": 325
+    },
+    {
+      "chapter": 14,
+      "title": "Effective Coding Practices",
+      "book_pages": "305-330",
+      "start_pdf_page": 326,
+      "end_pdf_page": 351
+    },
+    {
+      "chapter": 15,
+      "title": "Stay Sharp with System Programming",
+      "book_pages": "331-344",
+      "start_pdf_page": 352,
+      "end_pdf_page": 365
+    },
+    {
+      "chapter": 16,
+      "title": "Appendix: Hardware Automation / Index",
+      "book_pages": "345-372",
+      "start_pdf_page": 366,
+      "end_pdf_page": 391
+    }
+  ]
+}
