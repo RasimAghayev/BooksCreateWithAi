@@ -2,128 +2,173 @@
 
 ## Bu chapter nədən bəhs edir?
 
-MallBots modular monolith-inin strukturu (internal paketlər, composition root,
-driver/driven adapterlər, Docker Compose), modullararası inteqrasiya və domain
-hadisələri ilə yan təsirlərin (side effect) refaktoru: Event interface,
-aggregate record-ları, EventDispatcher.
+MallBots modular monolith-inin strukturu (internal packages, composition root,
+gRPC/REST), modullararası sinxron inteqrasiya nümunələri və side-effect-lərin
+domain event-lərə refactor edilməsi: AggregateBase, Event interfeysi,
+EventDispatcher, ignoreUnimplementedDomainEvents pattern-i.
 
 ## Əsas fikirlər
 
-### 1. Modular monolith struktur
-```
-/root/internal/          → bütün modullar (customers, orders, ...)
-/root/internal/common   → paylaşılan infra (api, di/containers)
-/root/cmd/mallbots      → giriş nöqtəsi
-```
-Hər modul öz hexagonunu daşıyır: Driver adapterlər (gRPC/REST) solda, Driven
-adapterlər (Postgres, NATS) sağda.
+### 1. Modular monolith strukturu
+**Qovluq qaydaları (internal visibility):**
+- `/root/internal` → yalnız `/root` və onun ağacı import edə bilər
+- `/root/pkg-b/internal` → yalnız `/root/pkg-b` ağacı — `/root` və `pkg-a`
+ onda YOX. Modullararası sərhəd Go-nun öz visible mexanizmi ilə qorunur.
 
-### 2. Ports & adapters inteqrasiyada
-- Hər modul **öz port interfeyslərini** təyin edir (istehlakçı tərəfi)
-- Modullararası əlaqələr gRPC üzərində (namespace konfliktinə qarşı protobuflar
-  ayrı saxlanılır; tək gRPC server bir çox service qulluq edə bilər)
+**Generic layer adları QADAĞANDIR** (`controllers`, `services`, `models`) —
+qovluqlar domain modulları adını daşıyır (baskets, stores, ordering...).
 
-### 3. Composition root
-Hər modul **eyni başlanğıc patterni** ilə qalxır:
+**Hexagonal (ports & adapters) ilə interface yerləşməsi fərqi:**
+- "Accept interfaces, return structs" (consumer-side kiçik interfeys) — modul
+  DAXİLİNDƏ
+- Ports/contracts üçün — daha BÖYÜK interfeyslər mərkəzi yerdə (application/
+  domain qovluğu), implementation-lardan sonra yazılır
+
+### 2. Composition root
+**Nədir:** Infrastructure + konfiqurasiya + app komponentlərinin birləşdirildiyi
+yer — dependency injection burada baş verir. Sıra (sadə, proqnozlaşdırılan):
+1. **Driven adapters** (DB, domain dispatcher) — yalnız infrastructure lazımdır
+2. **Application** — Driven adapterlər lazımdır, Driver-lər YOX
+3. **Driver adapters** (gRPC server, REST gateway) — infrastructure + application
+
+Bu səviyyədə konkret dəyərlər üstünlük təşkil edir — abstraksiyaya ehtiyac azdır.
+
+### 3. gRPC + REST
+- Tək gRPC server bir neçə service daşıya bilər; namespace conflict olmasın
+  deyə protobuf-lar parent qovluq prefiksi ilə compile olunur:
+  `basketspb.Item` vs `orderingpb.Item`
+- REST: `grpc-gateway` ilə — module-lar gRPC API-lərini REST-ə açır;
+  Swagger UI http://localhost:8080/ ünvanında
+
+### 4. Sinxron inteqrasiya nümunələri (indiki vəziyyət)
+**AddItem (səbətə məhsul):** Baskets.AddItem → Stores.GetProduct (məlumat
+anında çəkilir — data duplication yoxdur, amma hər sorğu cross-module çağırış).
+
+**CheckoutBasket → CreateOrder (zəncirvari side-effect-lər):**
+```
+Baskets.CheckoutBasket
+Ordering.CreateOrder
+Customers.AuthorizeCustomer
+Payments.CreateInvoice / ...
+Stores... 
+```
+Bir handler-də bir neçə modula çağırış → birləşmə (coupling) artır.
+
+### 5. Event tipləri (əvvəlki fəsillərdən qısa xatırlatma)
+- **Domain event** — bounded context daxilində state dəyişikliyi haqqında
+  məlumat; ən çox eyni prosesdə sinxron işlənir
+- **Event sourcing event** — aggregate-in state-nin bərpası üçün davam
+  (append-only) jurnal yazısı
+
+### 6. Side-effect → Domain event refactoru
+**Problemlərin yaranması:** `CreateOrder`-da notification birbaşa çağırılırsa:
 ```go
-// Driven adapters — portları reallaşdırır (Postgres, dispatcher)
-grpc.RegisterServer(ctx, app, mono.RPC()) // Driver adapter — sorğuları qəbul edir
+if err = h.orders.Save(ctx, order); err != nil { ... }
+if err = h.notifications.NotifyOrderCreated(ctx, order.ID, order.CustomerID); err != nil { ... }
 ```
-- **Driver adapterlər** tətbiqə "sürür" (gRPC, REST, cron)
-- **Driven adapterlər** tətbiq tərəfindən "idarə olunur" (DB, mesaj broker)
-- Docker Compose ilə bütün sistem qalxır (docker compose up); dəyişiklikdən
-  sonra down → up
+Bir qayda üçün yaxşıdır, real app-lərdə isə bir çox side-effect olur →
+handler şişir, birləşmə artır.
 
-### 4. Problem: yan təsirlər handler-də
-Köhnə yanaşma — CheckoutBasket handler birbaşa 3 çağırış edir: order yarat +
-payment başlat + notification göndər. Modullar bir-birinə yapışıq (temporal
-coupling).
-
-### 5. Domain events ilə həll
-**Domain event** — bounded context daxilində baş verən hadisə (inteqrasiya
-hadisəsindən fərqli). Yan təsirlər implicit qaydalara çevrilir.
-
-**Aggregate-lərdə hadisə saxlanması:**
+**Həll — aggregate event-lər:**
 ```go
-type aggregate interface {
-    ID() string
-    Events() []event.Event    // topladığı hadisələr
-    CommitEvents()            // handler uğurla bitəndə təmizlənir
+type Order struct {
+    ddd.AggregateBase        // ID + event idarəsi kompozisiya ilə
+    CustomerID string
+    PaymentID  string
+    // ...
 }
 ```
-Hər model dəyişəndə hadisə **yığılır** (dərhal göndərilmir!) — handler-ın
-özü müvəffəqiyyətindən sonra dispatch olur (uğursuzluqda hadisələr itmir).
+- `AggregateBase` — ID sahəsi, `AddEvent(eventName, payload)`, `Events()` 
+- **Aggregate event** — aggregate-in özündə yaranan, həyat dövrü ilə bağlı
+  event (OrderCreated, OrderCanceled)
 
 **Event interfeysi:**
 ```go
 type Event interface {
-    EventName() string // identifikasiya + router üçün açar
+    EventName() string   // bounded context daxilində unikal
 }
-
-type OrderCreated struct {
-    OrderID string
-    // ...
-}
-func (OrderCreated) EventName() string { return "orders.created" }
+type OrderCreated struct { ... }
+func (e OrderCreated) EventName() string { return "events.order.created" }
 ```
 
-**Subscriber interfeysi (hadisə-yə görə metod):**
+### 7. ignoreUnimplementedDomainEvents pattern
+DomainEventHandlers interfeysi böyüyəndə (yeni event əlavə olunanda) hər
+handler-i dərhal yazmaq məcburiyyətindən qurtarmaq üçün:
 ```go
-type EventSubscriber interface {
-    OnOrderCreated(evt OrderCreated) error
-    OnOrderReadied(evt OrderReadied) error
-    // ...
-}
-```
-- Yeni hadisə əlavə olunca interfeys genişlənir → **kompilyator** reallaşdırmayan
-  abunəçini yaxalayır
-- Köhnə kodun sınmaması üçün "ignore" embed:
-```go
-type ignoreUnimplementedDomainEvents struct{}
+type ignoreUnimplementedDomainEvents struct{ storeNotificationHandlers }
+
 func (ignoreUnimplementedDomainEvents) OnOrderCreated(...) error { return nil }
+func (ignoreUnimplementedDomainEvents) OnOrderReadied(...) error { return nil }
+// ...
 ```
+- Embed etdiyi struct tərəfindən realləşdirilməyən metodlar boş qaytarır
+- **Interfeys yoxlaması sayəsində** yeni event interfeysə əlavə olunanda
+  compile xətası — update etməyi xatırladır (susmaq YOX)
 
-### 6. EventDispatcher
+### 8. EventDispatcher
 ```go
 type EventDispatcher struct {
     mu       sync.Mutex
-    handlers map[string][]event.Handler
+    handlers map[string][]handlerFunc
 }
 
-func (h *EventDispatcher) Subscribe(event event.Event, handler event.Handler) {
+func (h *EventDispatcher) Subscribe(eventName string, handler handlerFunc) {
     h.mu.Lock()
     defer h.mu.Unlock()
-    h.handlers[event.EventName()] = append(h.handlers[event.EventName()], handler)
+    h.handlers[eventName] = append(h.handlers[eventName], handler)
 }
 
-func (h *EventDispatcher) Publish(ctx context.Context, events ...event.Event) error {
-    // hər hadisə üçün abunə olan bütün handler-ləri çağırır
+func (h *EventDispatcher) Publish(ctx context.Context, events ...Event) error {
+    for _, event := range events {
+        for _, handler := range h.handlers[event.EventName()] {
+            if err := handler(ctx, event); err != nil {
+                return err
+            }
+        }
+    }
+    return nil
 }
 ```
-Composition root-da bağlanış:
+Sub-kod izahı: mutex ilə qorunan map — event adı → handler sırası; Publish
+təbii olaraq sinxrondur (eyni proses, eyni goroutine).
+
+### 9. Driver adapter kimi qeydiyyat
 ```go
-domainDispatcher.Subscribe(domain.OrderCanceled{}, notificationHandlers.OnOrderCanceled)
+func RegisterNotificationHandlers(
+    subscriber EventSubscriber, handlers DomainEventHandlers,
+) {
+    subscriber.Subscribe(
+        domain.OrderCreated{}, handlers.OnOrderCreated,
+    )
+    // ...
+}
 ```
-Notification artıq order module-ün DAXİLİNƏ yazılmır — hadisə ilə subscribe
-olunur. Modul asılılıqları azalır, yan təsirlər sınanabilt.
+- NotificationHandlers artıq CreateOrder handler-inin parametri DEYİL —
+  `domainDispatcher` (Driven) qurulur, handler-lər subscribe olunur
+- Application constructor-u dəyişir: notifications asılılığı silinir →
+  side-effect məntiqi handler-dən AYRILIR
 
 ## Əsas terminlər
 
-- Modular Monolith / Composition Root
-- Driver / Driven Adapter
-- Domain Event vs Integration Event
-- Aggregate Event Collection (hadisə yığımı)
-- EventDispatcher / Subscriber
-- Temporal Coupling (zaman bağlılığı)
-- Side Effect (yan təsir)
+- Modular Monolith (modul monolit)
+- Composition Root (tərkib kökü)
+- Internal Package Visibility (daxili paket görünməzliyi)
+- Ports & Adapters (hexagonal)
+- Domain Event / Aggregate Event
+- EventDispatcher / Subscribe / Publish
+- AggregateBase
+- grpc-gateway
+- Namespace Conflict (protobuf prefiksləri)
 
 ## Praktik nəticə
 
-- Yan təsirləri handler-dən hadisəyə köçür — "nə edirəm" yox, "nə baş verdi"
-- Aggregate hadisələri yığır; commit zamanı dispatch — transaction təhlükəsizliyi
-- Hadisə interfeysləri kompilyator ilə subscriber-ləri dəstəkləyin (yeni
-  hadisə = mütləq imzası görünür)
-- Dispatcher mutex ilə qorunur; subscribe/publish composition root-da bağlanır
+- Modul sərhədlərini Go internal qovluqları ilə tənzimlə — compiler qoruyur
+- Composition root-daqı qurulma sırası: Driven → Application → Driver
+- Side-effect-ləri aggregate event-lərə çıxar; handler yalnız business
+  məntiqi saxlasın
+- ignoreUnimplementedDomainEvents — interfeys böyüyəndə boş implementasiyalarla
+  compile təhlükəsizliyi
+- Domain event adları context-daxili unikal; diskrimininator kimi EventName()
 
 ## Mənbə
 
