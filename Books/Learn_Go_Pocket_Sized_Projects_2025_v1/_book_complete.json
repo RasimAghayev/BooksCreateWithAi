@@ -1,0 +1,23 @@
+{
+    "book_id": "learn_go_pocket_sized_projects_2025_v1",
+    "title": "Learn Go with Pocket-Sized Projects",
+    "author": "Aliénor Latour, Donia Chaiehloudj, Pascal Bertrand",
+    "year": 2025,
+    "version": 1,
+    "pages": 782,
+    "filename_safe": "Learn_Go_Pocket_Sized_Projects_2025_v1",
+    "completed_at": "2026-09-08T10:30:00Z",
+    "chapters_processed": 12,
+    "info_files": [
+        "summary.az.md",
+        "terminology.az.md",
+        "cheatsheet.az.md",
+        "teacher-notes.az.md"
+    ],
+    "classification": {
+        "primary_language": "Go",
+        "level": 1,
+        "level_name": "Beginner"
+    },
+    "note": "12 cepli layihə ilə Go öyrənmə: hello CLI, bookworms JSON, pocketlog kitabxanası, Gordle oyunu, money converter (Decimal+HTTP), generic cache (race+mutex), Gordle REST servisi, paralel maze solver, gRPC habits tracker, HTML templating, Wasm və TinyGo. TDD əsaslı; bütün fəsillər AZ dilində emal edildi."
+}
