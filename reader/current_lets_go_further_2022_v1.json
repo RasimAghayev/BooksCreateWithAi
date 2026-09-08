@@ -3,9 +3,9 @@
   "filename_safe": "Lets_Go_Further_Alex_Edwards_2022_v1",
   "fingerprint": "let's go further|alex edwards|2022|1",
   "pipeline_step": "knowledge_extraction",
-  "current_page": 123,
+  "current_page": 134,
   "chapter": 0,
-  "git_committed_through_chapter": 5,
+  "git_committed_through_chapter": 6,
   "telegram_upload_status": {},
   "finalization": {
     "upload": "pending",
@@ -14,7 +14,7 @@
     "delete_original": "pending",
     "delete_state": "pending"
   },
-  "last_updated": "2026-09-08T13:25:00Z",
+  "last_updated": "2026-09-08T13:40:00Z",
   "chapters_total": 24,
   "chapters_processed": [
     0,
@@ -22,6 +22,7 @@
     2,
     3,
     4,
-    5
+    5,
+    6
   ]
 }
