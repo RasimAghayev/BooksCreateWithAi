@@ -1,0 +1,12 @@
+{
+  "book_id": "effective_go_recipes_2024_v1",
+  "title": "Effective Go Recipes: Fast Solutions to Common Tasks",
+  "author": "Miki Tebeka",
+  "year": 2024,
+  "version": 1,
+  "chapters_total": 15,
+  "chapters_processed": 15,
+  "recipes_total": 84,
+  "info_files": ["summary.az.md", "terminology.az.md", "teacher-notes.az.md", "cheatsheet.az.md"],
+  "completed_at": "2026-09-08"
+}

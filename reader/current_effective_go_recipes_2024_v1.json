@@ -2,10 +2,10 @@
   "book_id": "effective_go_recipes_2024_v1",
   "filename_safe": "Effective_Go_Recipes_Miki_Tebeka_2024_v1",
   "fingerprint": "effective go recipes|miki tebeka|2024|1",
-  "pipeline_step": "knowledge_extraction",
-  "current_page": 12,
-  "chapter": 1,
-  "git_committed_through_chapter": 0,
+  "pipeline_step": "finalization",
+  "current_page": 268,
+  "chapter": 15,
+  "git_committed_through_chapter": 15,
   "telegram_upload_status": {},
   "finalization": {
     "upload": "pending",
@@ -15,5 +15,5 @@
     "delete_state": "pending"
   },
   "started_at": "2026-09-08",
-  "last_updated": "2026-09-08T20:15:00Z"
+  "last_updated": "2026-09-08T21:30:00Z"
 }
