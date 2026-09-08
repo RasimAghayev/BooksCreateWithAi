@@ -445,7 +445,10 @@
       "status": "completed",
       "completed_at": "2026-09-08",
       "started_at": "2026-09-08",
-      "filename_safe": "System Programming Essentials with Go - Alex Rios - 2024 - v1"
+      "filename_safe": "System Programming Essentials with Go - Alex Rios - 2024 - v1",
+      "workspace": "books_read/Go/L4/System Programming Essentials with Go - Alex Rios - 2024 - v1",
+      "fingerprint": "system programming essentials with go|alex rios|2024|1",
+      "telegram_upload": "done"
     },
     {
       "book_id": "orchestrator_in_go_2024_v1",

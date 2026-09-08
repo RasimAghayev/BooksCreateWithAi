@@ -401,7 +401,7 @@ func buildCaption(meta *scanner.BookMetadata) string {
 		chapters += fmt.Sprintf("📑 %d. %s (%s)", ch.Chapter, ch.Title, ch.Pages)
 	}
 
-	return fmt.Sprintf("📚 %s\n👤 %s  \n📅 %d  \n📖 v%d\n💻 %s  \n🎯 Level %d — %s\n🏷 %s\n%s",
+	caption := fmt.Sprintf("📚 %s\n👤 %s  \n📅 %d  \n📖 v%d\n💻 %s  \n🎯 Level %d — %s\n🏷 %s\n%s",
 		meta.TitleOriginal,
 		meta.Author,
 		meta.Year,
@@ -412,4 +412,18 @@ func buildCaption(meta *scanner.BookMetadata) string {
 		tags,
 		chapters,
 	)
+
+	const maxCaptionLen = 1024
+	if len([]rune(caption)) > maxCaptionLen {
+		lines := strings.Split(caption, "\n")
+		for len(strings.Join(lines, "\n"))+1 > maxCaptionLen && len(lines) > 1 {
+			lines = lines[:len(lines)-1]
+		}
+		if len(lines) == 0 {
+			lines = []string{string([]rune(caption)[:maxCaptionLen])}
+		}
+		caption = strings.Join(lines, "\n")
+	}
+
+	return caption
 }
