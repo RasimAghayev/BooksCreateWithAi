@@ -514,6 +514,19 @@
       "workspace": "Books/Lets_Go_Further_Alex_Edwards_2022_v1",
       "telegram_upload": "",
       "fingerprint": "let's go further|alex edwards|2022|1"
+    },
+    {
+      "book_id": "build_systems_with_go_2021_v1",
+      "title": "Build systems with Go: Everything a Gopher must know",
+      "author": "Juan M. Tirado",
+      "year": 2021,
+      "version": "v0.1.0",
+      "pages": 472,
+      "status": "reading",
+      "started_at": "2026-09-08",
+      "filename_safe": "Build_Systems_with_Go_Juan_M_Tirado_2021_v1",
+      "fingerprint": "build systems with go: everything a gopher must know|juan m. tirado|2021|v0.1.0",
+      "workspace": "Books/Build_Systems_with_Go_Juan_M_Tirado_2021_v1"
     }
   ]
 }
