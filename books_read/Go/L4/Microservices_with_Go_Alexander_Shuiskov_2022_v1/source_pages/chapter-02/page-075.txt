@@ -1,0 +1,33 @@
+Scaffolding a Go Microservice
+52
+    }
+}
+At this point, we have the logic for all three services. Note that we used static service addresses, 
+localhost:8081, localhost:8082, and localhost:8083, in this example. This allows 
+you to run the services locally; however, this would not work if we deployed our services to the cloud 
+or any other deployment platform. In the next chapter, we are going to cover this aspect and continue 
+improving our microservices. You can run the services we just created by executing this command 
+inside the cmd directory of each service:
+go run *.go
+Then, you can call the metadata service API using the following command:
+curl localhost:8081?id=1
+You can call the rating service API using a similar command:
+curl localhost:8082?id=1&type=2
+Finally, you can call the movie service using the following command:
+curl localhost:8083?id=1
+All of the preceding requests should return an HTTP 404 error, indicating that records are not 
+found—we do not have any data yet, so this is expected.
+At this point, we have illustrated how to bootstrap and manually test our example microservices and 
+are ready to move on to the next chapter.
+Summary
+In this section, we have covered lots of topics, including the most important recommendations for 
+writing Go applications and the standards for the project layout of Go applications. The knowledge 
+we gained helped us during the code scaffolding of our microservices—we have tried to implement 
+our microservice code in an idiomatic way as much as possible.
+You have also learned how to split each of your microservices into multiple layers, each responsible 
+for its own logic. We have illustrated how to separate the business logic from the code accessing the 
+database, and how to separate the API handler logic from both, as well as from the logic performing 
+remote calls between the services.
+While the amount of information in this chapter is quite overwhelming, we have made a solid start 
+and are ready to move on to more advanced topics. In the next chapter, we are going to see how the 
+microservices we created can explore each other, so we can finally test them.

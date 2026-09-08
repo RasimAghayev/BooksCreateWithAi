@@ -1,0 +1,31 @@
+Popular serialization formats
+83
+•	 Unlike JSON and XML, Thrift-serialized data is not readable, so it’s trickier to use it for debugging.
+•	 Nearly no support in recent years – Facebook keeps maintaining a separate branch of it called 
+Facebook Thrift, but it is much less popular than its Apache counterpart.
+Let’s see the other popular serialization formats that are widely used across the industry.
+Apache Avro
+Apache Avro is a combination of a serialization format and a communication protocol that is somewhat 
+similar to Apache Thrift. Apache Avro also requires a developer to define a schema (written either 
+in JSON or in its own language called Avro IDL) for their data. In our case, the Metadata structure 
+would have the following schema:
+{
+   "namespace": "example.avro",
+   "type": "record",
+   "name": "Metadata",
+   "fields": [
+      {"name": "id", "type": "string"},
+      {"name": "title", "type": "string"},
+      {"name": "description", "type": "string"},
+      {"name": "director", "type": "string"},
+   ] 
+}
+Then, the schema would be used for translating the structures into a serialized state and back.
+It is not uncommon for types and structures to change over time, and microservice API and structure 
+definitions need to evolve. With Avro, developers can create a new version of a schema (represented 
+as a separate file, often suffixed with an incremental version number), and keep both the old and new 
+versions in the code base. This way, the application can encode and decode data in either format, 
+even if they have some incompatible changes, such as changes in field names. This is one of the key 
+benefits of using Apache Avro over many other serialization protocols. Additionally, Apache Avro 
+allows you to generate code for existing schemas, making it easier to translate between serialized data 
+and corresponding data structures in different programming languages.

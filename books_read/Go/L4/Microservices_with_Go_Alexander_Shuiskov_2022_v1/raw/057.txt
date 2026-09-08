@@ -1,0 +1,30 @@
+Scaffolding a Go Microservice
+34
+    "movieexample.com/metadata/internal/controller/metadata"
+    httphandler "movieexample.com/metadata/internal/handler/
+http"
+    "movieexample.com/metadata/internal/repository/memory"
+)
+func main() {
+    log.Println("Starting the movie metadata service")
+    repo := memory.New()
+    ctrl := metadata.New(repo)
+    h := httphandler.New(ctrl)
+    http.Handle("/metadata", http.HandlerFunc(h.GetMetadata))
+    if err := http.ListenAndServe(":8081", nil); err != nil {
+        panic(err)
+    }
+}
+The function we just created initializes all structures of our service and starts the http API handler we 
+implemented earlier. The service is ready to process user requests, so let’s move on to the other services.
+Rating service
+Let’s summarize the logic of the rating service:
+•	 API: Get the aggregated rating for a record and write a rating.
+•	 Database: Rating database.
+•	 Interacts with services: None.
+•	 Data model type: Rating.
+This logic would translate into the following packages:
+•	 cmd: Contains the main function for starting the service
+•	 controller: Our service logic (read and write ratings)
+•	 handler: API handler for a service
+•	 repository: Logic for accessing the movie metadata database

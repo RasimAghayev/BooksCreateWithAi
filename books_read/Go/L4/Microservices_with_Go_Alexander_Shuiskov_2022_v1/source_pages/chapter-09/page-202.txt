@@ -1,0 +1,34 @@
+Integration tests
+179
+Note that defer calls to the GracefulStop function of each server — this code is a part 
+of the tear-down logic of our test for terminating all servers gracefully.
+4.	
+Now, let’s set up the test clients for our services:
+    opts := grpc.WithTransportCredentials(insecure.
+NewCredentials())
+    metadataConn, err := grpc.Dial(metadataServiceAddr, 
+opts)
+    if err != nil {
+        panic(err)
+    }
+    defer metadataConn.Close()
+    metadataClient := gen.
+NewMetadataServiceClient(metadataConn)
+    
+    ratingConn, err := grpc.Dial(ratingServiceAddr, opts)
+    if err != nil {
+        panic(err)
+    }
+    defer ratingConn.Close()
+    ratingClient := gen.NewRatingServiceClient(ratingConn)
+    movieConn, err := grpc.Dial(movieServiceAddr, opts)
+    if err != nil {
+        panic(err)
+    }
+    defer movieConn.Close()
+    movieClient := gen.NewMovieServiceClient(movieConn)
+Now, we are ready to implement the sequence of our test commands. The first step is to test, write, 
+and read the operations of the metadata service:
+    log.Println("Saving test metadata via metadata service")
+    m := &gen.Metadata{
+        Id:          "the-movie",

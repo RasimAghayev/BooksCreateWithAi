@@ -1,0 +1,35 @@
+Project structure
+19
+•	 Limit the usage of context for passing any metadata. You should use metadata propagation for 
+truly exceptional cases, such as distributed tracing, mentioned earlier.
+•	 Do not attach context to structures.
+Now, as we have discussed the key recommendations for writing idiomatic Go code, we can move 
+on to the next section, which is going to cover the project structure recommendations and standards 
+for Go applications.
+Project structure
+The project structure is the foundation of and plays a major role in the readability and maintainability 
+of your code. As we discussed in the previous sections, in Go projects, the structure may play a more 
+important role than in other languages, because each exported name generally includes the name of 
+its package. This requires you to have good and descriptive naming for your packages and directories, 
+as well as the right hierarchy of your code.
+While the official guidelines define some strong recommendations for naming and coding styles there 
+aren’t that many rules constraining the Go project structure. Each project is unique by its nature, 
+and developers are generally free to choose the way they organize the code. However, there are some 
+common practices and specifics of Go package organization that we are going to cover in this section.
+Private packages
+In Go, all code stored inside a directory called internal can be imported and used only by packages 
+stored within the same directory or one of the directories it includes. Putting code into an internal 
+directory can ensure your code is not exported and used by external packages. This can be useful for 
+the following different cases:
+•	 Hide the details of the implementation from the user if some of the types of functions need 
+to be exported.
+•	 Ensure no external package relies on your types and functions, which you don’t want to expose 
+widely.
+•	 Remove possible unnecessary dependencies between the packages.
+•	 Avoid extra refactoring and maintenance difficulties if your code is unexpectedly used by other 
+developers/teams.
+I have found it useful to use internal packages as a protection against unwanted dependencies. This 
+plays a big role in large repositories and applications, where there is a high possibility of unexpected 
+dependencies between the packages. Large code bases that don’t have a separation between private 
+and public packages often suffer from an effect called spaghettification—when packages depend on 
+each other in an uncontrolled and chaotic way.

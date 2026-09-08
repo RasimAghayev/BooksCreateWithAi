@@ -1,0 +1,32 @@
+Service Discovery
+60
+HashiCorp Consul
+HashiCorp Consul has been a pretty popular solution for service discovery for many years. Written 
+in Go, this tool allows you to set up service discovery for your services and applications quite easily, 
+using its clients or API.
+Consul has a pretty straightforward API, including the following key endpoints:
+•	 PUT /catalog/register: Register a service instance.
+•	 PUT /catalog/deregister: Deregister a service instance.
+•	 GET /catalog/services: Get the available instances of a service.
+Client applications can access the Consul catalog either via the API or in server-side service discovery 
+mode, using a DNS service.
+You can learn more about Consul by checking the official website: https://consul.io.
+Kubernetes
+Kubernetes is a popular open source platform for running, scaling, and managing collections of 
+applications, such as microservices.
+One of the features of Kubernetes is the ability to register and discover the services that are running 
+in it. Kubernetes provides an API for retrieving the list of network addresses of each service that is 
+being updated automatically, so users can use it in client-side discovery mode. Alternatively, it allows 
+its users to plug in a load balancer to use it for server-side discovery instead.
+We are going to cover Kubernetes later, in Chapter 8 of this book. Now, let’s see how we can add service 
+discovery to the applications we created in the previous chapter.
+Adopting service discovery
+In this section, we are going to illustrate how you can start using service discovery for your applications. 
+We will be using the microservices we created in the previous chapter as an example. Then, you will 
+learn how to add the logic responsible for service discovery to your microservice code.
+When you consider enabling service discovery for your services, you have multiple questions to 
+answer, such as the following:
+•	 Which model would you prefer to use – client-side or server-side discovery?
+•	 Which platform will you use for the deployment and orchestration of your microservices?
+Answering the second question may already give you a solution – various deployment platforms, 
+including Kubernetes, as well as popular clouds such as AWS, offer service discovery for your services.

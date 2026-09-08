@@ -1,0 +1,34 @@
+Scaffolding an example application
+39
+        return 0, ErrNotFound
+    } else if err != nil {
+        return 0, err
+    }
+    sum := float64(0)
+    for _, r := range ratings {
+        sum += float64(r.Value)
+    }
+    return sum / float64(len(ratings)), nil
+}
+// PutRating writes a rating for a given record.
+func (c *Controller) PutRating(ctx context.Context, recordID 
+model.RecordID, recordType model.RecordType, rating *model.
+Rating) error {
+    return c.repo.Put(ctx, recordID, recordType, rating)
+}
+In this example, it is easy to see how the controller logic is different from the repository one. The 
+repository provides an interface to get all ratings for a record and the controller implements the 
+aggregation logic for them.
+Handler
+Let’s implement the service handler in the rating/internal/handler/http/http.go file, 
+using the following code:
+package http
+import (
+    "encoding/json"
+    "errors"
+    "log"
+    "net/http"
+    "strconv"
+    "movieexample.com/rating/internal/controller"
+    "movieexample.com/rating/pkg/model"
+)

@@ -1,0 +1,24 @@
+4
+Serialization
+In previous chapters, we have learned how to scaffold Go microservices, create HTTP API endpoints, 
+and set up service discovery to let our microservices commsunicate with each other. This knowledge 
+already provides a solid foundation for building microservices; however, we are going to continue 
+our journey with more advanced topics.
+In this chapter, we will explore serialization, a process that allows the encoding and decoding of data 
+for storing or sending between services. 
+To illustrate how to use serialization, we are going to define data structures transferred between the 
+services using the Protocol Buffers format, which is widely used across the industry and has a simple 
+syntax, as well as very size-efficient encoding. 
+Finally, we are going to illustrate how you can generate code for the Protocol Buffers structures and 
+demonstrate how efficient Protocol Buffers encoding is compared to some other formats, such as 
+XML and JSON.
+In this chapter, we are going to cover the following topics:
+•	 The basics of serialization
+•	 Using Protocol Buffers
+•	 Best practices with serialization
+Now, let’s continue to the basics of serialization.
+Technical requirements
+To complete this chapter, you will need to have Go 1.11 or above and the Protocol Buffers compiler. 
+We will be using the official Protocol Buffers compiler; you can install it by running the following:
+go install google.golang.org/protobuf/cmd/protoc-gen-go@latest
+export PATH="$PATH:$(go env GOPATH)/bin"

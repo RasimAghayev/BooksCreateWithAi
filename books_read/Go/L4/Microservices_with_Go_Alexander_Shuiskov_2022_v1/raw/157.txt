@@ -1,0 +1,25 @@
+Storing Service Data
+134
+Introduction to databases
+Databases are systems that allow us to store and retrieve different types of data. Databases offer a 
+variety of guarantees related to data storage, such as durability – a guarantee that all records and any 
+related data changes will be persistent over time. A durability guarantee helps ensure that the data 
+stored in a database won’t be lost in case of various events such as software and hardware restarts, 
+which are pretty common for microservices
+Databases help solve lots of different other problems related to data storage. Let’s illustrate one such 
+problem using the metadata service that we created in Chapter 2. In our metadata service code, we 
+implemented an in-memory repository for storing and retrieving the movie data that provides two 
+functions, Get and Put. If we have just one instance of the metadata service, all its callers would be 
+able to successfully write and read metadata records from the service memory, so long as a service 
+instance does not perform a restart. However, let’s imagine that we add another instance of a metadata 
+service, as illustrated in the following diagram:
+Figure 7.1 – Interaction between the movie service and two instances of the metadata service
+Imagine that the movie service wants to write movie metadata and calls the metadata service to do 
+this. The movie service instance would pick an instance of a metadata service (let’s assume it picks 
+instance 0) and send a write request to it, storing the record in memory of the instance that processes 
+the request.
+Now, let’s assume the movie service wants to read the previously stored movie metadata and sends a 
+read request to the metadata service. Depending on which instance handles the request, there would 
+be two possible outcomes:
+•	 Instance 0: Successfully return the previously saved movie metadata
+•	 Instance 1: Return ErrNotFound

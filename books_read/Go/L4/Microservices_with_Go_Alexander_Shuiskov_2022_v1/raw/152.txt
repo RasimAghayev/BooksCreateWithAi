@@ -1,0 +1,36 @@
+Asynchronous communication basics
+129
+In the code we just created, we have implemented a NewIngester function to create a new Kafka 
+ingester, the component that will ingest rating events from it. The Ingest function starts message 
+ingestion in the background and returns a Go channel with RatingEvent structures.
+You may notice that in our call to the ReadMessage function, we provided -1 as an argument. We 
+specified a consumer offset — a checkpoint from which we should consume the messages from our 
+topic. The value of -1 is specific to Kafka and means that we will always consume from the beginning 
+of the topic, reading all existing messages.
+Let’s use this structure in our rating service controller. In our rating/internal/controller/
+controller.go file, add the following code:
+type ratingIngester interface {
+    Ingest(ctx context.Context) (chan model.RatingEvent, error)
+} 
+// StartIngestion starts the ingestion of rating events.
+func (s *RatingService) StartIngestion(ctx context.Context) 
+error {
+    ch, err := s.ingester.Ingest(ctx)
+    if err != nil {
+        return err
+    }
+    for e := range ch {
+        if err := s.PutRating(ctx, e.RecordID, e.RecordType, 
+&model.Rating{UserID: e.UserID, Value: e.Value}); err != nil {
+            return err
+        }
+    }
+    return nil
+}
+In our code, we call the Ingest function and get back a Go channel containing rating events from 
+the topic. We iterate over it using the for operator. It keeps returning us available rating events until 
+the channel is closed (for example, when the Kafka client is closed on service shutdown).
+Now, update the existing RatingService structure and the New function in this file to the following:
+// RatingService encapsulates the rating service business 
+// logic.
+type RatingService struct {

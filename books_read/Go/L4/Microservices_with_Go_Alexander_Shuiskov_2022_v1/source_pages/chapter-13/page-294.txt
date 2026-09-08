@@ -1,0 +1,20 @@
+Profiling Go services
+271
+For example, the heavyOperation function took just 0.01 seconds, but all the operations that were 
+executed in it (including all function calls inside it) took 4.39 seconds, taking most of the elapsed time.
+If you walk through the graph, you will see the distribution of the elapsed time by sub-operations. In 
+our case, heavyOperation executed two functions that got recorded by the CPU profiler: md5.
+Write and rand.Read. The md5.Write function took 2.78 seconds in total, while rand.
+Read took 1.59 seconds of the execution time. Level by level, you can analyze the calls and find the 
+CPU-intensive functions.
+When working with the CPU profiler data, notice the functions that take the most processing time. Such 
+functions are illustrated as larger rectangles to help you find them. If you notice that some functions 
+have unexpectedly high processing time, spend some time analyzing their code to see whether there 
+is any opportunity to optimize them.
+Now, let’s illustrate another example of profiler data. This time, we will be capturing a heap profile – a 
+profile showing dynamic memory allocation by a Go process. Run the following command:
+go tool pprof http://localhost:6060/debug/pprof/heap
+Similar to the previous example, successfully executing this command should run the pprof tool, 
+where we can execute a web command. The result will contain the following graph:
+ 
+Figure 13.2 – Go heap profile example

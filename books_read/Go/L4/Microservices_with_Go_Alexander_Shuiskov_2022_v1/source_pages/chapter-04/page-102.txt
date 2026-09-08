@@ -1,0 +1,33 @@
+The basics of serialization
+79
+Let’s take our Metadata structure defined in the metadata/pkg/model/metadata.go file 
+as an example:
+// Metadata defines the movie metadata.
+type Metadata struct {
+    ID          string `json:"id"`
+    Title       string `json:"title"`
+    Description string `json:"description"`
+    Director    string `json:"director"`
+}
+Our structure includes the records called annotations that help the JSON encoder transform our 
+record into an output. For example, we create an instance of our structure:
+Metadata{
+    ID:          "123",
+    Title:       "The Movie 2",
+    Description: "Sequel of the legendary The Movie",
+    Director:    "Foo Bars",
+}
+When we then encode it with JSON, the result would be the following:
+{"id":"123","title":"The Movie 2","description":"Sequel of the 
+legendary The Movie","director":"Foo Bars"}
+Once the data is serialized, it can be used in many different ways. In our examples in Chapter 2, we 
+used JSON format for sending and receiving the data between our microservices. Some additional 
+use cases of serialization include the following:
+•	 Store configuration: Serialization formats are commonly used for storing configuration. For 
+example, you can define your service settings using these kinds of formats and then read them 
+in your service code.
+•	 Store records in a database: Formats such as JSON are frequently used for storing arbitrary data 
+in databases. For example, key-value databases require encoding entire record values into byte 
+arrays, and developers often use formats such as JSON to encode and decode these record values.
+•	 Logging: Application logs are often stored in JSON format, making them easy to read for both 
+humans and various applications, such as data visualization software.

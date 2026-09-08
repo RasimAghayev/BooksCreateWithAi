@@ -1,0 +1,36 @@
+Scaffolding an example application
+33
+Request) {
+    id := req.FormValue("id")
+    if id == "" {
+        w.WriteHeader(http.StatusBadRequest)
+        return
+    }
+    ctx := req.Context()
+    m, err := h.ctrl.Get(ctx, id)
+    if err != nil && errors.Is(err, repository.ErrNotFound) {
+        w.WriteHeader(http.StatusNotFound)
+        return
+    } else if err != nil {
+        log.Printf("Repository get error: %v\n", err)
+        w.WriteHeader(http.StatusInternalServerError)
+        return
+    }
+    if err := json.NewEncoder(w).Encode(m); err != nil {
+        log.Printf("Response encode error: %v\n", err)
+    }
+}
+The handler we just created uses our repository to retrieve the information and return it in JSON 
+format. We chose JSON here just for simplicity. In Chapter 4, we are going to cover more data formats 
+and illustrate how they can benefit your applications.
+You may notice that we have called the package for our HTTP handler http. There is a trade-off 
+here—while we are certainly colliding with its namesake standard library package, we get a pretty 
+descriptive http.Handler exported name. Since our package is going to be used internally, this 
+trade-off is reasonable.
+Main file
+Now, since we have created both a database and an API handler, let’s create the executable for the metadata 
+service. Inside the metadata/cmd directory, create the main.go file and add the following code:
+package main
+import (
+    "log"
+    "net/http"

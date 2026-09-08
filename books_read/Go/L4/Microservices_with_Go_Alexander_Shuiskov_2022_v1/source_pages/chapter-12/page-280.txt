@@ -1,0 +1,35 @@
+Setting up Prometheus alerting for our microservices
+257
+Setting up Prometheus alerting for our microservices
+In this section, we will illustrate how to set up service alerting using Prometheus and its alerting 
+extension, Alertmanager, for the services we created in previous chapters. You will learn how to expose 
+the service metrics for collection, how to set up Prometheus and Alertmanager to aggregate and store 
+the metrics from multiple services, and how to define and process service alerts.
+Our high-level approach is as follows:
+1.	
+Set up Prometheus metric reporting to our services.
+2.	
+Install Prometheus and configure it to scrape the data from the three example services that we 
+created in previous chapters.
+3.	
+Configure service availability alerts using Alertmanager.
+4.	
+Test our alerts by triggering an alerting condition and running Alertmanager.
+Let’s start by illustrating how to integrate our services with Prometheus. To do this, we need to add 
+a metric collection to our services by exposing an endpoint that will provide the newest metrics 
+to Prometheus.
+First, we need to add Prometheus configuration to our services. In each service directory, update the 
+cmd/config.go file to the following:
+package main
+type config struct {
+    API        apiConfig        `yaml:"api"`
+    Jaeger     jaegerConfig     `yaml:"jaeger"`
+    Prometheus prometheusConfig `yaml:"prometheus"`
+}
+type apiConfig struct {
+    Port int `yaml:"port"`
+}
+type jaegerConfig struct {
+    URL string `yaml:"url"`
+}
+type prometheusConfig struct {

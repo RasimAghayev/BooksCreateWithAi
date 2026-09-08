@@ -1,0 +1,23 @@
+Summary
+91
+This list provides some high-level recommendations applicable to all serialization protocols. For 
+protocol-specific recommendations, follow the official documentation and check the popular open 
+source projects to get some real-world code examples.
+Summary
+In this chapter, we covered the basics of serialization and illustrated how our data structures could be 
+encoded using various serialization protocols, including XML, JSON, and Protocol Buffers. You learned 
+about the differences between the most popular serialization protocols and their main advantages 
+and disadvantages. 
+We covered the basics of Protocol Buffers and showed how to define custom data structures in its 
+schema definition language. Then, we used the example code to illustrate how to generate the schema 
+files for the Go language. Finally, we covered the differences in compression efficiency between XML, 
+JSON, and Protocol Buffers.
+In the next chapter, we are going to continue using Protocol Buffers and will show how to use it for 
+communication between services. 
+Further reading
+•	 The Protocol Buffers documentation: https://developers.google.com/protocol-
+buffers
+•	 Comparison of serialization formats: https://en.wikipedia.org/wiki/Comparison_
+of_data-serialization_formats
+•	 The Protocol Buffers official style guide: https://developers.google.com/protocol-
+buffers/docs/style

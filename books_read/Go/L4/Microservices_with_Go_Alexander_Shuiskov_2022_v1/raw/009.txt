@@ -1,0 +1,85 @@
+Table of Contents
+viii
+Application code structure
+25
+Movie metadata service
+27
+Movie service
+42
+Summary
+52
+Further reading
+53
+3
+Service Discovery	
+55
+Technical requirements
+55
+Service discovery overview
+55
+Registry
+57
+Service discovery models
+58
+Service health monitoring
+59
+Service discovery solutions
+59
+HashiCorp Consul
+60
+Kubernetes
+60
+Adopting service discovery
+60
+Preparing the application
+61
+Implementing the discovery logic
+64
+Using the discovery logic
+70
+Summary
+76
+Further reading
+76
+4
+Serialization	
+77
+Technical requirements
+77
+The basics of serialization
+78
+Popular serialization formats
+80
+Using Protocol Buffers
+84
+Best practices for serialization
+90
+Summary
+91
+Further reading
+91
+5
+Synchronous Communication	
+93
+Technical requirements
+93
+Introduction to synchronous 
+communication
+94
+Go RPC frameworks and libraries
+95
+Defining a service API using Protocol 
+Buffers
+96
+Implementing gateways and clients
+100
+Metadata service
+100
+Rating service
+105
+Movie service
+107
+Summary
+113
+Further reading
+113

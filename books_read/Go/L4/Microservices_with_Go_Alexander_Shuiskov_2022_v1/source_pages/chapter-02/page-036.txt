@@ -1,0 +1,24 @@
+2
+Scaffolding a Go Microservice
+In this chapter, we will finally start scaffolding our microservice code. The goal of this chapter is to 
+establish a solid foundation for writing Go microservices and setting the right structure for future 
+changes. While Go makes it relatively easy to write small applications, there are multiple challenges 
+that engineers may face along the way, including the following:
+•	 How to set the right project structure to make it easier to evolve and maintain the code base
+•	 How to write idiomatic Go code that is going to be consistent with the largest Go code bases
+•	 How to separate the components of a microservice and wire them together
+In this chapter, we are going to address each of these challenges. First, you will be introduced to the key 
+aspects of writing idiomatic and conventional Go code. You will learn important recommendations 
+for writing and organizing your code base, as well as how to set up the proper code structure for your 
+services. Then, we are going to introduce you to an example application, which will consist of three 
+microservices that we are going to use throughout the book. In the following chapters, we will add 
+additional features to these services, illustrating all the important areas of microservice development.
+In this chapter, we will cover the following topics:
+•	 Go basics
+•	 Project structure
+•	 Scaffolding an example application
+Technical requirements
+To complete this chapter, you need to have Go 1.11 or above. If you don’t have Go installed, you can 
+download it from the official website at go.dev/dl.
+You can find the code examples for this chapter on GitHub: https://github.com/
+PacktPublishing/microservices-with-go/tree/main/Chapter02.

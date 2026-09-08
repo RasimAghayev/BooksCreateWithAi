@@ -1,0 +1,35 @@
+Collecting service metrics
+229
+•	 Name of the service
+•	 Name of the component emitting the event (for example, endpoint name)
+•	 Name of the file (optional)
+A more detailed version of the preceding log message looks like this:
+{"level":"error", "time":"2022-09-04T20:10:10+1:00","message":"
+Request timed out", "service":"rating", "component": "handler", 
+"endpoint": "putRating", "file": "handler.go"}
+At this point, we have discussed the main topics related to logging and can move on to the next section, 
+which describes another type of telemetry data – metrics.
+Collecting service metrics
+In this section, we are going to describe another type of service telemetry data: metrics. To understand 
+what metrics are and how they are different from log data, let’s start with an example. Imagine that 
+you have a set of services providing APIs to their users, and you want to know how many times per 
+second each API endpoint is called. How would you do this?
+One possible way of solving this problem is using logs. We could create a log event for each request, and 
+then we would be able to count the number of events for each endpoint, aggregating them by second, 
+minute, or in any other possible way. Such a solution would work until we get too many requests per 
+endpoint and can’t log each one independently anymore. Let’s assume there is a service that processes 
+more than a million requests per second. If we used logs to measure its performance, we would need 
+to produce more than a million log events every second, generating lots of data.
+A more optimal solution to this problem would be to use some sort of value-based aggregation. Instead 
+of storing the data representing each request separately, we could summarize the count of requests 
+per second, minute, or hour, making the data more optimal for storing.
+The problem that we just described is a perfect use case for using metrics – real-time quantitative 
+measurements of system performance, such as request rate, latency, or cumulative counts. Like logs, 
+metrics are time-based – each record includes a timestamp representing a unique instant of time in 
+the past. However, unlike log events, metrics are primarily used for storing individual values. In our 
+example, the value of an endpoint request rate metric would be the count of requests per second.
+Metrics are generally represented as time series – sets of objects, called data points, containing the 
+following data:
+•	 Timestamp
+•	 Value (most commonly, the value is numerical)
+•	 An optional set of tags, defined as key-value pairs, that contain any additional metadata

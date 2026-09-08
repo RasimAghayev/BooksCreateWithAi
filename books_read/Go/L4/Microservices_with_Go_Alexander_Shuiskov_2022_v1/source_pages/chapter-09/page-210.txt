@@ -1,0 +1,32 @@
+Testing best practices
+187
+end of each integration test that uses persistent data storage to clean up the created records, whenever 
+this is possible. 
+Now, the question is when we should write integration tests. It is always up to you; however, I do have 
+some general suggestions:
+•	 Test critical flows: Make sure you test the entire flows, such as user signups and logins
+•	 Test critical endpoints: Perform the tests of the most critical endpoints that your services 
+provide to your users
+Additionally, you may have integration tests that are executed after each code change. Systems such as 
+Jenkins provide these kinds of features and allow you to plug any custom logic that would be executed 
+into each update of your code. We won’t cover Jenkins setup in this book, but you can familiarize 
+yourself with its documentation on the official website (https://www.jenkins.io).
+As we have illustrated how to write both unit and integration tests, let’s proceed to the next section 
+of the book, describing some of the best practices of Go testing.
+Testing best practices
+In this section, we are going to list some additional useful testing tips that are going to help you to 
+improve the quality of your tests.
+Using helpful messages
+One of the most important aspects of writing tests is providing enough information in error logs that 
+it is easy to understand exactly what went wrong and which test case triggered the failure. Consider 
+the following test case code:
+if got, want := Process(tt.in), tt.want; got != want {
+  t.Errorf("Result mismatch")
+}
+The error log does not include both the expected and the actual value received from the function 
+being tested, making it harder to understand what the function returned and how it was different 
+from the expected value.
+The better log line would be as follows:
+t.Errorf("got %v, want %v", got, want)
+This log line includes the expected and the actual returned value of the function and provides much 
+more context to you when you debug the test.

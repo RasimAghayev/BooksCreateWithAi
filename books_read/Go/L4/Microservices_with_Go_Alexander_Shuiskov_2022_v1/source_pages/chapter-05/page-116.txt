@@ -1,0 +1,24 @@
+5
+Synchronous Communication
+In this chapter, we are going to cover the most common way of communicating between microservices 
+– synchronous communication. In Chapter 2, we already implemented the logic for communicating 
+between microservices via the HTTP protocol and returning results in JSON format. In Chapter 4, 
+we illustrated that the JSON format is not the most efficient in terms of data size, and there are many 
+different formats providing additional benefits to developers, including code generation. In this chapter, 
+we are going to show you how to define service APIs using Protocol Buffers and generate both client 
+and server code for them.
+By the end of this chapter, you will understand the key concepts of synchronous communication 
+between microservices and will have learned how to implement microservice clients and servers.
+The knowledge you gain in this chapter will help you to learn how to better organize the client and 
+server code, generate the code for serialization and communication, and use it in your microservices. 
+In this chapter, we will cover the following topics:
+•	 Introduction to synchronous communication
+•	 Defining a service API using Protocol Buffers
+•	 Implementing gateways and clients
+Now, let’s proceed to the main concepts of synchronous communication.
+Technical requirements
+To complete this chapter, you will need Go 1.11, a Protocol Buffers compiler that we installed in the 
+previous chapter, and a gRPC plugin.
+You can install the gRPC plugin by running the following command:
+go install google.golang.org/grpc/cmd/protoc-gen-go-grpc@latest 
+export PATH="$PATH:$(go env GOPATH)/bin" 

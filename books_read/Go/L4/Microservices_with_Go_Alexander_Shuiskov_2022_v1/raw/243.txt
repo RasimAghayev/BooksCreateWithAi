@@ -1,0 +1,30 @@
+Collecting Service Telemetry Data
+220
+than regular ones, requiring more disk space and making it harder to navigate the other types of logs. 
+Different logging libraries let us enable or disable specific levels, such as Debug or even Info, leaving 
+only logs indicating warnings, errors, fatal errors, and panics.
+Let’s review some popular Go logging libraries and focus on choosing the one that we would use in 
+our microservices.
+Choosing the logging library
+In this section, we will describe some of the existing Go logging libraries and review their features. 
+This section should help you choose the logging library that you will use in your microservices.
+First, let’s list the features that we would like to get from the logging library:
+•	 Structured logging: Supports logging structured messages that may include additional fields 
+in a key-value format.
+•	 Fast performance: Writing log messages should not have a noticeable impact on 
+service performance.
+•	 Log level support: Enforce inclusion of a log level in message metadata.
+The following is an additional feature that would be nice to have:
+•	 Support formatting: We can write formatted strings in a Printf-like format (for example, 
+support an Errorf function to log a formatted error).
+Now, let’s review some of the most popular Go logging libraries. When evaluating library performance, 
+we will be using the logging library benchmark data: https://github.com/uber-go/
+zap#performance.
+The list of popular Go logging libraries includes the following:
+•	 Built-in Go log package (https://pkg.go.dev/log):
+	 Officially supported by the Go development team, included in the Go SDK
+	 Does not support structured logging and does not have built-in support for log levels
+•	 zap (https://github.com/uber-go/zap):
+	 Fastest performance among all logging libraries reviewed
+	 Feature-rich and supports a fast minimalistic logger, as well as a slightly slower one with 
+additional features

@@ -1,0 +1,34 @@
+Tracing
+237
+Standardize metric and tag names
+Imagine that you have hundreds of services, and each service follows different metric naming conventions. 
+For example, one service could be using api_errors as the name of the API error counter metric, 
+while the other could be using the api_request_errors name. If you wanted to compare the 
+metrics for such services, you would need to remember which naming convention each service was 
+using. Such metric discovery will always take time, reducing your ability to analyze your data.
+A much better solution is to standardize the names of common metrics and tags across all your services. 
+This way, you can easily search and compare various performance indicators, such as service client and 
+server error rates, API throughput, and request latency. In Chapter 12, we will review some common 
+performance indicators that you can use to monitor the health of your services.
+Set the appropriate retention
+Most time series databases are capable of storing large datasets of metrics due to efficient aggregation. 
+Unlike logs that require you to store each record independently, metrics can be aggregated into a 
+smaller dataset. For example, if you store the counter data, you can store the sums of the values 
+instead of storing each value separately. Even with these optimizations, time series data can take a lot 
+of disk space to store. Large companies can store terabytes of metrics data, so it becomes important 
+to manage its size and set up data retention policies, similar to logs and other types of telemetry data.
+Metric storages, such as Prometheus, have a default retention time of 15 days, allowing you to change 
+it in the settings. For example, to set the data retention time in Prometheus to 60 days, you can use 
+the following flag:
+--storage.tsdb.retention.time=60d
+Limiting the storage retention time helps keep the size of the time series datasets under control, 
+making it easier to manage the storage capacity and plan the infrastructure spending on data storage.
+Now that we’ve discussed the metrics data, let’s move on to the next section, which covers a powerful 
+technique: tracing.
+Tracing
+So far, we have covered two common types of observability data – logs and metrics. Having logs and 
+metrics data in place is often sufficient for service debugging and troubleshooting. However, there is 
+another type of data that is useful for getting insights into microservice communication and data flows.
+In this section, we are going to discuss distributed tracing – a technique that involves recording and 
+analyzing interactions between different services and service components. The main idea behind 
+distributed tracing is to automatically record all such interactions and provide a convenient way to 

@@ -1,0 +1,34 @@
+Achieving reliability through automation
+205
+Graceful shutdown
+In this section, we are going to talk about the graceful handling of service shutdown events. Service 
+shutdowns can be triggered by multiple events:
+•	 Manual interruption of execution (for example, when a user types Ctrl + C/Cmd + C in a 
+terminal that runs the service process, and the process receives a SIGINT signal from the 
+operating system)
+•	 Termination of execution by the operating system (for example, by SIGTERM or SIGKILL signals)
+•	 Panic in service code
+Generally, sudden termination of the execution of a service may result in the following negative 
+consequences:
+•	 Dropped requests: Incoming API requests may be dropped before they get fully processed, 
+resulting in errors for the callers of the service.
+•	 Connection issues: Service network connections may not be properly closed during a shutdown, 
+resulting in multiple negative effects. For example, not closing a database connection may result 
+in a situation called a connection leak, when the database keeps the connection allocated to 
+the service instead of allowing it to be reused by another instance.
+To prevent these issues, you need to ensure that your service shuts down gracefully by performing 
+a set of operations that minimize any negative consequences for the service and its components. 
+Performing a graceful shutdown, the service would run some extra logic before the termination, 
+such as the following:
+•	 Completing as many unfinished operations, such as unprocessed requests, as possible
+•	 Closing all open network connections and yielding any shared resources, such as network sockets
+Graceful shutdown logic for Go services is usually implemented in the following way:
+1.	
+The service subscribes to shutdown events by calling a Notify function of an os/
+signal package.
+2.	
+When a service receives a SIGINT or SIGTERM event from the operating system, indicating 
+that the service is about to be terminated, it performs a set of required operations for closing 
+all open connections and completing all pending tasks.
+3.	
+Once all operations are completed, the service finishes the execution.

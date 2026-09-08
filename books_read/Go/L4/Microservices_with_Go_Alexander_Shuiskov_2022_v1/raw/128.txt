@@ -1,0 +1,37 @@
+Implementing gateways and clients
+105
+Rating service
+Let’s create a gRPC handler for the rating service. In the rating/internal/handler package, 
+create a grpc directory and add a grpc.go file with the following code:
+package grpc
+ 
+import (
+    "context"
+    "errors"
+ 
+    "google.golang.org/grpc/codes"
+    "google.golang.org/grpc/status"
+    "movieexample.com/gen"
+    "movieexample.com/rating/internal/controller"
+    "movieexample.com/rating/pkg/model"
+)
+ 
+// Handler defines a gRPC rating API handler.
+type Handler struct {
+    gen.UnimplementedRatingServiceServer
+    svc *controller.RatingService
+}
+ 
+// New creates a new movie metadata gRPC handler.
+func New(svc *controller.RatingService) *Handler {
+    return &Handler{ctrl: ctrl}
+}
+Now, let’s implement the GetAggregatedRating endpoint:
+// GetAggregatedRating returns the aggregated rating for a 
+// record.
+func (h *Handler) GetAggregatedRating(ctx context.
+Context, req *gen.GetAggregatedRatingRequest) (*gen.
+GetAggregatedRatingResponse, error) {
+    if req == nil || req.RecordId == "" || req.RecordType == "" 
+{
+        return nil, status.Errorf(codes.InvalidArgument, "nil 

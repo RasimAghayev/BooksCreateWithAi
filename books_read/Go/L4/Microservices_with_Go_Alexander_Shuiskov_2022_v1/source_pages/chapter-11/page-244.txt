@@ -1,0 +1,31 @@
+Collecting service logs
+221
+•	 zerolog (https://github.com/rs/zerolog):
+	 Fast performance
+	 Simple and elegant API
+•	 go-kit/log (https://github.com/go-kit/log):
+	 Part of a larger go-kit toolkit for microservice development
+	 Slightly slower than zerolog and zap, but faster than the other logging libraries
+•	 apex/log (https://github.com/apex/log):
+	 Has built-in support for various log storages, such as Elasticsearch, Graylog, and AWS Kinesis
+•	 log15 (https://github.com/inconshreveable/log15):
+	 Feature-rich logging toolkit
+	 Much slower than the other log libraries reviewed
+The preceding list provides some high-level details about some of the popular Go logging libraries to 
+help you choose the right one for your services. All libraries, except the built-in log package, provide 
+the features that we need, including structured logging and log levels. Now, the question is, how do 
+we select the best one among them?
+My personal opinion is that the zap library provides the most flexible and yet most performant 
+solution to service logging problems. It allows us to use two separate loggers, called Logger and 
+SugaredLogger. Logger can be used in high-performance applications, while SugaredLogger 
+can be used when you need some extra features; we will review these features in the next section.
+Using logging features
+Let’s start practicing and demonstrate how to use some features of the zap logging library that we 
+picked in the previous section. First, let’s start with the basics and illustrate how to log a simple message 
+that has the Info level and an additional metadata field called serviceName. The complete Go 
+code for this example is as follows:
+package main
+import "go.uber.org/zap"
+func main() {
+    logger, _ := zap.NewProduction()
+    logger.Info("Started the service", zap.

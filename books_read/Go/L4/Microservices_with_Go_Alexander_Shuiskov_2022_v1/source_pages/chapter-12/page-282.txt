@@ -1,0 +1,32 @@
+Setting up Prometheus alerting for our microservices
+259
+In the code we just added, we initialized the tally library to collect and report the metrics data, which 
+we mentioned in Chapter 11 of this book. We used a built-in Prometheus reporter that implements 
+metric data collection using the Prometheus time series format and exposed an HTTP endpoint to 
+allow Prometheus to collect our data.
+Let’s test the newly added endpoint. Restart the metadata service and try accessing the new endpoint by 
+opening http://localhost:8091/metrics in your browser. You should get a similar response:
+# HELP go_gc_duration_seconds A summary of the pause duration 
+of garbage collection cycles.
+# TYPE go_gc_duration_seconds summary
+go_gc_duration_seconds{quantile="0"} 0
+go_gc_duration_seconds{quantile="0.25"} 0
+...
+The response of the metrics handler includes the Go runtime data, such as the number of goroutines 
+at the current moment, the Go library version, and many other useful metrics.
+Now, we are ready to set up Prometheus alerting. Inside the src directory of our project, create a 
+directory called configs and add a prometheus.yaml file with the following contents:
+global:
+  scrape_interval: 15s
+  scrape_timeout: 10s
+  evaluation_interval: 15s
+alerting:
+  alertmanagers:
+  - follow_redirects: true
+    enable_http2: true
+    scheme: http
+    timeout: 10s
+    api_version: v2
+    static_configs:
+    - targets:
+      - host.docker.internal:9093

@@ -1,0 +1,8 @@
+{
+  "book_id": "microservices_with_go_2022_v1",
+  "status": "completed",
+  "chapters_total": 13,
+  "chapters_processed": ["01", "02", "03", "04", "05", "06", "07", "08", "09", "10", "11", "12", "13"],
+  "info_files_done": true,
+  "completed_at": "2026-09-08"
+}

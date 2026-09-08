@@ -1,0 +1,34 @@
+Defining a service API using Protocol Buffers
+99
+Let’s see the compiled code that was generated as the output for our command. If the command is 
+executed without any errors, you will find a movie_grpc.pb.go file inside the src/gen directory. 
+The file will include the generated Go code for our services. Let’s take a look at the generated client code:
+type MetadataServiceClient interface {
+    GetMetadata(ctx context.Context, in *GetMetadataRequest, 
+opts ...grpc.CallOption) (*GetMetadataResponse, error)
+}
+ 
+type metadataServiceClient struct {
+    cc grpc.ClientConnInterface
+}
+ 
+func NewMetadataServiceClient(cc grpc.ClientConnInterface) 
+MetadataServiceClient {
+    return &metadataServiceClient{cc}
+}
+func (c *metadataServiceClient) GetMetadata(ctx context.
+Context, in *GetMetadataRequest, opts ...grpc.CallOption) 
+(*GetMetadataResponse, error) {
+    out := new(GetMetadataResponse)
+    err := c.cc.Invoke(ctx, "/MetadataService/GetMetadata", in, 
+out, opts...)
+    if err != nil {
+        return nil, err
+    }
+    return out, nil
+}
+This generated code can be used in our applications to call our API from the Go applications. Additionally, 
+we can generate such client code for other languages, such as Java, adding more arguments to the 
+compiler command that we just executed. This is a great feature that can save us lots of time when 
+writing microservice applications – instead of writing client logic for calling our services, we can use 
+the generated clients and plug them into our applications.

@@ -1,0 +1,29 @@
+Collecting service logs
+223
+Now, we can log the Metadata structure as a log field:
+logger.Debug("Retrieved movie metadata", zap.
+Stringer("metadata", metadata))
+The output would look as follows:
+{"level":"debug","msg":"Retrieved movie 
+metadata","metadata":"Metadata{id=id, title=title, 
+description=description, director=director}"}
+Now, let’s illustrate one more useful technique of using the zap library. If you want to include the 
+same fields in multiple messages, you can re-initialize the logger by using the With function, as 
+illustrated in the following example:
+logger = logger.With(zap.String("endpoint", "PutRating"), zap.
+String("ratingId", ratingID))
+logger.Debug("Received a PutRating request")
+// endpoint logic
+logger.Debug("Processed a PutRating request")
+The results of both calls to the Debug function will now include both the endpoint and 
+ratingId fields.
+You can also use this technique when you create new service components in your code. In the following 
+example, we are creating a sub-logger inside the New function:
+func New(logger *zap.Logger, ctrl *rating.Controller) *Handler{ 
+    return &Handler{logger.With("component": 
+"ratingController"), ctrl}
+}
+This way, the newly created instance of a Handler structure will be initialized with a logger that 
+includes the component field with the ratingController value in each message.
+Now that we have covered some of the primary service logging use cases, let’s discuss how to store 
+logs in a microservice environment.

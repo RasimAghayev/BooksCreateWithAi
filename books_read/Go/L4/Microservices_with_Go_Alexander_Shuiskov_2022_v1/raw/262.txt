@@ -1,0 +1,32 @@
+Tracing
+239
+Let’s describe the tracing data model so that you can get familiar with its common terminology. The 
+core element of tracing is a span – a record representing some logical operation, such as a service 
+endpoint call. Each span has the following properties:
+•	 Operation name
+•	 Start time
+•	 End time
+•	 An optional set of tags providing some additional metadata related to the execution of the 
+associated operation
+•	 An optional set of associated logs
+Spans can be grouped into hierarchies to model relationships between different operations. For example, 
+in Figure 11.2, our GetMovieDetails span included two child spans, representing GetMetadata 
+and GetAggregatedRating operations.
+Let’s explore how we can collect and use tracing data in our Go applications.
+Tracing tools
+There are various tools for distributed tracing in a microservice environment. Among the most popular 
+ones is Jaeger, which we will review in this section.
+Note
+There are multiple observability libraries and tools available for developers, including libraries 
+for trace collection. To standardize the data model and make data interchangeable, there is an 
+OpenTelemetry project that contains the specification of the tracing data model. You can get 
+familiar with the project on its website: https://opentelemetry.io.
+Jaeger is an open source distributed tracing tool that provides mechanisms for collecting, aggregating, 
+and visualizing the tracing data. It offers a simple but highly flexible setup and a great user interface for 
+accessing trace data. This is the reason why it quickly became one of the most popular observability 
+tools across the industry.
+Jaeger is compatible with the OpenTelemetry specification, so it can be used in combination with any 
+clients implementing the tracing specification, such as the Go SDK (https://opentelemetry.
+io/docs/instrumentation/go/). The OpenTelemetry SDK is currently the recommended 
+way of emitting trace data from applications, so we are going to use it in our examples throughout 
+this section.

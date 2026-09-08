@@ -1,0 +1,24 @@
+Asynchronous communication basics
+121
+Figure 6.2 – The Apache Kafka data model
+Having such a seemingly simple data model, Kafka is a powerful system that offers lots of benefits 
+to its users:
+•	 High write and read throughput: Kafka is optimized for highly performant write and read 
+operations. It achieves this by doing as many sequential writes and reads as possible, allowing 
+it to efficiently make use of hardware such as hard disk drives, as well as sequentially sending 
+large amounts of data over the network.
+•	 Scalability: Developers can leverage topic partitioning provided by Kafka to achieve more 
+performant parallel processing of their data.
+•	 Flexible durability: Kafka allows users to configure the policies for storing data, such as 
+message retention. Messages can be stored for a fixed amount of time (for example, for 7 days) 
+or indefinitely until there is enough space on the data storage.
+Note
+While Kafka provides many benefits for developers, it is important to note that it is a fairly 
+complex infrastructure component that may be nontrivial to manage and maintain. We are 
+going to use it in this chapter for illustrative purposes, especially taking into account its 
+wide adoption and popularity in the developer community. In this chapter, we will avoid the 
+difficulties of setting up a Kafka cluster by using its Docker version, but for production use cases 
+you may need to get familiar with the relevant Kafka maintenance documentation, available at 
+https://kafka.apache.org/documentation/
+Let’s explore how we can leverage the benefits offered by Kafka for the microservices we developed 
+in the previous chapters.

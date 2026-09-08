@@ -1,0 +1,35 @@
+Integration tests
+183
+    wantRating := float64((firstRating + secondRating) / 2)
+    if got, want := getAggregatedRatingResp.RatingValue, 
+wantRating; got != want {
+        log.Fatalf("rating mismatch: got %v want %v", got, 
+want)
+    }
+We are almost done with our main function – let’s implement the last check:
+    log.Println("Getting updated movie details via movie 
+service")
+    getMovieDetailsResp, err = movieClient.GetMovieDetails(ctx, 
+&gen.GetMovieDetailsRequest{MovieId: m.Id})
+    if err != nil {
+        log.Fatalf("get movie details: %v", err)
+    }
+    wantMovieDetails.Rating = wantRating
+    if diff := cmp.Diff(getMovieDetailsResp.MovieDetails, 
+wantMovieDetails, cmpopts.IgnoreUnexported(gen.MovieDetails{}, 
+gen.Metadata{})); diff != "" {
+        log.Fatalf("get movie details after update mismatch: 
+%v", err)
+    }
+    log.Println("Integration test execution successful")
+}
+Our integration test is almost ready. Let’s add the functions for initializing the servers for our services 
+below the main function. First, add the function for creating the server for a metadata service:
+func startMetadataService(ctx context.Context, registry 
+discovery.Registry) *grpc.Server {
+    log.Println("Starting metadata service on " + 
+metadataServiceAddr)
+    h := metadatatest.NewTestMetadataGRPCServer()
+    l, err := net.Listen("tcp", metadataServiceAddr)
+    if err != nil {
+        log.Fatalf("failed to listen: %v", err)

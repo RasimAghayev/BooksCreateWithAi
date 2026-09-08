@@ -1,0 +1,23 @@
+Service discovery solutions
+59
+The following diagram will help you understand the server-side service discovery model:
+Figure 3.3 – Server-side service discovery
+In the diagram, the application calls the target service via a load balancer, accessing the service registry 
+to read the list of active service instances from it. In this model, the application does not need to know 
+about the registry. This is the main benefit of the server-side service discovery model: it helps decouple 
+the interaction with the service registry from each calling application, making the application logic 
+simpler. The downside of the model is that it requires setting up and using a load balancer. The latter 
+is rather an untrivial operation, and we are not going to cover it in this book.
+Now, let’s see how the registry can keep the list of only active instances of each service.
+Service health monitoring
+The registry keeps the information about the instances up to date either via a pull or a push model:
+•	 Pull model: The service registry periodically performs a health check for each known instance.
+•	 Push model: The application renews its status by contacting the registry.
+The pull model removes the need to implement status renewal on a service level. In a push model, the 
+application is responsible for renewing its status or telling the service registry about its healthy status.
+Now, as we have covered the theoretical basics of service discovery, let’s see which existing solutions 
+you can use to enable your microservices.
+Service discovery solutions
+In this section, we are going to describe the existing service discovery solutions available for your 
+use – HashiCorp Consul and Kubernetes. Then, you will learn about the most popular tools that 
+can be used by microservice developers to perform service discovery.

@@ -1,0 +1,42 @@
+Using MySQL to store our service data
+137
+•	 Blob databases: These are databases for storing blob (binary large object) data, such as audio 
+or video files. Blob records are generally immutable (their content never gets changed after a 
+successful write), so blob databases are well optimized for append-only writes (such as writing 
+new files), as well as blob reads (such as retrieving the contents of a large file).
+We won’t go into the details of various types of databases because this is a topic for a separate book, but 
+it is important to note that there is no one-size-fits-all solution among all of them, and each database 
+provides a unique set of features that can be useful for solving a specific problem. For example, if 
+the only purpose of your service is to store files, using a blob database would be sufficient, while a 
+graph database could help with building a social network to store user relationship data. However, 
+many use cases can be modeled using the relational model that powers relational databases: since it 
+was introduced in 1970 by E.F. Codd, it has been used across the software development industry for 
+nearly all types of problems. Popular relational databases, such as MySQL and PostgreSQL, remain the 
+top-used software solutions, helping to build various types of applications, from tiny services running 
+on a single host to large-scale clusters spanning hundreds of thousands of hosts. Because of the wide 
+adoption and maturity of popular relational databases, many companies use them as a standard way 
+to store various types of data. We are going to illustrate how to store our microservice data using a 
+popular relational database: MySQL. 
+Using MySQL to store our service data
+In this section, we are going to provide a brief overview of MySQL and demonstrate how to write and 
+read data from the microservices that we created in the previous chapters.
+MySQL is an open source relational database that was created in 1995 and since then has become 
+one of the top-used databases across the development industry, according to DB-Engines ranking 
+(https://db-engines.com/en/ranking). It stores data as a set of tables, each consisting of 
+rows and columns of predefined types (such as string, numeric, binary, or more), and allows to data 
+via SQL queries. For example, assume you have the following data, stored as a table called movies:
+id
+title
+director
+922
+New York Stories
+John Jones
+1055
+Christmas Day
+Ben Miles
+1057
+Sunny Weather 3
+Ben Miles
+Table 7.1 – Movie table example
+A SQL query to get all movies filmed by a particular director would look as follows:
+SELECT * FROM movies WHERE director = "Ben Miles"

@@ -1,0 +1,33 @@
+Setting Up Service Alerting
+252
+Alerting basics
+No microservice operates without incidents; even if you have a stable, highly tested, and well-maintained 
+service, it can still experience various types of issues, such as the following:
+•	 Resource constraints: A host running the service may experience high CPU utilization or 
+insufficient RAM or disk space.
+•	 Network congestion: The service may experience a sudden increase in load or decreased 
+performance in any of its dependencies. This could limit its ability to process incoming requests 
+or operate at the expected performance level.
+•	 Dependency failures: Other services or libraries that your service is depending on may 
+experience various issues, affecting your service execution.
+Such issues can be self-resolving. For example, a slower network throughput could be a transient issue 
+caused by temporary maintenance or a network device being restarted. Many other types of issues, 
+which we call incidents, require some actions from the engineers to be mitigated.
+To mitigate an incident, first, we need to detect it. Once the issue is known, we can notify the engineers 
+or perform automated actions, such as an automated deployment rollback or application restart. In this 
+chapter, we will describe the alerting technique that combines incident detection and notification. 
+This technique can be used to automate the incident response to various types of microservice issues.
+The key principles behind alerting are pretty simple and can be summarized by the following statements:
+•	 To set up alerts, developers define the alerting conditions.
+•	 Alerting conditions are based on the telemetry data (most commonly, metrics) and are defined 
+in the form of queries.
+•	 Each defined alerting condition is evaluated periodically, such as every minute.
+•	 If the alerting condition is met, the associated actions are executed (for example, an email or 
+an SMS is sent to an engineer).
+To illustrate how alerting works, imagine that one of your services is emitting a metric called active_
+user_count that reports the number of active users at a particular moment. Let’s assume that we 
+would like to get notified if the number of active users suddenly drops to zero. Such a situation would 
+likely indicate some incident with our service unless we have too few users (for simplicity, we will 
+assume our system should always have some active users).
+Using pseudocode, we could define the alerting condition for our use case in the following way:
+active_user_count == 0

@@ -1,0 +1,31 @@
+Scaffolding an example application
+27
+you keep these names consistent across all your microservices, so let’s align on a common naming 
+convention for these types of packages.
+In this book, we are going to use the following names for our application components:
+•	 controller: Business logic
+•	 gateway: Logic for interacting with other services
+•	 handler: API handlers
+•	 repository: Database logic
+Now, since we are aligned on the naming, let’s proceed to the last step of setting up our project. Execute 
+this command in the application root directory:
+go mod init movieexample.com
+This command creates a Go module called movieexample.com. A Go module is a collection of 
+related packages stored in a file tree. They help manage dependencies for your project, and we are 
+going to use this feature in all the chapters.
+Now, we can proceed to code scaffolding for our first microservice.
+Movie metadata service
+Let’s summarize the logic of the movie metadata service:
+•	 API: Get metadata for a movie
+•	 Database: Movie metadata database
+•	 Interacts with services: None
+•	 Data model type: Movie metadata
+This logic would translate into the following packages:
+•	 cmd: Contains the main function for starting the service
+•	 controller: Our service logic (read the movie metadata)
+•	 handler: API handler for a service
+•	 repository: Logic for accessing the movie metadata database
+Let’s store the logic of our service in a directory called metadata. Following the conventions we 
+described earlier in the chapter, the executable code containing the main file is going to be stored in 
+the cmd package. All code that we are not going to export will be stored in the internal directory 
+and this will include most of our applications. The exported structures will reside in the pkg directory.

@@ -1,0 +1,41 @@
+Adopting service discovery
+71
+You may notice that instead of calling a static pre-configured address, we now first get the 
+available addresses of the metadata from the registry. This is the essence of service discovery 
+– we use the data from the registry for making remote calls between our services. After we get 
+the list of service addresses, we pick a random one using a rand.Intn function. By doing 
+this, we balance the load between the active instances, randomly selecting any available instance 
+on each request.
+4.	
+Now, updating the rating gateway in the same way, we changed the metadata service.
+5.	
+The next step is to update the main functions of our services so that each service will register 
+and deregister itself in the service registry. Let’s update the metadata service first. Update its 
+main function to the following:
+const serviceName = "metadata"
+func main() {
+    var port int
+    flag.IntVar(&port, "port", 8081, "API handler port")
+    flag.Parse()
+    log.Printf("Starting the metadata service on port 
+%d", port)
+    registry, err := consul.NewRegistry("localhost:8500")
+    if err != nil {
+        panic(err)
+    }
+    ctx := context.Background()
+    instanceID := discovery.
+GenerateInstanceID(serviceName)
+    if err := registry.Register(ctx, instanceID, 
+serviceName, fmt.Sprintf("localhost:%d", port)); err != 
+nil {
+        panic(err)
+    }
+    go func() {
+        for {
+            if err := registry.
+ReportHealthyState(instanceID, serviceName); err != nil {
+                log.Println("Failed to report healthy 
+state: " + err.Error())
+            }
+            time.Sleep(1 * time.Second)

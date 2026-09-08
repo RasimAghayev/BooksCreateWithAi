@@ -1,0 +1,33 @@
+Collecting service logs
+227
+If your services log the data using different field names, you will not be able to easily gather such data 
+using a common query function. On the opposite side, establishing the common field names helps 
+ensure the log messages follow the same naming convention, simplifying any queries you write.
+To make sure the logs are emitted in the same way across all services and all components, you may 
+follow these tips:
+•	 Create a shared package that includes log field names as constants; take the following example:
+package logging
+const (
+  FieldService  = "service"
+  FieldEndpoint = "endpoint"
+...
+)
+•	 To avoid forgetting to include some important field inside a certain structure, function, or set of 
+functions, re-initialize the logger by setting the field as early as possible; take the following example:
+func (h *Handler) PutRating(ctx context.Context, req 
+*PutRatingRequest) (*PutRatingResponse, error) {
+    logger := h.logger.With(logging.FieldEndpoint, 
+"putRating")
+    // Now we can make sure the endpoint field is set 
+across all handler logic.
+...
+}
+•	 Additionally, ensure that the root logger of your service is setting the service name so that all 
+your service components will automatically collect this field by default:
+func main() {
+    logger, _ := zap.NewProduction()
+    logger = logger.With(logging.FieldService, "rating")
+    // Pass the initialized logger to all service 
+components.
+The tips that we just provided should help you standardize the usage of common fields across all 
+your service components, making it easier to query the logged data and aggregate it in different ways.

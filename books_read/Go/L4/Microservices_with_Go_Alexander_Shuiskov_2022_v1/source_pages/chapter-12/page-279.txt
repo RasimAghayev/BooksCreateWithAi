@@ -1,0 +1,35 @@
+Setting Up Service Alerting
+256
+Alerting conditions are generally defined as expressions that return Boolean results. For example, to 
+define the alerting condition when the active user count drops to zero, you would use the following 
+PromQL query with the == operator:
+active_user_count == 0
+The PromQL language provides some other types of time series matchers, such as quantile, which 
+can be used to perform various aggregations. The following query example can be used to check 
+whether the median api_request_latency value exceeds 1:
+api_request_latency{quantile="0.5"} > 1
+You can become familiar with the other aspects of the PromQL language by reading the official 
+documentation on its website: https://prometheus.io/docs/prometheus/latest/
+querying/basics/. Now, let’s explore how to set up alerts using the Prometheus alerting 
+tool, Alertmanager.
+Alertmanager is a separate component of Prometheus that allows us to configure alerts and 
+notifications to detect various types of incidents. Alertmanager operates by reading the provided 
+configuration and querying Prometheus time series data periodically. Let’s provide an example of 
+Alertmanager’s configuration:
+groups:
+- name: Availability alerts
+  rules:
+  - alert: Rating service down
+    expr: service_availability{service="rating"} == 0
+    for: 3m
+    labels:
+      severity: page
+    annotations:
+      title: Rating service availability down
+      description: No available instance of the rating service.
+In our configuration example, we set an alert for when the value of the service_availability 
+metric, which has a service="rating" tag, is equal to 0 for 3 minutes or more, triggering a 
+PagerDuty incident to notify the on-call engineer about the issue.
+Some other features of Alertmanager include notification grouping, notification retries, and alert 
+suppression. To illustrate how Prometheus and Alertmanager work in practice, let’s describe how to 
+set them up for our example microservices from the previous chapters.

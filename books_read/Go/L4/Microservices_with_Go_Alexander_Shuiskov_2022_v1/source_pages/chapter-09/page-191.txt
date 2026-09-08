@@ -1,0 +1,32 @@
+Unit and Integration Testing
+168
+The skipping feature can be particularly useful for bypassing the execution of long-running tests, such 
+as the tests performing slow I/O operations or doing lots of data processing. To support this, the Go 
+testing library provides an ability to pass a specific flag, -test.short, to the go test command: 
+go test -test.short
+With the -test.short flag, you can let the Go test runner know that you want to run tests in short 
+mode — a testing mode when only special, short tests are getting executed. You can add the following 
+logic to all long-running tests to exclude them in short mode:
+func TestLongRunningProcess(t *testing.T) {
+  if testing.Short() {
+    t.Skip("Skipping a test in short mode")
+  }
+  ...
+}
+In the preceding example, the test is skipped when the -test.short flag is passed to the test 
+command.
+Using the short testing mode is useful when some of your tests are much slower than others and you 
+need to run tests very frequently. Skipping the slow tests and executing them less frequently could 
+significantly increase your development speed and make your development experience much better.
+You can get familiar with the other Go testing features by checking out the official documentation for 
+the testing package: https://pkg.go.dev/testing. We are now going to proceed to the 
+next section and focus on the details of implementing unit tests for our microservices.
+Unit tests
+We have covered many useful features for automated testing of Go applications and are now ready to 
+illustrate how to use them in our microservice code. First, we are going to start with unit tests — tests 
+of individual units of code, such as structures and individual functions.
+Let’s walk through the process of implementing unit tests for our code using the metadata service 
+controller as an example. Currently, our controller file looks like this:
+package metadata
+import (
+    "context"

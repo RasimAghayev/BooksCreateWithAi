@@ -1,0 +1,23 @@
+6
+Asynchronous Communication
+In the previous chapter, we illustrated how services can communicate with each other using a 
+synchronous request-response model. There are other communication models that provide various 
+benefits to the application developer, such as asynchronous communication, which we are going to 
+cover in this chapter.
+In this chapter, you are going to learn the basics of asynchronous communication and some common 
+techniques for using it, as well as some benefits and challenges it brings to microservice developers. 
+We will cover a popular piece of asynchronous communication software, Apache Kafka, and illustrate 
+how to use it for establishing communication between our microservices. 
+In this chapter, we are going to cover the following topics:
+•	 Asynchronous communication basics
+•	 Using Apache Kafka for messaging
+•	 Asynchronous communication best practices
+Let’s proceed to the basics of asynchronous communication.
+Technical requirements
+To complete this chapter, you need Go 1.11+ or above, similar to the previous chapters.
+You can find the GitHub code for this chapter here: https://github.com/PacktPublishing/
+microservices-with-go/tree/main/Chapter06
+Asynchronous communication basics
+In this section, we are going to cover some theoretical aspects of asynchronous communication. You 
+will learn the benefits and the common issues of an asynchronous communication model, and the 
+common ways of using it, as well as getting some real-world examples of asynchronous communication.

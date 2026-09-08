@@ -1,0 +1,57 @@
+Table of Contents 
+xi
+Collecting tracing data with the 
+OpenTelemetry SDK
+240
+Summary
+249
+Further reading
+250
+12
+Setting Up Service Alerting	
+251
+Technical requirements
+251
+Alerting basics
+252
+Alerting use cases
+253
+Introduction to Prometheus
+254
+Setting up Prometheus alerting for 
+our microservices
+257
+Alerting best practices
+265
+Summary
+266
+Further reading
+266
+13
+Advanced Topics	
+267
+Technical requirements
+267
+Profiling Go services
+268
+Creating microservice dashboards
+272
+Frameworks
+278
+Storing microservice ownership data 280
+Securing microservice 
+communication with JWT
+282
+JWT basics
+283
+Implementing authentication and 
+authorization with JWTs
+284
+Summary
+289
+Further reading
+289
+Index	
+291
+Other Books You May Enjoy	
+302

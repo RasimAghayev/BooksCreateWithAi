@@ -1,0 +1,14 @@
+Summary
+113
+Summary
+In this chapter, we covered the basics of synchronous communication and learned how to make 
+microservices communicate with each other using the Protocol Buffers format. We illustrated how 
+to define our service APIs using the Protocol Buffers schema language and generate code that can be 
+reused in microservice applications written in Go and other languages.
+The knowledge you gained in this chapter should help you write and maintain the existing services 
+using Protocol Buffers and gRPC. It also serves as an example of how to use code generation for your 
+services. In the next chapter, we are going to continue our journey into different ways of communication 
+by covering another model, asynchronous communication.
+Further reading
+•	 gRPC: https://grpc.io
+•	 HTTP/2 detailed overview: https://web.dev/performance-http2

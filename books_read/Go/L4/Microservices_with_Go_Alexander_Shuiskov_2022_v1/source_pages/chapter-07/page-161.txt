@@ -1,0 +1,44 @@
+Storing Service Data
+138
+Now, let’s imagine we have in the same database called ratings that contains the following data:
+record_id
+record_type
+user_id
+rating
+1055
+movie
+alex001
+5
+1055
+movie
+chris.rocks
+3
+1057
+movie
+alex001
+4
+Table 7.2 – Rating table example
+Using SQL language, we can write a more complex query to get all ratings that are associated with 
+movies of a certain director:
+SELECT * FROM ratings r INNER JOIN movies m ON r.record_id = 
+m.id WHERE r.record_type = "movie" AND m.director = "Ben Miles"
+In our SQL query, we perform a join of two tables – an operation that allows us to group the data 
+belonging to two tables and perform additional filtering (in our case, we will only select rating events 
+where the record_type column’s value is equal to movie and the director column’s value is equal to 
+Ben Miles).
+To demonstrate how to use MySQL to store our service data, let’s define which data we want to 
+store and how we want to access it. Let’s start with the metadata service, which performs two data 
+storage operations:
+•	 Stores movie metadata for a given movie ID
+•	 Gets movie metadata for a given movie ID
+Now, let’s review the data schema of the movie metadata object. Our movie metadata contains the 
+following fields:
+•	 ID: String
+•	 Title: String
+•	 Description: String
+•	 Director: String
+Now, let’s see which data is stored by our rating service, which performs the following storage-related 
+operations:
+•	 Stores a rating for a given record (identified by a combination of a record ID and its type)
+•	 Gets all ratings for a given record
+Let’s review the data schema of a rating:

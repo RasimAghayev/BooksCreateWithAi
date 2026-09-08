@@ -1,0 +1,31 @@
+Deployment with Kubernetes
+158
+As you may notice, Kubernetes created two pods for our service, the same number as we specified in 
+the deployment configuration. Each pod has a unique identifier (UID), which is shown in the left 
+column. You can see that Kubernetes created two pods for our metadata service.
+You can check the logs of each pod by running the following command:
+kubectl logs -f <POD_ID>
+Now, perform the same changes that we did for the metadata service for the other two services, 
+and verify that the pods are running.
+If you want to make some manual API requests to the services, you need to set up port forwarding 
+by running the following command:
+kubectl port-forward <POD_ID> 8081:8081
+This command would work for the metadata, rating, and movie services; however, you would 
+need to replace the 8081 port value with 8082 and 8083, correspondingly.
+If you did everything well, congratulations! We have finished setting up basic Kubernetes deployments 
+of our microservices. Let’s summarize what we did in this section:
+•	 First, we created container images for each of our services so that we could deploy them.
+•	 Then, we published our container images to Docker Hub so that Kubernetes could pull the 
+images during the deployment.
+•	 We created a Kubernetes deployment configuration to tell it how to deploy our microservices.
+•	 Finally, we tested our Kubernetes deployments using a combination of minikube and 
+kubectl commands.
+At this point, you should have some understanding of Kubernetes deployments and know how to deploy 
+your microservices using them. This knowledge will help you to run your services on many platforms, 
+including all popular cloud platforms, such as AWS, Azure, and Google Cloud Platform (GCP).
+Deployment best practices
+In this section, we are going to describe some best practices related to the deployment process. These 
+practices, listed here, will help you to set up a reliable deployment process for your microservices: 
+•	 Automated rollbacks
+•	 Canary deployments
+•	 Continuous deployment (CD)

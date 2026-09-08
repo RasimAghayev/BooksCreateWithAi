@@ -1,0 +1,30 @@
+Scaffolding a Go Microservice
+24
+Should we split the application?
+Let’s provide a summary of the two parts of the application we have just described:
+•	 Movie metadata:
+	 Retrieve the metadata for a movie by its ID.
+•	 Ratings:
+	 Store a rating for a record.
+	 Retrieve an aggregated rating for a record.
+After we abstracted the rating component by letting it support various record types, it stopped being 
+a movie rating component and became a more generic record rating system. The movie metadata 
+component is now loosely coupled to the rating system—the rating system can store the ratings for 
+movies as well as for any other possible types of records.
+As we discussed previously, the data models for both components are also quite different. The movie 
+metadata component stores static data, which is going to be retrieved by ID, while the rating component 
+stores dynamic data, which requires aggregation.
+Both components seem to be relatively independent of each other. This is a perfect example of a 
+situation where we may benefit from splitting the application into separate services:
+•	 Logic is loosely coupled
+•	 Data models are different
+•	 Data is generally independent
+This list is not complete, and you need to consider all the aspects described in Chapter 1, to make a 
+decision on splitting the application. However, since this book covers microservice development, let’s 
+make our decision here and decide to split the system into separate services.
+Let’s list the services we would split the application into:
+•	 Movie metadata service: Store and retrieve the movie metadata records by movie IDs.
+•	 Rating service: Store ratings for different types of records and retrieve aggregated ratings for 
+records.
+•	 Movie service: Provide complete information to the callers about a movie or a set of movies, 
+including the movie metadata and its rating.

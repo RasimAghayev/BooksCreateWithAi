@@ -1,0 +1,36 @@
+Unit and Integration Testing
+176
+Let’s provide an example of an integration test, taking our rating service as an example. The integration 
+test for our service would instantiate both the service instance and the client for it and ensure that 
+client requests would produce the expected results. As you remember, our rating service provides 
+two API endpoints:
+•	 PutRating: Writes a rating to the database
+•	 GetAggregatedRating: Retrieves the ratings for a provided record (such as a movie) and 
+returns the aggregated value
+Our integration test for the rating service could have the following sequence of calls:
+•	 Writes some data using the PutRating endpoint
+•	 Verifies the data using the GetAggregatedRating endpoint
+•	 Writes new data using the PutRating endpoint
+•	 Calls the GetAggregatedRating endpoint and checks that the aggregated value reflects 
+the latest rating update
+In microservice development, integration tests usually test individual services or combinations of 
+them – developers can write tests that target an arbitrary number of services.
+Unlike unit tests—which generally reside together with the code being tested and can access some 
+internal functions, structures, constants, and variables—integration tests often treat the components 
+being tested as black boxes. Black boxes are logical blocks for which the implementation details 
+remain unknown and can only be accessed through publicly exposed APIs or user interfaces. This 
+way of testing is called black box testing – testing of a system using a public interface, such as an 
+API, instead of calling individual internal functions or accessing internal components of the system.
+Microservice integration tests are often performed by instantiating service instances and performing 
+requests either by calling service APIs or via asynchronous events in case the system handles requests 
+in an asynchronous fashion. The structure of an integration test usually follows a similar pattern:
+•	 Set up the test: Instantiate the components being tested and any clients that can access their 
+interfaces
+•	 Perform test operations and verify the correctness of results: Run an arbitrary number of 
+operations and compare the outputs from the system being tested, such as a microservice, to 
+the expected values
+•	 Tear down the test: Gracefully terminate the test by tearing down the components instantiated 
+in the setup, closing any clients if needed
+To illustrate how to write an integration test, let’s take three microservices from the previous chapters 
+– metadata, movie, and rating services. To set up our test, we would need to instantiate six components 
+– a server and a client for each microservice. To make it easier to run the test, we can instantiate servers 

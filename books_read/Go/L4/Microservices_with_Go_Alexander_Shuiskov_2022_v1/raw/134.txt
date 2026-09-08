@@ -1,0 +1,37 @@
+Implementing gateways and clients
+111
+    client := gen.NewRatingServiceClient(conn)
+    resp, err := client.GetAggregatedRating(ctx, &gen.
+GetAggregatedRatingRequest{RecordId: string(recordID), 
+RecordType: string(recordType)})
+    if err != nil {
+        return 0, err
+    }
+    return resp.RatingValue, nil
+}
+At this point, we are almost done with the changes. The last step is to update the main function of 
+the movie service. Change it to the following:
+package main
+ 
+import (
+    "context"
+    "log"
+    "net"
+ 
+    "google.golang.org/grpc"
+    "movieexample.com/gen"
+    "movieexample.com/movie/internal/controller"
+    metadatagateway "movieexample.com/movie/internal/gateway/
+metadata/grpc"
+    ratinggateway "movieexample.com/movie/internal/gateway/
+rating/grpc"
+    grpchandler "movieexample.com/movie/internal/handler/grpc"
+"movieexample.com/pkg/discovery/static"
+)
+func main() {
+    log.Println("Starting the movie service")
+    registry := static.NewRegistry(map[string][]string{
+        "metadata": {"localhost:8081"},
+        "rating":   {"localhost:8082"},
+        "movie":    {"localhost:8083"},
+    })

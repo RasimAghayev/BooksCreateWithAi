@@ -1,0 +1,34 @@
+Collecting Service Telemetry Data
+234
+    panic(err)
+}
+reporter := tallystatsd.NewReporter(statter, tallystatsd.
+Options{
+    SampleRate: 1.0,
+})
+scope, closer := tally.NewRootScope(tally.ScopeOptions{
+    Tags:     map[string]string{"service": "rating"},
+    Reporter: reporter,
+}, time.Second)
+In this example, we are creating a tally reporter that will submit the metrics to the data collector 
+(StatsD in our use case) and create a scope – an interface for reporting the metrics data – that would 
+automatically submit them for collection.
+Tally scopes are hierarchical: when we initialize the library, we create a root scope, which includes 
+initial metadata in the form of key-value tags. All scopes that are created from it would include the 
+parent metadata, preventing cases of missing tags during the metric’s emission.
+Once you get the scope, you can start reporting the metrics. The following example illustrates how 
+to increment a counter metric by measuring the API request count, which would be automatically 
+reported by tally:
+counter := scope.Counter("request_count")
+counter.Inc(1)
+The Inc operation increments the value of the counter by 1, and the updated value of the metric 
+gets collected by tally automatically in the background. This does not affect the performance of the 
+function that performs the provided operations.
+If you want to add some additional tags to the metric, you can use the Tagged function:
+counter := scope.Tagged(map[string]string{"operation": "put"}).
+Counter("request_count")
+The following example illustrates how to update the gauge value. Let’s say we have a function that 
+calculates the number of active users in the system and we want to report this value to the metrics 
+storage. We can achieve this by using a gauge metric in the following way:
+gauge := scope.Gauge("active_user_count")
+gauge.Update(userCount)

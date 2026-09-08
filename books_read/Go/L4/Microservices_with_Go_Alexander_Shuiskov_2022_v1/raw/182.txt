@@ -1,0 +1,36 @@
+Deployment best practices
+159
+Automated rollbacks
+Automated rollbacks are the mechanism of automatically reverting a deployment in case there was 
+a failure during it. Imagine you are making deployment of a new version of your service and that 
+version has some application bug that is preventing it from starting successfully. In that case, the 
+deployment process will replace your active instances of a service (if the service is already running) 
+with the failing ones, making your services unavailable. Automated rollbacks are a way to detect and 
+revert such bad deployments, helping you to avoid an outage in situations when your services become 
+unavailable due to such issues.
+Automated rollbacks are not offered by default in Kubernetes, at the time of writing this book, similar 
+to many popular deployment platforms. However, this should not stop you from using this technique, 
+especially if you aim to achieve high reliability of your services. The high-level idea of implementing 
+automated rollbacks with Kubernetes is as follows:
+•	 Perform continuous health checks of your service (we are going to cover such logic in Chapter 
+12 of this book).
+•	 When you detect a health issue with your service, check whether there was a recent deployment of 
+your service. For example, you can do so by running the kubectl describe deployment 
+command.
+•	 In case there was a recent deployment and the time of it closely matches the time when the 
+health check issues were detected, you can roll it back by executing this rollback command: 
+kubectl rollout undo deployment <DEPLOYMENT_NAME>.
+Canary deployments
+As we mentioned at the beginning of the chapter, canary is a special type of deployment, where you 
+update only a small fraction (1 to 3%) of instances. The idea of canary deployments is to test a new 
+version of your code on a subset of production instances and validate its correctness before doing a 
+regular production deployment.
+We won’t cover the details of setting up canary deployments in Kubernetes, but can cover the basic ideas 
+that would help you to do this once you want to enable canary deployments for your microservices, 
+as set out here:
+•	 Create two separate Kubernetes deployment configurations, one for canary and one for production.
+•	 Specify the desired number of replicas in each configuration—if you want to run a service on 50 
+pods and let canary handle 2% of traffic, set 1 replica for canary and 49 replicas for production.
+•	 You may also add environment-specific suffixes to deployment names. For example, you can 
+call a canary deployment of a rating service, rating-canary, and rating-production 
+for the production environment.

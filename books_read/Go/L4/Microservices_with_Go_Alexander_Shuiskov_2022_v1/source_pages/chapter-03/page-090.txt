@@ -1,0 +1,34 @@
+Adopting service discovery
+67
+    for _, i := range r.serviceAddrs[serviceName] {
+        if i.lastActive.Before(time.Now().Add(-5 * time.
+Second)) {
+            continue
+        }
+        res = append(res, i.hostPort)
+    }
+    return res, nil
+}
+This implementation can be used in tests or simple applications running on a single server. The 
+implementation is based on a combination of a map data structure and sync.RWMutex, allowing 
+reads and writes to the map concurrently. In the map, we store serviceInstance structures 
+containing the instance address and the last time of a successful health check for it, which can be set 
+by calling a ReportHealthyState function. In the ServiceAddresses function, we only 
+return instances with successful health checks from within the last 5 seconds.
+Let’s now move to the Consul-based service registry implementation.
+Consul-based implementation
+The implementation that we are going to work on now will use Hashicorp Consul as a service registry:
+1.	
+First, create a pkg/discovery/consul package and add to it a file named consul.go:
+ package consul
+import (
+    "context"
+    "errors"
+    "fmt"
+    "strconv"
+    "strings"
+    consul "github.com/hashicorp/consul/api"
+    "movieexample.com/pkg/discovery"
+)
+// Registry defines a Consul-based service regisry.
+type Registry struct {

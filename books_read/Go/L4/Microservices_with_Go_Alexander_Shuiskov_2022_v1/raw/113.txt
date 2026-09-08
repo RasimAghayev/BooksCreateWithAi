@@ -1,0 +1,34 @@
+Serialization
+90
+From the output, we can see that Protocol Buffers serialization on average took 185.7 nanoseconds, 
+while JSON serialization was almost two times slower at 342.2 nanoseconds. XML serialization on 
+average took 2519 nanoseconds, being more than 13 times slower than Protocol Buffers, and more 
+than 7 times slower than JSON serialization. 
+The benchmark is indeed interesting – it illustrates how different the average encoding speeds for 
+various serialization formats are. If performance is important for your services, you should consider 
+faster serialization formats to achieve a higher encoding and decoding speed.
+For now, we are going to leave the generated structures in our repository. We will be using them in 
+the next chapter, Chapter 5, to replace our JSON API handlers.
+Now, let’s learn some best practices for using serialization.
+Best practices for serialization
+This section summarizes the best practices for serializing and deserializing the data. These practices 
+will help you make efficient decisions for using serialization in your applications and writing your 
+schema definitions in Protocol Buffers and other formats:
+•	 Keeping your schema backward compatible: Avoid any changes in your data schema that 
+would break any existing callers. Such changes include modifications (renaming or removal) 
+of field names and types.
+•	 Ensuring that data schemas are kept in sync between clients and servers: For serialization 
+formats with explicit schema definitions, such as Apache Thrift, Protocol Buffers, and Apache 
+Avro, you should keep clients and servers in sync with the latest schema versions.
+•	 Documenting implicit details: Let the callers know any implicit details related to your data 
+schema. For example, if your API does not allow an empty value of a certain field of a structure, 
+include this in the comments in the schema file.
+•	 Using built-in structures for representing time whenever possible: Protocol Buffers and 
+some other serialization protocols provide built-in types for timestamps and durations. Taking 
+Protocol Buffers as an example, having a int timestamp filed would be considered a bad 
+practice. The right approach would be to use google.protobuf.Timestamp.
+•	 Using consistent naming: Opt for using consistent naming in your schema files, similarly to 
+your code.
+•	 Following the official style guide: Get familiar with the official style guide if you are using 
+a schema definition language, such as Thrift or Protocol Buffers. You can find the link to the 
+official style guide for Protocol Buffers in the Further reading section below.

@@ -1,0 +1,31 @@
+Setting Up Service Alerting
+254
+Now, let’s provide some examples of signals for measuring system saturation:
+•	 CPU utilization: How much your CPUs are being used on a scale from 0% (unused/idle) to 
+100% (fully used, no extra capacity).
+•	 Memory utilization: Ratio between the used and total memory.
+•	 Disk utilization: Percentage of used disk space.
+•	 Open file descriptors: File descriptors are often used to handle network requests, file writes and 
+reads, and other I/O operations. There is usually a limit on the number of open file descriptors 
+per process, so if your service reaches a critical limit (based on your OS settings), your service 
+may fail to serve requests.
+Let’s also provide some examples of other signals to monitor:
+•	 Service panics: The general recommendation is not to tolerate any service panics, as they often 
+signal application bugs or issues such as out-of-memory errors.
+•	 Failed deployments: You can automate the detection of failed deployments and emit a metric 
+indicating the failure, using it to create automated alerts.
+Now that we have covered some common alerting use cases, let’s proceed to the overview of Prometheus, 
+which we will use to set up our microservice alerts.
+Introduction to Prometheus
+In Chapter 11, we mentioned a popular open source alerting and monitoring tool called Prometheus 
+that can collect service metrics and set up automated alerts based on the metric data. In this section, 
+we will demonstrate how to use Prometheus to set up alerts for our microservices.
+Let’s summarize our learning about Prometheus from Chapter 11:
+•	 Prometheus allows us to collect and store service metrics in the form of a time series.
+•	 There are three types of metrics – counters, histograms, and gauges.
+•	 To query metrics data, Prometheus offers a query language called PromQL.
+•	 Service alerts can be configured using a tool called Alertmanager.
+Metrics can be imported from service instances into Prometheus in two different ways:
+•	 Scraping: Prometheus reads metrics from service instances.
+•	 Pushing: The service instance sends metrics to Prometheus using a dedicated service, the 
+Prometheus Pushgateway.

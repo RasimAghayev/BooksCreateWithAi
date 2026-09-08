@@ -1,0 +1,33 @@
+Synchronous Communication
+98
+message PutRatingRequest {
+    string user_id = 1;
+    string record_id = 2;
+    int32 record_type = 3;
+    int32 rating_value = 4;
+}
+ 
+message PutRatingResponse {
+}
+Our rating service has two endpoints, and we defined requests and responses for them in a similar 
+way to the metadata service.
+Finally, let’s add the definition of the movie service to the same file:
+service MovieService {
+    rpc GetMovieDetails(GetMovieDetailsRequest) returns 
+(GetMovieDetailsResponse);
+}
+ 
+message GetMovieDetailsRequest {
+    string movie_id = 1;
+}
+ 
+message GetMovieDetailsResponse {
+    MovieDetails movie_details = 1;
+}
+Now our movie.proto file includes both our structure definitions and the API definitions for our 
+services. We are ready to generate code for the newly added service definitions. In the src directory 
+of the application, run the following:
+protoc -I=api --go_out=. --go-grpc_out=. movie.proto  
+The preceding command is similar to the command that we used in the previous chapter for generating 
+code for our data structures. However, it also passes a --go-grpc_out flag to the compiler. This 
+flag tells the Protocol Buffers compiler to generate the service code in gRPC format. 

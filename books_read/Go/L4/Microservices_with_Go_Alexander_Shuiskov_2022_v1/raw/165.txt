@@ -1,0 +1,33 @@
+Storing Service Data
+142
+        Director:    director,
+    }, nil
+}
+// Put adds movie metadata for a given movie id.
+func (r *Repository) Put(ctx context.Context, id string, 
+metadata *model.Metadata) error {
+    _, err := r.db.ExecContext(ctx, "INSERT INTO movies (id, 
+title, description, director) VALUES (?, ?, ?, ?)",
+        id, metadata.Title, metadata.Description, metadata.
+Director)
+    return err
+}
+In our code, we implemented the Get and Put functions so that we can store and retrieve the movie 
+metadata from MySQL. Inside our Get function, we use the QueryRowContext function of our 
+database instance to read a single row from our table. In the case of a query error, we check if it is 
+equal to sql.ErrNoRows; if so, we return ErrNotFound.
+Now, let’s implement our MySQL rating repository. Create a rating/internal/repository/
+mysql directory and add a mysql.go file to it with the following contents:
+package mysql
+import (
+    "context"
+    "database/sql"
+    "rating/pkg/model"
+    _ "github.com/go-sql-driver/mysql"
+    "movieexample.com/rating/internal/repository"
+    "movieexample.com/rating/pkg/model"
+)
+// Repository defines a MySQL-based rating repository.
+type Repository struct {
+    db *sql.DB
+}

@@ -1,0 +1,10 @@
+Advanced Topics
+270
+Type web in the command prompt of the tool and press Enter. If everything worked well, you will be 
+redirected to a browser window containing a CPU profile graph:
+Figure 13.1 – Go CPU profile example
+Let’s walk through the data from the graph to understand how to interpret it. Each node on the graph 
+includes the following data:
+•	 Package name
+•	 Function name
+•	 Elapsed time and the total time of the execution

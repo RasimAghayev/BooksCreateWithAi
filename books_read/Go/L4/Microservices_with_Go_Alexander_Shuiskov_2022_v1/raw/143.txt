@@ -1,0 +1,28 @@
+Asynchronous Communication
+120
+The publisher-subscriber model provides a flexible solution for sending and delivering data in a system 
+where messages can be processed by multiple components. Each publisher can publish their messages 
+without caring about the delivery process and any difficulties in delivering messages to an arbitrary 
+number (even a very large one) of receivers. Each subscriber can subscribe to the relevant messages 
+and get them delivered without needing to contact the publisher directly and check if there is any new 
+data to consume. The latter feature is especially useful for scenarios with low message rates, such as 
+occasional notification delivery.
+Now, as we have covered some high-level asynchronous communication models, let’s move on to the 
+practical side of the chapter and illustrate how you can implement asynchronous communication in 
+your microservices.
+Using Apache Kafka for messaging
+In this section, we are going to introduce you to Apache Kafka, a popular message broker system that 
+we are going to use to establish asynchronous communication between our microservices. You will 
+learn the basics of Kafka, how to publish messages to it, and how to consume such messages from the 
+microservices we created in the previous chapters.
+Apache Kafka basics
+Apache Kafka is an open source message broker system that provides the ability to publish and 
+subscribe to messages containing arbitrary data. Originally developed at LinkedIn, Kafka has become 
+perhaps the most popular open source message broker software and is used by thousands of companies 
+around the world.
+In the Kafka model, a component that publishes messages is called a producer. Messages are published 
+in sequential order to objects called topics. Each message in a topic has a unique numerical offset in 
+it. Kafka provides APIs for consuming messages (the component for consuming messages is called 
+a consumer) for the existing topics. Topics can also be partitioned to allow multiple consumers to 
+consume from them (for example, for parallel data processing).
+We can illustrate the Kafka data model in the following diagram:

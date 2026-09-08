@@ -1,0 +1,22 @@
+11
+Collecting Service Telemetry 
+Data
+In the previous chapter, we explored the topic of service reliability and described various techniques for 
+making your services more resilient to different types of errors. You learned that reliability-related work 
+consists of making constant improvements in incident detection, mitigation, and prevention techniques.
+In this chapter, we are going to take a closer look at various types of service performance data, which 
+is essential for setting up service health monitoring and debugging and automating service incident 
+detection. You will learn how to collect service logs, metrics, and traces, and how to visualize and 
+debug communication between your microservices using the distributed tracing technique.
+We will cover the following topics:
+•	 Telemetry overview
+•	 Collecting service logs
+•	 Collecting service metrics
+•	 Collecting service traces
+Now, let’s proceed to the overview of all the techniques that we are going to describe in this chapter.
+Technical requirements
+To complete this chapter, you will need Go 1.11+ or above. You will also need the following tools:
+•	 grpcurl: https://github.com/fullstorydev/grpcurl
+•	 Jaeger: https://www.jaegertracing.io/
+You can find the GitHub code for this chapter here: https://github.com/PacktPublishing/
+microservices-with-go/tree/main/Chapter11.

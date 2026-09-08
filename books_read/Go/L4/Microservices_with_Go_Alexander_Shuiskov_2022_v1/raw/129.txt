@@ -1,0 +1,37 @@
+Synchronous Communication
+106
+req or empty id")
+    }
+    v, err := h.svc.GetAggregatedRating(ctx, model.
+RecordID(req.RecordId), model.RecordType(req.RecordType))
+    if err != nil && errors.Is(err, controller.ErrNotFound) {
+        return nil, status.Errorf(codes.NotFound, err.Error())
+    } else if err != nil {
+        return nil, status.Errorf(codes.Internal, err.Error())
+    }
+    return &gen.GetAggregatedRatingResponse{RatingValue: v}, 
+nil
+}
+Finally, let’s implement the PutRating endpoint:
+// PutRating writes a rating for a given record.
+func (h *Handler) PutRating(ctx context.Context, req *gen.
+PutRatingRequest) (*gen.PutRatingResponse, error) {
+    if req == nil || req.RecordId == "" || req.UserId == "" {
+        return nil, status.Errorf(codes.InvalidArgument, "nil 
+req or empty user id or record id")
+    }
+    if err := h.svc.PutRating(ctx, model.RecordID(req.
+RecordId), model.RecordType(req.RecordType), &model.
+Rating{UserID: model.UserID(req.UserId), Value: model.
+RatingValue(req.RatingValue)}); err != nil {
+        return nil, err
+    }
+    return &gen.PutRatingResponse{}, nil
+}
+Now, we are ready to update our rating/cmd/main.go file. Replace it with the following:
+package main
+ 
+import (
+    "log"
+    "net"
+ 

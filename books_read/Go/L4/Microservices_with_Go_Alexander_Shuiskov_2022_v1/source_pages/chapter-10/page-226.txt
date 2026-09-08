@@ -1,0 +1,32 @@
+Achieving reliability through automation
+203
+rate of r elements per second. For example, for b = 100 and r = 50, the token bucket algorithm creates 
+a bucket of size 100 and refills it at a rate of 50 per second. At any moment in time, it doesn’t allow 
+more than 100 simultaneous requests (the maximal number is controlled by the current bucket size).
+Here is an example of using a token bucket-based rate limiter in Go:
+package main
+import (
+    "fmt"
+    "golang.org/x/time/rate"
+)
+func main() {
+    limit := 3
+    burst := 3
+    limiter := rate.NewLimiter(rate.Limit(limit), burst)
+    for i := 0; i < 100; i++ {
+        if limiter.Allow() {
+            fmt.Println("allowed")
+        } else {
+            fmt.Println("not allowed")
+        }
+    }
+}
+This code prints allowed 3 times and then keeps printing not allowed 97 times unless it takes 
+more than 1 second to run.
+Let’s illustrate how to use such a rate limiter in combination with a gRPC API handler, which we 
+implemented in Chapter 5. The gRPC protocol allows us to define interceptors—operations that 
+are performed on each request and can modify the gRPC server’s response to it. To add a gRPC rate 
+limiter to the movie service gRPC handler, perform the following steps: 
+1.	
+Open the movie/cmd/main.go file and add the following code to its imports:
+“github.com/grpc-ecosystem/go-grpc-middleware/ratelimit"

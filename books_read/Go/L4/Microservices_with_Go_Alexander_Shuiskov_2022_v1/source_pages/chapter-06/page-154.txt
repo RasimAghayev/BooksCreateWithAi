@@ -1,0 +1,30 @@
+Asynchronous communication best practices
+131
+The second event has a userId field that is not present in the first. Is it because the producer did 
+not provide it or because the data format did not have this field before? 
+Providing the schema version explicitly would help the data consumer handle this problem. Consider 
+these updated examples:
+{"recordID": "1", "rating": 5, "version": 1}
+{"recordID": "2", "rating": 17, "userId": "alex", "version": 2}
+In these examples, we know the versions of events and can now handle each one separately. For example, 
+we may completely ignore events of a certain version (assume there was an application bug and we 
+want to re-process events with an updated version instead) or use the version-specific validation (for 
+instance, allow the records without a userId field for version 1, but disallow for the higher versions).
+Versioning is very important to systems that can evolve over time because it makes dealing with 
+different data formats easier. Even if you don’t expect your data format to change, consider using 
+versioning to increase your system’s maintainability in the future.
+Leveraging partitioning
+In the code examples in the Adopting Apache Kafka for our microservices section, we implemented 
+the logic for producing our data to message topics in Apache Kafka. The function for producing a 
+message was as follows:
+if err := p.Produce(&kafka.Message{
+TopicPartition: kafka.TopicPartition{Topic: &topic, Partition: 
+kafka.PartitionAny},
+Value:          []byte(encodedEvent),
+}, nil); err != nil {
+    return err
+}
+In this function, we used the kafka.PartitionAny option. As we mentioned in the Apache 
+Kafka basics section, Kafka topics can be partitioned to allow multiple consumers to consume different 
+partitions of a topic. Imagine you have a topic with three partitions – you can consume each one 
+independently, as illustrated in the following diagram:

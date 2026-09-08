@@ -1,0 +1,35 @@
+Adopting service discovery
+61
+If you don’t know which deployment platform you are going to use for your services and you are new 
+to microservice development, you may consider client-side service discovery. The client-side discovery 
+model is slightly simpler because your service directly coordinates with the service registry. Later, you 
+will be able to switch to server-side service discovery, if you want.
+Let’s start preparing your applications for adding service discovery logic.
+Preparing the application
+Let’s list what we want to achieve from our service discovery code.
+•	 The ability to register a service that we are going to use on service startup
+•	 The ability to deregister a service that we are going to use on service shutdown
+•	 The ability to get a list of addresses of a particular service that we are going to use for making 
+the calls to the other services.
+•	 Set up service health monitoring so the service registry is able to remove inactive service instances
+It would be great if our service discovery logic weren’t directly tied to a particular tool. It is usually 
+a good practice to abstract the actual technology with a more generic interface, which allows us to 
+swap implementations. We can illustrate this using an example – imagine we are using the Hashicorp 
+Consul library, which returns a list of service addresses in the following form:
+func Service(string, string) ([]*consul.ServiceEntry, *consul.
+QueryMeta, error)
+If we expose these Consul structures in our code and pass these structures around our code base, our 
+service code will be heavily tied to Consul. If we ever decide to switch to another service discovery 
+tool, we would need to replace not only the service discovery implementation logic but also all the 
+code in which it is used.
+Instead, let’s define a more generic and technology-agnostic interface. For providing the list of service 
+instances, we can just return the list of URLs in the []string format.
+The complete interface for our service discovery logic would be as follows:
+// registry defines a service registry.
+type Registry interface {
+    // Register creates a service instance record in the 
+registry.
+    Register(ctx context.Context, instanceID string, 
+serviceName string, hostPort string) error
+    // Deregister removes a service instance record from the 
+registry.

@@ -1,0 +1,31 @@
+Tracing
+241
+•	 Report the data on distributed operations: For each traceable operation – an operation spanning 
+multiple components, such as network requests or database queries – an instrumented service 
+should report spans. The report should contain the operation name, start time, and end time.
+•	 Facilitate context propagation: The service should explicitly propagate context throughout 
+the execution (if you are confused by this, please read the following paragraphs – this is the 
+main trick behind distributed tracing!).
+We already defined a span earlier in this chapter, so let’s move to the second requirement for service 
+instrumentation. What is context propagation and how do we perform it in the Go microservice code?
+Context propagation is a technique that involves explicitly passing an object, called a context, into 
+other functions in the form of an argument. The context may contain arbitrary metadata, so passing 
+it to another function helps propagate it further. That is, each function down the stream can either 
+add new metadata to the context or access the metadata that already exists in it.
+Let’s illustrate context propagation via a diagram:
+Figure 11.4 – Context propagation example
+In the previous flow chart, there is an HTTP request coming from Service A to Service B to process a 
+payment. Service A includes an additional HTTP header called ctx.reqId for the request to pass 
+the request identifier. Service B calls Service C to check the user details to verify whether the user 
+is eligible for making a payment. Then, Service B passes the ctx.reqId header further to Service 
+C so that all services can record the identifier of the request, for which they perform the operations.
+The example that we just provided illustrates context propagation between three services. This is 
+achieved by including specific HTTP headers in requests, which provide additional metadata for 
+request processing. There are multiple ways of propagating the data when executing various operations. 
+We will start by looking at the regular Go function calls.
+We covered Go context propagation in Chapter 2 and mentioned the context package, which provides 
+a type called context.Context. Passing the context between two Go functions of a single service 
+is as easy as calling another function with an additional argument, as shown here:
+func ProcessRequest(ctx context.Context, ...) {
+    return ProcessAnotherRequest(ctx, ...)
+}

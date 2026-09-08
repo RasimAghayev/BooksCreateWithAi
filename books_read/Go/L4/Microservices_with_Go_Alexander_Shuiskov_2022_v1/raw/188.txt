@@ -1,0 +1,36 @@
+Go testing overview
+165
+Table-driven tests are tests in which inputs are stored in the form of a table or a set of rows. Let’s take 
+this example:
+func TestAdd(t *testing.T) {
+    tests := []struct {
+        a    int
+        b    int
+        want int
+    }{
+        {a: 1, b: 2, want: 3},
+        {a: -1, b: -2, want: -3},
+        {a: -3, b: 3, want: 0},
+        {a: 0, b: 0, want: 0},
+    }
+    for _, tt := range tests {
+        assert.Equal(t, tt.want, Add(tt.a, tt.b), fmt.
+Sprintf("Add(%v, %v)", tt.a, tt.b))
+    }
+}
+In this code, we initialize the tests variable with the test cases for our function and then iterate over 
+it. Note that we use the assert.Equal function provided by the github.com/stretchr/
+testify library to compare the expected and the actual result of the function being tested. This 
+library provides a set of convenient functions that can simplify your test logic. Without using the 
+assert library, the code comparing the test result would look like the following:
+        if got, want := Add(tt.a, tt.b), tt.want; got != want {
+            t.Errorf ("Add(%v, %v) = %v, want %v", tt.a, tt.b, 
+got, want)
+        }
+Table-driven tests help reduce the repetitiveness of tests by separating test cases and the logic that 
+performs actual checks. In general, these tests are good practice when you need to perform lots of 
+similar checks against the defined goal states, as shown in our example. 
+The table-driven format also helps us improve the readability of test code, making it easier to see and 
+compare different test cases for the same functions. The format is quite common in Go tests; however, 
+you can always organize your test code in the way that is the best for your use case.
+Now, let’s review the basic features provided by Go’s built-in testing library.

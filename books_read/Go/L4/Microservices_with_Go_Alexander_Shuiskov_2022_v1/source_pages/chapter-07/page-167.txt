@@ -1,0 +1,35 @@
+Storing Service Data
+144
+    return res, nil
+}
+// Put adds a rating for a given record.
+func (r *Repository) Put(ctx context.Context, recordID model.
+RecordID, recordType model.RecordType, rating *model.Rating) 
+error {
+    _, err := r.db.ExecContext(ctx, "INSERT INTO ratings 
+(record_id, record_type, user_id, value) VALUES (?, ?, ?, ?)",
+        recordID, recordType, rating.UserID, rating.Value)
+    return err
+}
+In our Get handler, we use the Query function to read rating rows from our table. We scan each row 
+by calling the rows.Scan function, converting MySQL data into the necessary structures.
+Our repository code is ready, so we can import the newly used package, github.com/go-sql-
+driver/mysql, by running the following command:
+go mod tidy
+Let’s verify that our logic is correct by manually testing the rating repository:
+1.	
+Inside the rating/cmd/main.go file, change the movieexample.com/rating/
+internal/repository/memory import to movieexample.com/rating/
+internal/repository/mysql.
+2.	
+Inside the same file, find the following block:
+repo := memory.New()
+3.	
+Change it to the following:
+repo := mysql.New()
+if err != nil {
+    panic(err)
+}
+4.	
+Navigate to the cmd directory of the rating service and run the following command:
+go run *.go

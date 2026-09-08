@@ -1,0 +1,38 @@
+Deployment with Kubernetes
+148
+In addition to Docker, to complete this chapter, you will need Kubernetes, which you can download 
+at https://kubernetes.io (you will need the kubectl and minikube tools from it).
+You can find the GitHub code for this chapter here:
+https://github.com/PacktPublishing/microservices-with-go/tree/main/
+Chapter08
+Preparing application code for deployments
+In this section, we are going to provide a high-level overview of a service deployment process and 
+describe the actions required to prepare your microservices for deployments. You will learn how to 
+configure Go microservices for running in different environments, how to build them for different 
+operating systems, and some other tips for preparing your microservices for remote execution.
+Let’s proceed to the basics of the deployment process.
+Deployment basics
+As we mentioned in the introduction to this chapter, deployments allow you to run and update your 
+applications on one or multiple servers. Such servers are usually located remotely (clouds or dedicated 
+web hosting) and are running all the time to allow your applications to serve the request or process 
+data 24/7.
+The deployment process for each environment usually consists of multiple steps. The steps include 
+the following:
+1.	
+Build: Build a service by compiling it (for compiled languages, such as Go) and including 
+additional required files.
+2.	
+Rollout: Copy the newly created build to servers of the target environment and replace the 
+existing running code, if any, with the newly built one.
+The rollout process is usually sequential: instead of replacing the build on all hosts parallelly, it performs 
+one replacement at a time. For example, if you have ten service instances, the rollout process would 
+first update one instance, then verify that the instance is healthy and move to the second one, and 
+continue until it updates the last service instance. This is done to increase service reliability because 
+if a new version consists of a bug or entirely fails to start on some server, the rollout would not affect 
+all servers at once.
+In order to enable the testing of microservices, servers can be classified into multiple categories, called 
+environments:
+•	 Local/development: Servers that are used for running and testing code while working on the 
+code. This environment should never handle any requests from users, and it often consists just 
+of a developer’s computer. It can be also configured to use simplified versions of a database and 
+other components, such as single-server and in-memory implementations.

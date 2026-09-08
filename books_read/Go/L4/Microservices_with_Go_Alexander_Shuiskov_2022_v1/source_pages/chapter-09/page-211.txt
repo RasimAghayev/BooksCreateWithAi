@@ -1,0 +1,33 @@
+Unit and Integration Testing
+188
+Important note
+Note that in our test logs, first, we log the actual value and then the expected one. This order 
+is recommended by the Go team as the conventional way of logging the values in tests and 
+is followed in all libraries and packages. Follow the same order in your logs for consistency.
+An even better error message would be as follows:
+t.Errorf("YourFunc(%v) = %v, want %v", tt.in, got, want)
+This error log message includes some additional information – the function being called and the input 
+argument that was passed to it.
+To standardize the code for your test cases, you can use the github.com/stretchr/testify 
+library. The following example illustrates how to compare the expected and the actual value and log 
+the name of the function being tested, as well as the argument passed to it:
+assert.Equal(t, want, got, fmt.Sprintf("YourFunc(%v)", tt.in))
+The assert package of the github.com/stretchr/testify library prints both the expected 
+and the actual value of the test result, as well as providing the details about the test case (the fmt.
+Sprintf result, in our case).
+Avoiding the use of Fatal in your logs
+The built-in Go testing library includes different functions for logging errors, including Error, 
+Errorf, Fatal, and Fatalf. The last two functions print the logs and interrupt the execution of 
+the tests. Consider this test code:
+if err := Process(tt.in); err != nil {
+  t.Fatalf("Process(%v): %v, want nil", err)
+} 
+The call to the Fatalf function interrupts the test execution. Interrupting test execution is often not 
+the best idea because it leads to fewer tests being executed. Executing fewer tests leaves the developer 
+with less information for the remaining failing test cases. Fixing one error and running all the tests 
+again may be a suboptimal experience for many developers and it is often better to continue the test 
+execution whenever possible.
+The previous example can be re-written as follows:
+if err := Process(tt.in); err != nil {
+  t.Errorf("Process(%v): %v, want nil", err)
+} 

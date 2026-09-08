@@ -1,0 +1,37 @@
+Synchronous Communication
+102
+// MetadataFromProto converts a generated proto counterpart 
+// into a Metadata struct.
+func MetadataFromProto(m *gen.Metadata) *Metadata {
+    return &Metadata{
+        ID:          m.Id,
+        Title:       m.Title,
+        Description: m.Description,
+        Director:    m.Director,
+    }
+}
+The code we just added transforms the internal model into the generated structures and back. In the 
+following code block, we are going to use it in the server code.
+Now, let’s implement a gRPC handler for the metadata service that would handle the client requests 
+to the service. In the metadata/internal/handler package, create a grpc directory and 
+add a grpc.go file:
+package grpc
+ 
+import (
+    "context"
+    "errors"
+ 
+    "google.golang.org/grpc/codes"
+    "google.golang.org/grpc/status"
+    "movieexample.com/gen"
+    "movieexample.com/metadata/internal/controller"
+    "movieexample.com/metadata/internal/repository"
+    "movieexample.com/metadata/pkg/model"
+)
+ 
+// Handler defines a movie metadata gRPC handler.
+type Handler struct {
+    gen.UnimplementedMetadataServiceServer
+    svc *controller.MetadataService
+}
+ 

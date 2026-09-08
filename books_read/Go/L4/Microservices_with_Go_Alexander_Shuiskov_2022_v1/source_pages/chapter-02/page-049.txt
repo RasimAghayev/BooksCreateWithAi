@@ -1,0 +1,20 @@
+Scaffolding a Go Microservice
+26
+Each service may contain one or multiple packages related to the following logical roles:
+•	 API handlers
+•	 Business/application logic
+•	 Database logic
+•	 Interaction with other services
+Note that handler and business/application logic are separate, even though the primary purpose of 
+the application may be to handle the API requests. This is not absolutely necessary, but it’s a relatively 
+good practice to separate the business logic from the API handling layer. This way, if you migrate 
+from one type of API to another (for example, from HTTP to gRPC), or support both, you don’t need 
+to implement the same logic twice or rewrite it. Instead, you would just call the business logic from 
+your handler, keeping the handler as simple as possible and making its primary purpose to pass the 
+requests to the relevant interfaces.
+We can illustrate this relationship with the help of a diagram:
+Figure 2.2 – Layers of a service
+As you can see in the diagram, the API handler does not access the database directly. Instead, the 
+database access is performed on a business logic layer.
+There is no convention in the Go community on how to call packages serving these purposes, so we 
+are free to choose the names for our packages providing such logic. It is, however, important that 

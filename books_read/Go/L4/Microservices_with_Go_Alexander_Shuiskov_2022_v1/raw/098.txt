@@ -1,0 +1,21 @@
+Adopting service discovery
+75
+2.	
+Run each microservice by executing this command inside each cmd directory:
+go run *.go
+3.	
+Now, go to the Consul web UI via its link, http://localhost:8500/. When you open 
+the Services tab, you should see the list of our services and an active Consul instance:
+Figure 3.4 – Consul web view of active service instances
+You can optionally add some additional instances of each service by running the following:
+go run *.go --port <PORT>
+If you run the preceding command, replace the <PORT> placeholder with unique port numbers 
+that are not in use yet (in our examples, we used ports 8081, 8082, and 8083, so you can 
+run with port numbers starting with 8084). The result of each command would be additional 
+healthy instances in the Consul service view illustrated earlier.
+You can also try shutting down any service manually by terminating the go run commands 
+and seeing how instances change their states from Passing to Critical.
+4.	
+To test API requests, ensure you have at least one healthy instance of each service and make 
+the following request to a movie service:
+curl -v localhost:8083/movie?id=1

@@ -1,0 +1,31 @@
+Preparing application code for deployments
+149
+•	 Production: Servers that are intended to handle user requests. 
+•	 Staging: A mirror of a production environment, but is used for testing. Staging differs from 
+the local/production environment due to configuration and separate data storages, which help 
+to avoid any interference with production data during testing.
+Production deployments can be done in canary mode—a deployment mode that performs the changes 
+only on a small fraction (such as 1%) of production hosts. Canary deployments are useful for the final 
+testing of new code before updating all production instances of a service.
+Let’s now see how developers can configure their microservices for deployments to multiple environments.
+Application configuration
+In the previous section, we described the differences between various environments, such as local/
+development and production. Each environment is usually configured differently—if your services 
+have access to databases, each environment will generally have a separate database with different 
+credentials. To enable your services to run in such environments, you would need to have multiple 
+configurations of your services, one per environment.
+There are two ways of configuring your services:
+•	 In-place/hardcode: All required settings are stored in the service code (Go code, in our case).
+•	 Separate code and configuration: Configuration is stored in separate files so that it can be 
+modified independently.
+Separating service code and configuration often results in better readability, which makes configuration 
+changes easier. Each environment can have a separate configuration file or a set of files, allowing you to 
+read, review, and update environment-specific configurations easily. Additionally, various data formats, 
+such as YAML, can help to keep configuration files compact. Here’s a YAML configuration example:
+mysql:
+  database: ratings
+kafka:
+  topic: ratings
+In this book, we are going to use an approach that separates application code and configuration files 
+and stores the configuration in YAML format. This approach is common to many Go applications 
+and can be seen in many popular open source Go projects.

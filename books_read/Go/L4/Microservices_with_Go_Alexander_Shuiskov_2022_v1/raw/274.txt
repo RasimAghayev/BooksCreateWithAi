@@ -1,0 +1,19 @@
+12
+Setting Up Service Alerting
+In the previous chapter, we described various types of service telemetry data, such as logs, metrics and 
+traces, and illustrated how to collect them for troubleshooting service performance issues.
+In this chapter, we will illustrate how to use telemetry data to automatically detect incidents by setting 
+up alerts for our microservices. You will learn which types of service metrics to collect, how to define 
+the conditions for various incidents, and how to establish the complete alerting pipeline for your 
+microservices using a popular monitoring and alerting tool, Prometheus.
+We will cover the following topics:
+•	 Alerting basics
+•	 Introduction to Prometheus
+•	 Setting up Prometheus alerting for our microservices
+•	 Alerting best practices
+Now, we are going to proceed to the overview of alerting basics.
+Technical requirements
+To complete this chapter, you will need Go 1.11+ or above. You will also need the Docker tool, which 
+you can download at https://www.docker.com/.
+You can find the code examples for this chapter on GitHub: https://github.com/
+PacktPublishing/microservices-with-go/tree/main/Chapter12.

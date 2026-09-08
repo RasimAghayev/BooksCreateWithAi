@@ -1,0 +1,31 @@
+Collecting Service Telemetry Data
+248
+5.	
+If you click on the trace, you will see its visualized view, as shown here:
+Figure 11.7 – Jaeger trace view for the GetMovieDetails endpoint call
+On the left panel, you can see the request as a tree of spans, where the root span represents the 
+MovieService/GetMovieDetails operation, which includes the calls to the MetadataService/
+GetMetadata and RatingService/GetAggregatedRating endpoints. Congratulations, 
+you have set up distributed tracing for your microservices using the OpenTracing SDK! All our gRPC 
+calls are now traced automatically, without any need to add any extra service logic. This provides us 
+with a convenient mechanism for collecting valuable data on service communication.
+As an extra step, let’s illustrate how to add tracing for our database operations. As you can see from 
+the trace view in the preceding screenshot, we currently don’t have any database-related spans on 
+our graph. This is because our database logic has not been instrumented yet. Let’s demonstrate how 
+to do this manually:
+1.	
+Open the metadata/internal/repository/memory/memory.go file and add 
+go.opentelemetry.io/otel to its imports.
+2.	
+In the same file, add the following constant:
+const tracerID = "metadata-repository-memory"
+3.	
+At the beginning of the Get function, add the following code:
+_, span := otel.Tracer(tracerID).Start(ctx, "Repository/
+Get")
+defer span.End()
+4.	
+Add a similar code block at the beginning of the Put function:
+_, span := otel.Tracer(tracerID).Start(ctx, "Repository/
+Put")
+defer span.End()

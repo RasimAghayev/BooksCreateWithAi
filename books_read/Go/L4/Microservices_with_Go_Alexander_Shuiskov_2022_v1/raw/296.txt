@@ -1,0 +1,23 @@
+Creating microservice dashboards
+273
+Figure 13.3 – Go process dashboard example from the Grafana tool
+Dashboards help visualize various types of data, such as time series datasets, allowing us to analyze 
+service performance. The following are some other use cases for using dashboards:
+•	 Debugging: Being able to visualize various service performance metrics helps us identify 
+service issues and notice any anomalies in system activity
+•	 Data correlation: Having a side-by-side representation of multiple service performance 
+charts helps us find related events, such as an increase in server errors or a sudden drop in 
+available memory
+It’s a great practice to have a dashboard for each of your services, as well as some dashboards that span 
+all services, to get some high-level system performance data, such as the number of active service 
+instances, network throughput, and much more.
+Let’s demonstrate how to set up an example dashboard for the Prometheus data that we collected 
+in Chapter 12. For this, we will use the open source tool called Grafana, which has built-in support 
+for various types of time series data and provides a convenient user interface for setting up different 
+dashboards. Follow these instructions to set up a Grafana dashboard:
+1.	
+Execute the following command to run the Grafana Docker image:
+docker run -d -p 3000:3000 grafana/grafana-oss
+This command should fetch and run the open source version of Grafana (Grafana also comes 
+in an enterprise version, which we won’t cover in this chapter) and expose port 3000 so that 
+we can access it via HTTP.

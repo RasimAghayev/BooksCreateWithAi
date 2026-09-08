@@ -1,0 +1,32 @@
+Scaffolding a Go Microservice
+18
+Tests
+We are going to cover testing in detail in Chapter 8 of this book. Let’s provide here some key suggestions 
+for writing Go tests in an idiomatic way:
+•	 Tests should always provide information to the user on what exactly went wrong in case of a failure.
+•	 Consider writing table-driven tests whenever possible. See this example: https://github.
+com/golang/go/blob/master/src/fmt/errors_test.go.
+•	 Generally, we should only test public functions. Your private function should be indirectly 
+tested through them.
+Make sure you always write tests for your code. Not only does this help with finding bugs earlier but 
+it also helps to see how your code can be used. I personally find the latter especially useful.
+Context
+One of the key differences between the Go language and other popular languages is explicit context 
+propagation. Context propagation is a mechanism of propagating an additional call argument, called 
+context, into function calls, passing additional metadata.
+Go context has a type called context.Context. There are multiple ways of using it:
+•	 Cancelation logic: You can pass a special instance of a context that can get canceled. In that 
+case, all functions you were to call with it would be able to detect this. Such logic can be useful 
+for handling application shutdown or stopping any processing.
+•	 Timeouts: You can set the timeouts for your execution by using the corresponding context 
+functions.
+•	 Propagating extra metadata: You can propagate additional key-value metadata inside the 
+context. This way, any downstream functions called would receive that metadata inside the 
+context object. There are some useful applications of this approach, one of which is distributed 
+tracing, which we are going to cover in the following chapters.
+We will get back to context propagation in the following chapters. Now, we can define some important 
+aspects of using context in Go:
+•	 Context is immutable but can be cloned with extra metadata.
+•	 Functions using context should accept it as their first argument.
+Additionally, some context best practices are as follows:
+•	 Always pass context to functions performing I/O calls.

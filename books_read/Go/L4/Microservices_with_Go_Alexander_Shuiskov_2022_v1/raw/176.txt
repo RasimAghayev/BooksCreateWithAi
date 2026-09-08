@@ -1,0 +1,35 @@
+Deploying via Kubernetes
+153
+3.	
+Run a deployment command: Kubernetes will apply the provided configuration by running 
+the desired number of pods with the target application(s).
+One of the benefits of Kubernetes is abstracting away all the low-level details of deployments, such 
+as selecting target servers to deploy (if you have many, you need to balance their load otherwise), 
+copying and extracting your files, and running health checks. In addition to this, there are some other 
+useful benefits:
+•	 Service discovery: Kubernetes offers a built-in service discovery API for use in applications.
+•	 Rollbacks: In case there are any issues with the deployment, Kubernetes allows you to roll back 
+the changes to the previous state.
+•	 Automated restarts: If any pod experiences any issue, such as an application crash, Kubernetes 
+will perform a restart of that pod.
+Now, let’s describe how we can set up deployments of our microservices using Kubernetes.
+Setting up our microservices for Kubernetes deployments
+All the necessary steps for setting up deployments in Kubernetes for our three microservices are set 
+out here:
+1.	
+The first step is to create a container image for each service. Kubernetes supports multiple 
+types of containers, and Docker is currently the most popular container type. We already used 
+Docker in Chapter 3 and will illustrate now how to use it for creating containers for our services.
+Inside the metadata service directory, create a file called Dockerfile and add the following 
+code to it:
+FROM alpine:latest
+ 
+COPY main .
+COPY configs/. . EXPOSE 8081
+CMD ["/main"]
+In the file that we just added, we specified that to prepare the image for our container for 
+the metadata service, Docker should use the alpine:latest base image. Alpine is a 
+lightweight Linux distribution that has a size of just a few megabytes and is optimal for our 
+services. Then, we added a command to copy the executable file called main to a container, 
+copy the configs directory of the service, and expose an 8081 port so that we can accept 
+incoming requests on it.

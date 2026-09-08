@@ -1,0 +1,37 @@
+Introduction to Microservices
+8
+•	 Invest in integration testing: Make sure you have comprehensive tests for the integrations 
+between your microservices performing automatically.
+•	 Keep backward compatibility in mind: Always remember to keep your changes backward 
+compatible to ensure that new changes are safe to deploy. Additionally, use techniques such as 
+versioning, which we are going to cover in the next chapter of the book.
+At this point, we have covered the key aspects of microservice development, and you have learned its 
+benefits and the challenges you may face. Before we proceed to the next chapter, let's cover one more 
+topic to ensure we are ready for the journey into microservice development. Let's get familiar with 
+the Go programming language and its role in microservice development.
+Role of Go in microservice development
+Over the last decade, the Go programming language has become one of the most popular languages 
+for application development. There have been many factors contributing to its success, including its 
+simplicity, ease of writing network applications, and an ability to easily develop parallel and concurrent 
+applications. 
+Additionally, the larger developer community has played a key role in raising its popularity across all 
+types of developers. The Go community is welcoming to everybody, from people just starting their 
+journeys into programming to seasoned experts with decades of experience building different types 
+of applications.
+The Go standard library provides a set of packages that can often be enough for building a complete 
+web application or an entire service, sometimes without even requiring any external dependencies. 
+Many developers have been fascinated by the ease of writing applications and tools performing network 
+calls, data serialization and encoding, file processing, and many other types of common operations.
+This simplicity, paired with fast and efficient compilation into native binaries as well as rich tooling, 
+made it one of the primary languages for writing web tools and services. The high adoption of the Go 
+language for web service development made it one of the primary choices for writing microservices 
+across the industry.
+The biggest advantages of Go for microservice development include the following:
+•	 Smooth learning curve: As one of the critical aspects of application development in growing 
+teams, the simplicity of the Go language helps reduce the onboarding time for new, inexperienced 
+developers.
+•	 Explicit error handling: While being a hot topic in the Go community, error handling in Go 
+encourages explicit handling of all application errors. It aligns with one of the key principles 
+of microservice development of designing applications for failure.
+•	 Useful standard library: The Go standard library includes lots of packages that can be used 
+in production-grade systems without requiring external solutions.

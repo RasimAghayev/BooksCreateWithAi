@@ -1,0 +1,35 @@
+Reliability Overview
+196
+Differentiating between retriable and non-retriable errors is the responsibility of the client. However, 
+it is a good practice to indicate this explicitly whenever possible. For example, a server can return 
+specific codes, indicating the types of errors (such as HTTP 404 Not Found) so that a client can 
+recognize retriable errors and perform retries. Differentiation between client and server errors also 
+helps to ensure that requests are not retried for non-retriable errors. It is important from the server’s 
+perspective because handling duplicate, invalid requests increases its load.
+Let’s illustrate how to handle retriable communication errors by implementing client request retries. 
+Setting up automated responses to potential issues, such as communication errors, helps to make the 
+system more resilient to transient failures, resulting in a better experience for all components in the system.
+Implementing request retries
+Let’s illustrate how to implement request retries in microservice code. For this, let’s review the metadata 
+gRPC gateway code we implemented earlier in Chapter 5. The Get function includes the actual call 
+to the metadata service:
+    resp, err := client.GetMetadata(ctx, &gen.
+GetMetadataRequest{MovieId: id})
+    if err != nil {
+        return nil, err
+    }
+Let’s now look at the implementation of the GetMetadata endpoint in the metadata service gRPC 
+handler. The GetMetadata function includes the following code:
+func (h *Handler) GetMetadata(ctx context.Context, req *gen.
+GetMetadataRequest) (*gen.GetMetadataResponse, error) {
+    if req == nil || req.MovieId == "" {
+        return nil, status.Errorf(codes.InvalidArgument, "nil 
+req or empty id")
+    }
+    m, err := h.ctrl.Get(ctx, req.MovieId)
+    if err != nil && errors.Is(err, metadata.ErrNotFound) {
+        return nil, status.Errorf(codes.NotFound, err.Error())
+    } else if err != nil {
+        return nil, status.Errorf(codes.Internal, err.Error())
+    }
+    return &gen.GetMetadataResponse{Metadata: model.

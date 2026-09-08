@@ -1,0 +1,34 @@
+Testing best practices
+189
+If you use this code in a loop, you can add continue after the Errorf call to proceed to the next 
+test cases.
+Making a comparison using a cmp library
+Imagine that you have a test that compares the Metadata structure that we defined in Chapter 2:
+want := &model.Metadata{ID: "123", Title: "Some title"}
+id := "123"
+if got := GetMetadata(ctx, "123"); got != want {
+  t.Errorf("GetMetadata(%v): %v, want %v", id, got, want)
+}
+The code here would not work for structure references – in our code, the want variable holds a pointer 
+to the model.Metadata structure, so the != operator will return true even for structures with 
+the same field values if these structures are created separately.
+A comparison of structure pointers can be made in Go using the reflect.DeepEqual function:
+if !reflect.DeepEqual(GetMetadata(ctx, "123"), want); {
+  t.Errorf("GetMetadata(%v): %v, want %v", id, *got, *want)
+}
+However, the output of the test may not be easy to read. Consider that you have lots of fields inside 
+the Metadata structure – if only one field is different, you will need to scan through both structures 
+to find the difference. There is a convenient library that simplifies comparison in tests called cmp 
+(https://pkg.go.dev/github.com/google/go-cmp/cmp).
+The cmp library allows you to compare arbitrary Go structures in the same way as with reflect.
+DeepEqual, but it also provides human-readable output. Here’s an example of using the function:
+if diff := cmp.Diff(want, got); diff != "" {
+  t.Errorf("GetMetadata(%v): mismatch (-want +got):\n%s", 
+tt.in, diff)
+}
+If the structures don’t match, the diff variable will be a non-empty string, including the printable 
+representation of the differences between them. Here’s an example of this kind of output:
+GetMetadata(123) mismatch (-want +got):
+  model.Metadata{
+      ID:      "123",
+-     Tiitle: s"Title",

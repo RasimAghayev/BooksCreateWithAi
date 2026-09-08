@@ -1,0 +1,40 @@
+Achieving reliability through development processes and culture
+209
+The process for establishing such a mechanism for notifying engineers about service incidents is called 
+on-call. This process helps ensure that at any moment in time, service incidents are acknowledged 
+and addressed by the engineers responsible for the service. 
+The main ideas behind the on-call process are the following:
+•	 Engineers can get grouped into on-call rotations. Each engineer participating in the on-call 
+process repeatedly gets assigned a continuous shift (often taking 1 week), during which they 
+take responsibility for periodically handling notifications regarding service-level incidents.
+•	 On-call rotation can have an escalation policy—a process of escalating incidents in case they 
+remain unresolved. First, an incident gets reported to the primary on-call engineer of the 
+rotation. If the primary engineer is unavailable, the incident gets reported to the secondary 
+engineer, and so on.
+•	 There can be a shadow role, commonly assigned to new engineers. This role does not require 
+any response to the incident, but it can be used for getting familiar with the on-call process 
+and subscribing to real-time incident notifications.
+•	 Each incident triggers one or multiple notifications, notifying the on-call engineers about the 
+issue. Each notification must be acknowledged by the responsible on-call engineer unless the 
+incident self-resolves (for example, if a service stops receiving too many requests and starts 
+operating normally).
+•	 You can also set up an escalation policy for a rotation—a mechanism for escalating the incident 
+notifications if the responsible on-call engineers don’t acknowledge them within the configured 
+time. Usually, escalation policy follows the reporting chain of the engineering hierarchy—if 
+no engineer acknowledges the incident, the incident first triggers a notification to the closest 
+engineering manager, then to the person the manager is reporting to, and so on until it reaches 
+the highest level (this can even be a CTO at some companies).
+Having an on-call process is common to most technology companies and teams, and the on-call process 
+is pretty similar in most companies across the industry. Some popular solutions provide mechanisms 
+for triggering various types of notifications, such as SMS, emails, and even phone calls. You can also 
+configure on-call rotations and assign them to different services. One of the most popular solutions 
+to on-call management is PagerDuty—a platform providing a set of tools for automating on-call 
+operations, as well as integrations with hundreds of services, including Slack, Zoom, and many more. 
+PagerDuty provides all the features we listed earlier, allowing engineers to configure on-call rotations 
+for their services and notifying them about incidents in different ways. Additionally, it provides an 
+API that can be used for both accessing the incident data and triggering new incidents from the code.
+We are not going to dive into the details of PagerDuty's features and integrations in this chapter—I 
+suggest you check the official PagerDuty documentation on their website, https://developer.
+pagerduty.com/docs. I also suggest you read Chapter 12 before establishing an on-call process 
+for your services. It will help you to learn more about possible incident detection mechanisms and 
+tools you can utilize in your projects.

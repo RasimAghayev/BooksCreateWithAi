@@ -1,0 +1,35 @@
+Reliability Overview
+210
+Let’s discuss the common challenges of establishing an on-call process in a microservice environment:
+•	 Rotation ownership: Different services may be maintained by different teams, so there may 
+be multiple on-call rotations inside a single company. A good practice is to have an explicit 
+mapping between each production service and the associated on-call rotation so that it is clear 
+which rotation each incident should be reported to. In Chapter 13, we will cover the ownership 
+aspect of this.
+•	 Cross-service issues: Some issues, such as database or network failures, can span multiple 
+services, so it becomes important to have some centralized team(s) that will be able to help 
+with any issues crossing the boundaries of individual services.  
+Some companies may have thousands of microservices, so centralized incident response teams become 
+crucial. For example, Uber has a dedicated team of engineers called Ring0 that is able to address any 
+widespread incidents and coordinate the mitigation of issues that span multiple teams. Having such 
+a team helps to dramatically reduce incident mitigation time.
+To better understand what happens next after incidents are detected and acknowledged by the engineers, 
+we are going to move now to the next topic: incident management.
+Incident management
+Once incidents are detected and acknowledged by the engineers, there are two other types of work 
+necessary for improving the service or system reliability—mitigation and prevention. Mitigation is 
+required for resolving an open issue unless it gets resolved by itself or due to some external changes 
+(for example, an external API getting fixed by the owning team). Prevention work is useful for ensuring 
+the issue does not happen again. Without a proper prevention response to the incident, you may keep 
+fixing the same issue over and over again, spending your time and affecting the experience of your 
+system’s users.
+To make the incident mitigation process quick and efficient, especially in a large team where engineers 
+may have different levels of understanding of the system, there should be enough documentation 
+describing which actions to perform in case of an incident. Such documentation is called a runbook 
+and should be prepared for as many types of detectable incidents as possible. Whenever an on-call 
+engineer gets an incident notification, it should be clear from the runbook which steps to take to 
+mitigate it.
+A good runbook should be short and concise and provide clear actionable steps that are easy to 
+understand for any engineer. Let’s take this example:
+rating_service_fd_limit_reached:
+  mitigation: Restart the service

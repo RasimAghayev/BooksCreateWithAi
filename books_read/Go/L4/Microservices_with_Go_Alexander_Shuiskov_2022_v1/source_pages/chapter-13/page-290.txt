@@ -1,0 +1,21 @@
+13
+Advanced Topics
+If you are reading this chapter – congratulations, you have reached the very final part of this book! 
+We have discussed many topics related to microservice development, but some remain that are 
+important to cover. The topics in this chapter span many areas, from observability and debugging to 
+service ownership and security. You may find these topics useful at various points in time: some of 
+them will be helpful once you have working services serving production traffic, while others will be 
+useful while your services are still in active development.
+In this chapter, we will cover the following topics:
+•	 Profiling Go services
+•	 Creating microservice dashboards
+•	 Frameworks
+•	 Storing microservice ownership data
+•	 Securing microservice communication with JWT
+Let’s proceed to the first section of this chapter, which covers service profiling.
+Technical requirements
+To complete this chapter, you will need Go 1.11+ or above. Additionally, you will need the following tools:
+•	 Graphviz: https://graphviz.org
+•	 Docker: https://www.docker.com
+You can find the code examples for this chapter on GitHub: https://github.com/
+PacktPublishing/microservices-with-go/tree/main/Chapter13.

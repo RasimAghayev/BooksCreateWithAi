@@ -1,0 +1,14 @@
+Setting Up Service Alerting
+264
+Now, run the following command to start Alertmanager:
+docker run -p 9093:9093 -v <PATH_TO_CONFIGS_DIR>:/etc/
+alertmanager prom/alertmanager --config.file=/etc/alertmanager/
+alertmanager.yml
+Don’t forget to replace the <PATH_TO_CONFIGS_DIR> placeholder with the full local path to the 
+configs directory containing the newly added alertmanager.yml file.
+Now, let’s simulate the alerting condition by manually stopping the rating and movie services. Once 
+you do this, open the Alerts page in the Prometheus UI; you should see that both alerts are firing:
+Figure 12.4 – Firing Prometheus alerts
+You can access the Alertmanager UI by going to http://localhost:9093.
+If alerts are fired in Prometheus, you should also see them in the Alertmanager UI:
+Figure 12.5 – The Alertmanager UI

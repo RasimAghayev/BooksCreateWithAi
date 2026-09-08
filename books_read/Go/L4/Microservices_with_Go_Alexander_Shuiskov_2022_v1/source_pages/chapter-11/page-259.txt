@@ -1,0 +1,28 @@
+Collecting Service Telemetry Data
+236
+Let’s provide an example of using a histogram with a set of predefined numerical buckets:
+histogram := scope.Histogram("user_age_distribution", tally.
+MustMakeLinearValueBuckets(0, 1, 130))
+histogram.RecordValue(userAgeInYears)
+In our example, we are initializing the histogram metric using a set of predefined buckets from 0 to 
+130 and recording the value that matches the user age in years using it. Each bucket of the histogram 
+will then contain the sum of the values.
+Now that we have provided some basic examples of emitting service metrics, let’s look at the best 
+practices for working with metrics data.
+Metrics best practices
+In this section, we will describe some of the best practices related to metric data collection. The list 
+is not exhaustive, but should still be useful for setting up metric collection logic in your services.
+Keep tag cardinality in mind
+When you emit your metrics and add additional tags to time series data, keep in mind that most time 
+series databases are not designed to store high-cardinality data, which can contain lots of possible tag 
+values. For example, the following types of data should not be generally included in service metrics:
+•	 Object identifiers, such as movie or rating IDs
+•	 Randomly generated data, such as UUIDs (for example, request UUIDs)
+The reason for this is indexing is that each tag key-value combination must be indexed to make the time 
+series searchable, and it becomes expensive to perform this when there are lots of distinct tag values.
+You can still use some low-cardinality data in metric tags. The following are some possible examples:
+•	 City ID
+•	 Service name
+•	 Endpoint name
+Remember this tip to avoid reducing the throughput of your metrics pipeline and to ensure your 
+services don’t emit user identifiers and other types of high-cardinality metadata.

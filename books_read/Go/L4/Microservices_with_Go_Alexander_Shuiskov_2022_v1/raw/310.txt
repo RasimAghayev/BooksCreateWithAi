@@ -1,0 +1,34 @@
+Securing microservice communication with JWT
+287
+                http.Error(w,
+                    "request does not contain an Authorization 
+Bearer token", http.StatusUnauthorized)
+                return
+            }
+        tokenString := strings.TrimPrefix(authHeaderValue,
+            bearerPrefix)
+        // Validate token.
+        token, err := jwt.Parse(tokenString,
+            func(token *jwt.Token) (interface{}, error) {
+                if _, ok := token.Method.(
+                    *jwt.SigningMethodHMAC); !ok {
+                        return nil,
+                        fmt.Errorf(
+                            "unexpected signing method:
+                                %v", token.Header["alg"])
+            }
+            return secret, nil
+        })
+        if err != nil {
+            http.Error(w, "invalid token",
+                http.StatusUnauthorized)
+        }
+        claims, ok := token.Claims.(jwt.MapClaims)
+        if !ok || !token.Valid {
+            http.Error(w, "invalid token",
+                http.StatusUnauthorized)
+            return
+        }
+        username := claims["username"]
+        fmt.Fprintf(w, "Hello, "+username.(string))
+    }

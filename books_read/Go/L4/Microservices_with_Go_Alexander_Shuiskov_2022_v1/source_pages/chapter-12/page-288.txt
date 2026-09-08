@@ -1,0 +1,36 @@
+Alerting best practices
+265
+If you configured Alertmanager correctly, you should get an email to the address you provided in 
+the configuration. If you haven’t received an email, check the Docker logs of Alertmanager – users 
+with two-factor email authentication may receive additional instructions for enabling notifications.
+If everything worked well – congratulations, you have set up service alerting! We intentionally haven’t 
+covered many of Alertmanager’s features – it includes many configurable settings that are outside the 
+scope of this chapter. If you are interested in learning more about it, check the official documentation 
+at https://prometheus.io/docs.
+Now, let’s proceed to the next section, where we will provide some best practices for setting up service 
+alerting that should help you increase your service reliability.
+Alerting best practices
+The knowledge you will gain by reading this section should be useful for establishing the new alerting 
+process for your services. It will also help you improve existing alerts if you are working with some 
+established alerting processes.
+Among the most valuable best practices, I would highlight the following ones:
+•	 Keep your alerts immediately actionable: Alerting is a powerful technique for ensuring any 
+issues or incidents get acknowledged and addressed. However, you should not overuse it for 
+the types of issues that do not require immediate attention. Some types of alerts, such as alerts 
+indicating high saturation, are not necessarily actionable. For example, a sudden increase in 
+CPU load may not indicate any immediately actionable issue, unless it remains high for some 
+prolonged period (for example, the CPU load not going below 85% for more than 10 minutes), 
+and may just be a transient symptom of high service usage. When creating alerts, think about 
+whether an engineer needs to perform any manual action as a result of a notification, and 
+reduce any possible noise as much as possible (for example, specify how long the metric 
+should be breaching the threshold before an alert gets fired by providing the for value in the 
+rule configuration).
+•	 Include the runbook references: For each alert, ensure you have a runbook in place that 
+provides clear instructions to the on-call engineers receiving it. Having an accurate and 
+up-to-date runbook for each alert helps reduce the incident mitigation time and share relevant 
+knowledge among all engineers.
+•	 Ensure the alerting configuration is reviewed periodically: The best solution for ensuring the 
+alerting configuration is accurate is to make it easy to access and review. One of the easiest solutions 
+is to make the alerting configuration a part of your code base so that all alert configurations 
+are easily reviewable. Perform periodic checks of your alerts to ensure all important scenarios 
+are covered, as well as to ensure no alerts are outdated.

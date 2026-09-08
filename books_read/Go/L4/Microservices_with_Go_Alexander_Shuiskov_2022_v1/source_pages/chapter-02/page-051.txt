@@ -1,0 +1,30 @@
+Scaffolding a Go Microservice
+28
+Applying the rules that we just described, we are going to structure our packages in the following way:
+•	 metadata/cmd
+•	 metadata/internal/controller
+•	 metadata/internal/handler
+•	 metadata/internal/repository
+•	 metadata/pkg
+Once you have created the directories listed here, let’s proceed to implement the code for our microservice.
+Model
+First, we are going to implement the structure for the movie metadata. Inside the metadata/pkg 
+directory, create a metadata.go file using the following code:
+package model
+// Metadata defines the movie metadata.
+type Metadata struct {
+    ID          string `json:"id"`
+    Title       string `json:"title"`
+    Description string `json:"description"`
+    Director    string `json:"director"`
+}
+This structure is going to be used by the callers of our service. It includes JSON annotations, which 
+we are going to use later in this chapter.
+Repository
+Now, let’s create the stub logic for handling the database logic. Inside the metadata/internal/
+repository directory, add an error.go file using the following code:
+package repository
+import "errors"
+// ErrNotFound is returned when a requested record is not 
+// found.
+var ErrNotFound = errors.New("not found")

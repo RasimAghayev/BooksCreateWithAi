@@ -1,0 +1,10 @@
+303
+Other Books You May Enjoy
+Event-Driven Architecture in Golang
+Michael Stack
+ISBN: 978-1-803-23801-2
+•	 Learn different event-driven patterns and best practices.
+•	 Plan and design your software architecture with ease.
+•	 Effectively track changes and updates using event sourcing.
+•	 Test and deploy your sample software application with ease.
+•	 Monitor and improve the performance of your software architecture.

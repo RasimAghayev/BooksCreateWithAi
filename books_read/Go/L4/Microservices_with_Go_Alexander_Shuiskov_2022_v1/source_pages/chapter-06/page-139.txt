@@ -1,0 +1,38 @@
+Asynchronous Communication
+116
+Asynchronous communication is communication between a sender and one or multiple receivers, where 
+a sender does not necessarily expect an immediate response to their messages. In the synchronous 
+communication model, which we covered in Chapter 5, the caller sending the request would expect an 
+immediate (or nearly immediate, taking into account network latency) response to it. In asynchronous 
+communication, it may take an arbitrary amount of time for the receiver to respond to the request, 
+or to not respond at all (for example, when receiving a no-reply notification).
+We can illustrate the differences between the two models using two examples. An example of 
+synchronous communication is a phone call – two people having a phone conversation are in direct 
+and immediate communication with each other, and they expect to hear the responses in real time. 
+An example of asynchronous communication is sending mail to people. It can take time to respond 
+to such mail, and the sender does not expect an immediate response to their messages.
+It does not mean, however, that asynchronous communication is necessarily slower than the synchronous 
+model. In most cases, asynchronous processing is as quick as synchronous processing and often can 
+be even faster: asynchronous processing is often much less interruptive and leads to higher processing 
+efficiency. It’s like replying to 10 emails, one by one, compared to switching between 10 parallel phone 
+calls — the latter example of synchronous processing can sometimes be way slower due to context 
+switching and frequent interruptions. 
+Benefits and challenges of asynchronous communication
+The asynchronous communication model comes with its own benefits and challenges. Developers 
+need to consider both in order to make a decision on whether to use this model. What are the benefits 
+of using asynchronous communication? Let’s find out:
+•	 The first benefit is a more streamlined approach to processing messages. Imagine you have a 
+service whose purpose is to process data and report the status to another service. The reporting 
+service does not necessarily need to wait for any response back from the service it is reporting 
+to, as it would do in the synchronous model. In asynchronous mode, it just needs confirmation 
+that the status message was sent successfully. This is similar to sending a large number of 
+postcards to your relatives – if you send a dozen postcards, you don’t want to wait until each 
+card gets delivered before sending the next one!
+•	 The second benefit of an asynchronous communication model is the ability to de-couple the 
+sending and processing of requests. Imagine a caller requesting to download a large video and 
+a remote server that needs to perform such a task. In a synchronous model, the caller would 
+be waiting in real time until the entire video is processed. This could easily take minutes and 
+sometimes even hours, making such waiting very inefficient. Instead, such a task could be 
+performed in an asynchronous way, where the caller would send the task to a server, get an 
+acknowledgment that the task was received, and perform any other activity until an eventual 
+notification of completion (or processing failure) is received.

@@ -1,0 +1,33 @@
+Scaffolding an example application
+51
+        log.Printf("Repository get error: %v\n", err)
+        w.WriteHeader(http.StatusInternalServerError)
+        return
+    }
+    if err := json.NewEncoder(w).Encode(details); err != nil {
+        log.Printf("Response encode error: %v\n", err)
+    }
+}
+Now, we are finally ready to write a main file for the movie service.
+Main file
+In the movie/cmd package, create a main.go file, using the following code block:
+package main
+import (
+    "log"
+    "net/http"
+    "movieexample.com/movie/internal/controller/movie"
+    metadatagateway "movieexample.com/movie/internal/gateway/
+metadata/http"
+    ratinggateway "movieexample.com/movie/internal/gateway/
+rating/http"
+    httphandler "movieexample.com/movie/internal/handler/http"
+)
+func main() {
+    log.Println("Starting the movie service")
+    metadataGateway := metadatagateway.New("localhost:8081")
+    ratingGateway := ratinggateway.New("localhost:8082")
+    ctrl := movie.New(ratingGateway, metadataGateway)
+    h := httphandler.New(ctrl)
+    http.Handle("/movie", http.HandlerFunc(h.GetMovieDetails))
+    if err := http.ListenAndServe(":8083", nil); err != nil {
+        panic(err)

@@ -1,0 +1,25 @@
+Creating microservice dashboards
+277
+The resulting dashboard should look like this:
+Figure 13.8 – Example Grafana dashboard
+We just created an example dashboard that has two panels that display some existing Prometheus 
+metrics. You can use the same approach to create any dashboards for your services, as well as high-level 
+dashboards showing the system-global metrics, such as the total number of API requests, network 
+throughput, or the total number of all service instances.
+Let’s provide some examples of metrics that can be useful for setting up a dashboard for an individual 
+service. This includes The Four Golden Signals, which we mentioned in Chapter 12:
+•	 Client error rate: The ratio between client errors (such as invalid or unauthenticated requests) 
+and all requests to the service
+•	 Server error rate: The ratio between server errors (such as database write errors) and all 
+requests to the service
+•	 API throughput: Number of API requests per second/minute
+•	 API latency: API request processing latency, usually measured in percentiles, such as p90/p95/
+p99 (you can learn about percentiles by reading this blog post: https://www.elastic.
+co/blog/averages-can-dangerous-use-percentile)
+•	 CPU utilization: Current usage of CPUs (100% means all CPUs are fully loaded)
+•	 Memory utilization: Ratio between used and total memory across all service instances
+•	 Network throughput: Total amount of network write/read traffic per second/minute
+Depending on the operations performed by your service (for example, database writes or reads, cache 
+usage, Kafka consumption, or production), you may wish to include additional panels that will help 
+you visualize your service performance. Make sure that you cover all the high-level functionality of 
+the service so that you can visually notice any service malfunctions on your dashboards.

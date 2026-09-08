@@ -1,0 +1,35 @@
+Asynchronous Communication
+118
+•	 Asynchronous data flow may seem non-intuitive to many developers and be more complex: 
+Unlike the synchronous request-response model, where each request is logically followed by a 
+response to it, asynchronous communication may be unidirectional (no responses are received 
+at all) or may require the caller to perform additional steps in order to receive a response (for 
+example, when the response is sent as a separate notification). Because of this, data flow in 
+asynchronous systems may be more complex than in synchronous request-response interactions.
+Now, let’s cover some asynchronous communication techniques and patterns that can help you in 
+organizing your services and establishing asynchronous communication between them.
+Techniques and patterns of asynchronous communication
+There are various techniques that help to make the asynchronous interaction between multiple services 
+more efficient in various scenarios, such as sending a message to multiple recipients. In this section, 
+we are going to describe multiple patterns that help to facilitate such interactions.
+Message broker
+A message broker is an intermediary component in the communication chain that can play multiple 
+roles:
+•	 Message delivery: It performs the delivery of a message to one or multiple receivers.
+•	 Message transformation: It transforms an incoming message into another format that can be 
+later consumed by receivers.
+•	 Message aggregation: It aggregates multiple messages into a single one for more efficient 
+delivery or processing.
+•	 Message routing: It routes incoming messages to the appropriate destination based on 
+pre-defined rules.
+When you send a postcard to your friend or a relative, the post office plays the role of a message 
+broker, playing an intermediary role in delivering it to the destination. In this example, the main 
+benefit of using the message broker would be the convenience of sending the message (postcard, in 
+our example) without any need to think about how to deliver it. Another benefit of using message 
+brokers is delivery guarantees. A message broker can provide various levels of guarantees for message 
+delivery. Examples of these guarantees include the following:
+•	 At-least-once: The message gets delivered at least once, but may be delivered multiple times 
+in case of failures.
+•	 Exactly-once: The message broker guarantees that the message gets delivered and it will be 
+delivered exactly once.
+•	 At-most-once: The message can be delivered 0 or 1 time.

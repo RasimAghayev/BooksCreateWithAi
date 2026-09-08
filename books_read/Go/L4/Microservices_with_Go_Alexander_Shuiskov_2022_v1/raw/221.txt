@@ -1,0 +1,35 @@
+Reliability Overview
+198
+    for i := 0; i < maxRetries; i++ {
+        resp, err = client.GetMetadata(ctx, &gen.
+GetMetadataRequest{MovieId: id})
+        if err != nil {
+            if shouldRetry(err) {
+                continue
+            }
+            return nil, err
+        }
+        return model.MetadataFromProto(resp.Metadata), nil
+    }
+    return nil, err
+}
+Add a function that should help us to check whether a communication error is retriable:
+func shouldRetry(err error) bool {
+    e, ok := status.FromError(err)
+    if !ok {
+        return false
+    }
+    return e.Code() == codes.DeadlineExceeded || e.Code() == 
+codes.ResourceExhausted || e.Code() == codes.Unavailable
+}
+Note that we also need to import two extra packages for checking for specific gRPC error codes—
+google.golang.org/grpc/codes for accessing a list of error codes and google.golang.
+org/grpc/status for checking whether the communication error is a valid gRPC error.
+Now, our metadata gRPC gateway can perform up to five retries of requests to the metadata service. 
+The retry logic that we just added should help us minimize the impact of occasional errors, such as 
+temporary server unavailability (for example, during an unexpected outage or temporary network 
+issues). However, it introduces some additional challenges:
+•	 Extra requests to the server: For every call to the Get function, the metadata service gRPC 
+gateway now performs up to five calls instead of one for retriable errors.
+•	 Request bursts: The metadata gRPC gateway performs immediate retries on errors, which will 
+generate bursts of requests to the server.

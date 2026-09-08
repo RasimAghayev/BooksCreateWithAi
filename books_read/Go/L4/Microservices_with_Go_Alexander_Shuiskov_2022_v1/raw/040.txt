@@ -1,0 +1,29 @@
+Go basics
+17
+•	 When calling a function returning an error, always handle the error first.
+•	 Wrap errors if you want to add additional information to the clause. The conventional way of 
+wrapping errors in Go is to use %w at the end of the formatted error:
+if err != nil {
+    return fmt.Errorf("upload failed: %w", err)
+}
+•	 While checking for errors, using the == operator may result in improper handling of the 
+wrapped errors. There are two solutions to this. For a comparison to a sentinel error, such as 
+errors.New("some error"), use errors.Is:
+if errors.Is(err, ErrNotFound) {
+    // err or some error it wraps is ErrNotFound.
+}
+For error types, use errors.As:
+var e *QueryError
+if errors.As(err, &e) {
+    // err has *QueryError type.
+}
+Additionally, keep errors descriptive yet compact. It should be always easy to understand what exactly 
+went wrong by reading the error message.
+Interfaces
+Key principles of Go interfaces include the following:
+•	 Do not define interfaces before they are used without a realistic example of usage.
+•	 Return concrete (using a pointer or struct) types instead of an interface in your functions.
+•	 Single-method interfaces should be called by the method name and include the er suffix, for 
+example, the Writer interface with a Write function.
+See some built-in interfaces, such as Writer and Reader, to get a good example of defining and 
+using interfaces in Go.

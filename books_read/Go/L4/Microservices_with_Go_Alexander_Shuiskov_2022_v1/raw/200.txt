@@ -1,0 +1,44 @@
+Integration tests
+177
+using in-memory implementations of service registries and repositories.
+Before you write the test, it’s often helpful to write down the set of operations to be tested and determine 
+the expected outputs for each step. Let’s write down the plan for our integration test:
+1.	
+Write metadata for an example movie using the metadata service API (the PutMetadata 
+endpoint) and check that the operation does not return any errors.
+2.	
+Retrieve the metadata for the same movie using the metadata service API (the GetMetadata 
+endpoint) and check it matches the record that we submitted earlier.
+3.	
+Get the movie details (which should only consist of metadata) for our example movie using 
+the movie service API (the GetMovieDetails endpoint) and make sure the result matches 
+the data that we submitted earlier.
+4.	
+Write the first rating for our example movie using the rating service API (the PutRating 
+endpoint) and check the operation does not return any errors.
+5.	
+Retrieve the initial aggregated rating for our movie using the rating service API (the 
+GetAggregatedRating endpoint) and check that the value matches the one that we just 
+submitted in the previous step.
+6.	
+Write the second rating for our example movie using the rating service API and check that the 
+operation does not return any errors.
+7.	
+Retrieve the new aggregated rating for our movie using the rating service API and check that 
+the value reflects the last rating.
+8.	
+Get the movie details for our example movie and check that the result includes the updated rating.
+Having this kind of plan makes it easier to write the code for the integration test and brings us to the 
+last step — actually implementing it:
+1.	
+Create a test/integration directory and add the file called main.go with the following 
+code:
+package main
+import (
+    "context"
+    "log"
+    "net"
+    "github.com/google/go-cmp/cmp"
+    "github.com/google/go-cmp/cmp/cmpopts"
+    "google.golang.org/grpc"
+    "movieexample.com/gen"

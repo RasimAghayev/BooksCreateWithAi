@@ -1,0 +1,11 @@
+Further reading
+161
+Further reading
+If you’d like to learn more, refer to the following links: 
+•	 Kubernetes documentation: https://kubernetes.io/docs/home/
+•	 Service deployment best practices: https://codefresh.io/learn/software-
+deployment/
+•	 Setting up Kubernetes services: https://kubernetes.io/docs/concepts/
+services-networking/service/
+•	 Blue-green deployments: https://www.redhat.com/en/topics/devops/what-
+is-blue-green-deployment

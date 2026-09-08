@@ -1,0 +1,31 @@
+Scaffolding a Go Microservice
+20
+Public packages
+There is another type of directory name with a semantic meaning in Go—a directory called pkg. It 
+implies that it is OK to use the code from this package externally.
+The pkg directory isn’t recommended officially, but it is widely used. Ironically, the Go team used 
+this in the library code and then got rid of this pattern, while the rest of the Go community adopted 
+it so widely that it became a common practice.
+It is up to you whether you use a pkg directory in your applications. But in tandem with the internal 
+directory, it can help to organize your code so that what is private and what is public is clear, easing 
+the code navigation for the developers.
+Executable packages
+The cmd package is commonly used in the Go community to store the code of one or multiple executable 
+packages with a main function. This may include the code starting your application or any code for your 
+executable tools. For a single-app directory, you can store your Go code directly in the cmd package:
+cmd/
+cmd/main.go
+For a multi-app directory, you can include subpackages in cmd packages:
+cmd/
+cmd/indexer/main.go
+cmd/crawler/main.go
+Other commonly used directories
+The following list includes some other commonly used directory or package names in the Go community:
+•	 api: JSON schema files and definitions in various protocols, including gRPC. We are going 
+to cover these topics in Chapter 4.
+•	 testdata: Files containing the data used in tests.
+•	 web: Web application components and assets.
+Common files
+Here is a list of common filenames, which will keep your packages consistent with the official library 
+and lots of third-party libraries:
+•	 main.go: A file containing the main() function

@@ -1,0 +1,37 @@
+Service Discovery
+62
+    Deregister(ctx context.Context, instanceID string, 
+serviceName string) error
+    // ServiceAddresses returns the list of addresses of active 
+instances of the given service.
+    ServiceAddresses(ctx context.Context, serviceID string) ([]
+string, error)
+    // ReportHealthyState is a push mechanism for reporting 
+healthy state to the registry.
+    ReportHealthyState(instanceID string, serviceName string) 
+error
+}
+As you may notice, the interface is pretty generic, yet it allows you to create multiple implementations 
+based on different technologies if needed.
+You may also notice that the interface includes a ReportHealthyState function for reporting 
+the healthy state of a service instance. This function allows us to implement the push-based service 
+health monitoring that we mentioned before, so each microservice would periodically report its health 
+to the service registry. The registry would then be able to remove inactive instances of each service 
+if they don’t report a healthy state within some defined interval of time (we are going to assume the 
+interval is 5 seconds in our implementation).
+Let’s now think about where we would store the service discovery logic for our microservices. I 
+suggest using a package that all three services can access – let’s create it in the root directory of our 
+application, under the pkg folder. We can call it pkg/discovery. Inside it, add a discovery.
+go file and add the following code to it:
+package discovery
+import (
+    "context"
+    "errors"
+    "fmt"
+    "math/rand"
+    "time"
+)
+// Registry defines a service registry.
+type Registry interface {
+    // Register creates a service instance record in the
+    // registry.

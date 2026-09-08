@@ -1,0 +1,36 @@
+xiv
+Preface
+Chapter 2, Scaffolding a Go Microservice, will introduce the you to the main principles of the Go 
+programming language and provide the most important recommendations for writing Go code. It 
+will cover the process of setting up the right structure to organize the microservice code in Go and 
+introduce the you to an example application consisting of three microservices. Finally, the chapter will 
+illustrate how to scaffold the code for each of the example microservices. The example microservices 
+implemented in this chapter are going to be used throughout the book, with each chapter adding 
+new features to them.
+Chapter 3, Service Discovery, will talk about the problem of service discovery and illustrates how 
+different services can find each other in a microservice environment. It will cover the most popular 
+service discovery tools and walk the you through the steps of adding service discovery logic to the 
+example microservices from the previous chapter.
+Chapter 4, Serialization, will bring us to the concept of data serialization, which is required for 
+understanding upcoming chapters covering microservice communication. The you will be introduced 
+to the Protocol Buffers data format, which is going to be used for encoding and decoding the data 
+transferred between our example microservices. The chapter will provide examples of how to define 
+serializable data types and generate code for them, and how to use the generated code in Go microservices.
+Chapter 5, Synchronous Communication, will cover the topic of synchronous communication between 
+microservices. It will illustrate how to define service APIs using the Protocol Buffers format and 
+introduce the you to gRPC, a service communication framework. The chapter will wrap up with 
+examples of how to implement microservice gateways and clients and perform remote calls between 
+our microservices.
+Chapter 6, Asynchronous Communication, will talk about asynchronous communication between 
+microservices. It will introduce the you to a popular asynchronous communication tool, Apache Kafka, 
+and provide examples of sending and receiving messages, using it for our example microservices. The 
+chapter will wrap up with an overview of the best practices for using asynchronous communication 
+in microservice environments.
+Chapter 7, Storing Service Data, will cover the topic of persisting service data in databases. The you 
+will learn about the common types of databases and the benefits they bring to software developers. 
+The chapter will walk the you through the process of implementing the logic for storing service data 
+in a MySQL database.
+Chapter 8, Deployment with Kubernetes, will talk about service deployment and provide an overview 
+of a popular deployment and orchestration platform, Kubernetes. The chapter will illustrate how to 
+prepare service code for deployment and how to deploy it using Kubernetes. The chapter will include 
+the best practices for deploying microservice applications.

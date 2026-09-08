@@ -1,0 +1,27 @@
+Setting Up Service Alerting
+266
+This list contains just a handful of best practices to improve your service alerting. If you are interested 
+in the topic, I strongly suggest that you read the relevant chapters of the Google SRE book, including the 
+Monitoring Distributed Systems chapter from https://sre.google/sre-book/monitoring-
+distributed-systems/.
+This summarizes a brief overview of service alerting. Now, let’s summarize this chapter.
+Summary
+In this chapter, we covered one of the most important aspects of service reliability work – alerting. 
+You learned how to set up the service metric collection using the Prometheus tool and the tally 
+library, set up service alerts using the Alertmanager tool, and connect all these components to create 
+an end-to-end service alerting pipeline.
+The material in this chapter summarizes our learning from the reliability and service telemetry topics 
+from Chapter 10 and Chapter 11. By collecting the telemetry data and establishing the notification 
+mechanisms using the alerting tools, we can quickly detect various service issues and get notified 
+each time we need to mitigate them.
+In the next chapter, we will continue covering some advanced aspects of Go development, including 
+system profiling and dashboarding.
+Further reading
+To learn more about the topics that were covered in this chapter, take a look at the following resources:
+•	 Practical Alerting from Time-Series Data: https://sre.google/sre-book/practical-
+alerting/
+•	 Monitoring Distributed Systems: https://sre.google/sre-book/monitoring-
+distributed-systems/
+•	 Prometheus documentation: https://prometheus.io/docs/introduction/
+overview/
+•	 Eliminating Toil: https://sre.google/workbook/eliminating-toil/

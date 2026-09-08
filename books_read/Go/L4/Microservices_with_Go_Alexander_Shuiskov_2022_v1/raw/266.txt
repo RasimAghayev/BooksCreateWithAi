@@ -1,0 +1,35 @@
+Tracing
+243
+}
+type apiConfig struct {
+    Port int `yaml:"port"`
+}
+type jaegerConfig struct {
+    URL string `yaml:"url"`
+}
+The configuration that we just added will help us set the Jaeger URL for submitting the trace data.
+2.	
+The next step is to update the configs/base.yaml file for each service so that it includes 
+the Jaeger API URL property. We can do this by adding the following code at the end:
+jaeger:
+  url: http://localhost:14268/api/traces
+3.	
+Let’s create a shared function that can be used in each service to initialize the tracing data provider. 
+This is going to submit our traces to Jaeger. In our root pkg directory, create a directory called 
+tracing and add a tracing.go file with the following contents:
+package tracing
+import (
+    "go.opentelemetry.io/otel/exporters/jaeger"
+    "go.opentelemetry.io/otel/sdk/resource"
+    tracesdk "go.opentelemetry.io/otel/sdk/trace"
+    semconv "go.opentelemetry.io/otel/semconv/v1.12.0"
+)
+// NewJaegerProvider returns a new jaeger-based tracing 
+provider.
+func NewJaegerProvider(url string, serviceName string) 
+(*tracesdk.TracerProvider, error) {
+    exp, err := jaeger.New(jaeger.
+WithCollectorEndpoint(jaeger.WithEndpoint(url)))
+    if err != nil {
+        return nil, err
+    }

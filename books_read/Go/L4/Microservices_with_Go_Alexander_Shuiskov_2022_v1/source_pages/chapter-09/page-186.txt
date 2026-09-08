@@ -1,0 +1,23 @@
+9
+Unit and Integration Testing
+Testing is an integral part of any development process. It is always important to cover your code with 
+automated tests, ensuring that all important logic is continuously tested on all code changes. Writing 
+good tests often helps ensure that any changes made throughout the development process will keep 
+the code working and reliable.
+Testing is especially important in microservice development, but it brings some additional challenges 
+to developers. It’s not enough to test each service – it’s also important to test the integrations between 
+the services, ensuring every service can work with the others.
+In this chapter, we will cover both unit testing and integration testing and illustrate how to add tests 
+to the microservices we created in the previous chapters. We will cover the following topics:
+•	 Go testing overview
+•	 Unit tests
+•	 Integration tests
+•	 Testing best practices
+You will learn how to write unit and integration tests in Go, how to use the mocking technique, and 
+how to organize the testing code for your microservices. This knowledge will help you to build more 
+reliable services.
+Let’s proceed to the overview of Go testing tools and techniques.
+Technical requirements
+To complete this chapter, you need Go version 1.11+ or above.
+You can find the GitHub code for this chapter here: https://github.com/PacktPublishing/
+microservices-with-go/tree/main/Chapter09.

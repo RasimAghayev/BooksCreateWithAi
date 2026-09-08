@@ -1,0 +1,28 @@
+Collecting Service Telemetry Data
+238
+visualize them. Let’s look at the following example, which illustrates a distributed tracing use case 
+known as call analysis:
+Figure 11.2 – Tracing visualization example
+Here, you can see the execution of a single GetMovieDetails request for our movie service. The 
+data provides some insights into the operation’s execution:
+•	 Soon after the request starts, two parallel calls come from the movie service; one to the metadata 
+service and the other to the rating service.
+•	 The call to the metadata service takes 100 milliseconds to complete.
+•	 The call to the rating service takes 1,100 milliseconds to complete, spanning almost the entire 
+request processing time.
+The data that we just extracted provided us with lots of valuable information for analyzing the movie 
+service’s performance. First, it helped us understand how an individual request was handled by the 
+movie service, as well as which sub-operations it performed. We can also see the duration of each 
+operation and find out which one was slowing down the entire request. By using this data, we could 
+troubleshoot endpoint performance issues, finding which components make a significant impact on 
+request processing.
+In our example, we showed the interaction between just three services, but tracing tools allow us 
+to analyze the behavior of systems that use tens and even hundreds of services simultaneously. The 
+following are some other use cases that make tracing a powerful tool for production debugging:
+•	 Error analysis: Tracing allows us to visualize the errors on complex call paths, such as chains 
+of calls spanning lots of different services.
+•	 Call path analysis: Sometimes, you may investigate issues in systems you are not very familiar 
+with. Tracing data helps you visualize the call path of various operations, helping you understand 
+the logic of the services without requiring you to analyze their code.
+•	 Operation performance breakdown: Tracing allows us to see the duration of individual steps 
+of a long-running operation.

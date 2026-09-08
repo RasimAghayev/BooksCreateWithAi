@@ -1,0 +1,35 @@
+Collecting service logs
+219
+The following snippet includes an example of a JSON-encoded log structure:
+{"level":"info", "time":"2022-09-04T20:10:10+1:00","message":"S
+ervice started", "service":"metadata"}
+As you may have noticed, in addition to using JSON as the output format, there are two additional 
+features of the preceding log format:
+•	 Log level: There is a field called level that specifies the type of a log message.
+•	 Additional message fields: Our example includes a field called service, which is used to 
+indicate the service that emitted the message.
+The output format described earlier allows us to decode the log messages much easier. It also helps us 
+interpret their contents based on the log level and the additional message fields. Additional metadata 
+can also be used for searching: for example, we can search for messages that have a particular service 
+field value.
+Now, let’s focus on log-level metadata from the previous example. First, let’s review some of the 
+common log levels:
+•	 Info: Informational messages that do not indicate any error. An example of such a message is 
+a log record indicating that the service successfully connected to the database.
+•	 Error: Messages indicating errors, such as network timeouts.
+•	 Warning: Messages indicating some potential issues, such as too many open files.
+•	 Fatal: Messages indicating critical or non-recoverable errors, such as insufficient memory, that 
+make executing the service further impossible.
+•	 Debug: Messages that provide some additional context to the developers that can help troubleshoot 
+various issues or get some additional insights for application performance. Collecting Debug 
+messages is usually disabled by default, as they often generate a large amount of data.
+Log levels also help us interpret log messages. Consider the following unstructured message produced 
+by the built-in log library, which does not include any level information:
+2022/06/06 23:00:00 Connection terminated
+Can you tell whether it’s a regular informational message indicating the regular behavior (for example, 
+the service intentionally terminated a connection after performing some work), a warning, or an 
+error? If this is an error, is it critical or not? Without the log level providing additional context, it is 
+difficult to interpret this message.
+Another advantage of explicitly using log levels is the ability to enable or disable that ability to log 
+specific types of levels. For example, logging Debug messages can be disabled under normal service 
+conditions and enabled during troubleshooting. Debug messages often include much more information 

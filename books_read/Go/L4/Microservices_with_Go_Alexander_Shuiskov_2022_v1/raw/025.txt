@@ -1,0 +1,37 @@
+Introduction to Microservices
+2
+In the microservice architecture model, each component would be an independent service playing 
+its own role in the system.
+Organizing each part of the application as a separate service is not necessarily a requirement. As with 
+any architecture model or any aspect of software development, engineers need to be careful with 
+choosing a particular approach or solution – doing an initial analysis and understanding the solution 
+under the given conditions. 
+Before we proceed to the key benefits and downsides of microservices, let's see what challenges you 
+could face when the application is not separated into multiple services.
+Motivation to use microservices
+In order to understand the motivation behind using the microservice architecture, it is very important 
+to see the opposite approach – when the application is built and executed as a single program. Such 
+applications are called monolithic applications or monoliths.
+Monolithic architecture is, in most ways, the simplest model to implement since it does not involve 
+splitting the application into multiple parts that need to coordinate with each other. This can provide 
+you with major advantages in many cases, such as the following:
+•	 Small code base: Splitting an application into multiple independent parts may significantly 
+increase the size of the code base by introducing extra logic required for communication 
+between the components.
+•	 Application logic is still loosely defined: It is very common that parts of the application or 
+the entire system go through major structural or logical changes, especially at the very early 
+stages of development. This might be caused by a sudden change of requirements, priorities, 
+changes in the business model, or a different approach to development. During the early stages 
+of development, iterating fast can be critical not only to the development process, but also to 
+the entire company.
+•	 Narrow scope of the application: Not every service requires a decomposition and division 
+into separate parts. Consider a service for generating random passwords – it has a single logical 
+feature and, in most cases, it would be unnecessary to split it into multiple parts.
+In all of the preceding cases, monolithic architecture would be a better fit for the application. However, 
+at some point, services get too big to remain monolithic. Developers start experiencing the following 
+issues:
+•	 Large application size and slow deployments: At a certain point, an application can become 
+so big that it can take minutes or even hours to build, start, or deploy.
+•	 Inability to deploy a particular part of the application independently: Not being able to replace 
+a part of a large application can easily become a bottleneck, slowing down the development 
+and release process.

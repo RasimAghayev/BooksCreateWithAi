@@ -1,0 +1,36 @@
+Reliability Overview
+200
+For synchronous requests, there is a way to improve the client experience by setting a request timeout—
+an interval after which the request is considered as failed in case of not receiving a successful response. 
+Setting request timeouts is a good practice due to multiple reasons:
+•	 Elimination of unexpected waits: If a request takes an unexpectedly long time, the client can 
+stop it earlier and perform an optional retry.
+•	 Ability to estimate maximum request processing time: When requests are performed with 
+explicit timeouts, it is easier to calculate how long it will take until the operation returns a 
+response or an error to the caller.
+•	 Ability to set longer timeouts for long-running operations: Libraries used for performing 
+network calls often set default request timeouts (for example, 30 seconds). Sometimes the clients 
+want to set a higher value, knowing that the request may take longer to complete (for example, 
+when uploading a large file to a server). Explicitly setting a higher timeout helps to prevent the 
+situation of a request getting canceled due to exceeding the default timeout.
+In Go, timeouts are usually propagated via the context.Context object. As we mentioned in 
+Chapter 1, each I/O operation, such as a network call, accepts the context object as an argument, and 
+we can set a timeout by calling the context.WithTimeout function, as shown in the following 
+code snippet:
+func TimeoutExample(ctx context.Context, args Args) {
+    const timeout = 10 * time.Second
+    ctx, cancel := context.WithTimeout(ctx, timeout)
+    defer cancel()
+    resp, err := SomeOperation(ctx, args)
+}
+In the preceding example, we set the timeout for the SomeOperation function to 10 seconds, so 
+it should not take more than 10 seconds to complete the operation.
+Setting a timeout is not the only way to limit request processing time. An alternative solution to this is 
+setting a deadline—the maximal time until which the request should get processed not to be considered 
+as failed. Unlike a timeout, which is set using the time.Duration structure (for example, having 
+the value of 10 seconds), a deadline indicates the exact instance of time (for example, January 1, 2074, 
+00:00:00). Here’s an example of using a deadline for the same operation as in the previous code example:
+deadline := time.Parse(time.RFC3339, "2074-01-01T00:00:00Z")
+ctx, cancel := context.WithDeadline(ctx, deadline)
+defer cancel()
+resp, err := SomeOperation(ctx, args)

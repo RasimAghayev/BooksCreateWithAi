@@ -1,0 +1,19 @@
+Serialization
+78
+You can find the code examples for this chapter on GitHub at the following link: 
+https://github.com/PacktPublishing/microservices-with-go/tree/main/
+Chapter04 
+The basics of serialization
+Serialization is the process of converting data into a format that allows you to transfer it, store it, and 
+later deconstruct it back.
+This process is illustrated in the following diagram:
+Figure 4.1 – The serialization and deserialization process 
+As illustrated in the diagram, the process of transforming the original data is called serialization, and 
+the reverse process of transforming it back is called deserialization.
+Serialization has two primary use cases:
+•	 Transferring the data between services, acting as a common language between them
+•	 Encoding and decoding arbitrary data for storage, allowing you to store complex data structures 
+as byte arrays or regular strings
+In Chapter 2, while scaffolding our applications, we created our HTTP API endpoints and set them 
+to return JSON responses to the callers. In that case, JSON played the role of a serialization format, 
+allowing us to transform our data structures into it and then decode them back.

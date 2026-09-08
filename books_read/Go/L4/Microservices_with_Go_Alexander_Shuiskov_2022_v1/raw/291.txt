@@ -1,0 +1,35 @@
+Advanced Topics
+268
+Profiling Go services
+In this section, we are going to review a technique called profiling, which involves collecting real-time 
+performance data of a running process, such as a Go service. Profiling is a powerful technique that 
+can help you analyze various types of service performance data:
+•	 CPU usage: Which operations used the most CPU power and what was the distribution of 
+CPU usage among them?
+•	 Heap allocation: Which operations used heap (dynamic memory allocated in Go applications) 
+and what amount of memory was used?
+•	 Call graph: In which order were service functions executed?
+Profiling may help you in different situations:
+•	 Identifying CPU-intensive logic: At some point, you may notice that your service is consuming 
+most of your CPU power. To understand this problem, you can collect the CPU profile – a 
+graph showing the CPU usage of various service components, such as individual functions. 
+Components that consume too much CPU power may indicate various issues, such as inefficient 
+implementations or code bugs.
+•	 Capturing the service memory footprint: Similar to high CPU consumption, your service may 
+be using too much memory (for example, to allocate too much data to the heap), resulting in 
+occasional service crashes due to out-of-memory panics. Performing memory profiling may 
+help you analyze the memory usage of various parts of your service and find components that 
+have unexpectedly high memory usage.
+Let’s illustrate how to profile Go services using the pprof tool, which is a part of the Go SDK. To visualize 
+the results of the tool, you will need to install the Graphviz library: https://graphviz.org/.
+We will use the metadata service that we implemented in Chapter 2 as an example. Open the metadata/
+cmd/main.go file and add the flag package to the imports block. Then, add the following code 
+to the beginning of the main function, immediately after the logger initialization:
+simulateCPULoad := flag.Bool("simulatecpuload",
+    false,"simulate CPU load for profiling")
+    flag.Parse()
+    if *simulateCPULoad {
+        go heavyOperation()
+    }
+go func() {
+    if err := http.ListenAndServe("localhost:6060", nil);

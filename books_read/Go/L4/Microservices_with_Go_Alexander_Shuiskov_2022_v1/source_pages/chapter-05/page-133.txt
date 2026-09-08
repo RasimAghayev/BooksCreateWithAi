@@ -1,0 +1,37 @@
+Synchronous Communication
+110
+Now we are ready to create a gateway for our rating service. Inside the movie/internal/gateway 
+package, create a rating/grpc directory and add a grpc.go file with the following contents:
+package grpc
+ 
+import (
+    "context"
+    "pkg/discovery"
+    "rating/pkg/model"
+ 
+    "google.golang.org/grpc"
+    "movieexample.com/internal/grpcutil"
+    "movieexample.com/gen"
+)
+ 
+// Gateway defines an gRPC gateway for a rating service.
+type Gateway struct {
+    registry discovery.Registry
+}
+ 
+// New creates a new gRPC gateway for a rating service.
+func New(registry discovery.Registry) *Gateway {
+    return &Gateway{registry}
+}
+Add the implementation of the GetAggregatedRating function:
+// GetAggregatedRating returns the aggregated rating for a 
+// record or ErrNotFound if there are no ratings for it.
+func (g *Gateway) GetAggregatedRating(ctx context.Context, 
+recordID model.RecordID, recordType model.RecordType) (float64, 
+error) {
+    conn, err := grpcutil.ServiceConnection(ctx, "rating", 
+g.registry)
+    if err != nil {
+        return 0, err
+    }
+    defer conn.Close()

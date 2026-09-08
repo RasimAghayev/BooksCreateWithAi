@@ -1,0 +1,37 @@
+Setting up Prometheus alerting for our microservices
+261
+provides built-in support for scraping metrics from services registered with Consul: instead of 
+static_configs, you could define the Consul scraping configuration:
+    consul_sd_configs:
+    - server:  host.docker.internal:8500
+      services:
+        - <SERVICE_NAME>
+Next, we will demonstrate how to scrape a static list of service instances; you can try setting up Consul-
+based Prometheus scraping as an additional exercise after reading this chapter. Let’s add alerting rules 
+for our services. Inside the newly added configs directory, create the alerts.rules file and 
+add the following to it:
+groups:
+- name: Service availability
+  rules:
+  - alert: Metadata service down
+    expr: up{service="metadata"} == 0
+    labels:
+      severity: warning
+    annotations:
+      title: Metadata service is down
+      description: Failed to scrape {{ $labels.service }}. 
+Service possibly down.
+  - alert: Rating service down
+    expr: up{service="rating"} == 0
+    labels:
+      severity: warning
+    annotations:
+      title: Metadata service is down
+      description: Failed to scrape {{ $labels.service }} 
+service on {{ $labels.instance }}. Service possibly down.
+  - alert: Movie service down
+    expr: up{service="movie"} == 0
+    labels:
+      severity: warning
+    annotations:
+      title: Metadata service is down

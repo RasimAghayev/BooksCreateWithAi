@@ -1,0 +1,23 @@
+Asynchronous Communication
+122
+Adopting Kafka for our microservices
+Let’s get back to the rating service example from the previous chapters. The service provided a synchronous 
+API for inserting rating records, allowing its callers to call an endpoint and get an immediate response 
+from the service. Such an API would be useful in many practical use cases, including one where the 
+user submits a rating from a user interface or a web form.
+Now consider a scenario where we work with a data provider who frequently publishes rating records 
+(for example, movie ratings from a popular movie database, such as IMDb) that we can use in our 
+rating service. Here, we would need to consume such records and ingest them into our system, so we 
+could use them in addition to the data that was created through our API. The publisher-subscriber 
+model that we described earlier in this chapter would be a great fit for this use case – the publisher 
+would be the data provider that provides the rating data, and the subscriber would be a part of our 
+application (such as a rating service), which would consume the data.
+We can illustrate the described model using the following diagram:
+Figure 6.3 – The publisher-subscriber model of rating ingestion from a data provider
+The model of interaction between the data provider and the rating service is a perfect example of 
+asynchronous communication – the rating service does not necessarily need to process the provider’s 
+data immediately. It is up to us when and how to consume this data – our rating service could do this 
+periodically (for example, once an hour, or once a day), or handle the new rating data as soon as it 
+gets published. Let’s choose the second approach in this chapter. 
+The only missing piece in our model is the component that allows us to publish the rating data from 
+the data provider and subscribe to it from our rating service. Apache Kafka, which we described earlier, 

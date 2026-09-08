@@ -1,0 +1,4 @@
+Microservices with Go
+Building scalable and reliable microservices with Go
+Alexander Shuiskov
+BIRMINGHAM—MUMBAI

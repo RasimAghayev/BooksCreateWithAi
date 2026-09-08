@@ -1,0 +1,34 @@
+Scaffolding an example application
+23
+metadata are different. This hints that the ratings data can, and probably should, be stored separately 
+from the movie metadata.
+While designing the application, it is beneficial to think one step ahead and imagine how the application 
+may evolve in the future. This does not mean that you should necessarily build the application trying to 
+predict future use cases, because it can lead to unnecessary abstractions that may not be needed later if 
+your plans change. However, thinking one step ahead may save you time later if you find more efficient 
+ways of modeling and storing your data, which would help you to adapt to changing requirements.
+Let’s see how the rating service can possibly evolve. At some point, we may want to extend the rating 
+functionality to other types of movie-related records. A user may be able to do the following:
+•	 Rate the actor’s performance in some movies
+•	 Rate the movie soundtrack
+•	 Rate the movie’s costume design
+When making decisions on supporting future use cases, you should ask yourself, how likely it is that 
+I will need to implement that logic in the observable future (6 to 12 months)? You should generally 
+avoid thinking much further ahead because the requirements and goals may change. However, if you 
+are quite certain you have plans to support particular features, you should make sure your data model 
+can support those features without major changes.
+Let’s assume we definitely want to implement the additional ratings mentioned earlier. In this case, we 
+want to make sure we can design our application in a way that would support the ratings for different 
+types of objects.
+Let’s define the API for such a rating component:
+•	 Store the rating record, including the following:
+	 ID of the user who gave the rating
+	 Type of record
+	 ID of the record
+	 Rating value
+•	 Get the aggregated rating for a record by its ID and type.
+This API supports record types, so we can easily add more types of ratings without changing the 
+system. The trade-off we made here is quite reasonable—the API is different on the basis of just one 
+field (record type) from the API of a rating system designed just for movies. However, this gives us 
+complete freedom in introducing new rating types in the future! Such a trade-off seems very reasonable 
+given that we have decided we will certainly need those ratings in the future.

@@ -1,0 +1,13 @@
+Other Books You May Enjoy
+If you enjoyed this book, you may be interested in these other books by Packt:
+Go for DevOps
+John Doak, David Justice
+ISBN: 978-1-801-81889-6
+•	 Understand the basic structure of the Go language to begin your DevOps journey
+•	 Interact with filesystems to read or stream data
+•	 Communicate with remote services via REST and gRPC
+•	 Explore writing tools that can be used in the DevOps environment
+•	 Develop command-line operational software in Go
+•	 Work with popular frameworks to deploy production software
+•	 Create GitHub actions that streamline your CI/CD process
+•	 Write a ChatOps application with Slack to simplify production visibility

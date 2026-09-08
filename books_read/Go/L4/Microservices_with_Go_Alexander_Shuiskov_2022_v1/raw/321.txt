@@ -1,0 +1,75 @@
+Index
+298
+order of operations  217
+panics  217
+warnings  218
+service metrics
+best practices  236, 237
+collecting  229-231
+emitting  233-236
+Go metrics libraries  233
+storing  231
+service performance
+anomaly detection  217
+event correlation  217
+semantic graph capturing  216
+trend analysis  216
+service registry  57
+example  57
+features  57
+short mode  168
+signals for API alerting
+API client error rate  253
+API latency  253
+API server error rate  253
+signature  283
+Skip function  167, 168
+span  242
+SQL
+reference link  136
+standard JWT claim fields
+reference link  288
+structured logging  218
+subtests  166, 167
+successful response  195
+synchronous communication
+HTTP protocol  94
+protocols  94
+system saturation
+measuring, signal examples  254
+system throughput  194
+T
+table-driven tests  164, 165
+tags  229
+telemetry data  216
+logs  216
+metrics  216
+traces  216
+testing  163
+testing, best practices
+cmp library, used for comparing 
+metadata structure  189, 190
+Fatal usage, avoiding in logs  188, 189
+helpful messages, using  187, 188
+Thrift services  82
+time series  229
+time to repair (TTR)  211
+token bucket algorithm  202
+token header  284
+token payload  283
+trace data
+collecting, for Go function  242
+tracing  237
+example  238
+tracing data
+collecting, with OpenTelemetry 
+SDK  241-249
+tracing use cases
+call path analysis  238
+error analysis  238
+operation performance breakdown  238
+transitive dependencies  212
+U
+unique identifier (UID)  158
+unit tests  168, 169
+implementing  173, 174

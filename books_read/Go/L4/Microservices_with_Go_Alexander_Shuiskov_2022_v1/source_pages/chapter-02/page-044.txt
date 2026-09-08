@@ -1,0 +1,34 @@
+Scaffolding an example application
+21
+•	 doc.go: Package documentation (a separate file is not necessary for small packages)
+•	 *_test.go: Test files
+•	 README.md: A read-me file written in the Markdown language
+•	 LICENSE: A license file, if there is one
+•	 CONTRIBUTING.md/CONTRIBUTORS/AUTHORS: List of contributors and/or authors
+Now, let’s cover the best practices for organizing the code base for Go applications.
+Best practices
+In this section, you can find a list of best practices for organizing the Go application project structure. 
+It is going to help you to keep your code aligned with thousands of other Go packages and keep it 
+conventional and idiomatic. The best practices of Go project organization include the following:
+•	 Separate private code using an internal directory.
+•	 Get familiar with the way popular open source Go projects, such as https://github.
+com/kubernetes/kubernetes, are organized. This can provide you with great examples 
+of how to structure your repository.
+•	 Split in a sufficiently granular way. Don’t split the packages too early but also avoid having a 
+lot of logic in a single package. Generally, you will find that the easier it is to give a short and 
+specific self-descriptive name to a package, the better your code composition is.
+•	 Avoid long package names.
+•	 Always be ready to change the structure if requirements are changed or if the structure no 
+longer reflects the package name/original intent.
+This sums up the part of the chapter describing the core principles and best practices of Go application 
+development and code organization. Now, we are ready to get to the practical side of this chapter.
+Scaffolding an example application
+We have covered the general recommendations for writing and organizing Go applications and we 
+are finally ready to start writing the code! In this section, we are going to introduce an application, 
+consisting of multiple microservices that are going to be used throughout the book. In each chapter, 
+we are going to add to or improve them, converting them from small examples into production-grade 
+services that are ready to be used.
+You will learn how to scaffold microservice code and split the code into separate logical parts, each 
+having its own role. We are going to apply the project structure and Go knowledge you gained in this 
+chapter to illustrate how to set the right structure for each service and write its code in a conventional 
+and idiomatic way.

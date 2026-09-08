@@ -1,0 +1,33 @@
+Introduction to synchronous communication
+95
+In Chapter 2, we implemented our API handlers by sending the result data as an HTTP response body 
+in JSON format. We achieved this by using the Go JSON encoder:
+if err := json.NewEncoder(w).Encode(details); err != nil {
+    log.Printf("Response encode error: %v\n", err)
+}
+As discussed in the previous chapter, the JSON format is not the most optimal in terms of data size. 
+Also, it does not offer useful tools, such as the cross-language code generation of data structures, that 
+are provided by the formats, such as Protocol Buffers. Additionally, sending requests over HTTP and 
+encoding the data manually is not the only form of communication between the services. There are 
+some existing remote procedure call (RPC) libraries and frameworks that help to communicate 
+between multiple services and offer some additional features to application developers:
+•	 Client and server code generation: Developers can generate the client code for connecting 
+and sending data to other microservices, as well as generate the server code for accepting 
+incoming requests.
+•	 Authentification: Most RPC libraries and frameworks offer authentication options for cross-
+service requests, such as TLS-based and token-based authentication.
+•	 Context propagation: This is the ability to send additional data with requests, such as traces, 
+which we are going to cover in Chapter 11.
+•	 Documentation generation: Thrift can generate HTML documentation for services and data 
+structures.
+In the next section, we are going to cover some of the RPC libraries that you can use in your Go 
+services, along with the features they provide.
+Go RPC frameworks and libraries
+Let’s review some popular RPC frameworks and libraries that are available for Go developers.
+Apache Thrift
+We already covered Apache Thrift in Chapter 4 and mentioned its ability to define RPC services – sets 
+of functions provided by an application, such as a microservice. Here is an example of a Thrift RPC 
+service definition:
+service MetadataService {
+  Metadata get(1: string id)
+}

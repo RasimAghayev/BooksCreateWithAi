@@ -1,0 +1,31 @@
+Collecting service metrics
+231
+Some of the other gauge use cases include the following:
+•	 Number of goroutines running by a service instance
+•	 Number of active connections
+•	 Number of open files
+Histograms are slightly different from counters and gauges. They require us to define a set of ranges 
+that will be used to store the subsets of recorded data. The following are some examples of using 
+histogram metrics:
+•	 Latency tracking: You can track how long it takes to perform a certain service operation by 
+creating a set of buckets representing various duration ranges. For example, your buckets could 
+be 0–100 ms, 100–200 ms, 200–300 ms, and so on.
+•	 Cohort tracking: You can track statistical data, such as the number of records in each group 
+of values. For example, you can track how many users of each age subscribed to your service.
+Now that we have covered some high-level basics of metrics, let’s provide an overview of storing metrics.
+Storing metrics
+Similar to logs, storing metrics in a microservice environment brings some common challenges:
+•	 Collection and aggregation: Metrics need to be collected from all service instances and sent 
+for further aggregation and storage.
+•	 Aggregation: Collected data needs to be aggregated, so various types of metrics, such as 
+counters, would contain the data coming from all service instances. For example, the counter 
+measuring the total number of requests should summarize the data across all service instances.
+Let’s review some of the popular tools that provide such features.
+Prometheus
+Prometheus is a popular open source monitoring solution that provides mechanisms for collecting 
+and querying service metrics, as well as setting up automated alerts for detecting various types of 
+incidents. Prometheus gained popularity in the developer community due to its simple data model 
+and being a very flexible model for data ingestion, which we are going to cover in this section.
+Note
+Did you know that Prometheus is written in Go? You can check its source code on its GitHub 
+page: https://github.com/prometheus/prometheus.

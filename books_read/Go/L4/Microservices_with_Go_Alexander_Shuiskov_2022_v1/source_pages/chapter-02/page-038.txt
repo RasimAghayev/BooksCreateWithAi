@@ -1,0 +1,35 @@
+Go basics
+15
+Writing idiomatic Go code
+This section summarizes the key topics described in the Effective Go document. Following the suggestions 
+provided in this section will help you to keep your code consistent with the official guidelines.
+Naming
+Naming is one of the most important aspects of Go development. Writing Go code in an idiomatic 
+way requires an understanding of its core naming principles:
+•	 Exported names start with an uppercase character.
+•	 When a variable, struct, or interface is imported from another package, its name includes a 
+package name or alias, for example, bytes.Buffer.
+•	 Since references include package names, you should not prefix your names with the package 
+name. If the package name is xml, use the name Reader, not XMLReader—in the second 
+case, the full name would be xml.XMLReader.
+•	 Packages are generally given lowercase, single-word names.
+•	 It is not idiomatic to start the names of getters with the Get prefix. If your function returns the 
+user’s age, call the function Age(), not GetAge(). Using the Set prefix, however, is fine; 
+you can safely call your function SetAge().
+•	 Single-method interfaces are named using the method name plus an er suffix. For example, 
+an interface with a Write function would be called Writer.
+•	 Initialisms and acronyms should have a consistent case. The correct versions would be URL, 
+url and ID, include while Url, Id would be incorrect.
+•	 Variable names should be short rather than long. In general, follow this simple rule—the closer 
+to declaration a name is used, the shorter it should be. For iterating over an array, use i for the 
+index variable.
+Additional naming recommendations include the following:
+•	 The package name should be short, concise, and evocative and should provide context for its 
+contents, for example, json.
+•	 Keep the contents of a package consistent with the name. If you start noticing that a package 
+includes extra logic that has no relationship to the package name, consider exporting it to a 
+separate one or using a more descriptive name.
+•	 Use name abbreviations only if they are widely used (for example, fmt or cmd).
+•	 Avoid name collisions, when possible. For example, if you introduce a set of string functions, 
+avoid calling it strings package because a package with the same name exists in the Go 
+standard library and is already widely used.

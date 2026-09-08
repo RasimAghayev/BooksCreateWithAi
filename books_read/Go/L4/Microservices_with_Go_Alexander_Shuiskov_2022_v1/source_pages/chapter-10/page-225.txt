@@ -1,0 +1,37 @@
+Reliability Overview
+202
+When designing new services or features, ask yourself which operations could be replaced with 
+fallbacks in case of failures. Additionally, check which features and operations are absolutely necessary 
+and which ones can be turned off in case of any failure, such as system overload or losing a part of 
+a system due to an outage. Also, a good practice is to emit additional useful information related to 
+failures, such as logs and metrics, and make it explicit in the code that the fallback is intentional, as 
+in the preceding example.
+Rate limiting and throttling
+As we discussed at the beginning of this chapter, there may be a situation when a microservice is 
+overloaded and can’t handle incoming requests anymore. How can we prevent or mitigate such issues?
+A popular way of preventing such issues is setting a hard limit on the number of requests to be 
+processed in parallel. Such a technique is called rate limiting and can be applied on multiple levels:
+•	 Client level: A client limits the number of simultaneous outgoing requests.
+•	 Server level: A server limits the number of simultaneous incoming requests.
+•	 Network/intermediate level: The number of requests between a server and its clients is controlled 
+by some logic or an intermediate component between them (for example, by a load balancer).
+When a client or a server exceeds the configured number of requests, the result of a request would be 
+an error that should include a special code or message, indicating that a request has been rate limited.
+An example of a rate-limiting indication in the HTTP protocol is a built-in status code, 429 Too 
+Many Requests. When a client receives a response with such a code, it should take this into account 
+by either reducing the call rate or waiting some time until the server can process requests again.
+Client- and server-level rate limiting are often done by each service instance separately: each instance 
+keeps track of the current number of outgoing or incoming requests. The downside of these models 
+is the inability to configure the limits on a global-service level. If you configure each service client 
+instance to send no more than 100 requests per second, you may still receive 100,000 simultaneous 
+requests if there are 1,000 client instances. Such a high number of simultaneous requests could easily 
+overload your service.
+Network-level rate limiting can potentially solve this problem: if rate limiting is performed in a centralized 
+way (for example, by a load balancer that handles requests between the services), the component 
+performing rate limiting can keep track of the total number of requests across all service instances.
+While network-level rate limiters provide more flexibility to configure the settings, they often require 
+additional centralized components (such as load balancers). Because of this, we are going to demonstrate 
+how to use a simpler approach, based on the client level.
+There is a popular package implementing rate limiting in Go, called golang.org/x/time/rate. 
+The package implements the token bucket algorithm—a limiting algorithm that initializes a bucket of 
+some configured maximal size b, decrements its value by 1 on each request, and refills it at a configured 

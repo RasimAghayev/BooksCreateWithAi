@@ -1,0 +1,25 @@
+8
+Deployment with Kubernetes
+As you have reached this chapter, you already know how to bootstrap microservices, set up the logic 
+for accessing the database, implement service APIs, use serialization, and enable asynchronous 
+communication between your microservices. Now, we are ready to cover a topic that is very important 
+in practice—microservice deployment.
+Deployment is a technique of uploading and running your code to one or multiple servers that are often 
+located remotely. Prior to this chapter, we assumed that all services are run locally. We implemented 
+services using static hardcoded local addresses, such as localhost for Kafka. At some point, you will 
+need to run your services remotely—for example, on a remote server or in a cloud, such as Amazon 
+Web Services (AWS) or Microsoft Azure. 
+This chapter will help you to learn how to build and set up your applications for deployments to such 
+remote infrastructure. Additionally, we are going to illustrate how to use one of the most popular 
+deployment and orchestration systems, Kubernetes. You will learn about the benefits it provides, as 
+well as how to set it up for the microservices that we created in the previous chapters.
+In this chapter, we will cover the following topics:
+•	 Preparing application code for deployments
+•	 Deploying via Kubernetes
+•	 Deployment best practices
+Now, let’s proceed to the first part of the chapter, which is going to help you to better understand the 
+core ideas behind the deployment process, and prepare your microservices for deployments.
+Technical requirements
+To complete this chapter, you need Go 1.11+ or above, similar to the previous chapters. Additionally, 
+you will need Docker, which you can download at https://www.docker.com. You will need to 
+register on the Docker website in order to test service deployments in this chapter. 

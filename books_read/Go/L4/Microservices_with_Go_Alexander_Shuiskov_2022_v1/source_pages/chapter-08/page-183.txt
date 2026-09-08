@@ -1,0 +1,31 @@
+Deployment with Kubernetes
+160
+•	 When you perform a deployment of your service, deploy it using a canary configuration first.
+•	 Once you verify that the deployment was successful, make a deployment using a production 
+configuration.
+Canary deployments are strongly recommended for increasing the reliability of your deployments. 
+Testing new changes on a small fraction of traffic helps to reduce the impact of various application 
+bugs and other types of issues that your services can encounter.
+Replace with Continuous Deployment (CD)
+Continuous Deployment (CD) is a technique of making frequent recurring deployments. With CD, 
+services get deployed automatically—for example, on each code change. The main benefit of CD is 
+early deployment failure detection—if any change (such as a Git commit of a new service code) is 
+causing a deployment failure, the failure would often get detected much sooner than in the case of 
+manual deployments.
+You can automate deployments by programmatically monitoring a change log (such as Git commit 
+history), or by using Git hooks—configurable actions that are executed at specific stages of Git changes. 
+With Kubernetes, once you detect a new version of your software, you can trigger a new deployment 
+by using a kubectl apply command.
+Due to the high cadence of version updates, CD requires some tooling for automated checks of service 
+health. We are going to cover such tooling later in Chapter 11 and Chapter 12 of this book.
+Summary
+In this chapter, we have covered a very important topic—service deployments. You have learned about the 
+basics of the service deployment process, as well as the necessary steps for preparing our microservices 
+for deployment. Then, we introduced Kubernetes, a popular deployment and orchestration platform 
+that is now provided by many companies and cloud providers. We have illustrated how to set up a 
+local Kubernetes cluster and deploy our microservices to it, running multiple instances of each service 
+to illustrate how easy is to run any arbitrary number of instances within the Kubernetes platform. 
+The knowledge you gained should help you to set up more complex deployment processes, as well as 
+to work with the services that are already deployed via Kubernetes.
+This chapter summarizes our material on service deployments. In the next chapter, we are going to 
+describe another important topic: unit and integration.

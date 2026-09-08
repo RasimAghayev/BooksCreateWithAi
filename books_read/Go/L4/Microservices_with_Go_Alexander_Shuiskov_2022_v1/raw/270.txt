@@ -1,0 +1,7 @@
+Tracing
+247
+Figure 11.5 – Jaeger UI
+4.	
+Select the movie service in the Service field and click Find Traces. You should see some trace 
+results, as shown here:
+Figure 11.6 – Jaeger traces for the movie service

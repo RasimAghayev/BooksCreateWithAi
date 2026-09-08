@@ -1,0 +1,32 @@
+Summary
+289
+Summary
+With that, we have finished the last chapter of this book by reviewing lots of microservice development 
+topics that were not included in the previous chapters. You learned how to profile Go services, create 
+microservice dashboards so that you can monitor their performance, define and store microservice 
+ownership data, and secure microservice communication with JWTs. I hope that you have found 
+lots of interesting tips in this chapter that will help you build scalable, highly performant, and 
+secure microservices.
+The Go language keeps evolving, as well as the tooling for it. Each day, developers release new libraries 
+and tools for it that can solve various microservice development problems that we described in this 
+book. While this book provided you with lots of tips on Go microservice development, you should 
+keep improving your skills and make your services simpler and easier to maintain.
+I also want to thank you for reading this book. I hope you enjoyed reading it and gained lots of useful 
+experience that will help you in mastering the art of Go microservice development. Let your Go 
+microservices be highly performant, secure, and easy to maintain!
+Further reading
+To learn more about the topics that were covered in this chapter, take a look at the following resources:
+•	 Profiling Go Programs: https://go.dev/blog/pprof
+•	 Grafana documentation: https://grafana.com/docs/
+•	 Grafana support for Prometheus: https://prometheus.io/docs/visualization/
+grafana/
+•	 Top Go frameworks: https://github.com/mingrammer/go-web-framework-
+stars
+•	 JSON web token: https://jwt.io/
+•	 JSON Web Token (JWT) Signing Algorithms Overview: https://auth0.com/blog/
+json-web-token-signing-algorithms-overview/
+We suggest that you use these resources to stay up to date with the latest news related to Go 
+microservice development:
+•	 The Go blog: https://go.dev/blog/
+•	 Microservice architecture: https://microservices.io
+•	 A curated list of awesome Go software: https://github.com/avelino/awesome-go

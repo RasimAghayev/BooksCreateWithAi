@@ -1,0 +1,37 @@
+Deployment with Kubernetes
+150
+Important note
+Note that invalid configuration changes are among the top causes of service outages in most 
+production systems. I suggest you explore various ways of automatically validating configuration 
+files as a part of the code commit flow. An example of Git-based YAML configuration validation 
+is provided in the following article: https://ruleoftech.com/2017/git-pre-
+commit-and-pre-receive-hooks-validating-yaml.
+Let’s review our microservice code and see which settings can be extracted from the application 
+configuration:
+1.	
+Our metadata service does not have any settings other than its gRPC handler address, 
+localhost:8081, which you can find in its main.go file:
+lis, err := net.Listen("tcp", fmt.Sprintf("localhost:%v", 
+port))
+2.	
+We can extract this setting to the service configuration. A YAML configuration file with this 
+setting would look like this:
+api:
+  port: 8081
+3.	
+Let’s make the changes for reading the configuration from a file. Inside the metadata/cmd 
+directory, create a config.go file and add the following code to it:
+package main
+ 
+type serviceConfig struct {
+  APIConfig apiConfig `yaml:"api"`
+}
+ 
+type apiConfig struct {
+  Port string `yaml:"port"`
+}
+4.	
+In addition to this, create a configs directory inside the metadata service directory and 
+add a base.yaml file to it with the following contents:
+api:
+  port: 8081

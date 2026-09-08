@@ -1,0 +1,35 @@
+Integration tests
+181
+GetMovieDetails(ctx, &gen.GetMovieDetailsRequest{MovieId: 
+m.Id})
+    if err != nil {
+        log.Fatalf("get movie details: %v", err)
+    }
+    if diff := cmp.Diff(getMovieDetailsResp.MovieDetails, 
+wantMovieDetails, cmpopts.IgnoreUnexported(gen.MovieDetails{}, 
+gen.Metadata{})); diff != "" {
+        log.Fatalf("get movie details after put mismatch: %v", 
+err)
+    }
+Now, we are ready to test the rating service. 
+Let’s implement two tests – one for writing a rating and one for retrieving the initial aggregated value, 
+which should match the first rating:
+    log.Println("Saving first rating via rating service")
+    const userID = "user0"
+    const recordTypeMovie = "movie"
+    firstRating := int32(5)
+    if _, err = ratingClient.PutRating(ctx, &gen.
+PutRatingRequest{
+        UserId:      userID,
+        RecordId:    m.Id,
+        RecordType:  recordTypeMovie,
+        RatingValue: firstRating,
+    }); err != nil {
+        log.Fatalf("put rating: %v", err)
+    }
+    log.Println("Retrieving initial aggregated rating via 
+rating service")
+    getAggregatedRatingResp, err := ratingClient.
+GetAggregatedRating(ctx, &gen.GetAggregatedRatingRequest{
+        RecordId:   m.Id,
+        RecordType: recordTypeMovie,

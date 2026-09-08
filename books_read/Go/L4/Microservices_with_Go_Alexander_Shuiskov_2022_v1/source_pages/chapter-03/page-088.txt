@@ -1,0 +1,37 @@
+Adopting service discovery
+65
+}
+type serviceInstance struct {
+    hostPort   string
+    lastActive time.Time
+}
+// NewRegistry creates a new in-memory service
+// registry instance.
+func NewRegistry() *Registry {
+    return &Registry{serviceAddrs: map[serviceName]
+map[instanceID]*serviceInstance{}}
+}
+2.	
+Let’s implement our Register and Deregister functions:
+// Register creates a service record in the registry.
+func (r *Registry) Register(ctx context.Context, 
+instanceID string, serviceName string, hostPort string) 
+error {
+    r.Lock()
+    defer r.Unlock()
+    if _, ok := r.serviceAddrs[serviceName]; !ok {
+        r.serviceAddrs[serviceName] = 
+map[string]*serviceInstance{}
+    }
+    r.serviceAddrs[serviceName][instanceID] = 
+&serviceInstance{hostPort: hostPort, lastActive: time.
+Now()}
+    return nil
+}
+// Deregister removes a service record from the
+// registry.
+func (r *Registry) Deregister(ctx context.Context, 
+instanceID string, serviceName string) error {
+    r.Lock()
+    defer r.Unlock()
+    if _, ok := r.serviceAddrs[serviceName]; !ok {

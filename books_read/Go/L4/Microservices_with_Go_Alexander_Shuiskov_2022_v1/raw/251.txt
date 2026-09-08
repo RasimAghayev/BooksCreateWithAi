@@ -1,0 +1,35 @@
+Collecting Service Telemetry Data
+228
+Periodically review your log data
+Once you start collecting your service logs, it is important to periodically review them. Look out for 
+the following cases:
+•	 Make sure there is no PII data in logs: Personally identifiable information (PII), such as 
+full names and SSNs, falls under many regulations and generally must not be stored in logs. 
+Make sure that no component, such as an API handler or a repository component, emits any 
+such data, even for debugging.
+•	 Check that your service doesn’t emit extra debug data: Sometimes, developers log some 
+additional data, such as request fields, to debug various issues. Check that no service is 
+continuously emitting too many debug messages during a prolonged period, polluting the logs 
+and using too much disk space.
+Set up appropriate log retention
+Log data often takes a lot of space to store. If it keeps growing in size without any additional actions 
+being taken, you may end up using all your disk space and having to urgently clean up the old records. 
+To prevent this, various log storage solutions allow you to configure retention policies for your data. 
+For example, you can configure your log storage to keep the logs for some services for up to a few years, 
+while limiting some other services to just a few days, depending on the requirements. Additionally, you 
+can set some size constraints so that the logs of your services don’t exceed a predefined size threshold.
+Ensure you set retention policies for all types of your logs, avoiding situations when you need to clean 
+up unneeded log records manually.
+Identify the message source in logs
+Imagine that you are viewing your system logs and notice the following error event:
+{"level":"error", "time":"2022-09-04T20:10:10+1:00","message":"
+Request timed out"}
+Can you understand the problem described in this event? The log record includes the Request 
+timed out error message and has the error level, but it does not provide any meaningful context 
+to us. Without any additional context, we can’t easily understand the problem that caused the log event.
+Providing the context of any log message is crucial for making it easy to work with the logs. This is 
+especially important in a microservice environment, where similar operations can be performed by 
+multiple services or components. It should always be easy to understand each message and have some 
+reference to the component it is coming from. In this section, we already mentioned the practice of 
+including some additional information, such as the name of the component, in a log event. Such 
+metadata would generally include the following:
