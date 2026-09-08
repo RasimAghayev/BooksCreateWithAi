@@ -1,0 +1,77 @@
+{
+  "book": "Go. Рецепты программирования (Go Programming Cookbook, Second Edition)",
+  "chapters": [
+    {
+      "chapter": 1,
+      "title": "Ввод-вывод и файловые системы",
+      "start_page": 23,
+      "end_page": 57
+    },
+    {
+      "chapter": 2,
+      "title": "Инструменты командной строки",
+      "start_page": 58,
+      "end_page": 92
+    },
+    {
+      "chapter": 3,
+      "title": "Преобразование данных и композиция",
+      "start_page": 93,
+      "end_page": 132
+    },
+    {
+      "chapter": 4,
+      "title": "Обработка ошибок в Go",
+      "start_page": 133,
+      "end_page": 162
+    },
+    {
+      "chapter": 5,
+      "title": "Сетевое программирование",
+      "start_page": 163,
+      "end_page": 190
+    },
+    {
+      "chapter": 6,
+      "title": "Все о базах данных и хранилищах",
+      "start_page": 191,
+      "end_page": 217
+    },
+    {
+      "chapter": 7,
+      "title": "Веб-клиенты и API",
+      "start_page": 218,
+      "end_page": 260
+    },
+    {
+      "chapter": 8,
+      "title": "Микросервисы для приложений в Go",
+      "start_page": 261,
+      "end_page": 296
+    },
+    {
+      "chapter": 9,
+      "title": "Тестирование Go-кода",
+      "start_page": 297,
+      "end_page": 330
+    },
+    {
+      "chapter": 10,
+      "title": "Параллелизм и конкурентность",
+      "start_page": 331,
+      "end_page": 360
+    },
+    {
+      "chapter": 11,
+      "title": "Распределенные системы",
+      "start_page": 361,
+      "end_page": 395
+    },
+    {
+      "chapter": 12,
+      "title": "Реактивное программирование и потоки данных",
+      "start_page": 396,
+      "end_page": 464
+    }
+  ]
+}

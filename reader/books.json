@@ -473,6 +473,47 @@
       "filename_safe": "Microservices_with_Go_Alexander_Shuiskov_2022_v1",
       "workspace": "Books/Microservices_with_Go_Alexander_Shuiskov_2022_v1",
       "fingerprint": "microservices with go|alexander shuiskov|2022|1"
+    },
+    {
+      "book_id": "data_structures_algorithms_go_2024_v1",
+      "title": "Data Structures and Algorithms with Go",
+      "author": "Dušan Stojanović",
+      "year": 2024,
+      "version": 1,
+      "pages": 487,
+      "status": "reading",
+      "started_at": "2026-09-08",
+      "filename_safe": "Data_Structures_and_Algorithms_with_Go_Dusan_Stojanovic_2024_v1",
+      "workspace": "Books/Data_Structures_and_Algorithms_with_Go_Dusan_Stojanovic_2024_v1",
+      "fingerprint": "data structures and algorithms with go|dušan stojanović|2024|1"
+    },
+    {
+      "book_id": "go_recipes_torres_2019_v2",
+      "title": "Go. Рецепты программирования (Go Programming Cookbook, 2nd ed)",
+      "author": "Аарон Торрес (Aaron Torres)",
+      "year": 2019,
+      "version": "2nd Edition",
+      "pages": 464,
+      "status": "reading",
+      "started_at": "2026-09-08",
+      "filename_safe": "Go_Recipes_Aaron_Torres_2019_v2",
+      "workspace": "Books/Go_Recipes_Aaron_Torres_2019_v2",
+      "telegram_upload": "",
+      "fingerprint": "go. рецепты программирования|аарон торрес|2019|2nd edition"
+    },
+    {
+      "book_id": "lets_go_further_2022_v1",
+      "title": "Let's Go Further",
+      "author": "Alex Edwards",
+      "year": 2022,
+      "version": 1,
+      "pages": 590,
+      "status": "reading",
+      "started_at": "2026-09-08",
+      "filename_safe": "Lets_Go_Further_Alex_Edwards_2022_v1",
+      "workspace": "Books/Lets_Go_Further_Alex_Edwards_2022_v1",
+      "telegram_upload": "",
+      "fingerprint": "let's go further|alex edwards|2022|1"
     }
   ]
 }

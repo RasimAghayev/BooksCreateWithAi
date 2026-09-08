@@ -1,0 +1,20 @@
+{
+  "book_id": "go_recipes_torres_2019_v2",
+  "filename_safe": "Go_Recipes_Aaron_Torres_2019_v2",
+  "pipeline_step": "knowledge_extraction",
+  "current_page": 23,
+  "chapter": 0,
+  "git_committed_through_chapter": 0,
+  "telegram_upload_status": {
+    "RA_GO": "pending",
+    "RA_ALL": "pending"
+  },
+  "finalization": {
+    "upload": "pending",
+    "move": "pending",
+    "git_commit": "pending",
+    "delete_original": "pending",
+    "delete_state": "pending"
+  },
+  "last_updated": "2026-09-08T12:45:00Z"
+}
