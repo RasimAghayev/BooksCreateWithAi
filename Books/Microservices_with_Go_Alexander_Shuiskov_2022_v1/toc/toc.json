@@ -1,0 +1,113 @@
+{
+  "chapters": [
+    {
+      "chapter": 1,
+      "title": "Introduction to Microservices",
+      "book_start_page": 1,
+      "book_end_page": 12,
+      "pdf_start_page": 24,
+      "pdf_end_page": 35
+    },
+    {
+      "chapter": 2,
+      "title": "Scaffolding a Go Microservice",
+      "book_start_page": 13,
+      "book_end_page": 54,
+      "pdf_start_page": 36,
+      "pdf_end_page": 77
+    },
+    {
+      "chapter": 3,
+      "title": "Service Discovery",
+      "book_start_page": 55,
+      "book_end_page": 76,
+      "pdf_start_page": 78,
+      "pdf_end_page": 99
+    },
+    {
+      "chapter": 4,
+      "title": "Serialization",
+      "book_start_page": 77,
+      "book_end_page": 92,
+      "pdf_start_page": 100,
+      "pdf_end_page": 115
+    },
+    {
+      "chapter": 5,
+      "title": "Synchronous Communication",
+      "book_start_page": 93,
+      "book_end_page": 114,
+      "pdf_start_page": 116,
+      "pdf_end_page": 137
+    },
+    {
+      "chapter": 6,
+      "title": "Asynchronous Communication",
+      "book_start_page": 115,
+      "book_end_page": 132,
+      "pdf_start_page": 138,
+      "pdf_end_page": 155
+    },
+    {
+      "chapter": 7,
+      "title": "Storing Service Data",
+      "book_start_page": 133,
+      "book_end_page": 146,
+      "pdf_start_page": 156,
+      "pdf_end_page": 169
+    },
+    {
+      "chapter": 8,
+      "title": "Deployment with Kubernetes",
+      "book_start_page": 147,
+      "book_end_page": 162,
+      "pdf_start_page": 170,
+      "pdf_end_page": 185
+    },
+    {
+      "chapter": 9,
+      "title": "Unit and Integration Testing",
+      "book_start_page": 163,
+      "book_end_page": 192,
+      "pdf_start_page": 186,
+      "pdf_end_page": 215
+    },
+    {
+      "chapter": 10,
+      "title": "Reliability Overview",
+      "book_start_page": 193,
+      "book_end_page": 214,
+      "pdf_start_page": 216,
+      "pdf_end_page": 237
+    },
+    {
+      "chapter": 11,
+      "title": "Collecting Service Telemetry Data",
+      "book_start_page": 215,
+      "book_end_page": 250,
+      "pdf_start_page": 238,
+      "pdf_end_page": 273
+    },
+    {
+      "chapter": 12,
+      "title": "Setting Up Service Alerting",
+      "book_start_page": 251,
+      "book_end_page": 266,
+      "pdf_start_page": 274,
+      "pdf_end_page": 289
+    },
+    {
+      "chapter": 13,
+      "title": "Advanced Topics",
+      "book_start_page": 267,
+      "book_end_page": 290,
+      "pdf_start_page": 290,
+      "pdf_end_page": 313
+    }
+  ],
+  "page_offset": 23,
+  "project_continuity": true,
+  "project_name": "Movie application (metadata, rating, movie services)",
+  "chapters_involved": "all",
+  "note": "Kitab boyu tək layihə: Movie aplikasiyası (metadata/rating/movie mikroservisləri) sıfırdan qurulur"
+}
