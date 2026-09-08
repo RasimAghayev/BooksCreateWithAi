@@ -1,6 +1,7 @@
 {
-  "current_book": null,
+  "book_id": null,
+  "title": null,
   "status": "none",
   "started_at": null,
-  "note": "Go Recipes (go_recipes_torres_2019_v2) tamamlandı. 33 kitab completed. next/ALL_START davam edə bilər."
+  "note": "Build systems with Go (build_systems_with_go_2021_v1) tamamlandı. 33 kitab completed. ALL_START davam edir."
 }

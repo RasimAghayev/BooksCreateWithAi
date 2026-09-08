@@ -442,7 +442,8 @@
       "year": 2024,
       "version": 1,
       "pages": 372,
-      "status": "reading",
+      "status": "completed",
+      "completed_at": "2026-09-08",
       "started_at": "2026-09-08",
       "filename_safe": "System Programming Essentials with Go - Alex Rios - 2024 - v1"
     },
@@ -527,11 +528,13 @@
       "year": 2021,
       "version": "v0.1.0",
       "pages": 472,
-      "status": "reading",
+      "status": "completed",
       "started_at": "2026-09-08",
       "filename_safe": "Build_Systems_with_Go_Juan_M_Tirado_2021_v1",
       "fingerprint": "build systems with go: everything a gopher must know|juan m. tirado|2021|v0.1.0",
-      "workspace": "Books/Build_Systems_with_Go_Juan_M_Tirado_2021_v1"
+      "workspace": "books_read/Go/L2/Build_Systems_with_Go_Juan_M_Tirado_2021_v1",
+      "completed_at": "2026-09-08",
+      "telegram_upload": "done"
     }
   ]
 }
