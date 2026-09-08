@@ -1,0 +1,11 @@
+{
+  "book_id": "learn_go_pocket_sized_projects_2023_v1",
+  "filename_safe": "Learn_Go_with_Pocket_Sized_Projects_2023_v1",
+  "fingerprint": "learn go with pocket-sized projects|alienor latour|2023|1",
+  "pipeline_step": "raw_extraction_done",
+  "source_pdf": "Books/learn-go-with-pocket-sized-projects.pdf",
+  "raw_dir": "Books/Learn_Go_with_Pocket_Sized_Projects_2023_v1/raw",
+  "chapters_found": {"1": 33, "2": 46, "3": 79, "4": 122, "5": 154, "6": 203, "7": 282, "8": 328, "9": 393, "10": 452, "11": 519, "12": 581},
+  "appendix_start": 640,
+  "last_updated": "2026-09-08T07:20:00Z"
+}
