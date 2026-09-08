@@ -1,0 +1,39 @@
+{
+  "📘 title_original": "Build an Orchestrator in Go (From Scratch)",
+  "🔤 filename_safe": "Build_an_Orchestrator_in_Go_Tim_Boring_2024_v1",
+  "📚 book": {
+    "📖 title": "Build an Orchestrator in Go (From Scratch)",
+    "🧑‍💻 author": "Tim Boring",
+    "📅 year": 2024,
+    "📖 version": 1,
+    "📄 pages": 410,
+    "🔢 isbn": "978-1633438067",
+    "🏢 publisher": "Manning",
+    "📚 series": ""
+  },
+  "🎯 classification": {
+    "💻 primary_language": "Go",
+    "🎯 level": 4,
+    "📛 level_name": "Advanced",
+    "🌟 level_icon": "📕",
+    "🌐 domains": ["Distributed Systems", "Systems Programming", "DevOps", "Container Orchestration"]
+  },
+  "🛠️ technologies": ["Go", "Docker Engine API", "containers", "goroutines", "REST API", "metrics", "/proc filesystem", "gopsutil", "BoltDB", "Cobra CLI", "scheduling algorithms", "health checks", "cgroups"],
+  "🏷️ tags": ["#go", "#golang", "#orchestrator", "#distributed_systems", "#docker", "#containers", "#scheduling", "#advanced", "#manning"],
+  "📦 workspace": "books_read/Go/L4/Build_an_Orchestrator_in_Go_Tim_Boring_2024_v1",
+  "📑 chapters": [
+    {"chapter": 1, "title": "What is an orchestrator?", "start_page": 24, "end_page": 58},
+    {"chapter": 2, "title": "From mental model to skeleton code", "start_page": 59, "end_page": 77},
+    {"chapter": 3, "title": "Hanging some flesh on the task skeleton", "start_page": 78, "end_page": 103},
+    {"chapter": 4, "title": "Workers of the Cube, unite!", "start_page": 104, "end_page": 128},
+    {"chapter": 5, "title": "An API for the worker", "start_page": 129, "end_page": 154},
+    {"chapter": 6, "title": "Metrics", "start_page": 155, "end_page": 177},
+    {"chapter": 7, "title": "The manager enters the room", "start_page": 178, "end_page": 202},
+    {"chapter": 8, "title": "An API for the manager", "start_page": 203, "end_page": 226},
+    {"chapter": 9, "title": "What could possibly go wrong?", "start_page": 227, "end_page": 259},
+    {"chapter": 10, "title": "Implementing a more sophisticated scheduler", "start_page": 260, "end_page": 296},
+    {"chapter": 11, "title": "Implementing persistent storage for tasks and events", "start_page": 297, "end_page": 341},
+    {"chapter": 12, "title": "Building a command-line interface", "start_page": 342, "end_page": 382},
+    {"chapter": 13, "title": "Now what?", "start_page": 383, "end_page": 404}
+  ]
+}
