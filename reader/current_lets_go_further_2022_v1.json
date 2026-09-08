@@ -1,0 +1,18 @@
+{
+  "book_id": "lets_go_further_2022_v1",
+  "filename_safe": "Lets_Go_Further_Alex_Edwards_2022_v1",
+  "fingerprint": "let's go further|alex edwards|2022|1",
+  "pipeline_step": "raw_extraction",
+  "current_page": 0,
+  "chapter": 0,
+  "git_committed_through_chapter": 0,
+  "telegram_upload_status": {},
+  "finalization": {
+    "upload": "pending",
+    "move": "pending",
+    "git_commit": "pending",
+    "delete_original": "pending",
+    "delete_state": "pending"
+  },
+  "last_updated": "2026-09-08T12:10:00Z"
+}

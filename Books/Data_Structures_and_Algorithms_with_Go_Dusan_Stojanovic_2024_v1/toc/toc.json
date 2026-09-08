@@ -1,0 +1,51 @@
+[
+  {
+    "chapter": 1,
+    "title": "Fundamentals of Data Structures and Algorithms",
+    "pages": "34-84",
+    "start_page": 34,
+    "end_page": 84
+  },
+  {
+    "chapter": 2,
+    "title": "Arrays and Algorithms for Searching and Sorting",
+    "pages": "85-159",
+    "start_page": 85,
+    "end_page": 159
+  },
+  {
+    "chapter": 3,
+    "title": "Lists",
+    "pages": "160-202",
+    "start_page": 160,
+    "end_page": 202
+  },
+  {
+    "chapter": 4,
+    "title": "Stack and Queue",
+    "pages": "203-247",
+    "start_page": 203,
+    "end_page": 247
+  },
+  {
+    "chapter": 5,
+    "title": "Hashing and Maps",
+    "pages": "248-278",
+    "start_page": 248,
+    "end_page": 278
+  },
+  {
+    "chapter": 6,
+    "title": "Trees and Traversal Algorithms",
+    "pages": "279-341",
+    "start_page": 279,
+    "end_page": 341
+  },
+  {
+    "chapter": 7,
+    "title": "Graphs and Traversal Algorithms",
+    "pages": "342-487",
+    "start_page": 342,
+    "end_page": 487
+  }
+]
