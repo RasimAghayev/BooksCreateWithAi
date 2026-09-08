@@ -427,11 +427,13 @@
       "year": 2022,
       "version": 1,
       "pages": 384,
-      "status": "reading",
+      "status": "completed",
       "started_at": "2026-09-08",
       "filename_safe": "Event_Driven_Architecture_in_Golang_2022_v1",
-      "workspace": "Books/Event_Driven_Architecture_in_Golang_2022_v1",
-      "fingerprint": "event-driven architecture in golang|michael stack|2022|1"
+      "workspace": "books_read/Go/L4/Event_Driven_Architecture_in_Golang_2022_v1",
+      "fingerprint": "event-driven architecture in golang|michael stack|2022|1",
+      "completed_at": "2026-09-08",
+      "telegram_upload": "done"
     }
   ]
 }
