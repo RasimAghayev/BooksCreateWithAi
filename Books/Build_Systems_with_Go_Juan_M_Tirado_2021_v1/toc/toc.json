@@ -1,0 +1,25 @@
+{
+  "chapters": [
+    {"chapter": 1, "title": "First steps with Go", "start_page": 10, "end_page": 20},
+    {"chapter": 2, "title": "The basics", "start_page": 21, "end_page": 51},
+    {"chapter": 3, "title": "Arrays, slices, and maps", "start_page": 52, "end_page": 63},
+    {"chapter": 4, "title": "Structs, methods, and interfaces", "start_page": 64, "end_page": 82},
+    {"chapter": 5, "title": "Reflection", "start_page": 83, "end_page": 101},
+    {"chapter": 6, "title": "Concurrency", "start_page": 102, "end_page": 142},
+    {"chapter": 7, "title": "Input/Output", "start_page": 143, "end_page": 156},
+    {"chapter": 8, "title": "Encodings", "start_page": 157, "end_page": 182},
+    {"chapter": 9, "title": "HTTP", "start_page": 183, "end_page": 207},
+    {"chapter": 10, "title": "Templates", "start_page": 208, "end_page": 220},
+    {"chapter": 11, "title": "Testing", "start_page": 221, "end_page": 251},
+    {"chapter": 12, "title": "Modules and documentation", "start_page": 252, "end_page": 259},
+    {"chapter": 13, "title": "Protocol buffers", "start_page": 260, "end_page": 281},
+    {"chapter": 14, "title": "gRPC", "start_page": 282, "end_page": 325},
+    {"chapter": 15, "title": "Logging with Zerolog", "start_page": 326, "end_page": 348},
+    {"chapter": 16, "title": "Command Line Interface", "start_page": 349, "end_page": 380},
+    {"chapter": 17, "title": "Relational databases", "start_page": 381, "end_page": 413},
+    {"chapter": 18, "title": "NoSQL databases", "start_page": 414, "end_page": 432},
+    {"chapter": 19, "title": "Kafka", "start_page": 433, "end_page": 472}
+  ],
+  "project_continuity": false,
+  "note": "19 self-contained chapters; code repo: https://github.com/juanmanuel-tirado/savetheworldwithgo"
+}
