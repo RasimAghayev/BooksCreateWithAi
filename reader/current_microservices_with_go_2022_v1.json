@@ -9,6 +9,8 @@
   "chapters_processed": [],
   "git_committed_through_chapter": 0,
   "telegram_upload_status": {},
-  "finalization": {},
+  "finalization": {
+    "upload": "packaged"
+  },
   "started_at": "2026-09-08"
 }
