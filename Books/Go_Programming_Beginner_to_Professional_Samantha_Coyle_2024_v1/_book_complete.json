@@ -1,0 +1,11 @@
+{
+  "book_id": "go_programming_beginner_pro_2024_v1",
+  "title": "Go Programming - From Beginner to Professional",
+  "author": "Samantha Coyle",
+  "year": 2024,
+  "version": 1,
+  "chapters_total": 21,
+  "chapters_processed": 21,
+  "info_files": ["summary.az.md", "terminology.az.md", "teacher-notes.az.md", "cheatsheet.az.md"],
+  "completed_at": "2026-09-08"
+}
