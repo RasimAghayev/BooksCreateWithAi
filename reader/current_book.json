@@ -1,19 +1,6 @@
 ﻿{
-  "book_id": "beyond_effective_go_p2_2024_v1",
-  "title": "Beyond Effective Go: Part 2 - Striving for High-Quality Code",
-  "author": "Corey Scott",
-  "year": 2024,
-  "version": 1,
-  "pages": 357,
-  "status": "reading",
-  "started_at": "2026-09-07",
-  "filename_safe": "Beyond_Effective_Go_Corey_Scott_2024_v1",
-  "workspace": "Books/Beyond_Effective_Go_Corey_Scott_2024_v1",
-  "fingerprint": "beyond effective go: part 2 - striving for high-quality code|corey scott|2024|1",
-  "pipeline_step": "raw_extraction_done",
-  "source_pdf": "Books/Beyond_Effective_Go_Part_2_-_Corey_Scott.pdf",
-  "raw_dir": "Books/Beyond_Effective_Go_Corey_Scott_2024_v1/raw",
-  "chapters_found": {"4": 18, "5": 69, "6": 148, "7": 237, "8": 277, "9": 317},
-  "last_updated": "2026-09-07T23:45:00Z"
+  "current_book": null,
+  "status": "none",
+  "started_at": null,
+  "note": "Beyond Effective Go Part 2 (beyond_effective_go_p2_2024_v1) tamamlandı. 25 kitab completed. ALL_START davam edir."
 }
-
