@@ -1,129 +1,168 @@
-# Chapter 1 — Meet Go (səh. 33-45)
+# Chapters 1-2 — Meet Go, Hello Earth (səh. 33-78)
 
-## Bu fəsil nədən bəhs edir?
+## Bu fəsillər nədən bəhs edir?
 
-Kitabın metodu (pocket-sized layihələrlə öyrənmə — John Dewey 1897 "doing
-is the best way to learn"), Go-nun mənşəyi (2007, Google: Griesemer/Thompson/
-Pike — yavaş build, asılılıq idarəetməsi, mürəkkəb kod problemləri), 25
-rezerv açar söz sadəliyi, zəngin alət dəsti (compile/format/dependency/
-static-analysis/test/doc/profiling/LSP/trace), 2024 Developer Survey (1.
-API/RPC, 2. CLI, 3. kitabxana/framework, HTML web, avtomatlaşdırma, agents;
-7% embedded, 4% oyun, 4% AI), karyera sahələri (fintech/medtech/aerospace/
-satellite), goroutine-lərin üstünlüyü (resizable bounded stack, bir neçə
-KB başlanğıc → yüzlərlə min eyni adres fəzasında), composition + implicit
-interfeyslər (miras YOX), generics 1.18 (slice/map filter boilerplate),
-compile-time sintaksis xətaları, cloud dəstəyi (Kubernetes/Docker Go-da
-yazılıb), Go-nun ZƏİF tərəfləri (GC = tam yaddaş nəzarəti YOX — C/cgo;
-binari kitabxana "painfully achievable"; yenidən qurulma məcburiyyəti; böyük
-binary — TinyGo; "Googling for Go" → golang axtarış hiyləsi), dil müqayisə
-cedvəli (C++/Python/Java/Go: errors are values, goroutines+kanallar, implicit
-interfeys, built-in test/bench/fuzz), pocket-layihə fəlsəfəsi (grammar →
-service-ə qədər; interfeys implisitliyi = mock/DI dünyası; goroutine-lərə
-az diqqət — sadəcə 1 layihə; errors as values), unit test hər yerdə (ch12
-istisna), fuzzing (random dəyərlər = vulnerability yoxlama), clean code
-(Eagleson's Law — 6 ay sonra öz kodun yad kodur; domain-driven təşkilat),
-arxitektura layihələri (HTML/HTTP vs Protobuf/gRPC — sevimli protokolu
-SEÇ; logger; anti-corruption layer; keş), alət dəsti + ch12 (microcontrollers,
-WebAssembly), side quests (əlavə məşqlər).
+Go-ya giriş: dilin tarixi və fəlsəfəsi (sadəlik — 25 açar söz), müasir
+sənaye ehtiyacları (backend, cloud), test/benchmark/fuzz alətləri. Sonra ilk
+layihə: hello world-dən çoxdilli salamlama CLI-sına — test, custom tip, switch,
+map, table-driven test, flag paketi.
 
 ## Əsas fikirlər
 
-### 1. Go Niyə Yaradıldı?
-- **2007, Google (Griesemer/Thompson/Pike):** yavaş proqram qurulması +
-  asılılıq idarəetməsi + mürəkkəblik + cross-language çətinliyi
-- **Həll fəlsəfəsi:** memory idarəetməsini aradan qaldır + paralel kodu
-  SADƏ et + zəngin alət dəsti (compile→trace hamısı daxili)
-- **25 rezerv söz** (2024 noyabr): sadəlik = sürətli öyrənmə
+### 1. Go nədir? (Ch1)
+- **Mənşə:** Google-də böyük miqyaslı problemlər üçün: yavaş build, asılılıq
+  idarəsi, mürəkkəblik. **Sadəlik idarə edir** — 25 reserved keyword (2024).
+- **Müasir sənaye üçün:** unit test, benchmarking, fuzzing, formatting (gofmt)
+  — hamısı daxili alətlər.
+- **Generics:** 1.18-dən — type-safe yenidən istifadə, boilerplate azaldır.
+- **Harada YARAMIR:** OS yazmaq (GC — yaddaş nəzarəti məhdud), desktop GUI zəif.
+- **Dil müqayisəsi:** C++/Python/Java vs Go — statik tip, errors-are-values,
+  multiparadigm, daxili test alətləri.
+- **Pedaqogika:** John Dewey — "etmək öyrənməyin ən yaxşı yoludur"; kitabın 12
+  layihəsi bunun üzərində.
 
-### 2. 2024 İstifadə Sırası
-1. API/RPC servis (ən çox!) 2. CLI 3. Kitabxana/framework 4. HTML web
-5. Avtomatlaşdırma/data 6. Agents/daemons; 7% embedded; 4% oyun; 4% AI/ML
-- Karyera: fintech/medtech/foodtech/gaming/music/e-commerce/aerospace/
-  satellite — tələb YÜKSƏK
+### 2. İlk proqram: hello, world + Example test (Ch2)
+```go
+package main
 
-### 3. Goroutine Üstünlüyü
-| Thread (OS) | Goroutine (app səviyyəsi) |
-|---|---|
-| OS-dan asılı; CPU limitli | runtime idarəli |
-| böyük stack | **resizable bounded:** bir neçə KB başlanğıc, böyüyüb-kiçilir |
-| minik sayda | **yüzlər min** eyni adres fəzasında |
+import "fmt"
 
-### 4. OOP-siz OOP xüsusiyyətləri
-- Miras YOX → **composition + embedded tiplər** (miras-vari davranış,
-  mürəkkəbliyi olmadan)
-- **Implicit interfeyslər:** metodu İMPLEMENT etmək kifayətdir (elan YOX) —
-  "bilmədən interfeys implement edirsən"; mock/stub/DI dünyası açılır
-- **Generics (1.18):** filter/map boilerplate-i kəsdi; type-safe reuse
+func main() {
+    greeting := greet()
+    fmt.Println(greeting)
+}
 
-### 5. Güclü Tərəflər
-- Compile-time xətalar (runtime YOX) + FAST build
-- API/cloud-native: Kubernetes, Docker, lambda-lar — hamısı Go
-- Sürətli oxuma-yazma: turnover ~1 il → başqasının kodu = SƏNİN problemən
+// greet returns a greeting to the world.
+func greet() string {
+    return "Hello world"
+}
+```
+**Example test (stdout yoxlaması):**
+```go
+func ExampleMain() {
+    main()
+    // Output:
+    // Hello world
+}
+```
+- `// Output:` şərhindən sonrakı sətirlər standart çıxışla müqayisə olunur
+- Example həm test, həm DOKUMENTASİYADIR (godoc-da görünür)
 
-### 6. Zəif Tərəflər (namuslu siyahı!)
-| Problem | Detal / Həll |
-|---|---|
-| GC | tam yaddaş nəzarəti YOX → C ailəsi; cgo wrapper (kitabda YOX) |
-| Library binary | "painfully achievable"; asılılıq = yenidən build + mənbə |
-| OS yazmaq | GC vaxtı/şəkli səndə deyil |
-| Böyük binari | cloud-da problem YOX; embedded → TinyGo (ch12) |
-| "Googling Go" | axtarışda **golang** işlət |
-| Hire çətinliyi | developer üçün YAXŞI (tələb artır) |
+**Test faylı konvensiyaları:**
+- `*_test.go` — yalnız `go test` zamanı kompayl olunur
+- `package main` + `_internal_test.go` → unexported funksiyalara çıxış (internal
+  test); `package main_test` → yalnız export olunmuş API (external test)
 
-### 7. Dil Müqayisəsi (C++/Python/Java/Go)
-| | Go |
-|---|---|
-| Dizayn | prosedural+OOP-vari, çoxparadigmlı |
-| Xətalar | **errors are values** (exception YOX) |
-| Tiplər | statik |
-| Compile | birbaşa binari (VM YOX) |
-| Concurrency | goroutine + kanal |
-| İnterfeys | implicit (və explicit) |
-| Yaddaş | GC |
-| Test | **daxili**: test/bench/fuzz |
-| İstifadə | web API + cloud |
+### 3. Custom tip + switch (çoxdillilik)
+```go
+// language represents the language's code
+type language string  // custom tip — string-in "mənalı" versiyası
 
-### 8. Pocket-Layihə Fəlsəfəsi
-- **Dewey 1897:** "doing is the best way to learn" — BÜTÜN kitabın əsası
-- Sıra: hello world → syntax → ... → **cloud-deploy servis**
-- **Goroutine az diqqət:** "Go-da goroutinesiz də EFFEKTLİ proqramlaşdırma
-  olar" — kitabda YALNIZ 1 layihədə
-- Side quests: optional dərinləşdirmə məşqlər
+func greet(l language) string {
+    switch l {
+    case "en":
+        return "Hello world"
+    case "fr":
+        return "Bonjour le monde"
+    default:
+        return ""
+    }
+}
+```
+**Sub-kod izahı:**
+- `type language string` — nominal tip: `"en"` artıq təkcə string deyil, funksiya
+  imzası dəqiq tələb edir
+- Switch-də `break` LAZIM DEYİL — implicit
 
-### 9. Kitabın Öyrənmə Vədləri
-- **Grammar:** eyni loop açar sözü; switch-lərdə implicit break; exposal
-  (böyük hərf) — Java public/private müqabilində
-- **Test:** hər fəsildə unit (ch12 istisna); benchmark (commit-də performans
-  regresiya yoxlaması); **fuzzing** (random input = vulnerability tapmaq)
-- **Clean code:** Eagleson's Law; **domain-driven** qovluq təşkilatı;
-  "nəyi EXPOSE etmək" sualı
-- **Arxitektura:** HTTP+HTML VƏ gRPC+Protobuf — öz sevimlini SEÇ; logger
-  (stdlib-dən irəli); **anti-corruption layer** (Gordle); keş (generics ilə)
+### 4. Test funksiyası (testing.T)
+```go
+func TestGreet_English(t *testing.T) {
+    lang := language("en")      // preparation
+    want := "Hello world"
+    got := greet(lang)          // execution
+    if got != want {            // assertion
+        t.Errorf("expected: %q, got: %q", want, got)
+    }
+}
+```
+**Testin 4 mərhələsi:** preparation → execution → comparison → error reporting.
+`t.Errorf` — test FAIL edir amma davam edir; `%q` — stringi sitatla çap edir.
+
+### 5. Map (hash table) — phrasebook
+```go
+var phrasebook = map[language]string{
+    "el": "Χαίρετε Κόσμε", // Greek
+    "en": "Hello world",   // English
+    "fr": "Bonjour le monde", // French
+}
+
+func greet(l language) string {
+    greeting, ok := phrasebook[l]  // "comma ok" idiom-u
+    if !ok {
+        return fmt.Sprintf("unsupported language: %q", l)
+    }
+    return greeting
+}
+```
+**Sub-kod izahı:**
+- `v, ok := map[k]` — açar yoxdansa `ok=false`, `v` = zero value ("" string üçün)
+- Switch əvəzinə map: O(1) axtarış + yeni dil = 1 sətir (kod dəyişmir)
+
+### 6. Table-Driven Test (TDT)
+```go
+func TestGreet(t *testing.T) {
+    tests := map[string]struct {   // ad → test case
+        lang language
+        want string
+    }{
+        "English":            {lang: "en", want: "Hello world"},
+        "French":            {lang: "fr", want: "Bonjour le monde"},
+        "Akkadian, unsupported": {lang: "akk", want: "unsupported language: \"akk\""},
+    }
+    for name, tc := range tests {
+        tc := tc
+        t.Run(name, func(t *testing.T) {  // subtest — ad görünən
+            got := greet(tc.lang)
+            if got != tc.want {
+                t.Errorf("expected: %q, got: %q", tc.want, got)
+            }
+        })
+    }
+}
+```
+- Yeni dil əlavə etmək = 1 sətir test cədvəlində, test KODU dəyişmir
+- `t.Run` — subtestlər ayrıca run/parallel ola bilər
+
+### 7. Flag paketi (CLI parametrləri)
+```go
+var lang string
+flag.StringVar(&lang, "lang", "en", "The required language, e.g. en, ur...")
+flag.Parse()
+greeting := greet(language(lang))
+```
+- `flag.StringVar(&var, name, default, help)` — pointer ilə (və ya
+  `lang := flag.String(...)` — pointer qaytarır)
+- `flag.Parse()` — OS args parslənir; default "en"
+- `os.Args` ilə müqayisə: flag `--lang=fr` / `-lang fr` / `--lang fr` — hamısını
+  avtomatik emal edir
 
 ## Əsas terminlər
-- Goroutine (resizable stack) — yüngül, miqyaslana bilən paralellik
-- Composition/embedding — mirassız davranış birləşdirmə
-- Implicit interface — metod icrası = implementasiya (bəyansız)
-- Errors are values — exception əvəzinə dəyər-kimi xətalar
-- Fuzzing — random inputlarla vulnerability testi
-- Anti-corruption layer — xarici API-nin domendən izolyasiyası
-- cgo — Go↔C körpüsü (kitabda istifadə olunmur)
-- TinyGo — embedded/microcontroller Go compiler (ch12)
-- Domain-driven design — biznes domenlərinə görə kod təşkilatı
-- Side quest — kitabın optional dərin məşqi
-- golang — axtarış motoru üçün Go-nun ləqəbi
+
+- Reserved Keywords (açar sözlər — 25)
+- Example Test (nümunə testi — stdout müqayisəsi)
+- Internal/External Test (daxili/xarici test paketi)
+- Custom Type / Nominal Typing (xüsusi tip)
+- Comma Ok Idiom (v, ok := map[k])
+- Table-Driven Test (cədvəl testi)
+- Flag (komanda sətri parametri)
 
 ## Praktik nəticə
 
-1. **Go seçimi:** API/CLI/cloud üçün ideal; GC tam nəzarət tələb edən
-   (OS, real-time) üçün YOX — namuslu gözləntilər qur.
-2. **Öyrənmə strategiyası:** bu kitab = layihə əsaslı (pocket-sized);
-   unit-test HƏR layihədə; benchmark commit-regressiya aləti kimi.
-3. **İnterfeys intuisiyası:** implicit implementasiya mock/DI-ni
-   "pulsuz" edir — kitab boyu istifadə olunacaq.
-4. **Concurrency gözləntisi:** goroutine güclüdür, amma ESAS deyil —
-   sadəlik əvvəl.
-5. **Axtarış hiyləsi:** Go sualı → "golang" yaz.
+- Hər funksiya yaranan kimi test yaz — refactoring təhlükəsiz olur
+- Mənalı tiplər (`type language string`) — imzada dokumentasiya
+- Switch yox, map + comma-ok — çoxdilli cədvəllər üçün
+- TDT: test data vs test kod ayrılır; yeni hal = 1 sətir
 
 ## Mənbə
-Pages: 33-45 (PDF 34-46)
+
+Pages: 33-78 (Chapters 1-2, Learn Go with Pocket-Sized Projects)

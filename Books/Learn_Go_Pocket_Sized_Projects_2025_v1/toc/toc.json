@@ -11,9 +11,18 @@
     {"chapter": 9, "title": "Concurrent maze solver", "start_page": 393, "end_page": 451},
     {"chapter": 10, "title": "Habits tracker using gRPC", "start_page": 452, "end_page": 518},
     {"chapter": 11, "title": "HTML templating with a gRPC client", "start_page": 519, "end_page": 580},
-    {"chapter": 12, "title": "Go for other architectures", "start_page": 581, "end_page": 660}
+    {"chapter": 12, "title": "Go for other architectures", "start_page": 581, "end_page": 625}
   ],
-  "frontmatter": {"contents": [7, 16], "about": [17, 32]},
-  "project_continuity": false,
-  "note": "Each chapter is an independent pocket-sized project (game, CLI, service)"
+  "appendices": {
+    "A": "Installation steps (626+)",
+    "B": "Formatting cheat sheet",
+    "C": "Zero values",
+    "D": "Benchmarking",
+    "E": "Passing by value or by reference",
+    "F": "Fuzzing",
+    "G": "Connecting to a database"
+  },
+  "frontmatter": {"contents": [7, 18], "about_this_book": [25, 29]},
+  "project_continuity": true,
+  "project_continuity_note": "Hər chapter müstəqil 'pocket-sized' layihədir: 2-hello earth CLI, 3-bookworm digest, 4-logging library, 5-Gordle terminal oyunu, 6-money converter, 7-generic cache, 8-Gordle HTTP servis, 9-maze solver, 10-gRPC habits tracker, 11-HTML client, 12-Wasm/TinyGo. Chapter 8 Chapter 5-in Gordle layihəsini, Chapter 11 Chapter 10-un servisini istifadə edir."
 }
