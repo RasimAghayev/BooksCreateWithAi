@@ -1,0 +1,38 @@
+{
+  "📘 title_original": "Event-Driven Architecture in Golang",
+  "🔤 filename_safe": "Event_Driven_Architecture_in_Golang_2022_v1",
+  "📚 book": {
+    "📖 title": "Event-Driven Architecture in Golang",
+    "🧑‍💻 author": "Michael Stack",
+    "📅 year": 2022,
+    "📖 version": 1,
+    "📄 pages": 384,
+    "🔢 isbn": "978-1803248034",
+    "🏢 publisher": "Packt Publishing",
+    "📚 series": ""
+  },
+  "🎯 classification": {
+    "💻 primary_language": "Go",
+    "🎯 level": 4,
+    "📛 level_name": "Advanced",
+    "🌟 level_icon": "📕",
+    "🌐 domains": ["Software Architecture", "Microservices", "Distributed Systems", "Event-Driven Architecture"]
+  },
+  "🛠️ technologies": ["Go", "microservices", "modular monolith", "event sourcing", "CQRS", "Saga", "NATS", "gRPC", "PostgreSQL", "Docker", "Kubernetes", "Terraform", "AWS", "Pact", "Watermill"],
+  "🏷️ tags": ["#go", "#golang", "#eda", "#event_sourcing", "#cqrs", "#microservices", "#distributed_systems", "#packt"],
+  "📦 workspace": "books_read/Go/L4/Event_Driven_Architecture_in_Golang_2022_v1",
+  "📑 chapters": [
+    {"chapter": 1, "title": "Introduction to Event-Driven Architectures", "start_page": 22, "end_page": 39},
+    {"chapter": 2, "title": "Supporting Patterns in Brief", "start_page": 40, "end_page": 61},
+    {"chapter": 3, "title": "Design and Planning", "start_page": 62, "end_page": 93},
+    {"chapter": 4, "title": "Event Foundations", "start_page": 94, "end_page": 117},
+    {"chapter": 5, "title": "Tracking Changes with Event Sourcing", "start_page": 118, "end_page": 159},
+    {"chapter": 6, "title": "Asynchronous Connections", "start_page": 160, "end_page": 191},
+    {"chapter": 7, "title": "Event-Carried State Transfer", "start_page": 192, "end_page": 215},
+    {"chapter": 8, "title": "Message Workflows", "start_page": 216, "end_page": 247},
+    {"chapter": 9, "title": "Transactional Messaging", "start_page": 248, "end_page": 277},
+    {"chapter": 10, "title": "Testing", "start_page": 278, "end_page": 315},
+    {"chapter": 11, "title": "Deploying Applications to the Cloud", "start_page": 316, "end_page": 343},
+    {"chapter": 12, "title": "Monitoring and Observability", "start_page": 344, "end_page": 382}
+  ]
+}
