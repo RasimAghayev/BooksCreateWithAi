@@ -1,0 +1,23 @@
+{
+    "book_id": "100_go_mistakes_2024_v2",
+    "title": "100 Go Mistakes and How to Avoid Them (Second Edition)",
+    "author": "Teiva Harsanyi",
+    "year": 2024,
+    "version": 2,
+    "pages": 385,
+    "filename_safe": "100_Go_Mistakes_Teiva_Harsanyi_2024_v2",
+    "completed_at": "2026-09-08T13:30:00Z",
+    "chapters_processed": 12,
+    "info_files": [
+        "summary.az.md",
+        "terminology.az.md",
+        "cheatsheet.az.md",
+        "teacher-notes.az.md"
+    ],
+    "classification": {
+        "primary_language": "Go",
+        "level": 4,
+        "level_name": "Advanced"
+    },
+    "note": "100 real səhv: kod təşkilatı, tiplər, nəzarət, stringlər, funksiyalar, xətalar, paralellik (əsas+praktika), standart kitabxana, test, optimallaşdırma (CPU cache-dən CFS quota-ya). Bütün səhvlər AZ dilində izahlandı."
+}
