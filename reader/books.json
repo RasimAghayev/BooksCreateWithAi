@@ -498,12 +498,13 @@
       "year": 2019,
       "version": "2nd Edition",
       "pages": 464,
-      "status": "reading",
+      "status": "completed",
       "started_at": "2026-09-08",
       "filename_safe": "Go_Recipes_Aaron_Torres_2019_v2",
-      "workspace": "Books/Go_Recipes_Aaron_Torres_2019_v2",
-      "telegram_upload": "",
-      "fingerprint": "go. рецепты программирования|аарон торрес|2019|2nd edition"
+      "workspace": "books_read/Go/L3/Go_Recipes_Aaron_Torres_2019_v2",
+      "telegram_upload": "done",
+      "fingerprint": "go. рецепты программирования|аарон торрес|2019|2nd edition",
+      "completed_at": "2026-09-08"
     },
     {
       "book_id": "lets_go_further_2022_v1",
