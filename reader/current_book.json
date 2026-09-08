@@ -1,7 +1,6 @@
 {
-  "book_id": null,
-  "title": null,
+  "current_book": null,
   "status": "none",
   "started_at": null,
-  "note": "Build systems with Go (build_systems_with_go_2021_v1) tamamlandı. 33 kitab completed. ALL_START davam edir."
+  "note": "System Programming Essentials with Go (system_programming_essentials_with_go_2024_v1) tamamlandı. 34 kitab completed. next/ALL_START davam edə bilər."
 }
