@@ -6,8 +6,8 @@
     "version": 1,
     "pages": 329,
     "filename_safe": "Explore_Go_Cryptography_John_Arundel_2026_v1",
-    "completed_at": "2026-09-08T07:20:00Z",
-    "chapters_processed": 18,
+    "completed_at": "2026-09-08T07:00:00Z",
+    "chapters_processed": 7,
     "info_files": [
         "summary.az.md",
         "terminology.az.md",
@@ -19,5 +19,5 @@
         "level": 4,
         "level_name": "Advanced"
     },
-    "note": "Arundel-in kriptoqrafiya dərsi: Caesar-dan AES-GCM-yə tam TDD səfəri — shift cipher/crack, keyspace/entropiya, blok interfeyslər, CBC/IV, hash/HMAC, DHM/RSA, AES-GCM. 18 fəsil 6 bilik faylında AZ dilində emal edildi."
+    "note": "Kriptoqrafiya kitabı: shift cipher-dən AES-GCM-ə TDD yolu ilə. Ciphers, keys, blocks, CBC, hashing, blockchain, MAC/DHM, AES-GCM. Bütün fəsillər AZ dilində emal edildi."
 }

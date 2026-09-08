@@ -382,12 +382,12 @@
       "year": 2026,
       "version": 1,
       "pages": 329,
-      "status": "reading",
+      "status": "completed",
       "started_at": "2026-09-08T01:40:00Z",
-      "completed_at": null,
+      "completed_at": "2026-09-08",
       "filename_safe": "Explore_Go_Cryptography_John_Arundel_2026_v1",
-      "workspace": "Books/explore_go_cryptography",
-      "telegram_upload": "pending",
+      "workspace": "books_read/Go/L4/Explore_Go_Cryptography_John_Arundel_2026_v1",
+      "telegram_upload": "done",
       "fingerprint": "explore go: cryptography|john arundel|2026|1"
     }
   ]
