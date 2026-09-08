@@ -1,0 +1,45 @@
+{
+  "📘 title_original": "Go Programming - From Beginner to Professional: Learn everything you need to build modern software using Go",
+  "🔤 filename_safe": "Go_Programming_Beginner_to_Professional_Samantha_Coyle_2024_v1",
+  "📚 book": {
+    "📖 title": "Go Programming - From Beginner to Professional",
+    "🧑‍💻 author": "Samantha Coyle",
+    "📅 year": 2024,
+    "📖 version": 1,
+    "📄 pages": 680,
+    "🏢 publisher": "Packt Publishing"
+  },
+  "🎯 classification": {
+    "💻 primary_language": "Go",
+    "🎯 level": 1,
+    "📛 level_name": "Beginner",
+    "🌟 level_icon": "📘",
+    "🌐 domains": ["Go Fundamentals", "Backend Development", "Web Development", "Cloud Native"]
+  },
+  "🛠️ technologies": ["Go", "PostgreSQL", "GORM", "HTTP", "HTML Templating", "Generics", "Goroutines", "Channels", "sync", "OpenTelemetry", "Prometheus", "Docker"],
+  "🏷️ tags": ["#go", "#golang", "#beginner", "#fundamentals", "#web", "#concurrency", "#testing", "#cloud"],
+  "📦 workspace": "Books/Go_Programming_Beginner_to_Professional_Samantha_Coyle_2024_v1",
+  "📑 chapters": [
+    {"chapter": 1, "title": "Variables and Operators", "start_page": 32, "end_page": 81},
+    {"chapter": 2, "title": "Command and Control", "start_page": 82, "end_page": 109},
+    {"chapter": 3, "title": "Core Types", "start_page": 110, "end_page": 133},
+    {"chapter": 4, "title": "Complex Types", "start_page": 134, "end_page": 191},
+    {"chapter": 5, "title": "Functions – Reduce, Reuse, and Recycle", "start_page": 192, "end_page": 237},
+    {"chapter": 6, "title": "Don't Panic! Handle Your Errors", "start_page": 238, "end_page": 271},
+    {"chapter": 7, "title": "Interfaces", "start_page": 272, "end_page": 309},
+    {"chapter": 8, "title": "Generic Algorithm Superpowers", "start_page": 310, "end_page": 325},
+    {"chapter": 9, "title": "Using Go Modules to Define a Project", "start_page": 326, "end_page": 341},
+    {"chapter": 10, "title": "Packages Keep Projects Manageable", "start_page": 342, "end_page": 369},
+    {"chapter": 11, "title": "Bug-Busting Debugging Skills", "start_page": 370, "end_page": 397},
+    {"chapter": 12, "title": "About Time", "start_page": 398, "end_page": 419},
+    {"chapter": 13, "title": "Programming from the Command Line", "start_page": 420, "end_page": 439},
+    {"chapter": 14, "title": "File and Systems", "start_page": 440, "end_page": 469},
+    {"chapter": 15, "title": "SQL and Databases", "start_page": 470, "end_page": 503},
+    {"chapter": 16, "title": "Web Servers", "start_page": 504, "end_page": 539},
+    {"chapter": 17, "title": "Using the Go HTTP Client", "start_page": 540, "end_page": 561},
+    {"chapter": 18, "title": "Concurrent Work", "start_page": 562, "end_page": 607},
+    {"chapter": 19, "title": "Testing", "start_page": 608, "end_page": 627},
+    {"chapter": 20, "title": "Using Go Tools", "start_page": 628, "end_page": 645},
+    {"chapter": 21, "title": "Go in the Cloud", "start_page": 646, "end_page": 680}
+  ]
+}
