@@ -460,6 +460,19 @@
       "fingerprint": "build an orchestrator in go (from scratch)|tim boring|2024|1",
       "completed_at": "2026-09-08",
       "telegram_upload": "done"
+    },
+    {
+      "book_id": "microservices_with_go_2022_v1",
+      "title": "Microservices with Go",
+      "author": "Alexander Shuiskov",
+      "year": 2022,
+      "version": 1,
+      "pages": 329,
+      "status": "reading",
+      "started_at": "2026-09-08",
+      "filename_safe": "Microservices_with_Go_Alexander_Shuiskov_2022_v1",
+      "workspace": "Books/Microservices_with_Go_Alexander_Shuiskov_2022_v1",
+      "fingerprint": "microservices with go|alexander shuiskov|2022|1"
     }
   ]
 }

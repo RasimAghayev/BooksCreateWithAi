@@ -1,0 +1,14 @@
+{
+  "book_id": "microservices_with_go_2022_v1",
+  "title": "Microservices with Go",
+  "status": "reading",
+  "pipeline_step": "extract_knowledge",
+  "workspace": "Books/Microservices_with_Go_Alexander_Shuiskov_2022_v1",
+  "page_offset": 23,
+  "chapters_total": 13,
+  "chapters_processed": [],
+  "git_committed_through_chapter": 0,
+  "telegram_upload_status": {},
+  "finalization": {},
+  "started_at": "2026-09-08"
+}
