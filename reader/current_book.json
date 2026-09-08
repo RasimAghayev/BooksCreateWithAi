@@ -1,7 +1,7 @@
 {
-  "book_id": "lets_go_further_2022_v1",
-  "title": "Let's Go Further (Alex Edwards, 2022)",
+  "current_book": "build_systems_with_go_2021_v1",
+  "title": "Build systems with Go: Everything a Gopher must know (Juan M. Tirado, 2021)",
   "status": "reading",
   "started_at": "2026-09-08",
-  "note": "34 kitabdan 30 completed. Bu kitab claim edildi (paralel sessiya)."
+  "note": "Bu sessiya claim etdi: raw hazirdir (472 seh), TOC cixarilib (19 fasil), chapter emali baslayir."
 }

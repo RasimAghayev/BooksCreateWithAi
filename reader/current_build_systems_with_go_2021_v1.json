@@ -1,0 +1,19 @@
+{
+  "book_id": "build_systems_with_go_2021_v1",
+  "filename_safe": "Build_Systems_with_Go_Juan_M_Tirado_2021_v1",
+  "fingerprint": "build systems with go: everything a gopher must know|juan m. tirado|2021|v0.1.0",
+  "pipeline_step": "knowledge_extraction",
+  "current_page": 10,
+  "chapter": 1,
+  "git_committed_through_chapter": 0,
+  "telegram_upload_status": {},
+  "finalization": {
+    "upload": "pending",
+    "move": "pending",
+    "git_commit": "pending",
+    "delete_original": "pending",
+    "delete_state": "pending"
+  },
+  "started_at": "2026-09-08",
+  "last_updated": "2026-09-08T16:45:00Z"
+}
