@@ -404,6 +404,19 @@
       "fingerprint": "learn go with pocket-sized projects|latour chaiehloudj bertrand|2025|1",
       "completed_at": "2026-09-08",
       "telegram_upload": "done"
+    },
+    {
+      "book_id": "100_go_mistakes_2024_v2",
+      "title": "100 Go Mistakes and How to Avoid Them (Second Edition)",
+      "author": "Teiva Harsanyi",
+      "year": 2024,
+      "version": 2,
+      "pages": 385,
+      "status": "reading",
+      "started_at": "2026-09-08",
+      "filename_safe": "100_Go_Mistakes_Teiva_Harsanyi_2024_v2",
+      "workspace": "Books/100_Go_Mistakes_Teiva_Harsanyi_2024_v2",
+      "fingerprint": "100 go mistakes and how to avoid them|teiva harsanyi|2024|2"
     }
   ]
 }
