@@ -33,7 +33,9 @@
     {"chapter": 9, "title": "Тестирование Go-кода", "start_page": 297, "end_page": 323},
     {"chapter": 10, "title": "Параллелизм и конкурентность", "start_page": 324, "end_page": 360},
     {"chapter": 11, "title": "Распределенные системы", "start_page": 361, "end_page": 395},
-    {"chapter": 12, "title": "Реактивное программирование и потоки данных", "start_page": 396, "end_page": 464}
+    {"chapter": 12, "title": "Реактивное программирование и потоки данных", "start_page": 396, "end_page": 424},
+    {"chapter": 13, "title": "Бессерверное программирование", "start_page": 425, "end_page": 445},
+    {"chapter": 14, "title": "Улучшения производительности, советы и рекомендации", "start_page": 446, "end_page": 464}
   ],
   "📝 summary": "85+ praktik resept: I/O və fayl sistemi, CLI alətləri, data transformasiyası, error handling, şəbəkə proqramlaşdırması, SQL/MongoDB/Redis, web client/API, mikroservislər (gRPC, REST), test (unit, mock, httptest), concurrency (channel, sync, atomic, context), distributiv sistemlər (Consul, Raft, Docker, monitoring) və reaktiv proqramlaşdırma (Goflow, Kafka, WebSocket).",
   "last_updated": "2026-09-08T12:40:00Z"
