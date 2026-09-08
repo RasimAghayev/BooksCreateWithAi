@@ -1,0 +1,10 @@
+{
+  "book_id": "event_driven_architecture_golang_2022_v1",
+  "filename_safe": "Event_Driven_Architecture_in_Golang_2022_v1",
+  "fingerprint": "event-driven architecture in golang|michael stack|2022|1",
+  "pipeline_step": "raw_extraction_done",
+  "source_pdf": "Books/Event-Driven Architecture in Golang.pdf",
+  "raw_dir": "Books/Event_Driven_Architecture_in_Golang_2022_v1/raw",
+  "chapters_found": {"1": 22, "2": 40, "3": 62, "4": 94, "5": 118, "6": 160, "7": 192, "8": 216, "9": 248, "10": 278, "11": 316, "12": 344},
+  "last_updated": "2026-09-08T09:10:00Z"
+}
