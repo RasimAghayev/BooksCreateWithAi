@@ -1,6 +1,7 @@
 {
-  "current_book": null,
-  "status": "none",
-  "started_at": null,
-  "note": "System Programming Essentials with Go (system_programming_essentials_with_go_2024_v1) tamamlandı. 34 kitab completed. next/ALL_START davam edə bilər."
+  "book_id": "effective_go_recipes_2024_v1",
+  "title": "Effective Go Recipes: Fast Solutions to Common Tasks (Miki Tebeka, 2024)",
+  "status": "reading",
+  "started_at": "2026-09-08",
+  "note": "Bu sessiya claim etdi: raw hazirdir (268 seh), TOC cixarilib (15 fasil, 84 resept), chapter emali baslayir."
 }

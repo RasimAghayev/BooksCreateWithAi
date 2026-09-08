@@ -535,6 +535,19 @@
       "workspace": "books_read/Go/L2/Build_Systems_with_Go_Juan_M_Tirado_2021_v1",
       "completed_at": "2026-09-08",
       "telegram_upload": "done"
+    },
+    {
+      "book_id": "effective_go_recipes_2024_v1",
+      "title": "Effective Go Recipes: Fast Solutions to Common Tasks",
+      "author": "Miki Tebeka",
+      "year": 2024,
+      "version": 1,
+      "pages": 268,
+      "status": "reading",
+      "started_at": "2026-09-08",
+      "filename_safe": "Effective_Go_Recipes_Miki_Tebeka_2024_v1",
+      "workspace": "Books/Effective_Go_Recipes_Miki_Tebeka_2024_v1",
+      "fingerprint": "effective go recipes|miki tebeka|2024|1"
     }
   ]
 }
