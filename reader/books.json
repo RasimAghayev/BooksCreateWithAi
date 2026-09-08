@@ -434,6 +434,30 @@
       "fingerprint": "event-driven architecture in golang|michael stack|2022|1",
       "completed_at": "2026-09-08",
       "telegram_upload": "done"
+    },
+    {
+      "book_id": "system_programming_essentials_with_go_2024_v1",
+      "title": "System Programming Essentials with Go",
+      "author": "Alex Rios",
+      "year": 2024,
+      "version": 1,
+      "pages": 372,
+      "status": "reading",
+      "started_at": "2026-09-08",
+      "filename_safe": "System Programming Essentials with Go - Alex Rios - 2024 - v1"
+    },
+    {
+      "book_id": "orchestrator_in_go_2024_v1",
+      "title": "Build an Orchestrator in Go (From Scratch)",
+      "author": "Tim Boring",
+      "year": 2024,
+      "version": 1,
+      "pages": 410,
+      "status": "reading",
+      "started_at": "2026-09-08",
+      "filename_safe": "Build_an_Orchestrator_in_Go_Tim_Boring_2024_v1",
+      "workspace": "Books/Build_an_Orchestrator_in_Go_Tim_Boring_2024_v1",
+      "fingerprint": "build an orchestrator in go (from scratch)|tim boring|2024|1"
     }
   ]
 }
