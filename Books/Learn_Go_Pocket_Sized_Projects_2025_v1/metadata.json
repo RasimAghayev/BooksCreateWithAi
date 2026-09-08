@@ -1,0 +1,38 @@
+{
+  "📘 title_original": "Learn Go with Pocket-Sized Projects",
+  "🔤 filename_safe": "Learn_Go_Pocket_Sized_Projects_2025_v1",
+  "📚 book": {
+    "📖 title": "Learn Go with Pocket-Sized Projects",
+    "🧑‍💻 author": "Aliénor Latour, Donia Chaiehloudj, Pascal Bertrand",
+    "📅 year": 2025,
+    "📖 version": 1,
+    "📄 pages": 782,
+    "🔢 isbn": "9781633438804",
+    "🏢 publisher": "Manning Publications",
+    "📚 series": ""
+  },
+  "🎯 classification": {
+    "💻 primary_language": "Go",
+    "🎯 level": 1,
+    "📛 level_name": "Beginner",
+    "🌟 level_icon": "📘",
+    "🌐 domains": ["Backend Development", "Software Engineering", "CLI Development", "Web Development", "Distributed Systems"]
+  },
+  "🛠️ technologies": ["Go", "testing", "table-driven tests", "encoding/json", "flag", "bufio", "sort.Interface", "functional options", "generics", "goroutines", "channels", "mutex", "net/http", "html/template", "gRPC", "protobuf", "mockery", "context", "Wasm", "TinyGo", "fuzzing", "PostgreSQL", "database/sql"],
+  "🏷️ tags": ["#go", "#golang", "#beginner", "#projects", "#cli", "#grpc", "#concurrency", "#testing", "#wasm", "#manning"],
+  "📦 workspace": "books_read/Go/L1/Learn_Go_Pocket_Sized_Projects_2025_v1",
+  "📑 chapters": [
+    {"chapter": 1, "title": "Meet Go", "start_page": 24, "end_page": 50},
+    {"chapter": 2, "title": "Hello, earth! Extend your hello, world", "start_page": 51, "end_page": 88},
+    {"chapter": 3, "title": "A bookworm's digest: Playing with loops and maps", "start_page": 89, "end_page": 122},
+    {"chapter": 4, "title": "A log story: Creating a library", "start_page": 123, "end_page": 158},
+    {"chapter": 5, "title": "Gordle: Play a word game in your terminal", "start_page": 159, "end_page": 186},
+    {"chapter": 6, "title": "Money converter: CLI around an HTTP call", "start_page": 187, "end_page": 242},
+    {"chapter": 7, "title": "Caching with generics", "start_page": 243, "end_page": 286},
+    {"chapter": 8, "title": "Gordle as a service", "start_page": 287, "end_page": 344},
+    {"chapter": 9, "title": "Concurrent maze solver", "start_page": 345, "end_page": 404},
+    {"chapter": 10, "title": "Habits tracker using gRPC", "start_page": 405, "end_page": 474},
+    {"chapter": 11, "title": "HTML templating with a gRPC client", "start_page": 475, "end_page": 520},
+    {"chapter": 12, "title": "Go for other architectures", "start_page": 521, "end_page": 552}
+  ]
+}
